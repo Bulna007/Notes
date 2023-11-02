@@ -1,0 +1,42 @@
+Matrix Parameters
+-----------------
+Matrix parameters are used for adding additional information to a specific path parameter of a the request. The matrix parameters are appended right immediately to the path parameters of the URI as a key/value pair separated with (;) semi-colon
+
+syntax:-
+/electronics;connectorType=usAdapter;voltage=12v/camera;type=dslr;lens=wide/products
+
+in the above URI we added #4 matrix parameters, #2 per each path parameter of the URI. if we look at it the connectorType and voltage is generic inputs that is applicable for all the electronic products and type=dslr and lens=wide is only applied for cameras, rather than adding them as query parameters to the URI, it would be better to add them as matrix parameters to the specific path param of the URI adding more clarity on whom these values belongs to making the URI more meaningful and readable
+
+
+What is the difference between query parameter, path parameter and matrix parameters?
+1.
+query parameters: are always attached to the end of the URI
+path parameters: can appear at any place within the URI of the request
+matrix parameters: are always attached immediately to the path parameter of the request only
+
+2.
+query parameters: these are optional to be passed aspart of the URI of the request, because these doesnt participate in mapping a request to the resource
+path parameters: are mandatory and those are defined aspart of the URI itself. In absence of the path parameters, the request will not be mapped to the resource
+matrix parameters: the matrix parameters are optional to be passed aspart of the URI of the request and even these also doesnt participate in mapping the request to the resource
+	
+3.
+query parameters: are the way through which we can pass the data as an input to the scope of the request
+path parameters: are also the input data we passed to the scope of the request only
+matrix parameters: are the additional inputs that are attached to the scope of the path parameter at which those are defined, these are not request scope inputs
+
+4. 
+query parameters: can be multi-valued, we can pass multiple values for the parameter by writing it repeatedly aspart of the URI with different values
+path parameters: are single-valued inputs only
+matrix parameters: are multi-valued, we can pass multiple values for the parameter by writing it repeatedly at the path parameter of the URI with different values
+
+How to receive the Matrix parameter that is send along with the path parameter of the request?
+
+@Path("/product")	
+class ProductApiService {
+	@GET
+	@Path("/{category}/{productName}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String searchProduct(@PathParam("category") String category,@PathParam("productName") String productName, @MatrixParam("connectorType") String connectorType, @MatrixParam("volts") String volts, @MatrixParam("type") String cameraType,@MatrixParam("lens") String lensType) {
+		return "connectorType: " +connectorType + " volts : " +volts + " cameraType : " + cameraType + " lensType : " + lensType;
+	}
+}

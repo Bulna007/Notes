@@ -1,0 +1,86 @@
+HttpHeaders
+-----------
+HttpHeaders is another api class provided aspart of jaxrs api. it is used for extracting the Http Headers and Cookies that are passed aspart of the Http Request programmatically
+This is an another Context Object provided aspart of jaxrs api that holds the information about the headers/cookies that are passed aspart of the Request. To inject the HttpHeaders aspart of the Resource method we need to use @Context annotation
+
+@Path("schedule")
+class WorkScheduleApiService {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{week}")
+	public String getSchedule(@HeaderParam("empNo") String employeeno,@HeaderParam("orgNo") String organizationNo, @PathParam("week") int week) {
+		
+	}
+}
+
+list of schedule objects:
+[
+	{"date": ""
+	"emp_no": "",
+	"location": "",
+	"hours": 8,
+	"reporting_manager": "",
+	"assignment_no": ""},
+	{
+
+	}
+]
+
+instead of using @HeaderParam annotation in reading the http headers we can use HttpHeaders api class as below.
+	
+@Path("schedule")
+class WorkScheduleApiService {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{week}")
+	public String getSchedule(@Context HttpHeaders httpHeaders, @PathParam("week") int week) {
+		MultiValuedMap<String, String> headerParams = httpHeaders.getRequestHeaders();	
+		// write the logic in using the headerParameters
+		
+	}
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+Java Automatic Parameter Type Conversion	
+There are various different ways we can pass the input data aspart of the Http Request like
+1. URI
+	1.1 Query Parameters
+	1.2 Path Parameters
+	1.3 Matrix Parameters
+2. Header
+	1. Header
+	2. Cookies
+3. Body
+	Form Parameter
+	
+In all the above cases of sending the data aspart of HttpRequest, there are single-valued inputs and are not scalar types and these inputs are Character data and we wanted to receive them as part of Resource Method parameters
+
+The Jaxrs runtime takes the responsibility of extracting the above parameters of data that is send aspart of the HttpRequest and injects them into the parameters of the Resource Method.
+	
+It looks like since the data that is send aspart of the Request is character data, we can receive them into String type parameter of the Resource Method. In such case the programmer has to write additional logic in converting these values that are received as String type into respective dataType like (int, float, boolean etc) to be used inside the resource method logic. This looks like an additional effort developer has to put in reading the data from the Request and is an tedious job
+
+Instead of developer writing the conversion logic in receiving the data into Resource Method parameters, if jaxrs runtime by itself can convert these parameters of data that is send aspart of the Request into respective resource method parameter Types, then we can avoid this additional conversion logic. does the jaxrs runtime supports the data conversion before inject into Resource parameters?
+	
+Yes, given the parameterTypes of the Resource method qualifies for Java automatic parameter Type conversion rules.
+What are the rules under which the parameterTypes of the resource method are qualified for automatic type conversion?
+	
+1. The parameterTypes of the resource method can be any of the primitive dataTypes like int, String, long, double, float, boolean, byte, char etc. The jaxrs runtime takes care of extracting the character data that is send aspart of the request and converts into the respective primitive type we declared and injects into resource method parameter
+
+2. The request parameters that are send aspart of the HttpRequest can be injected to Object Type as well, given if the class of the underlying object is written based on below rules
+	
+HYD001|BLR002|9876
+	
+class AwbNo {
+	String sourceLocationCode;
+	String destinationLocationCode;
+	int parcelNo;
+}	
+
+@Path("/parcel")
+class ParcelApiService {
+	@GET
+	@Produces("text/plain")
+	@Path("/{awbNo}/track")
+	public String track(@PathParam("awbNo") AwbNo awbNo){ 
+				
+	}
+}

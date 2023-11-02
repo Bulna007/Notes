@@ -1,0 +1,84 @@
+URIInfo
+-------
+What is URIInfo, why do we need to use it?
+URIInfo is one of the Context Object that is provided by the jaxrs api.
+	
+Context Object : are the objects that holds the data specific to an scope/entity, so that we can use the data from it.	
+There are several context objects are provided by jaxrs api, to hold data pertaining to various different parts of Http Request
+
+URIInfo is an class, that holds the data that is being sent aspart of the URI of the http request. Aspart of the URI the client can send the data as
+1. query parameters
+2. path parameters
+3. matrix parameters
+
+all of the data that is being send can be kept in URIInfo object.
+	
+Why do we need to use it?
+1. Incase if the Path Parameter has been defined both at class-level and method-level, we cannot extract both the values by using annotations @PathParam, the only way to access both of the values is through URIInfo
+2. we can programmatically extract all of the data that is attached to the URI of the request using URIInfo
+
+
+@Path("/tour/{location}")
+class TourApiService {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{tourType}/{location}/search")
+	public String searchTourPackages(@PathParam("tourType") String tourType,@PathParam("location") String location,@QueryParam("days") int days, @QueryParam("minPrice") double minPrice,@QueryParam("maxPrice") double maxPrice,@MatrixParam("accomodationType") String accomodationType, @MatrixParam("travelType") String travelType, @QueryParam("people") int people) {
+		
+	}
+}
+
+/api/hyderabad/holiday;accomodationType=5star;travelType=air/delhi/search?days=5&minPrice=20000&maxPrice=50000&people=4
+if you see the above api, all of the data is send aspart of the URI of the request, this can be extracted easily using URIInfo as below.
+	
+@Path("/tour/{location}")
+class TourApiService {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{tourType}/{location}/search")
+	public String searchTourPackages(@Context URIInfo uriInfo) {
+		List<PathSegment> pathSegments = uriInfo.getPathSegments();
+		for(PathSegment ps : pathSegments) {
+			String path = ps.getPath();
+			MultiValuedMap<String, String> matrixParams = ps.getMatrixParameters();			
+		}
+		MutiValuedMap<String, String> queryParams = uriInfo.getQueryParameters();
+		
+	}
+}	
+
+by looking at URIInfo annotated with @Context, the jaxrs runtime wraps the entire URI of the request into URIInfo object and inject it to the Resource method.
+--------------------------------------------------------------------------------------------------------------------------------------
+HttpHeaders
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

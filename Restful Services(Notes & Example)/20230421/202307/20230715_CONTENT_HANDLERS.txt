@@ -1,0 +1,58 @@
+Content Handlers
+-----------------
+In the HttpRequest there are #3 parts are there in which we can send the data
+1. URI
+2. HEADER/COOKIE
+3. BODY
+
+similary aspart of the HttpResponse there are #2 parts are there in which we can dispatch the data to the client
+1. HEADER/COOKIE
+2. BODY
+
+out of these possibilities, there are few limitations in exchanging the data aspart of the URI or HEADERS as below.
+	limitations in sending/receiving the data aspart of the URI or HEADER/COOKIE:
+	1. only supports character data to be exchanged and doesnt support binary format
+	2. few browsers enforce strict limitation on the length of data being exchanged over the URI
+	3. all the data that is exchanged aspart of the URI/HEADER are plain/text characters cannot be encrypted to be secured.
+	
+Whereas aspart of the Request Body/Response Body :
+	1. we can exchange any amount of data aspart of it
+	2. the data can be of any format. it can be character or binary format as well
+	3. we can encrypt/decrypt the data that is being exchanged aspart of req/resp body without any restrictions
+	
+Note: in case if we are exchanging the character data aspart of request/response body, it is recommended to use data representation format so that the client/server applications can parse or interpret the data to perform the operation.
+	
+	
+Till now we designed the Resource class to recieve the data or dispatch the data aspart of the URI and Headers only, but now we wanted to  build the resource class in sending/receving the data aspart of the request/response body, that can be done through Content Handlers aspart of jaxrs api
+
+Content Handlers: is nothing but a technic/mechanism supported by jaxrs api in receiving/dispatching the data aspart of request/response body.
+	
+Request Body:
+The jaxrs runtime is responsible for extracting the data that is send aspart of the request body and pass it as an input to the resource method parameters. Since there are many ways in which the data can be send aspart of the HttpRequest, we need to specify to the jaxrs runtime which part of the request data should be injected into the resource method parameter while invoking the resource method per each request through annotations
+
+1. @QueryParam
+2. @PathParam
+3. @MatrixParam
+4. @HeaderParam
+etc
+
+the only part that is left over is RequestBody only, asking the jaxrs runtime to extract the data from request body and inject into resource method we dont need any annotation. if we declare any parameter aspart of the resource method without any annotation, that itself means to jaxrs runtime we are asking him to extract the data from request body and pass it as an input to the resouce method parameter.
+
+But the parameterTypes into which the jaxrs runtime can extract the request body data and inject cannot be any type, these parameter types should be supported Types by the jaxrs runtime.
+Supported Types:
+1. InputStream
+2. Reader
+3. File
+4. Byte[]
+5. String
+6. MultiValuedMap 
+
+Similarly we want to dispatch the data aspart of the response body
+By default when the resource method returned the returnValue, the returnValue that is returned by us would be received by jaxrs runtime and it would dispatch it aspart of the response body.
+But here we cannot have anyType being returned aspart of the resource method to jaxrs runtime, asking him to dispatch it aspart of response body, there are few supported returnTypes that can be taken aspart of the resource method returnType, for which jaxrs runtime can dispatch them aspart of the ResponseBody
+
+Supported Types:
+1. StreamingOutput
+2. File
+3. Byte[]
+4. String

@@ -1,0 +1,90 @@
+Http Header
+-----------
+Within the Http Header the client will send the standard http headers describing the information about the request, that acts as an input in interpreting the request that is being send. for eg..
+	1. Content-Type
+	2. Content-Length
+	3. Accept
+	4. Host
+	5. Charset
+	6. Authorization
+	etc
+additional the client application can add custom headers as key/value pair within the request that defines the information about the request/application itself
+
+How can we receive the Http Headers that are send aspart of the request within the Resource class/and their resource methods?
+We dont need to write the code for extracting the request headers that are sent aspart of the request, rather jaxrs runtime is responsible for extracting the specified headers and injecting them as an input to the resource method as parametes which is part of jaxrs resource injection
+
+
+@Path("/netbanking")
+class NetbankingApiService {
+	@PUT
+	@Path("/{accountNo}/{amount}/withdrawl")
+	@Produces(MediaType.TEXT_PLAN)
+	public String withdrawl(@PathParam("accountNo") String accountNo,@PathParam("amount") double amount, @HeaderParam("platformType") String platformType) {
+		return "accountNo : " +accountNo + " amount : " +amount + " platformType : "+ platformType;
+	}
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+Form Parameter
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,53 @@
+jaxrs resource injections
+The client aspart of the request will send various different data
+1. uri
+2. headers/cookies
+3. request body
+
+this data that is sent aspart of the request acts as an input for resource class to perform operations on that data, but the developer of the resource class should not write the code for extracting the data from various different parts of the request, instead the jaxrs runtime should be able to extract the data and pass it as an input to the resource class which is called resource injection
+
+There are various different types of jaxrs resource injections are supported by jaxrs api (runtime).
+
+1. Path Parameters / Template Parameters
+Path Parameters or Template parameters are the fixed positions reserved aspart of the uri of the request through which the resource allows the client application to pass the data as an input to perform operation.
+	
+while defining the URI for the resource class or a resource method we can reserve an position within the URI by defining an Name to the position using /{templateParam}/ in the URI. so that we can extract the data at that position within the URI and pass it as an input to the resource method parameters by using @PathParam("templateParam") through the help of jaxrs runtime
+
+There are #2 ways of sending the data aspart of the URI of the request
+1. query parameters
+the query parameters are the key/value pairs of data that are appended at the end of the URI through which we can send the data as an input to the resource class
+	
+eg: URI?k1=v1&k2=v2
+
+2. path parameters
+these are reserved and fixed positions within the URI through which the client application can send the data as an input to the resource class
+	
+eg: /rootURI/data/resource
+
+What is the difference between the query parameters & path parameters, when should we use what?
+	
+1. 
+query parameters: are the key/value pair appended at the end of the URI through which the user can send the data as an input to the Resource class/methods. 
+From the user perspective working with query parameters in passing the data as an input to the resource is very complex, one should know the syntax of writing query parameters. it should start with "?" and the subsequent parameters should be separated with "&" and need to construct the URI inorder to send the request, which seems often complex to write the URI 
+
+eg: /product?productCode=393&color=blue
+	
+	
+path parameters: path parameters are the fixed/reserved position within the URI at which the user supply the value in sending the request. There is no complex syntax to learn or understand in adding the parameters/data aspart of the URI. it would quick and easy to write URI in sending the data to the resource class/methods
+
+eg: /product/393/red
+if we look at the above URI we can directly append productcode and color within the URI easily.
+	
+2. 
+query parameters:
+while working with query parameters, one feels always complex in decoding or understand the URI of the request we sending for because we need to interpret the syntax of the query parameters in understanding the context of the request
+
+path parameters:
+since the data is appended directly aspart of the URI without any special symbols one can easily read the URI as a text of data and interpret it easily to understand what the request is being meant for
+	
+3.
+query parameters:
+the user has to memorize the names of the parameters in constructing the URIs while sending the request, unless the user/client knows the parameter names they cannot send the request data in accessing the resource. it would hard to memorize and complex to write these parameters aspart of the URI
+
+path parameters:
+there are no names we need to write in sending the data, only the data should passed at fixed position within the URI thus making them easy to use.

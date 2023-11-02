@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/jerseynetbanking/pom.xml" />
+        <option value="$PROJECT_DIR$/subresourcemethod/pom.xml" />
+        <option value="$PROJECT_DIR$/jerseybootstrapping/pom.xml" />
+        <option value="$PROJECT_DIR$/resteasybootstrapping/pom.xml" />
+        <option value="$PROJECT_DIR$/morepathparams/pom.xml" />
+        <option value="$PROJECT_DIR$/resourceinjections/pom.xml" />
+        <option value="$PROJECT_DIR$/customparamconverter/pom.xml" />
+        <option value="$PROJECT_DIR$/jsonparsing/pom.xml" />
+        <option value="$PROJECT_DIR$/jsonstreaming/pom.xml" />
+        <option value="$PROJECT_DIR$/jsonbinding/pom.xml" />
+        <option value="$PROJECT_DIR$/contenthandlers/pom.xml" />
+        <option value="$PROJECT_DIR$/customcontenthandlers/pom.xml" />
+        <option value="$PROJECT_DIR$/serverresponses/pom.xml" />
+        <option value="$PROJECT_DIR$/exceptionhandling/pom.xml" />
+        <option value="$PROJECT_DIR$/jaxrsclient/pom.xml" />
+        <option value="$PROJECT_DIR$/httpbasicsecurity/pom.xml" />
+        <option value="$PROJECT_DIR$/caching/pom.xml" />
+        <option value="$PROJECT_DIR$/asyncprog/pom.xml" />
+        <option value="$PROJECT_DIR$/openapi/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK" />
+</project>

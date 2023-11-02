@@ -1,0 +1,69 @@
+Content Handlers
+Content Handlers is all about receiving the data that is send aspart of the request body within the resource method or dispatching the data aspart of the response body from an resource method is called "Content Handler"
+	
+another way: how do we need to design the Resource class and their methods in receiving the request body data or dispatching the data aspart of the response body is termed as "Content Handlers"	
+	
+The Jaxrs runtime takes care of extracting the data from the request body and injects/passes it as an input into the resource class method parameters. Similarly the returnValue that is returned from the resource method will be taken as input by the Jaxrs runtime and dispatches it aspart of the ResponseBody for the response.
+	
+But the jaxrs runtime cannot extract the requestbody data and send it as an input to the resource method of any parameterTypes or any returnType data cannot be dispatched aspart of the response body by jaxrs runtime. The jaxrs runtime has specified specific set of supported parameterTypes and returnTypes that can be taken as parameters/returnTypes of the resource methods, so that it can inject the request body data or dispatch the return value as part of the response body.
+	
+Parameter Types supported by jaxrs runtime: 
+if we declare any parameter aspart of the resource method without any annotation, it indicates to the jaxrs runtime we are asking him to extract and pass the requestbody data.
+	
+1. String
+2. InputStream
+3. Reader
+4. byte[]
+5. File
+6. MultiValuedMap
+
+ReturnTypes supported by jaxrs runtime:
+1. String
+2. File
+3. StreamingOutput
+4. byte[]
+
+
+@Path("/job")
+class JobApiService {
+
+	@POST	
+	@Path("/is")
+	@Consumes("application/json")
+	@Produces("application/json")
+	public String newJobThroughInputStream(InputStream in) {
+		// no processing
+		int c = 0;
+		StringBuilder builder = new StringBuilder();
+		
+		while((c = in.read()) != -1) {
+			builder.append((char) c);
+		}
+		String respBody = builder.toString();
+		return respBody;
+	}
+	
+	@Path("/rdr")
+	@Consumes("application/json")
+	@Produces("application/json")
+	public byte[] newJobThroughReader(Reader reader) {
+		return bytes;
+	}
+	
+	@PUT
+	@Consumes("application/octetstream")
+	@Produces("text/plain")
+	public String uploadResume(File inFile) {
+		return contents;
+	}
+}
+
+1. InputStream = Binary Stream
+2. Reader = Character Stream
+
+POST method:
+1. URI
+2. HEADER/COOKIES
+3. REQUEST BODY
+
+lot of attributes of information should be sent aspart of the request to post a job

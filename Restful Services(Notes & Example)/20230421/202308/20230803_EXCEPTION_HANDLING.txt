@@ -1,0 +1,98 @@
+How does the exceptions that are thrown by the resource class is reported as error response to the client?
+The jaxrs runtime upon receiving the exception, by default it constructs an http response message with
+1. statuscode : 500 
+2. headers: standard http headers
+3. response body: exception stacktrace
+
+and would be dispatched as an error response to the client.
+	
+The default behaviour of mapping an exception reported by the resource class into error response is not quite useful for the client applications. The core aspect of reporting the failure is to let the client understand the reason for the failure and recover out of it.
+	
+There is no point of returning an http error response with stacktrace information embedded aspart of the response body, because the client cannot derive any meaning information regarding the failure encountered 
+
+So always the resource classes upon running into an exception should communicate the reason for the failure in an appropriate format, that can be parsed, interpreted, understandable and used by the client applications.
+	
+Typical best practise is define application standard error codes and error messages indicating the failure and write them aspart of the response body along with appropriate http status code
+
+#1. 
+HttpResponse
+status: 400 [Bad Request]
+Header: standard headers
+body:
+{
+	"errorCode": "A001",
+	"errorMessage": "error message describing the failure"
+}
+	
+
+class Receipt {
+	String receiptNo;
+	LocalDate rechargeDate;
+	String mobileNo;
+	double amount;
+	String status;
+	// accessors
+}
+
+class RechargeInfo {
+	String mobileNo;
+	String circle;
+	String provider;
+	String planName;
+	double amount;
+	// accessors
+}
+
+class Error {
+	String errorCode;
+	String errorMessage;
+	// accessors
+}
+
+@Path("/recharge")
+class MobileRechargeApiService {
+  	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response recharge(RechargeInfo rechargeInfo) {
+		Response response = null;
+		ResponseBuilder builder = null;
+		
+		try {
+			AirtelRechargeService rechargeService=  new AirtelRechargeService();
+			String txNo = rechargeService.recharge(rechargeInfo.getMobileNo(), rechargeInfo.getPlan(), rechargeInfo.getAmount());
+			Receipt receipt = new Receipt();
+			// populate the data into receipt
+			
+			builder = Response.ok();
+			builder = builder.entity(Entity.json(receipt));
+			response = builder.build();
+			
+		}catch(SubscriptionNotActiveException e) {
+			builder = Response.status(Status.BAD_REQUEST);
+			Error error = new Error();
+			error.setErrorCode("A0001");
+			error.setErrorMessage("Subscription Not Active");
+			builder.entity(Entity.json(error));
+			response = builder.build();
+		}
+		
+		return response;
+	}
+}
+
+
+class AirtelRechargeService {
+	public String recharge(String mobileNo, String plan, double amount) {
+		// query the subscription information of the mobileNo
+		if(subscription.getStatus().equals("In-Active")) {
+			throw new SubscriptionNotActiveException(); // UnChecked Exception
+		}
+		// do recharge
+		return "03kf";
+	}
+}
+
+In the above code, it looks like incase of exception we are catching it performing alternate path of execution and returning an success response rather than reporting an failure by constructing error response. because in java usually errors/failures are reported as exceptions and success is represented through return value. So the above code is not readable or mis-leading. 
+	
+To overcome the above problem, jaxrs api has provided an standard Exception class called "WebApplicationException".

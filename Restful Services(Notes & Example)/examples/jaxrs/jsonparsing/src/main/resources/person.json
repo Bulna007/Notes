@@ -1,0 +1,14 @@
+{
+  "uniqueNo": 3,
+  "fullname": "Julie",
+  "age": 34,
+  "gender": "Female",
+  "address": {
+    "addressLine1": "JohnsCreek, 12 Ave",
+    "addressLine2": "Main Street",
+    "city": "New Jersey",
+    "state": "New Jersey",
+    "zip": 3933,
+    "country": "USA"
+  }
+}

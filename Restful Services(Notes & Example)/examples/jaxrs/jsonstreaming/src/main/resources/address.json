@@ -1,0 +1,9 @@
+{
+  "addressLine1": "Brigade Road",
+  "addressLine2": "Pwky Street, 6th Lane",
+  "city": "Columbus",
+  "state": "Ohio",
+  "zip": 3844,
+  "country": "USA",
+  "attractions": ["Public park", "Museum", "Lake"]
+}

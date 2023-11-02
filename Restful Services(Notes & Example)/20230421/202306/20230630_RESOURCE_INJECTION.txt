@@ -1,0 +1,70 @@
+Bean Param
+-----------
+#10 different values being sent aspart of the request (in different parts), how do we recieve these values as input in the resource method?
+To receive all of the data sent aspart of the request in resource method, we need to declare #10 parameters in the resource method by writing relevant annotation on each of them to have the values injected by jaxrs runtime
+
+Here we are writing the resource method with #10 parameters which is not recommended, as per best practices / coding standards it is not adviced to write a method in java taking more than 5 parameters.
+	
+In this case to receive all of the #10 different values sent aspart of the request to the resource method we can wrap these #10 values into an java class object and pass it as an input to the resource method using BeanParam
+	
+@Path("/rental")
+class RentalPropertyApiService {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{propertyType}/{city}/search")
+	public String searchPropertyForRent(@PathParam("propertyType") String propertyType,@PathParam("city") String city, @MatrixParam("area") String area, @QueryParam("floor") int floor, @QueryParam("facing") String facing, @QueryParam("sqft") int sqft, @CookieParam("activeSession") String activeSession) {
+		
+	}
+}	
+in the above class we declare 7 parameters for the resource method in receiving the request data send by the client, which is not recommeded.
+	
+Instead wrap these parameters as attributes in an java class and ask jaxrs runtime to bind the request data into this class attributes and pass it as an parameter to the resource method using @BeanParam as below
+	
+class SearchCriteria {
+	@PathParam("propertyType")
+	String propertyType;
+	@PathParam("city")
+	String city;
+	@MatrixParam("area")
+	String area;
+	@QueryParam("floor")
+	int floor;
+	@QueryParam("facing")
+	String facing;
+	@QueryParam("sqft")
+	int sqft;
+	@CookieParam("activeSession")
+	String activeSession;
+	// accessors
+}
+	
+@Path("/rental")
+class RentalPropertyApiService {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{propertyType}/{city}/search")
+	public String searchPropertyForRent(@BeanParam SearchCriteria criteria) {
+		return "proeprties";
+	}
+}	
+--------------------------------------------------------------------------------------------------------------------------------------
+Till now we are building resources using jax rs api provided annotations only, this programming model is sufficient for building most of the application development addressing direct/easy requirements, but while developing complex resources with versatile data/inputs the annotations will not be sufficient in modeling/programming the resources
+
+we need to use jaxrs api provided interfaces/classes in building the restful services, let us explore them
+
+
+1. PathSegment
+PathSegment is an api interface provided by jaxrs api
+	
+problem:
+Search Cars
+
+/car/swift;year=2019/kia;year=2021?fuelType=petrol
+
+@Path("/car")
+class CarApiService {
+
+	public String search(String model, String manufacturer, String fuelType, int year) {
+		
+	}
+}

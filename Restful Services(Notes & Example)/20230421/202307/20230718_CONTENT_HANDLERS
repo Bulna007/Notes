@@ -1,0 +1,106 @@
+What the supported dataTypes that can be used in declaring the parameterTypes or returnTypes of a resource method, in receiving the request body and dispatching the data aspart of response body by jaxrs runtime?
+	
+Supported ParameterTypes:
+1. String
+2. byte[]
+3. InputStream
+4. Reader
+5. File
+6. MultiValuedMap
+
+Supported ReturnTypes:
+1. String
+2. byte[]
+3. File
+4. StreamingOutput
+
+@Path("/job")
+class JobApiService {
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/bytes")
+	public byte[] newJobWithBytes(byte[] inBytes) {
+		// extract and construct the job output
+		return jobDetails;
+	}
+}
+
+
+6. MultiValuedMap
+To read the form data that is sent aspart of the request body we use @FormParam. Instead how to programmatically extract/read all the form parameters that are send aspart of the request body.
+	
+We can declare the parameterType of the resource method as MultiValuedMap<String, String> when the request body has the content type as x-www-form-url-encoded format only. So that jaxrs runtime extracts all the form parameters and binds to the MultiValuedMap parameter of the resource method.
+	
+
+@POST
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+@Produces(MediaType.APPLICATION_JSON)
+public String newJobWithFormData(MultiValuedMap<String, String> jobForm) {
+	return jobDetails;
+}
+	
+8. StreamingOutput
+StreamingOutput is a callback class used for writing the data aspart of the response outputstream directly.
+	
+package org.glassfish.jersey.servlet;	
+
+@WebServlet(urlPatterns={"/api/*"})
+class ServletContainer extends HttpServlet {
+	public void service(HttpServletRequest req, HttpServletResponse resp) {
+		
+		InputStream ins = req.getInputStream(); // body
+		resource.newJob(ins); // invoke the resource method by passing inputstream
+		
+		OutputStream out = resp.getWriter();
+		out.println("");
+	}
+}
+	
+
+public String newJob(InputStream ins) {
+	
+}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

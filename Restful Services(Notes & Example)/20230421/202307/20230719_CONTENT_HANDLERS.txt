@@ -1,0 +1,129 @@
+4. StreamingOutput: Supported Returntype by the jaxrs runtime to dispatch the data aspart of the response body, by directly writing the data to the outputstream. StreamingOutput works based on callback mechanism
+
+
+interface StreamingOutput {
+	void write(OutputStream os);
+}
+
+
+package org.glassfish.jersey.servlet;
+@WebServlet(urlPatterns={"/api/*"})
+class ServletContainer extends HttpServlet {
+	public void service(HttpServletRequest httpReq, HttpServletResponse httpResp) {
+		
+		InputStream ins = httpReq.getInputStream();
+		OutputStream os = httpResp.getWriter();
+		
+		String resp = jobApiService.newJob(ins, os);
+		
+		
+		os.write(resp);
+		os.close();		
+	}
+}
+
+@Path("/job")
+class JobApiService {
+	@POST
+	@Consumes("application/json")
+	@Produces("application/json")
+	public StreamingOutput newJob(InputStream ins) {
+		
+	}
+}
+
+interface StreamingOutput {
+	void write(OutputStream os) {
+		// logic uses outputStream to write the response to the client
+	}
+}
+
+The jaxrs runtime will not provide the OutputStream object as an parameter by injecting into the Resource class method to us
+1. gzip/compression etc
+
+since we dont have the OutputStream object to execute our logic in writing the data directly to the OutputStream, we need to write our logic inside the StreamingOutput implementation class and return our object to jaxrs runtime.
+So that jaxrs runtime takes care of calling write(OutputStream) by passing OutputStream object to our logic in executing our code to write the response to the client.
+	
+request:	
+{
+	"fullname": "",
+	"dob": "",
+	"gender": "",
+	"roomType": "",
+	"mobileNo": "",
+	"emailAddress": "",
+	"identityProof": "",
+	"bookingDate": "",
+	"days": 
+}
+
+response:
+{
+	"reservationNo": "",
+	"roomNo" :"",
+	"amount": ,
+	"roomType": "",
+	"checkInTime": "",
+	"checkoutTime": "",
+	"bookingStatus": ""
+}
+
+class RoomBookingRequest {
+	String fullname;
+	LocalDate dob;
+	String gender;
+	String roomType;
+	String mobileNo;
+	String emailAddress;
+	String identityProof;
+	LocateDate bookingDate;
+	int days;
+	// accessors
+}
+
+class ReservationDetails {
+	String reservationNo;
+	String fullname;
+	String roomType;
+	int roomNo;
+	double amount;
+	String checkInTime;
+	String checkoutTime;
+	String bookingStatus;
+	// accessors
+}
+
+@Path("/accomodation")
+class HotelAccomodationApiService {
+	@POST
+	@Consumes("application/json")
+	@Produces("application/json")
+	public StreamingOutput reserveRoom(InputStream ins) {
+		RoomBookingRequest request = null;
+		ReservationDetails reservationDetails = null;
+		Jsonb jsonb = null;
+		
+		jsonb = JsonBuilder.create();
+		request = jsonb.fromJson(ins, RoomBookingRequest.class);
+		
+		// perform the business logic & insert the data into database
+		// generate reservationNo
+		
+		reservationDetails = new ReservationDetails();
+		// populate all the reservation data into the object
+		return new ReservationDetailsStreamingOutput(reservationDetails);
+	}
+	
+	private final class ReservationDetailsStreamingOutput implements StreamingOutput {
+		private ReservationDetails reservationDetails;
+		ReservationDetailsStreamingOutput(ReservationDetails reservationDetails) {
+			this.reservationDetails = reservationDetails;
+		}
+		public void write(OutputStream os) {
+			Jsonb jsonb = null;
+			jsonb = JsonBuilder.create();
+			jsonb.toJson(reservationDetails, os);
+			os.close();
+		}
+	}
+}	

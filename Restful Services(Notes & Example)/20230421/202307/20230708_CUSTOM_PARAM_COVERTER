@@ -1,0 +1,94 @@
+Custom Param Converter
+----------------------
+The parameterTypes we declared aspart of the resource method doesnt qualifies for jaxrs runtime automatic parameterType conversion, then we need to create a Custom Param Converter.
+	
+Custom Param Converter is used for converting the parameter values that are send aspart of the http request like
+1. path param
+2. query param
+3. matrix param
+4. header param
+5. cookie param
+6. form param
+into the objectType, so that the object can be injected into the resource method by the jaxrs runtime while calling the resource method for handling the request.
+	
+if we want to create our own param converter we need to must/should write our class implementing from standard interface provided by jaxrs api
+	
+	
+interface ParamConverter<T> {
+	T fromString(String s);
+	String toString(T t)
+}
+
+There are #2 methods are there
+1. converting string value into objectType
+2. another one for converting objectType into String
+
+class AccountNoParamConverter implements ParamConverter<AccountNo> {
+	AccountNo fromString(String s) {}
+	String toString(AccountNo accountNo) {}
+}
+
+To provide the information about these providers to the jaxrs runtime we need to write the ParamConverterProvider
+
+@Provider
+class AccountNoParamConverterProvider implements ParamConverterProvider {
+	public ParamConverter getConverter(Class<?> classType, Type rawType, Annotation[] annotations) {
+		if(classType == AccountNo.class) {
+			paramConverter = new AccountNoParamConverter();
+		}
+		return paramConverter;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

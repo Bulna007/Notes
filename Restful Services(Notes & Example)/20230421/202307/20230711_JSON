@@ -1,0 +1,161 @@
+JSON
+----
+JSON stands for JavaScript object notation and it is an data representation standard that is used for representing the data in a structured format with well-defined semantics attached to it, that can be used as an information interchange standard between humans and machines/applications as well.
+	
+There are 2 types of data structures are supported by JSON.
+	1. JSON Object 
+	2. JSON Array
+	
+1. JSON Object
+JSON object is an un-orderered collection of key/value pair data sourrounded around "{}"
+syntax:
+{
+	"key": "value",
+	"key": "value"
+}
+	
+2. JSON Array
+JSON Array is an ordered collection of values enclosed in "[]"	
+["val1", "val2", "val3"]
+	
+In both the cases the values can be either string, number, boolean, null or inturn can contain any of these #2 objectTypes inside it.	
+----------------------------------------------------------------------------------------------------------------------------------------------------
+How to process the JSON data aspart of an java application?
+since the json is an character/text-based data representation standard, we can hold the JSON data in a java.lang.String variable.
+	
+String product = "{'productno':1, 'productname':'Watch'}";
+
+but to perform the operation using that data, we need to extract the fields of information that is part of that JSON String like productNo & productName field values should be extracted, inorder to process that data.
+	
+by looking at the JSON object, initially it looks to be simple in extracting the data, we just need to apply String methods on it for extracting fields like split by "," and on the return array/list of Strings again split by ":" to extract key/value pair. For simple representations extracting the data seems to be simple job, but when we have complex representations with objects containing child objects or arrays inside them, extracting the data becomes complex job
+
+Processing the JSON data in java application seems to be a common requirement. every java application might want to deal with one or other way in reading or building the JSON data format, so instead of developers end up in writing complex logic in working with JSON we need standard api provided by java language
+
+But initially java has not provided any standard api to work with JSON format, so there are other third-party libraries are provided by third-party vendors like
+1. jackson
+2. gson = google
+3. json-simple
+4. flexjson
+etc
+
+later on the oracle has provided an standard api to process the json data aspart of java programs called "javax json api" "java api for json processing"
+	
+javax json api
+supports multiple ways of processing the json data. it supports reading/writing the json data in #3 ways
+1. parsing
+2. streaming
+3. binding
+
+for supporting reading/writing the json data using above methodologies, it provided classes aspart of the json api
+
+1. parsing
+Parsing in general refers to the process of reading. using JSON Parsing methodology we can read/write the data in JSON format.
+	
+person.json
+-----------
+{
+	"uniqueNumber": 938,
+	"fullname": "Alex B",
+	"age": 29,
+	"gender": "Male",
+	"address": {
+		"addressLine1": "5 Oaks Street",
+		"addressLine2": "",
+		"city": "Ballpoint",
+		"state": "TX",
+		"zip": 39384,
+		"country": "USA"
+	}
+}
+
+A json object is represented using "JSonObject" and an json array is represented using "JSonArray" in javax json api. So when we pass json document/text as an input asking the json parser api to read, it parses the entire document and constructs relevant object representing the json text and keeps in memory.
+	
+while writing the data, we need to construct in-memory representation of the data by building the objects populated with data in json format and then write the data into json document.
+	
+if we look at the above approach both reading/writing or not memory optimized since all the data is read at one-shot and kept in memory or the entire document to be written should be constructed in memory model using objects and write it.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

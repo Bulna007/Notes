@@ -1,0 +1,87 @@
+PathSegment
+limitations in working with Path parameters & Matrix parameters through annotations:
+1. when there are multiple matrix paramters with same name being passed across the path parameters of the URI, even though we can receive them using Collection object, we cannot identify which Matrix parameter is being passed for which path parameter of the request.
+2. we cannot extract all the matrix parameters being sent aspart of an path parameter within the URI while working with annotations.
+	
+To overcome the above 2 limitations jaxrs api has provided an interface "PathSegment". PathSegment represents all the information that is attached around the Pathparameter of the URI along with the parameter value in it.
+	
+upon looking at the Parameter type of the resource method as PathSegment type, the jaxrs runtime extracts all the data that is being send aspart of that PathParameter like value, matrix parameters and wrap into PathSegment object and injects it as parameter to the Resource method.
+	
+So that using the PathSegment we can extract the Path Parameter value and all the matrix parameters attached to that PathSegment as well.
+	
+@Path("/car")	
+class CarApiService {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{model}/{manufacturer}/{location}")
+	public String searchCars(@PathParam("model") PathSegment modelPS,@PathParam("manufacturer") PathSegment manufacturerPS,@PathParam("location") PathSegment locationPS) {
+		StringBuilder builder = new StringBuilder();
+		MultiValuedMap<String, String> matrixParams = null;
+		
+		builder.append(modelPS.getPath());
+		matrixParams = modelPS.getMatrixParameter();
+		buffer.append(" matrixParameters : ").append(extractMatrixParams(matrixParams));
+		
+		builder.append("/").append(manufacturerPS.getPath());
+		matrixParams = manufacturerPS.getMatrixParameter();
+		buffer.append(" matrixParameters : ").append(extractMatrixParams(matrixParams));
+		
+		
+		builder.append("/").append(locationPS.getPath());
+		matrixParams = locationPS.getMatrixParameter();
+		buffer.append(" matrixParameters : ").append(extractMatrixParams(matrixParams));
+		
+		return builder.toString();				
+	}
+	
+	private String extractMatrixParams(MultiValuedMap<String, String> matrixParams) {
+		StringBuffer buffer = new StringBuffer();
+		
+		for(String key : matrixParams.keySet()) {
+			buffer.append(key).append("=");
+			for(String value : matrixParam.get(key)) {
+				buffer.append(value).append(",");
+			}
+			buffer.append(";");
+		}				
+		return buffer.toString();
+	}
+}	
+-------------------------------------------------------------------------------------------------------------------------------------
+Working with URIInfo
+URIInfo is another api class provided by jaxrs api and it is one of the Context Object that is available in jaxrs api. URIInfo class can be used in few scenarios as defined below
+	
+#1	
+
+@Path("/account/{accountNo}")
+class AccountApiService {
+
+	@GET
+	@Produces(MediaType.TEXT_PLAN)
+	@Path("/balance")
+	public double getBalance(@PathParam("accountNo") String accountNo) {
+		return 39;
+	}
+	
+	@PUT
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{accountNo}/transfer")
+	public String transferFunds(@PathParam("accountNo") String fromAccount,@PathParam("accountNo")  String toAccount, @QueryParam("amount") double amount) {
+		
+	}
+}
+	
+we can define the PathParameter at class-level and even at method-level. When we defined it at both the levels, by using annotations we can extract only at the method level, we cannot access the class-level value supplied while sending the request. To help us in extracting both of these values supplied we can use URIInfo.
+	
+2.
+URIInfo the name itself tells you, it represents the entire URI of the request. using URIInfo we can extract all of the data that is passed aspart of URI of the request like
+1. path paramters
+2. query parmaeters
+3. matrix parameters
+dynamically without the need of Annotations
+
+Programmatically how to extract the URI data?
+using URIInfo
+
+since the URIInfo object holds the entire URI of the request, it is called "Context Object". 
+Context Objects = are the objects that holds the data.

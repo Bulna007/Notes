@@ -1,0 +1,8 @@
+HeaderParam = which type of data we need to send aspart of Headers
+FormParam
+All the data that is send aspart of the request body in form of x-www-form-urlencoded format can be received aspart of the Resource class methods using @FormParam
+
+CookieParam
+-----------
+Cookies
+Http Client state can be managed through the help of Cookies. Cookies are the machanism through which the state of the client can be stored at the client-side in the form of Cookies that would be transmitted between the Client/Server for each request to the server.

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/asyncprog/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/asyncprog/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/caching/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/caching/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/contenthandlers/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/contenthandlers/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/customcontenthandlers/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/customcontenthandlers/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/customparamconverter/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/customparamconverter/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/exceptionhandling/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/exceptionhandling/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/httpbasicsecurity/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/httpbasicsecurity/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jaxrsclient/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jaxrsclient/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jerseybootstrapping/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jerseybootstrapping/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jerseynetbanking/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jerseynetbanking/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jsonbinding/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jsonbinding/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jsonparsing/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jsonparsing/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jsonstreaming/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jsonstreaming/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/morepathparams/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/morepathparams/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/openapi/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/openapi/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/resourceinjections/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/resourceinjections/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/resteasybootstrapping/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/resteasybootstrapping/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/serverresponses/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/serverresponses/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/subresourcemethod/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/subresourcemethod/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

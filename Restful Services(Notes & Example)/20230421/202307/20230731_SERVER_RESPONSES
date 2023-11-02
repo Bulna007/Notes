@@ -1,0 +1,128 @@
+Server Responses
+-----------------
+upon returning the return value from the resource method, the jaxrs runtime receives the return value and constructs the http response as below:
+
+1. status code: 200 (always)
+2. http headers/cookies = standard http headers only
+3. response body = returnValue that is returned by the resource method will be placed aspart of the response body
+
+and dispatched to the client.
+	
+But sometimes our resource class by itself want to customize the way it wanted to return the response. For eg.. instead of the default status code as 200, we might want to return 201, 204 indicate the success status or may want to add additional custom headers/cookies aspart of the response.
+	
+To help us in customizing the responses being returned to the Client, jaxrs runtime has provided Server Response apis
+
+The jaxrs api has provided an class Response, into which we need to populate
+1. statuscode
+2. headers
+3. cookies
+4. response entity object
+that we wanted to dispatch aspart of the http response and return the object to jaxrs runtime. The jaxrs runtime extracts all of the response data from the Response object we returned and constructs the HttpResponse message and dispatches to the Client.
+	
+	
+since Response is a class provided aspart of jaxrs api it is an abstract class, 
+
+abstract class Response {
+	int statuscode;
+	MultiValuedMap<String, String> headers;
+	Cookie[] cookies;
+	Object entity;
+	
+	public static ResponseBuilder status(int statusCode);
+	// accessors
+}
+
+so the implementation class for the Response is provided by the implementation vendors (jersey, resteasy). To help us in creating the implementation object of the Response class with populated data aspart of them , the jaxrs api has provided ResponseBuilder
+
+
+abstract class ResponseBuilder {
+	int statuscode;
+	MultiValuedMap<String, String> headers;
+	Cookie[] cookies;
+	Object entity;
+	
+	public ResponseBuilder(int statuscode) {}
+	
+	// accessors
+	Response build();
+}
+
+The ResponseBuilder is a class provided aspart of jaxrs api, so it is also an abstract class, so we need implementation of the abstract class that is provided by vendors (jersey, resteasy) to instantiate the object of it.
+
+So to instantiate the implementation object of ResponseBuilder abstract class, we need factory class. The Response class has been provided with static factory methods for instantiating the implementation object of ResponseBuilder.
+	
+	
+Response response = Response.status(201).header("h1", "v1").cookie(new NewCookie("k1", "v1").body(obj).build();
+return response;
+																																	 
+																																	 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

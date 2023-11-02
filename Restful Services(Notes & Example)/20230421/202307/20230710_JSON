@@ -1,0 +1,187 @@
+Content Handlers
+----------------
+There are #3 ways of sending the data is possible aspart of the http request to the Resource. 
+1. URI
+   1.1 QUERY PARAM
+   1.2 PATH PARAM
+   1.3 MATRIX PARAM
+2. HEADERS/COOKIES
+3. BODY
+
+in all of these ways below
+1. URI
+   1.1 QUERY PARAM
+   1.2 PATH PARAM
+   1.3 MATRIX PARAM
+2. HEADERS/COOKIES
+we send the data as an input to the Resource class as an single character data, in other words those are not scalar in nature. These are called as request parameters that can be received into the Resource class method parameters as primitive types.
+
+But aspart of the BODY of the request, the user can send anyType of data/content as an input. Let say
+1. it can hold an single-string of characters of data
+2. any amount of fields/attributes of character data
+3. binary data 
+
+we can image an request body as an empty container, into which the client application can dump any data into it and send it to the server.
+
+So how to receive the Request Body data aspart of the resource class method, similary how to dispatch the data aspart of the Response Body to the client application, this aspect of receiving/dispatching the content that is send aspart of the request body or written aspart of the Response Body within the resource class method is called “Content Handlers”
+
+JSON
+----
+JSON stands for "javascript object notation", it is an light weight text-based language that is used for exchanging the data between humans and machines/programs as well.
+JSON can represent two structured types aspart of it:
+1. Objects
+2. Arrays
+
+These structures/representations of the data closely resembles the programming language types so that we can quickly port the data between json to programming Types and vice versa thus making json very popular.
+	
+For eg..	java program:
+
+class Person {
+	int uniqueNo;
+	String fullname;
+}
+
+Person p = new Person();
+p.uniqueNo=39;
+p.fullname="Joseph";
+
+[xml] = do we have objects? no, so mapping the java object into an xml representation is a bit difficult task, whereas in json they truly/directly support object notation.
+
+JSON Object:	
+An JSON object is an un-ordered collection of zero/more key/value pairs where the value can contain strings, numbers, booleans, nulls and these #2 structured types as well
+
+json notation:
+{
+	"key" : "value",
+	"key": "value",
+	"key":"value"
+}
+if the value is an number type we can omit the double quotes, for a person object we can represent in json object format as below
+
+person.json
+------------
+{
+	"uniqueNo": 39,
+	"fullname": "Joseph",
+	"age": 23,
+	"gender": "Male"
+}
+
+JSON Array:
+An JSON Array is an order sequence of zero or more values where the values can container string, numbers, booleans, nulls or other #2 structures within it
+
+JSON Array Notation:
+["val1", "val2", "val3", "val4"] 
+given if the value is number type we can omit double quotes
+
+marks = [34, 55, 38, 59]
+
+product.json
+{
+	"productCode": "P0383",
+	"productName": "LG Washing Machine 6.5 kg front load",
+	"manufacturer": "LG",
+	"features": ["Front Load", "Washing Modes", "Digital Keypad", "Automatic"],
+	"price": 9838
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

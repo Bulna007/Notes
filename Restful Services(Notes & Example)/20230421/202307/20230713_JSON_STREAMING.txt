@@ -1,0 +1,66 @@
+JSon Parsing
+------------
+Basic/Core objects:
+1. A json object is represeted by JsonObject class
+2. and an json array is represented by JsonArray in javax json api
+
+#1 Read:
+JSONReader helps in reading the json data interms of above objects, it takes the JSON data as an input, reads the entire data from the document and constructs an appropriate object either JsonObject or JsonArray representing data and returns it.
+	
+#2 Write:
+JSonWriter takes the JsonObject or JsonArray in-memory represetation of the json data and writes in json format. We need to build JsonObject or JsonArray objects manually by populating the data into them based on json data represetation we want to construct using build classes
+2.1 JsonObjectBuilder
+2.2 JsonArrayBuilder
+and pass these objects as an input to JsonWriter so that it writes in json data.
+
+Factory:
+Both JsonReader & JsonWriter are abstract classes from javax json api, so we need a factory for creating the implementations of them, so javax json api has provided Json class that acts as an factory for creating the implementations of javax json api classes (interfaces/abstract).
+---------------------------------------------------------------------------------------------------------------------------------------------
+How many ways of processing the json data are there?
+There are 3 ways in which we can process the json data
+1. parsing
+2. streaming
+3. binding
+
+#2. streaming
+#2.1 Read
+Streaming methodology or a technic is another mechanism through which we can read/write the json data aspart of javax json api. In case of parsing api, it constructs in-memory representation model of json data while reading/writing, that leads to huge consumption of jvm memory.
+	
+Unlike the parsing api, the streaming api works based on pull-based event mechanism. In this mechanism we place an pointer to the top of the document, increments sequentialy from one after the another and pulls an event.
+	
+when we pull an event, only the specific portion of the data that the pointer is pointing to, will be read into the memory, rather than entire document thus utilizing the memory efficiently. But the problem is it doesnt support random access.	
+	
+person.json
+{
+	"uniqueNo": 93,
+	"fullname": "Alex",
+	"age": 13,
+	"gender": "male",
+	"address": {
+		"addressLine1": "5th Ave",
+		"addressLine2": "Silver oaks",
+		"city": "New Jersey",
+		"state": "NJ",
+		"zip": 9384,
+		"country": "USA"
+	}
+}
+
+To read the JSON data using streaming methodology the javax json api has provided a class called "JsonParser", the parser parses through or reads through the document by placing an pointer to the document sequentially and allows us to pull the events 
+
+String keyName = null;
+JsonParser jsonParser = Json.createParser(new FileInputStream(new File("d:\\person.json")));
+while(jsonParser.hasNext()) {
+	Event e = jsonParser.next();
+	if(e == Event.KEY_NAME) {
+		keyName = jsonParser.getString();
+		if(keyName.equals("age")) {
+			jsonParser.next();
+			int age=jsonParser.getIntValue();
+			break;
+		}
+	}
+}
+sop(age);
+
+#2.2 How to write the json data using streaming api?

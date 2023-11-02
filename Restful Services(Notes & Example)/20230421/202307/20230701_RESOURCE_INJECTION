@@ -1,0 +1,159 @@
+PathSegment
+-----------
+
+
+cars24.com
+
+@Path("/car")
+class CarApiService {
+  @GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{model}/{manufacturer}/{location}/search")
+	public String searchCarsByModelOrManufacturerAtLocation(@PathParam("model") String model,@PathParam("manufacturer") String manufacturer,@PathParam("location") String location,@MatrixParam("year") int year,@MatrixParam("fuelType") String fuelType,@MatrixParam("color") String color,@MatrixParam("owners") int owners,@MatrixParam("area") String area) {
+		
+	}
+}
+
+/api/car/swift;year=2019;fuelType=petrol;color=red;engineCapacity=23/kia;year=2021;fuelType=diesel;owners=1/hyderabad;area=Jubliee Hills/search
+
+
+
+In the above URI there are 2 year & fuelType matrix parameters that are send aspart of the URI of the request, when we declare the year & fuelType with @MatrixParam in the resource method, only one of their value will be received as an input into the resource method.
+	
+How can we recieve multi-value input for a given parameter like matrix or query parameters?
+There are several parameter types that can be multi-valued in nature aspart of http request as below
+1. query parameters
+2. matrix parameters
+3. form parameters
+4. header parameters
+
+to recieve the mutli-valued parameters as an input in the resource class, jaxrs api supports injecting these parameter values into Collection types (Set, List) as well.
+When we declare the parameterTypes as List for receiving the multi-valued inputs, the jaxrs runtime takes care of gather multiple values for that parameter and wraps into Collection object and injects as an input to the resource method.
+	
+	
+The above resource method can be re-written as below.
+	
+
+@GET
+@Produces(MediaType.TEXT_PLAIN)
+@Path("/{model}/{manufacturer}/{location}/search")
+public String searchCarsByModelOrManufacturerAtLocation(@PathParam("model") String model,@PathParam("manufacturer") String manufacturer,@PathParam("location") String location,@MatrixParam("year") List<Integer> years,@MatrixParam("fuelType") List<String> fuelTypes,@MatrixParam("color") String color,@MatrixParam("owners") int owners,@MatrixParam("area") String area) {
+
+}
+
+here even though we can receive multiple values being passed for a matrix parameter, we cannot determine which parameter value is defined for which Path Parameter.
+
+Limitations with annotations:
+----------------------------
+1. While working with Annotation-driven programming, even though we can receive multi-valued matrix parameters as an input in the Resource method, we cannot determine which matrix parameter value is defined at which path parameter
+
+2. using annotations we can extract only the well-known or static parameters of the request, if we want to read all the matrix parameters attached to a path parameter dynamically at runtime we cannot accomplish using annotations.
+	
+To overcome the above 2 problems we need to use PathSegment.
+	
+What is PathSegment, why do we need to use it?	
+PathSegment is an api interface provided aspart of the jaxrs api, that represents an specific Path Parameter of the request. Instead of injecting the Path Parameter value into primitive types (int, String, boolean, float, double..) we can declare the parameterType into which we want to receive the Path Parameter value as PathSegment
+
+for eg.. @PathParam("model") PathSegment model, @PathParam("manufacturer") PathSegment manufacturer
+
+By looking at parameterType as PathSegment, jaxrs runtime extracts all of the information sourrounding that path parameter within the URI and wraps into PathSegment object and injects into the resource method while invoking it
+
+In-Short: A PathSegment carries all of the information binded to an Path parameter of the request. like value of the path parameters and matrix parameters attached to that path parameter
+
+Now using PathSegment objects we can extract the path parameter value by using
+pathSegment.getPath(); = value of the path parameter
+pathSegment.getMatrixParameters() = returns all of the matrix parameters that are defined for that path segment as MultiValuedMap<String, String>
+
+Map<String, String> = key / value
+MultiValuedMap<String, String> = key / List<Value> = this is an special datastructure that is provided by jaxrs api, to hold muti-values for a given key
+
+mvmap.getFirst("key"); = first value for that key
+mvMap.get("key") = List<Values>
+
+The above resource method can be re-written as below.
+	
+
+@Path("/car")
+class CarApiService {
+  @GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{model}/{manufacturer}/{location}/search")
+	public String searchCarsByModelOrManufacturerAtLocation(@PathParam("model") PathSegment model,@PathParam("manufacturer") PathSegment manufacturer,@PathParam("location") PathSegment location) {
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
