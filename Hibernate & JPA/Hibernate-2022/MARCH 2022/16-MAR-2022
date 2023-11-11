@@ -1,0 +1,109 @@
+table: address
+columns: address_no, address_line1, address_line2, city, state, zip, country
+-----------------------------------------------------------------------
+#1. write entity class representing the structure of the table to hold records of data into the object of entity class
+
+package com.netsafe.entities;	
+class Address implements Serializable {
+	private int addressNo;
+	private String addressLine1;
+	private String addressLine2;
+	private String city;
+	private String state;
+	private int zip;
+	private String country;
+	// accessors
+	// equals() & hashCode()
+}	
+
+Note: The table must and should have primarykey column to be managed to perform persistence operation using hibernate
+To make an entity class persistable we need to attach mapping information to the entity class otherwise hibernate framework dont know how to perform persistence operation on that entity class
+	
+com
+|-netsafe
+	|-entities
+		|-Address.hbm.xml
+
+Mapping File:
+--------------
+1. write the mapping file under the same package of the entity class
+2. The name of the mapping file must be same as your entity class name
+3. The filename should be saved with an extension of .hbm.xml
+4. it is mandatory to have either a DOCTYPE or Schema reference linked to the mapping file to let the hibernate identify the schema for the xml
+5. we can write mapping information for multiple entity classes in one single mapping file by writing multiple class tag declarations, but it is often recommended or followed as best practise in writing each entity class mapping in separate mapping file of its own.
+	
+
+Address.hbm.xml
+---------------
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "...">
+<hibernate-mapping package="com.netsafe.entities">
+	<class name="Address" table="address">
+		<id name="addressNo">
+			<column name="address_no" sql-type="INTEGER"/>
+		</id>
+		
+		<property name="addressLine1" >
+			<column name="address_line1" sql-type="VARCHAR" size="50" not-null="true"/>
+		</property>
+		<property name="addressLine2">
+			<column name="address_line2" sql-type="VARCHAR" size="50"/>			
+		</property>
+		
+		<property name="city"/>
+		<property name="state"/>
+		<property name="zip"/>
+		<property name="country"/>
+	</class>	
+</hibernate-mapping>
+
+1. for each attribute we can attach database information by writing child tag <column/>
+2. it is recommended to keep db information separately by writing in child tag <column/> for improved readability
+3. even though it is not mandatory to define entire database column information in mapping file defining details helps you in validating the mapping against the table by explicitly enabiling it (by default mapping validation is off in hibernate)
+4. if the attributeName and db columnName is same we dont need to write column name as well in mapping
+
+#3. Hibernate Configuration
+We need Hibernate configuration to let the hibernate know the details of the database against which it has to perform the persistence operation
+
+rules:-
+	1. by default we need to write the hibernate configuration file with a fixed name as hibernate.cfg.xml
+	2. should be kept directly under the classpath of the project only
+
+hibernate.cfg.xml
+------------------
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "...">
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/hibdb</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+		
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dailect</property>
+		<property name="show_sql">true</property>
+		
+		<mapping resource="com/netsafe/entities/Address.hbm.xml"/>
+	</session-factory>
+</hibernate-configuration>
+
+
+Address address = session.get(Address.class, 1);
+
+for all the sql querie there is an standard sql92 standard:
+from which all the database vendors derived base sql language and enhanced by adding their own clauses
+oracle database = oracle sql query standards and clauses are defined
+mysql database = it has defined its own query standards and clauses
+
+To make hibernate application portable across all the databases, hibernate has introduced dialect and hql query language
+
+dialect: translator, which will takes care of generating the sql queries based on the database we are running
+interface Dialect {}
+class Oracle10GDialect implements Dialect {}
+class MySql7Dialect implements Dialect {}
+
+Hibernate Framework supporting most of the popular database vendors has provided many implementations of the Dialect which takes care of generating the sql queries specific to the database
+
+now in our application we should not write native sql queries, instead hibernate framework has provided hql (hibernate query language), which is translated into database specific queries by taking the help of dialect
+
+we can define the dialect to be used for our application within hibernate configuration file, but from Hibernate4 onwards it is optional, since it identifies the dialect to be used based on database driver details

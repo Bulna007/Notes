@@ -1,0 +1,60 @@
+SessionFactory = SessionFactory holds the configuration and mapping information with which it creates the object of Session. It holds/maintains ConnectionPool, so that everytime while creating the object of the Session it passes the Connection as an input by grabing it from ConnectionPool
+
+How many objects of the SessionFactory we have to create within an Hibernate Application?
+In an application per each database we need to create one object of SessionFactory. 
+	
+Representing the database/and its tables within the database we write mapping information and database configuration within hibernate configuration file.
+	
+If we are using 2 databases within our application, per each database we need to write one hibernate configuration file holding database configuration and relevant mapping files pointing to the tables of that database.
+	
+Holding that mapping and configuration information of that database we need to create one SessionFactory object per database/configuration
+
+We should not create multiple objects of the SessionFactory pointing to same database, because
+1. we endup in creating multiple objects of immutable SessionFactory objects wherein all of the objects holds same mapping/configuration information with which it wastes the jvm memory
+
+2. SessionFactory is an heavy weight object, each time when we create a SessionFactory it creates an ConnectionPool holding the connections to the underlying database, if we create and close SessionFactory object per each operation then creating/closing the ConnectionPool is a costly job and kills the performance of the application.
+The point of reusing the connections in creating the object of Session is violated and we are mis-using the SessionFactory
+
+So avoid creating multiple objects of the SessionFactory per a database, create only one object of SessionFactory per one database within an application
+
+If we should create only one object of SessionFactory within an application why not Hibernate has not made it Singleton class?
+		session.close();
+Because in an application we might use multiple databases, in such case per database we need to create one object of the SessionFactory, if hibernate made SessionFactory as Singleton then we can only work with one database in an application
+
+How to manage SessionFactory within an Hibernate application?
+#1
+class Application {
+	public static void main(String[] args) {
+		Configuration configuration = null;
+		SessionFactory sessionFactory = null;
+		
+		try {
+			configuration = new Configuration().configure();
+			sessionFactory = configuration.buildSessionFactory();
+
+			AccountDao accountDao = new AccountDao();
+			Account account = accountDao.getAccount(sessionFactory, 1);
+
+		}finally {
+			if(sessionFactory != null) {
+				sessionFactory.close();
+			}
+		}		
+	}
+}
+
+class AccountDao {
+	public Account getAccount(SessionFactory sessionFactory, int accountNo) {
+		Session session = null;
+		
+		try {
+			session = sessionFactory.openSession();
+			// perform operation using session
+		}finally {
+			if(session != null) {
+				session.close();
+			}			
+		}
+		return account;		
+	}
+}

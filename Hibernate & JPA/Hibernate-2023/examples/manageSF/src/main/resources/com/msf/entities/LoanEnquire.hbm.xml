@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping package="com.msf.entities">
+	<class name="LoanEnquire" table="loan_enquire">
+		<id name="loanEnquireNo" column="loan_enquire_no" />
+		<property name="applicantName" column="applicant_nm" />
+		<property name="mobileNo" column="mobile_no" />
+		<property name="emailAddress" column="email_address" />
+		<property name="loanType" column="loan_type" />
+		<property name="principleAmount" column="principle_amount" />
+		<property name="tenure" />
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,70 @@
+How many ways a class can be related with another class?
+There are 2 ways a class can be related with another class
+1. Inheritance
+2. Association
+	
+#1. Inheritance
+Inheritance establishes IS-A relationship between the classes. if we want to reuse all the traits of another class within our class, then we need to use Inheritance. There are 3 forms of Inheritance relationship are there
+1.1 Generalization
+1.2 Specialization
+1.3 Realization
+
+#1.1 Generalization
+Generalization is the process of establishing inheritance relationship by identifying the common functionalities across various classes of our application and create an super class out of these common functionalities for the sake of reusability across all the classes.
+	
+Since the super class has been formed by generalizing the common functionalities across the various classes, here we declare the super class as abstract and this way of forming the inheritance relationship is called "Generalization"
+	
+#1.2 Specialization
+Specialization is the process of deriving new class out of the existing classes of our application inorder to add more functionality into the existing classes.
+Instead of modifying the existing classes, we want to derive new subclasses which reuse the existing class functionality and add new functionality which is called "Specialization".
+In this case the super class will be an concrete class and we create subclasses reusing the functionality of super class and add specific behaviours into subclass
+	
+#1.3 Realization
+Realization is the process of creating implementation classes from an interface
+----------------------------------------------------------------------------------------------------
+
+2. Association
+if a class is reusing the functionality of another class by declaring another class as an attribute in our class, then our classes are said to be in association relationship with each other.
+Association establish "has-a" relationship between the classes and can be used when we want to reuse all/few of the traits of another class.	
+	
+The classes which are in association relationship with each other has 2 characteristics
+1. cardinality = indicates how my class is related with another class or how many objects of another class to which my class is related
+To identify the cardinality of the association we need to read the relationship between the classes both sides
+	
+2. directionality = either uni-directional or bi-directional unlike the relational databases
+If both the classes holds each other objects within them, then the classes are said to be in bi-directional association relation
+If only one of class holds the object of another class, then it said to be uni-directional association
+The decision of uni-direction or bidirectional association purely depends on the way we want to use the classes of our application.
+	
+we declare the association from both the sides of the classes for navigatability
+
+class Account {
+	int accountNo;
+	String accountHolderName;
+	String accountType;
+	double balance;
+	Branch branch;
+}
+
+class Branch {
+	int branchNo;
+	String ifscCode;
+	String branchName;
+	String location;	
+	Set<Account> accounts;
+}
+
+account
+account_no   account_holder_nm   account_type   balance  branch_no (fk)
+
+branch
+branch_no  ifsc_code   branch_nm   location 
+	
+by writing primary key as a foreign_key in another table we can derive the data from both sides of the relationship
+for eg we can find what are all the accounts present in a branch using branch_no (fk) of account table, similar an account belongs to which branch we can find using same foreign key, so here one side of the relationship is sufficient to query the data from any direction
+
+where as in java classes if we declare Branch attribute in an Account class indicating this account has been opened in which branch. we cannot identify for a branch what are the accounts are there from other direction. so when it comes to class relationship we need bi-direction based on usage.
+	
+3. ownership (optional)
+along with the above an association relationship has ownership of the association as well indicating who is the owner of the relationship
+if owner dies the ownee will also dies. sometimes between 2 classes there may not be ownership at all.	

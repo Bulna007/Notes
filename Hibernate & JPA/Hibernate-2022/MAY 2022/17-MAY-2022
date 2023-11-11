@@ -1,0 +1,57 @@
+dynamic update and dynamic insert
+---------------------------------
+dynamic update:
+
+Customer customer = session.get(Customer.class, 19);
+customer.setMobileNo("973733345");
+customer.setEmailAddress("jane@gmail.com");
+session.update(customer);
+
+When we call the update method on the above entity class, all of the attributes of the customer object will be updated even though there is no change in all the attributes, because the queries (insert,update,delete and findById) are pre-generated at the time of creating the SessionFactory and are cached to be used for performing operations
+
+most of the cases we should be fine in updating all the columns but only in few cases like if we are capturing audit on the tables, then unwanted side-effects capturing these columns in audit will be resulted.
+	
+To let the hibernate framework update only specific columns which are modified in entity class we need to enable dynamic-update
+
+Customer.hbm.xml
+-----------------
+<hibernate-mapping package="com.dml.entities">
+	<class name="Customer" table="customer" dynamic-update="true">
+		<id name="customerNo" column="customer_no"/>
+		<property name="fullname" column="fullname"/>
+	</class>
+</hibernate-mapping>
+
+dynamic-update="true" = The update sql query will not be generated at the time of creating the SessionFactory, as the columns we need to update are not fixed
+
+So hibernate will generate the sql query with columns to be updated at the time of performing update() operation only by comapring which attributes are modified and with those attributes it generates the query at runtime by taking the help of dialect
+
+session.update(customer);
+now after enabling the dynamic-update="true", only 2 columns of the record will be updated as we modified only mobileNo, emailAddress
+
+There is a huge amount of performance impact will be there when we enable dynamic-update
+
+
+dynamic-insert
+---------------
+customer
+-------------------
+customer_no (pk)
+fullname
+age
+gender (nullable)
+mobile_no
+email_adress (nullable)
+	
+insert into customer(customer_no, fullname, age, gender, mobile_no, email_address) values(?,?,?,?,?,?)
+	
+Customer customer = new Customer();
+customer.setFullname("kris");
+customer.setAge(23);
+customer.setMobileNo("893979233");
+session.save(customer);
+in the above code even though we have 4 attributes with values, still the hibernate will pass the null values in the query for insertion because the query is pre-generated with all the columns at the time of creating session factory
+
+So if we enable dynamic-insert="true", then hibernate determines which columns are nullable, and values are supplied or not based on which the sql query will be generated
+--------------------------------------------------------------------------------------------
+Hibernate Entity Object lifecycle

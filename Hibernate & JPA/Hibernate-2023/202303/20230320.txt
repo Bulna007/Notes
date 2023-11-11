@@ -1,0 +1,28 @@
+while working with Relational database management system, within our java programs we need to write lot of code in reading the data from relational database management system and convert the data into object format similarly while persisting the data, we need to write the code for converting objects of data into relational format
+
+The code we are writing here doesnt have any functional value (which means will not perform any operation) and can be considered as throw away logic, but still need to write aspart of our application inorder to process the data interms of objects thus by increasing the lines of code we need to write in building the application due to which
+1. time required for developing the application goes high
+2. cost of building the application will be high
+3. chances of increasing the bugs also will be high
+
+The above problem is not only related to java, rather any application that is build on object oriented programming languages wants to process the data interms of objects only, so in every object oriented programming language based applications we need to write the code in processing the data interms of objects, so it looks like a common problem for everyone those are building applications in object oriented languages. To help us in addressing the problem the ORM technology has been introduced
+
+ORM Technology
+A group experts who has enourmous experience in building software applications has understood the problem and provided set of guidelines or recommendations that can be used for building the applications, so that we can easily map the data from relational model into object model, these principles or guidelines or recomendations provided are called "ORM technology or methodology"
+	
+
+The developers has to write the code based on the ORM guidelines in mapping the data from relational world to the object world, it looks like we need to endup in writing lot of code and even complex to achieve it. since it is everyones requirement in accessing the data interms of objects from relational world based on ORM technology guidelines, the programming languages has to provide support interms of retrieval of data in objects based on ORM technology by providing  apis
+
+every programming language has to provide an api to work with accessing/persisting the data interms of objects based on ORM technology. but unfortunately java has not provided any api in the initial days in support of ejb api
+
+that is where third-party libraries are introduced by third-party vendors
+1. Hibernate Framework (JBoss)
+2. iBatis (MyBatis)
+3. Toplink (Eclipse Link)
+
+	
+EJB3.1
+Session Beans
+Message-Driven Beans
+
+JPA Api (Java Persistence Api) = build based on ORM Technology Standards

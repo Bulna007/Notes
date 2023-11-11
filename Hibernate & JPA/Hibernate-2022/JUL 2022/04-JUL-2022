@@ -1,0 +1,94 @@
+inverse
+In a bi-directional association (one-to-many or many-to-many), while persisting the entity objects, the relationship column will be persisted from both the sides of the association. This behaviour result in duplicate persistence of the relationship column, so to avoid the problem we mark one-side of the association as relationship owner (or) read-only by using inverse="true"
+	
+DeliveryAssociate.hbm.xml
+-------------------------
+<set name="parcels" inverse="true">
+	<key column="delivery_associate_no" />
+	<one-to-many class="Parcel"/>
+</set>
+
+Parcel.hbm.xml
+--------------
+<many-to-one name="deliveryAssociate" column="delivery_associate_no"/>
+	
+		
+From the above association the delivery_associate_no relationship column will be persisted twice, so we can mark the <set> one-to-many side of the relationship as read-only, since we always associate Parcel with DeliveryAssociate.
+		
+
+How to work with inverse using annotations?
+		
+@Entity
+@Table(name="delivery_associate")
+class DeliveryAssociate {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int deliveryAssociateNo;
+	String associateName;
+	int experience;
+	String designation;
+	String contactNo;
+	
+	@OneToMany(mappedBy="deliveryAssociate") // inverse (read-only)
+	Set<Parcel> parcels;
+	
+	public Set<Parcel> getParcels() {
+		return parcels;
+	}
+	public void setParcels(Set<Parcel> parcels) {
+		this.parcels = parcels;
+	}
+}
+
+@Entity
+@Table(name="parcel")
+class Parcel {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int parcelNo;
+	String description;
+	String deliveryType;
+	int weight;
+	double charges;
+	
+	@ManyToOne
+	@JoinColumn(name="delivery_associate_no")
+	DeliveryAssociate deliveryAssociate;
+}
+--------------------------------------------------------------------------------------------Fetch options
+The fetch options indicates how does the child association objects to be queried or loaded while querying the parent objects is indicated by fetch option.
+There are 3 fetch options supported by hibernate
+1. select
+2. join
+3. subselect
+when we dont mark any fetch option the default value for fetch is "select".
+	
+#1. fetchType="select"
+For the associated entity objects we can specify the fetchType as "select" shown below	
+	
+<set name="parcels" fetchType="select">
+	<key column="delivery_associate_no"/>
+	<one-to-many class="Parcel/>
+</set>
+	
+<many-to-one name="deliveryAssociate" column="delivery_associate_no" fetchType="select"/>		
+	
+The fetch type as "select" indicates while querying the parent associations dont fetch child objects.
+
+DeliveryAssociate deliveryAssociate = session.get(DeliveryAssociate.class, 1);
+
+
+with the above code hibernate only queries the delivery associate record only without fetching the child objects (parcels) of the associate.
+	
+so when we tried accessing the child associations using the parent object by calling their getter then hibernate will fire one more query on the child association to select the child objects 
+
+Set<Parcel> parcels = deliveryAssociate.getParcels();
+with above code it will fire one more select query to fetch child associate objects parcel for that deliveryAssociate.
+	
+For fetchType="select" there are few notable points to remember:
+1. by the time when we call getter methods on the child association, the session object should be active/open, because one more query on the database will be triggered when we call the getter method
+2. To support lazy fetching of the child collection objects, hibernate will instantiate its own collection implementation classes for the child association as 
+List = PersistentList
+Set = PersistentSet
+Map = PersistentMap
+by wrapping session object into it and sets to the child collection

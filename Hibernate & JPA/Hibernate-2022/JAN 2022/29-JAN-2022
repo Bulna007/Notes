@@ -1,0 +1,36 @@
+5. No-Sql or Semi-Structured Database
+---------------------------------------
+1. Mongodb
+2. Casendra
+3. Couchdb
+4. Neo4j
+5. Oracle Bigdata
+6. Amazon DynamoDb
+
+Most of these no-sql databases stores the data underlying on Hadoop FileSystem for Scalability and High-Availability of the data/performance
+different no-sql database stores data interms of Files on Hadoop FileSystem using different data representation formats.
+		
+lab_report (collection) [table]
+--------------------------------
+{ 	
+	"lab_report_no" : 8287,
+  	"conducted_date": 2022/01/10,
+  	"patient_nm": "James",
+  	"doctor_nm": "Richard",
+  	"wbc": 89,
+  	"rbc": 82,
+  	"platelets": 937
+},
+{
+	"lab_report_no": 9383,
+	"conducted_date": 2022/01/11,
+	"patient_nm": "andrew",
+	"doctor_nm": "ken",
+	"fasting_sugar": 80,
+	"sugar": 150,
+	"pulse": 65
+}
+
+lab_report-> give a document where lab_report_no = 9383
+	
+table = schema [fixed structure]

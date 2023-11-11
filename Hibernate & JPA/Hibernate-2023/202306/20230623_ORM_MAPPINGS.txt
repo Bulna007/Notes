@@ -1,0 +1,66 @@
+What are the DML operations supported by the hibernate framework / jpa api?
+1. save()
+	 saveOrUpdate() 
+	---------------------------- deprecated
+	 void persist(Object object)
+	
+2. update()
+	---------------------------- deprecated
+	 void merge(Object object)
+	
+if there is an entity object with an given id associated with the active session, and if we have created a new entity object with the same id that exists in the session and call update() on it, then hibernate Session will throw an exception stating NonUniqueObjectException avoiding us to override the current object within the Session.
+	
+in case if we want hibernate to override the existing object within the Session cache with new object we supplied while updating, then we need to use merge(Object obj)	
+	
+3. void delete(Object object)
+	---------------------------- deprecated
+	 void remove(Object object)
+---------------------------------------------------------------------------------------------------------------------------------------------
+dynamic-insert and dynamic-update
+
+
+by default when we tried updating an existing entity object, hibernate session will updates all the columns/attributes of data of that record in the table.
+	
+	
+Product product = session.get(Product.class, 1);
+product.setDescription("LED Tv 32 Inch");		
+session.update(product);
+
+in the above code, we fetched an existing product object with id: 1 from database table and updated only the description of the product and when asked session to update the product object, it tries to persist all the fields/attributes/columns of data for that corresponding record.
+	
+The hibernate/jpa api applies optimization interms of query generation for insert/update operations for any of the entity objects. At the time of creating the SessionFactory, the SessionFactory reads all the mappings information of the entity classes and loads into the Registry/Memory and caches it. Along with that the SessionFactory by taking the help of dialect generates the insert/update/delete sql queries for all of these entity classes and caches them at the SessionFactory level. So that these queries can be re-used by substituting the values into them while performing the relevant operations, so that the cost of operations can be minimized
+
+Instead if we want to update or insert only few columns that has been changed then we need to enable dynamic-insert=true and dynamic-update-true on the corresponding entity class mappings. Now hibernate SessionFactory will not generate insert/update sql queries while bootstrapping the application, rather these queries will be constructed based on the fields of data supplied in performing operation
+
+dynamic-insert = by default even the attributes populated with NULL values also be inserted into the table if we turn-off dynamic-insert=false. but if we want only the columns of data to be inserted which are not-null and leave the rest of the columns to their default then we need to use dynamic-insert=true
+	
+Table definition in database	
+product
+product_no
+product_nm
+description (nullable) default 'NA'
+category
+manufacturer (nullable) default 'NONE'
+price
+
+
+Product product = new Product();
+product.setProductNo(233);
+product.setProductName("Washing machine");
+product.setCategory("electronics");
+product.setPrice(23000);
+session.insert(product);
+
+here if we have dynamic-insert=false, then hibernate will inserts the description and manufacturer columns with NULL values since the attributes are not populated with any values and the query has been pre-generated will all the columns
+
+if we want to avoid this and have the columns being left with default values, incase of the attributes are not populated with any values we need to enable dynamic-insert=true
+Now the description and manufacturer columns will be left with default values as 'NA' and 'NONE' by generating the query with only the columns that are supplied with values in the entity object
+
+dynamic-update=true
+when we are updating an existing entity object, hibernate will by default updates all the attributes even their values has not changed. incase if we want hibernate to update only the fields/attributes that are	modified by generating the sql query at runtime based on the object data, then we need to use dynamic-update=true
+	
+Entity Object Lifecycle
+An Hibernate/Jpa entity object could exist in one of the #3 different states
+1. Transient
+2. Persistent
+3. Detached

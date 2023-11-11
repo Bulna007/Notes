@@ -1,0 +1,47 @@
+How many types of database management systems are there?
+There are 6 types of database management systems are there
+1. Hierarchial database
+2. Network database
+3. Object oriented database
+4. Relational database
+5. No-sql or Semi Structured database
+6. Un-structured or Object storage database
+
+#1. Hierarchial database
+-------------------------
+In Hierarchial database the data is stored interms of Nodes, the relationship between the data is represented in terms of parent/child hierarchially. Each node has 2 parts data, and address where in the data part we store the data and the address part we hold the address of another node to establish relationship. Each node can have one parent but can have any number of children since it is hierarchial.
+	
+In linear model of persisting the data, performing operations the data like modifying a field, inserting an new record, deleting an existing record, searching and transvering are very complex operations. The programmers has to write complex logic in managing the data and eventually fails in operating the data. So to overcome the dis-advantages the Hierarchial database persist the data in nodes hierarchially rather than linearly.
+	
+As each data is stored independent of another and related through address, handling File operations are very easy, incase of modifying the field we can rewrite the data inside the node and for inserting/deleting the data we just need to manipulate the addresses.
+	
+advantages:-
+	1. performing operations on the data seems to be quite easy
+	2. good at representing relationship between the data
+dis-advantages:-
+	1. inorder to find or access the data within the hierarchial database one has to traverse across all the nodes of the tree of should memorize the address of the node where the data has been stored to access it
+	2. These databases fails in modelling real-world relationships, which means always a data is related with multiple other data, but hierarchial database allows a node to have only one parent.
+	For eg.. a customer can purchase or make multiple sales, to establish such relationship we need to write multiple addresses of sales node in customer as parent which is not allowed.
+	
+#2. Network databases
+----------------------
+These are also works on the similar lines of hierarchial databases only which means they permit us to store the data interms of nodes. but the only difference between hierarchial and network is an node can be in-relationship with any number of other nodes there is no restriction having only a parent since it is not hierarchial model.
+	
+advantages:-
+	1. handling file operations are quite easy and faster as well
+	2. helps us in modelling real-world relationships since there is no restrictions over establishing relationship
+dis-advantages:-
+	1. anyone to perform operations on the node should have adequate knowledge on the other nodes it is related with and update there references of the current node there are in related with, otherwise the database leads to inconsistency in holding relationships and leads to errorneous operation. So performing data manipulations are quite complex
+	2. The more the number relationships we establish for a node, the more wastage of memory in keeping hold of the address, which eventually leads to more address than the data
+	[indirectly looks like this is not an efficient way of establishing relationship between the data]
+	3. still to access the data user has to memorize the address of the node
+	
+Both hierarchial and network databases are obselete and are no more under use and we can say these are early innovators in database management systems.
+		
+#3. Relational database management system (RDBMS)
+Relational database management system allows us to store the data interms of Tables. Each table is defined with fixed set of columns within it and the data is stored within the tables interms of records or tupples.		
+Each record has same set of columns overwhich the data is stored. Since the data table definition has been well-known to the database, we dont need to memorize the address location of the data where it has been stored (thank god finally no address), we can ask the database itself to find and return appropriate data by searching through the data itself.
+		
+For eg.. we want to find all the sales made by a customer steve. then we can ask database management system to return all records in sale table whose customer_nm column contains steve
+
+All the data of the business should not be kept in one-single table in relational database management system, we endup in redundantly storing the data if we keep in one table. identify and group related fields of information and break them into separate tables.	

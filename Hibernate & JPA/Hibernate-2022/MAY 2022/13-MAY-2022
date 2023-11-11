@@ -1,0 +1,87 @@
+hibernate.hbm2ddl.auto:
+it is a tool used for creating/updating/dropping or validating the schema from the mapping files we can write property with 4 different values
+
+<property name="hibernate.hbm2ddl.auto">create</property>
+
+1. create = drop the tables and recreate during startup.
+2. create-drop = drop the tables and creates them during startup, and at the end of the application while closing the sessionfactory it drops the tables
+3. update = if the table is not there it creates new and if it already exists,it identifies the deltas and alters the table and adds any missing column
+4. validate = validates the schema/tables with the mapping information
+--------------------------------------------------------------------------------------------
+DML operations (100% interview questions)
+---------------
+The Hibernate has provided methods for performing DML operations as part of Session object, similarly in jpa api within the EntityManager class we have methods to perform DML operations let us explore each of them
+
+#1. save [Hibernate Framework, (Session) ] 
+Object save(entityObject) 
+save() method is part of Session class, which takes an entityObject to be saved in the underlying database and returns the primary key column value with which the object has been stored (inserted) into the database. along with that it updates the primary key attribute of the entity object we passed by populating the id with which object is stored. So that we can get the primary key value from the object as well
+
+int customerNo = (int) session.save(customer);
+customer.getCustomerNo(); // we can retrieve the customerno from entity class object as well
+	
+
+#2. persist() [Jpa api, (EntityManager)]	
+void persist(entityObject)
+persist() also is used for creating or inserting an entity object into the database table. The major difference between save() and persist() is save returns the id with which object is stored in the database, whereas persist() will not return the id with which the object has been stored in the database
+
+The persist method may not reflect the id with which the object has been persisted into the database immediately after calling the persist(entityObject), and may delay until the transaction has been commited
+
+
+try {
+	int customerNo = session.save(customer);
+	customer.getCustomerNo(); // save method immediately reflects the id with which object is stored
+}finally {
+	if(transaction ! =null){
+		if(flag) {
+			transaction.commit();
+		}else {
+			transaction.rollback();
+		}
+	}
+}
+
+try {
+	em.persist(customer);
+	customer.getCustomerNo(); 
+	#no guarantee that we can fetch the id of the customer immediately (depends on implementation vendor) it may be delayed until we commit the transaction.
+}finally {
+	if(transaction ! =null){
+		if(flag) {
+			transaction.commit();
+		}else {
+			transaction.rollback();
+		}
+	}
+}
+customer.getCustomerNo(); // here guaranteed to fetch customerNo
+
+#3. saveOrUpdate() [Hibernate Framework (session)]
+void saveOrUpdate(entityObject)
+saveOrUpdate() = by name it goes looks like it either saves an new entity object or if object already exists it will update, but it will not work in such a way.
+	
+saveOrUpdate() will not verifies the object we supplied for storing exists or not within the database. rather it works based on un-saved-value of an object we configure in the mapping file.
+	
+Customer.hbm.xml
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.ddl.entities">
+	<class name="Customer" table="customer">
+		<id name="customerNo" column="customer_no" unsaved-value="-1">
+			<generator class="increment"/>
+		</id>
+	</class>
+</hibernate-mapping>
+
+Customer customer = new Customer();
+customer.setCustomerNo(-1);
+customer.setFullname("brando");
+customer.setAge(10);
+
+session.saveOrUpdate(customer); // insert the object by generating id with priarmy key we configured.
+
+Customer customer = new Customer();
+customer.setCustomerNo(10);
+customer.setFullname("brando");
+customer.setAge(10);
+session.saveOrUpdate(customer); // update the entity object, it assumes already object exists in database based on un-saved value
+
+The saveOrUpdate() doesnt works for assigned id generator, always we need to use an id generator while using the saveOrUpdate() method

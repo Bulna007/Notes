@@ -1,0 +1,39 @@
+1. What is caching, why do we need to cache the data aspart of an application?
+2. How can we implement caching within an application?
+3. What is the need of caching the data at persistence-tier level from where the data is coming from rather than implementing the Cache at Presentation / Service level?
+	
+There are plenty of advantages in caching the data right at the sourcesystem of input, here it is at the persistency-tier level since we are accessing the data from database
+1. we dont need to endup in writing the code for storing and managing the data within the cache across all the classes within our application
+2. all the operations on the underlying database table are performed through only one object like an EntityManager or Session centralizing and managing the Cache is very easy
+3. we can easily determine the change in the data and can evict the data easily from the cache
+
+So every persistency api has to provide a support of Cache, so that we can optimize the performance while performing the persistence operations on the underlying database, but unfortunately jdbc api doesnt have any support of Caching. Whereas the Hibernate/Jpa implementations being persistence frameworks has provided rich support for caching.
+-------------------------------------------------------------------------------------------------------------------------------------	
+In an typical Application we have 3 types of data based on their scope of usage. 
+Let us try to understand from the below classifications, what are these different types of data means, which are candidate of Cache and how those needs to be cached:
+
+1. Static/Fixed Data
+Static/Fixed data is the data that will not change within the lifetime of the application and this data usually will be fixed in number/limited and will not grow during the runtime of the application. Since these are static/fixed always these are pre-identified during the development of the application
+
+Candidate For Cache:
+Yes, this type of data is always an good candidate for caching, so that we can avoid round-trips to the source system in reading the data and can save/optimize the performance
+
+How long the data needs to be Cached?
+Permanently for the lifetime of the application
+
+How do we need to Cache the data?
+Since this data is static and fixed in-nature and is pre-identified, we can always cache this data right at the startup of the application itself.	
+	
+eXamples:
+1. all the properties files or xml files contains static information/configurations are by default static in nature
+2. master tables data 
+
+	
+2. Moderate Data
+Moderate data is one that that remains static/constant for most of the time and might get modified rarely. This is the data that is being modified/added/deleted while the application is running, which seems to be runtime data (means while the application running the data is being manipulated)
+This data is not limited in nature, rather the data will be growing over the time while the application is running and can be of any amount in size
+
+eXamples:
+1. In a typical e-commerce application, there are several users browsing the products information and sees the details of the products. usually the products data will not be modified frequenlty and remains fixed/static for most of the time, the number of users trying to browse the products data within any given amount of time is huge, since it is not going to be modified frequently if we can cache the products data we can scaleup the performance of the application
+
+3. Frequently Modified Data

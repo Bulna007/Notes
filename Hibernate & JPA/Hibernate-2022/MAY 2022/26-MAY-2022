@@ -1,0 +1,107 @@
+Table per class hierarchy
+-------------------------
+1. how do we store the data of a super class object?	
+store the superclass attributes into the SINGLE_TABLE along with descriminator-column value representing that record belongs to super class. while storing the super class object all of the subclass represented columns should be persisted as "NULL"
+	
+2. how to store the data of a sub-class object?	
+store the subclass attributes along with inherited attributes from the super class into the SINGLE_TABLE along with descriminator-column value representing the record belongs to that subclass
+
+3. how to fetch the object of subclass?
+MedicalInsurancePlan mip = session.get(MedicalInsurancePlan.class, 3);
+while fetching the subclass object, we should ensure there is a record and it belongs to subclass only. so while querying the data fetch the record along with matching pk column value, the discriminator-column value pertaining to that subclass
+
+For the above subclass we need to execute a query as below
+select * from insurance_plan where insurance_plan_no = 3 and plan_type = "mip";
+
+
+4. how to fetch the object of superclass?	
+while querying the data for superclass object, to support polymorphic access of the data (which means any of the subclass objects can be accessed interms of superclass reference type)	
+we should query the record only based on pk column value. we need to check the discriminator-column value based on which we need to determine the record belongs to which class in the hierarchy. and return the corresponding object of the class by populating the data.
+	
+The above strategy and process of performing the persistence operations are defined by the ORM technology. the support towards this mechanim is provided by every implementor of ORM technology of all the languages
+In case of java
+1. Hibernate
+2. Jpa
+3. EclipseLink
+4. MyBatis
+etc supports these strategies
+
+So to Hibernate or Jpa api we dont have to tell how to perform operations, rather we need to tell
+1. Which strategy did we choose in mapping inheritance relationship into database model
+2. Based on that strategy the additional inputs pertaining to that strategy
+for Table per class hierarchy means
+	- we should tell which column in table we have created to act as descriminator-column
+	- the value to be stored for each entity class in the descriminator-column
+	
+class InsurancePlan {
+	int insurancePlanNo;
+	String planName;
+	String description;
+	int taxSaver;
+	float minInsurredAmount;
+	// accessor	
+}	
+
+class AccidentalInsurancePlan extends InsurancePlan {
+	String coverageType;
+	float disabilityCoveragePercentage;
+	// accessors
+}
+
+class MedicalInsurancePlan extends InsurancePlan {
+	String networkCoverage;
+	int copay;
+	// accessors
+}
+
+InsurancePlan.hbm.xml
+----------------------
+<hibernate-mapping package="com.tpch.entities">
+	<class name="InsurancePlan" table="insurance_plan" descriminator-value="ip">
+		<id name="insurancePlanNo" column="insurance_plan_no">
+			<generator class="increment"/>
+		</id>
+		<descriminator-column name="plan_type"/>
+		<property name="description"/>
+		<property name="planName" column="plan_nm"/>
+		<property name="taxSaver" column="tax_saver"/>
+		<property name="minInsurredAmount" column="min_insurred_amt"/>
+	</class>
+</hibernate-mapping>
+
+AccidentalInsurancePlan.hbm.xml
+---------------------------------
+<hibernate-mapping package="com.tpch.entities">
+	<subclass name="AccidentalInsurancePlan" extends="InsurancePlan" descriminator-value="aip">
+		
+		<property name="coverageType" column="coverage_type"/>
+		<property name="disabilityCoveragePercentage" column="disability_coverage_percentage"/>
+	</subclass>
+</hibernate-mapping>
+
+MedicalInsurancePlan.hbm.xml
+-----------------------------
+<hibernate-mapping package="com.tpch.entities">
+	<subclass name="MedicalInsurancePlan" extends="InsurancePlan" discriminator-value="mip">
+		<property name="networkType" column="network_type"/>
+		<property name="copay"/>
+	</subclass>
+</hibernate-mapping>
+
+
+
+select
+        insurancep0_.insurance_plan_no as insuranc1_0_0_,
+        insurancep0_.plan_nm as plan_nm3_0_0_,
+        insurancep0_.description as descript4_0_0_,
+        insurancep0_.tax_saver as tax_save5_0_0_,
+        insurancep0_.min_insurred_amt as min_insu6_0_0_,
+        insurancep0_.coverage_type as coverage7_0_0_,
+        insurancep0_.disability_coverage_percentage as disabili8_0_0_,
+        insurancep0_.network_type as network_9_0_0_,
+        insurancep0_.copay as copay10_0_0_,
+        insurancep0_.plan_type as plan_typ2_0_0_ 
+    from
+        insurance_plan insurancep0_ 
+    where
+        insurancep0_.insurance_plan_no=?

@@ -1,0 +1,30 @@
+The java programs requires data as input to perform business operations, if the java programs are reading the data as an input from the underlying source system to perform the business operations, we run into several problems
+1. the business logic will be exposed to the source system of the data, if we change the source system again the business logic will be impacted
+2. if the format of the underlying data in the source system has been changed, the business logic would be effected since the business logic is designed to read the data from the specific source system format
+3. if there are multiple source systems are there on which we need to apply the business logic in computing the data, then we need to write one component per one source system to read the data from the specific source system inorder to perform the operation, so that the business logic would be duplicated across these source systems.
+	
+From the above we can understand in an application there are 2 types of logic are there.
+	1. business logic
+	2. persistence logic
+if we inter-mingle these 2 logic together, then the business logic would be tightly coupled with the persistence logic and a change in persistence-tier would effect business logic directly
+
+So always the business logic should be designed to work with objects of data as an input perform operation and return objects of data as an output, so that the same business logic can applied, agnostic to the source system.
+	
+	
+class Sale {
+	int saleNo;
+	Date saleDate;
+	double billAmount;
+	double discount;
+	double paidAmount;
+	// accessors
+}
+	
+	
+class SalesManager {
+	public double getTotalSalesAmount(List<Sale> sales) {
+		int totalSalesAmount = 0;
+		sales.stream().forEach(paidAmount -> totalSalesAmount = totalSalesAmount + paidAmount);
+		return totalSalesAmount;
+	}
+}

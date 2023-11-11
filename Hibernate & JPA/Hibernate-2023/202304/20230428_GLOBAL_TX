@@ -1,0 +1,80 @@
+How many types of transactions are there?
+There are 2 types of transactions are there
+1. Local Transactions
+Within the transactional boundary only one single transactional participating resource is there on whom we are issuing a commit or rollback directly then that transaction is called "local transaction"
+	
+2. Global/Distributed/XA Transactions
+Within the transactional boundary there are multiple global transactional participating resources are there, across all these resources we issue a commit or rollback at one-shot is called "global transactions"
+	
+class EmployeeDao {
+	public void newEmployee(Employee employee, Payroll payroll) throw Exception {
+		boolean flag = false;
+		Connection hrCon = null;
+		Connection payrollCon = null;
+		PreparedStatement empPstmt = null;
+		PreparedStatement payrollStmt = null;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			hrCon = DriverManager.getConnection(hrUrl, hrUn, hrPwd);
+			payrollCon = DriverManager.getConnection(payrollUrl, payrollUn, payrollPwd);
+			hrCon.setAutoCommit(false);
+			payrollCon.setAutoCommit(false);
+			
+			empPstmt = hrCon.preparedStatement("insert into emp(emp_no, emp_name, age, gender, mobile_no, email_address) values(?,?,?,?,?,?)");
+			// substitute the params
+			empPstmt.executeUpdate();
+			
+			payrollPstmt = payrollCon.preparedStatement("insert into payroll(payroll_no, annual_salary, ta, da, ...) values (?,?,?,?,?,?)");
+			// substitute the params
+			payrollPstmt.executeUpdate();
+			
+			flag = true;
+		}catch(ClassNotFoundException | SqlException e) {
+			flag = false;
+			e.printStackTrace();
+			throw e;
+		}finally {
+			try {
+				if(hrCon != null) {
+					if(flag == true) {
+						hrCon.commit();
+					}else {
+						hrCon.rollback();
+					}				
+				}
+			}catch(Exception e) {
+				flag = false;
+			}
+			try {
+				if(payrollCon != null) {
+					if(flag == true){
+						payrollCon.commit();
+					}else {
+						payrollCon.rollback();
+					}
+				}
+			}catch(Exception e) {}
+			// wrap try and catch for each close statements
+			if(empPstmt != null) {
+				empPstmt.close();
+			}
+			if(payrollPstmt != null) {
+				payrollPstmt.close();
+			}
+			if(hrCon != null) {
+				hrCon.close();
+			}
+			if(payrollCon != null) {
+				payrollCon.close();
+			}
+		}
+	}
+}	
+
+In the above example we are trying to manage global transactions using java jdbc api. but if we look at it within the finally block once after hrCon has been commited, while commiting the payrollCon, if there is an exception encountered only the payroll will be rollbacked, but hr database will not be since it is already commited.
+	
+so we cannot manage global transactions using java jdbc api, we need a different approach
+
+How to work with global transactions in java language?
+java has provided the support for working with global transactions aspart of jee api and the support for working with it comes only in jee container environment only. Sun Microsystems has provided an JTA api (java transaction api) that allows applications to perform/manage distributed transactions.

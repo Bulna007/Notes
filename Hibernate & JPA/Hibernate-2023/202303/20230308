@@ -1,0 +1,54 @@
+Database Management System
+DBMS is an software system that helps us in persisting the data permanently on the storage device of the computer. it abstracts the complexity in storing/acessing the data from the underlying Filesystem of the computer, so that programmer only need to write the programming logic for communicating with the database management system.
+	
+There are 6 types of databases are there
+1. Hierarchial database
+2. Network database
+3. Relational database
+4. Object oriented database
+5. no-sql / semi-structured database
+6. unstructured /object-storage database
+
+1. Hierarchial database
+Hierarchial databases stores the data interms of Nodes. Each Node has 2 parts, data part and address part. In the data part we can store any arbitary data. In the address part we store the address of another node to which this node is in relationship with. These databases allows us to represent the relationship hierarchially interms of parent/child relationship.
+A parent can have any number of children, but a child node is always related with only one parent. Since the data has been scattered and stored dis-jointly across the various nodes on the system, performing File operations like insert, update and delete operations will be very easy
+
+adding a new node or deleting an existing node only involves manipulating the address of the node within the parent, similarly updating a field of data within a record involves changes only within one node, we dont need to do left-shift or right-shift of the data across the records to accomodate the change.
+	
+advantages:-
+	1. performing file operations is very easy
+	2. we can represent relationship betweent the data through hierarchial model, by storing node addresses
+	
+dis-advantages:-
+	1. to access the data from the database we need to traverse across all the nodes to identify the data or we may have to memorize the address location of the data to access it directly
+	2. the real-world / business data and their relationship cannot be represented in Hierarchial databases, because in reality a child can have any number of parents
+	3. more than the data, we endup in storing addresses which leads to huge wastage of memory
+
+2. Network database
+Network databases also works in the samelines of Hierarchial databases. These also stores the data interms of nodes only, but the only difference is a node can be in relationship with any other node, there is no restriction or representation as parent/child, and hence we can model real-world relationship between the data easily in Network databases
+
+advantage:-
+	1. still performing file operations are easy, since the data is scattered and stored dis-jointly and related through addresses
+	2. finally we can represent real-world relationships between the data
+
+dis-advantage:-
+	1. need to memorize the node address to access the data directly or traverse across all the nodes in the database to identify the data
+	2. huge wastage of memory as more and more addresses being stored for representing relationships
+	3. since a node can be related with any other node, while performing an operations on the node like delete a node may effect several other nodes with which this node is in relationship with. So we need to do careful exercise on identifying the nodes in relationship with and modifying them before making the changes in the current node. otherwise the database quickly goes out of inconsistency
+	
+#3. Relational database management system (RDBMS)
+Relational database management systems allows us to store the data interms of Tables with predefined set of columns. For each type data or entity we want to store we need to create/define a table with fixed columns inside it
+The data is stored within the tables interms of records / tuples. 
+		
+since the tables are defined with columns with predefined sizes perform data manipulation operations like
+1. insert a new record
+2. deleting a record
+3. updating a field of data becomes very easy
+
+since what data is being stored within the tables is well know to the database management system, we dont need to memorize the address of the data to access it, we can directly ask the database management system for searching and finding the relevant data for usage, this is the real-power of relational database management system.
+
+since the database is taking care of managing the data on the table, any change in the structure of data like 
+1. adding column
+2. deleting column
+3. changing the size of a column
+will be handled by the database management system itself, we dont need to deal with the complexity of restructuring the existing data based on the structural changes requested

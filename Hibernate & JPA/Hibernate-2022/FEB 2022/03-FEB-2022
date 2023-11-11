@@ -1,0 +1,15 @@
+Why does java programs wants to hold the data interms of objects in performing the operation?
+If the java programs are written to directly read the data from source system to perform business operation, we run into several problems
+1. The business logic written as part of our program will be exposed to the underlying source system from where data is coming from, so that the business logic works only for that source system.
+If there is a change in the underlying source system, we need to re-write the business logic along with data access logic as well
+2. The business logic doesnt works for multiple source systems, to make it work for multiple source system of inputs, we need duplicate the business logic which inccurs huge maintainance problems
+3. if there is a change in the format of the data in underlying source system, then we need to re-write the entire business logic of our applicaiton.
+	
+To overcome the above problems design the business logic to work around objects of data. always pass data as an input to the business logic interms of objects, let the business logic perform the operation and returns the data interms of objects only, so that the business logic works irrespective of the source systems.
+		
+always rdbms stores the data interms of tables only which is called relational format, whereas our java applications wants to access the data interms of objects to perform operation.
+The programmer has to endup in writing the code to fetch the data from relational database and convert into object format to perform operations which results in lot of challenges:-
+1. For an application we will have lot of tables in database, now the programmer has to write the code access the data from relational database tables in relational format and convert the data into object format for all the tables that are used in our application which leads to huge amount of code to be written
+2. similarly not only while fetching the data even while persisting the data also the business logic returns data in object format, but relational databases wants data in relational format to store the data, so again the programmer has to write huge amount of lines of code in mapping object of data into relational database tables to persist the data.
+3. While working with join queries we need to write complex rollup logic in converting records of data into object format where we might have several join sql queries for each of them we need to write the complex logic in wrapping the data into objects.
+4. By spending huge amount of time and by ending up in writing huge number of lines of code in accessing the data from relation database into object format we have achieved no business value apart from writing throw-away logic which will unnecessarily increases the cost and time required for developing the application.

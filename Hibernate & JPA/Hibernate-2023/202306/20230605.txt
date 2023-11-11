@@ -1,0 +1,76 @@
+1. sequence id generator
+2. all the id generations with orm.xml
+---------------------------------------------------------------------------------------------------------------------------------------------
+Hibernate Tools
+While working with jdbc api in accessing the data from database, we endup in writing huge amount of boiler-plate logic within our application, that leads to huge amount of time, cost and maintaince of the application. To overcome the problem with jdbc api, we use hibernate framework in building the persistence tier of the application
+
+even though by using Hibernate Framework we eliminate most of the boiler-plate logic in our application, we need to writing for each table in our database
+1. entity class
+2. mapping information
+
+inorder to perform operations on the underlying database using hibernate framework. its not quick to write the entity classes or mapping information for each table in the database because
+1. we need to identify the table relationships and map them into object relationships while writing the entity classes
+2. and based on the way the classes are designed, we need to write corresponding mappings in making these entities persistable entities
+3. there is no guarantee we comeup with accurate model in represeting the tables interms of entities which leads to errors and huge time in debugging and fixing them
+
+So to help us in quickly building an hibernate application, the hibernate framework developers has to provide tools using which developers can jump start in building the application using hibernate framework
+There are 2 types of tools are provided by hibernate developers:
+
+1. gui tools (eclipse based plugin tools)
+The gui tools are build as wizards in eclipse IDE through which we can quickly develop hibernate application.
+development tools: [table -> mappings]
+	1.1 Mapping Editor 
+	Mapping Editor is a tool using which we can quickly generate hbm.xml files out of an entity class, so that we can avoid writing manually the mappingFile for each entity class.
+	note: it assumes the attributeNames are same as columnNames in the table. it doesnt look at the real table in the database.	
+	class Product {
+		int productNo;
+		String productName;
+	}
+	<id name="productNo" column="productNo">
+	</id>
+	
+	1.2 Hibernate Configuration Editor
+	using the Hibernate Configuration Editor we can generate the hibernate.cfg.xml for the application. it opens an dialog asking us several details about the database and generates an hibernate.cfg.xml for us
+	
+	1.3 Database Explorer
+	Database explorer is a plugin/tools in eclipse using which we can connect to any RDBMS database and browse the schemas, tables and objects of the data directly.
+	
+	1.4 HQL Editor (Object-based query language)
+	HQL Editor is an developer handy-tool in writing HQL queries and validating them through HQL Editor before developing the code around it.
+		
+	1.5 Criteria Editor (Type-safe query language in Hibernate/Jpa) (Object-based query language)
+	Criteria Editor is used for validating the Criteria Query, before proceeding for development of the code around it
+	
+	1.6 Console Configuration
+	Console Configuration allows us to configure database connections, provides visualization of classes, their relationships and allows us to execute HQL/Criteria queries interactively against the database and browse the results.		
+	
+	1.7 Reverse engineering
+	Through Reverse engineering wizard, we can generate entityclasses and mappings for each entity out of existing database tables and their relationship.
+		
+	
+2. command-line tools
+The command-line tools helps us in creating/updating/validating the database schema out of the existing mapping. There are 3 command-line tools are there
+runtime tools: [mappings -> tables]
+1. SchemaExport
+we can quickly create database schema/objects out of the exiting application/mappings by using SchemaExport tool. The SchemaExport tool can be used for either creating the database schema or dropping an existing database schema
+
+SchemaExport tool is used while conducting unit-tests or integration-tests in an application. before running the tests the developer can take the help of SchemaExport tool to quickly create a test database schema using which he can conduct the testing. at the endof the testing he can drop the database schema that has been created for testing by using SchemaExport tool
+
+java application
+|-sourcecode (dao) -> tables
+|-testcode
+
+ProductDao
+- saveProduct(Product) {} -> insert into table
+
+create tables (new database)
+ProductDaoTest
+ -> invoke productDao.saveProduct(dummyProduct);
+// goto database and query the product is inserted or not (if available = pass else fail)
+drop test databaseSchema
+
+2. SchemaUpdate
+SchemaUpdate tool is used for updating the database schema/tables based on the changes we made in mappingFiles of the entities. This can be helpful during the development of the application to have the changes being quickly reflected in the tables.
+	
+3. SchemaValidator
+SchemaValidator tool is used for validating the mapping information written for the entity classes of our application is matching against the existing database before running the application, so that we can guarantee our applicaiton will not run into any runtime exception due to schema mismatches while execution

@@ -1,0 +1,23 @@
+The relational database management systems stores the data interms of tables and records (which is nothing but relational format). Java applications wants to always process the data by taking it interms of objects.
+	
+So relational databases doesnt permit/allow us to access the data directly interms of objects, so programmer has to write code for converting the data from relational format into object format and viceversa, which have lot of problems:
+
+1. We need to write lot of code in our application to fetch the data from relational database and convert into object format, its not one table, there are several tables for our application are there in database, so programmer has to endup in writing the code for coverting data from tables to objects for all the tables of our application
+
+2. It not just while fetching the data even while persisting the data also we need to map data from objects into relational format, where we endup in writing lot of code for persisting the data into all the tables
+
+3. any change in the underlying database tables will not only the data accesing logic even the data conversion logic also will be affected
+
+4. while working on join queries, we need to write complex rollup logic in coverting the records data into objects
+
+above all the code we are writing here is a throw-away logic which doesnt have any value interms of business operation. but unecessarily programmer has to spend lot of time in writing the code on data conversion which increases the time and cost of application development
+-----------------------------------------------------------------------------------------------
+Looks like its an universal problem in accessing the data from relational database interms of objects irrespective of the object oriented languages in which we are building the software application.
+	
+So there are experts the industry who has identified the problems of mapping data from relational database into objects and has comeup with guidelines and rules helping us in easily mapping the data from relational database into objects. These guidelines and rules are called "ORM Technology"	where ORM stands for object relational mapping technology.
+	
+Programmers has to write code in adopting the rules and guideliness provided by ORM technology in accessing the data from relational database into objects, looks like the programmers has to write complex logic in adopting the rules/guideliness in accessing the data.
+	
+Instead of the programmers by themself adopting those guidelines, the programming languages has to provide support by providing apis to help the developers in quickly building the applications towards ORM technology
+
+Every programming language has to provide an api in support of ORM technology.	

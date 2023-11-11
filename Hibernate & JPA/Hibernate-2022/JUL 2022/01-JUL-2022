@@ -1,0 +1,59 @@
+#many-to-many association
+
+class Journey implements Serializable {
+	int journeyNo;
+	String source;
+	String destinaton;
+	LocalDate journeyDate;
+	String busNo;
+	double amount;
+	
+	@ManyToMany
+	@JoinTable(name="journey_passengers", joinColumns={@JoinColumn(name="journey_no")}, inverseJoinColumns={@JoinColumn(name="passenger_no")})
+	Set<Passenger> journeyPassengers;
+}
+
+class Passenger implements Serializable {
+	int passengerNo;
+	String passengerName;
+	int age;
+	String gender;
+	String mobileNo;
+	
+	//Set<Journey> journeys;
+}
+
+journey_passengers
+--------------------
+journey_no (pk)(fk)
+passenger_no (pk)(fk)
+--------------------------------------------------------------------------------------------
+association mapping
+--------------------
+#inverse (100% interview)
+#cascade
+#fetch (N+1 Problem)
+--------------------------------------------------------------------------------------------
+#inverse
+inverse is used for representing the owner of the association relationship
+To understand better let us consider an one-to-many bidirectional association mapping
+
+class DeliveryAssociate {
+	int deliveryAssociateNo;
+	String associateName;
+	String designation;
+	int experience;
+	String mobileNo;
+	Set<Package> packages;
+}
+
+class Package {
+	int packageNo;
+	String description;
+	int weight;
+	String deliveryType; 
+	String receiverName;
+	String contactNo;
+	DeliveryAssociate deliveryAssociate;
+	
+}

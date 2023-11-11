@@ -1,0 +1,94 @@
+2. comma separated value (csv) format
+--------------------------------------
+each field of information is stored by delimited or separated through "," comma so that each record can be read and we can extract the fields of information based on delimiter and perform the operation
+
+advantages:-
+	1. both human and machine readable
+	2. no memory wastage as the fields are not have fixed width
+	3. no need to spend time on deriving the field sizes and no historical data references are required to define data boundaries in storing the data, all the complexities in deriving the boundaries are gone
+	4. we dont need to reprogram the applications or reformat the data as boundaries of the data are derived based on "," comma
+dis-advantages:-
+	1. only sequential access is supported, no random access is supported as the fields/records are not fixed in length
+	2. performing file handling operations are very complex 
+	3. if the actual data itself contains the "," then the data would be mis-interpreted and boundaries of the data will be broken
+	
+looks like the boundaries of the data cannot be derived easily and there is a high chance of mis-interpreting the data, it is not suitable to store business data as part of csv format we need an alternate way of storing the data on a file in a programable format
+
+3. eXtensible markup language (xml)
+XML stands for eXtensible Markup Language. XML is not an programming language, xml is used for storing or representing the data. XML uses tags for storing the data aspart of it so it is called "markup language".
+	
+daysales.xml
+--------------
+<sales>
+	<sale>
+		<customername>stephen</customername>
+		<sale-dt>08/01/2022</sale-dt>
+		<quantity>10</quantity>
+		<total-amount>2000</total-amount>
+		<discount>200</discount>
+		<amount-paid>1800</amount-paid>
+	</sale>
+	<sale>
+		<customername>andrew</customername>
+		<sale-dt>08/01/2022</sale-dt>
+		<quantity>13</quantity>
+		<total-amount>1800</total-amount>
+		<discount>180</discount>
+		<amount-paid>1620</amount-paid>
+	</sale>
+</sales>
+
+We can easily understand the semantics of the data and boundaries of the data in xml as the data is sourrounded by tags.
+	
+always we store the information pertaining to the objects that exists in realworld when it comes to business data and always the realworld objects will have relationships. how to store the data along with relationship between them in case of Fixed-with field size format or csv format.
+	
+The fixed-width field size format or csv format are linear representation formats which doesnt support establishing relationship between the data, the only way to represent relationship is by writing the data in a single line which eventually results in duplication of the data.
+	
+So we need an data representation standard that not only allows us to read the information through programs, it allows us to represent relationship between the data in an effective way that is where XML format was introduced
+
+XML supports representing the relationship between the data using hierarchial format.
+	
+daysales.xml	
+<customers>
+	<customer>
+		<customername>stephen, k</customername>
+		<mobile-no>90387343</mobile-no>
+		<email-address>stephen@gmail.com</email-address>
+		<sales>
+			<sale>				
+				<sale-dt>08/01/2022</sale-dt>
+				<quantity>10</quantity>
+				<total-amount>2000</total-amount>
+				<discount>200</discount>
+				<amount-paid>1800</amount-paid>
+			</sale>			
+			<sale>				
+				<sale-dt>09/01/2022</sale-dt>
+				<quantity>18</quantity>
+				<total-amount>3000</total-amount>
+				<discount>300</discount>
+				<amount-paid>2700</amount-paid>
+			</sale>
+		</sales>
+	</customer>
+	<customer>
+		<customername>andrew</customername>
+		<mobile-no>09939348</mobile-no>
+		<email-address>andrew@gmail.com</email-address>
+		<sales>
+			<sale>
+				<customername>andrew</customername>
+				<sale-dt>08/01/2022</sale-dt>
+				<quantity>13</quantity>
+				<total-amount>1800</total-amount>
+				<discount>180</discount>
+				<amount-paid>1620</amount-paid>
+			</sale>			
+		</sales>		
+	</customer>
+</customers>
+
+xml is an simple text/character representation format where data is represented in character format, so it can be carried across any operating system and programming language so xml is highly interoperable.
+	
+advantages:-
+dis-advantages:-

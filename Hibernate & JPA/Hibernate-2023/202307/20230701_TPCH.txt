@@ -1,0 +1,108 @@
+Table per class hierarchy
+-------------------------
+For all the entity classes within the Inheritance Hierarchy we create only one database table representing the attributes of all these classes as columns within the table. Now the data of any of the entity objects will be persisted into one-single table itself.
+	
+Since we store all of the entity objects in the hierarchy in same table, we cannot distinguish which record belongs to which entity class to retrieve them, so we need to have an additional columns defined in the table called "discriminator-column" that should be stored with the value pertaining to the entity class we are persisting.
+	
+How to persist the data of an the entity classes in the hierarchy within that table?
+Subclass:
+All the subclass attributes should be stored inthe single table by leaving the other sub-class attributes represented columns as NULL. In addition we need to store the discriminator-column value pertaining to that subclass inthat record.
+	
+Superclass:
+Store all the attributes of the superclass object into that single table by leaving the other subclass columns as NULL. along with that store the descriminator-value representing that superclass into that column.
+-------------------------------------------------------------------------------------------------------------------------------------	
+How to retrieve the data for the entity class within the hierarchy from that table?
+Subclass:
+One subclass object cannot be expressed interms of another subclass or even the superclass object cannot be expressed interms of Subclass. Which means a record belongs to one of the subclass cannot be represented either as an another sub-class or superclass object.
+	
+So while querying the record of data from the table pertaining to an Subclass, along with id, we need to use discriminator-column value pertaining to that object type also.
+	
+For eg..
+	MedicalInsurancePlan Plan_no = 10
+	AccidentalInsurancePlan Plan_no = 11
+	InsurancePlan Plan_no= 1
+	
+we cannot access MedicalInsurancePlan object of id 11, because id=11 record belongs to AccidentalInsurancePlan, this can be achieved by querying using discriminator column as below
+
+select * from insurance_plan where plan_no = ? and insurance_plan_type = 'MIP';
+
+Superclass:
+To support polymorphic retrieval of the data, we should not query the records based on discriminator-column value, rather fetch the record based on id and look for the value in discriminator-column based on which wrap the data into appropriate class object within the hierarchy and return it.
+	
+	
+The ORM technology guidelines has defined the ways we can map the Inheritance Relationship between the entity classes in the table which are
+1. Table per class hierarchy
+2. Table per Subclass
+3. Table per concreate class
+	
+and all the frameworks or apis that supports ORM technology must and should provided implementations in working with the above model
+From this we can understand hibernate/jpa both supports all of the 3 ways of mapping Inheritance relationship into table model.
+	
+	
+Now while working with Hibernate/Jpa we dont need to tell how to store the data or how to fetch the data based on Inheritance model. we just need to specify the mapping strategy along with additional information based on that strategy if required
+
+For eg..
+In Table per class hierarchy
+we need to tell these inherited classes are mapping as single table only. along with that we need to tell what is the discriminator-column in that table. and for each entity class, what is the discriminator-value of that class.
+Rest of the things of storing/retrieval will be taken care by Hibernate itself.
+-------------------------------------------------------------------------------------------------------------------------------------
+class InsurancePlan {
+	protected int planNo;
+	protected String planName;
+	protected int tenure;
+	protected double premiumAmount;
+	protected double insurredAmount;
+	protected String status;
+	
+	// accessors
+}	
+
+class MedicalInsurancePlan extends InsurancePlan {
+	private int copay;
+	private String coverageType;
+	// accessors
+}
+
+class AccidentalInsurancePlan extends InsurancePlan {
+	private int disabilityCoveragePercentage;
+	private boolean internationalCoverage;
+	// accessors
+}
+
+InsurancePlan.hbm.xml
+----------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.tpch.entities">
+	<class name="InsurancePlan" table="insurance_plan" discriminator-value="IP">
+		<id name="planNo" column="plan_no">
+			<generator class="identity"/>
+		</id>
+		<discriminator-column name="insurrance_plan_type"/>
+		
+		<property name="planName" column="plan_nm"/>
+		<property name="tenure"/>
+		<property name="premiumAmount" column="premium_amt"/>
+		<property name="insurredAmount" column="insurred_amt"/>
+		<property name="status"/>
+	</class>
+</hibernate-mapping>
+	
+MedicalInsurancePlan.hbm.xml
+----------------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.tpch.entities">
+	<subclass name="MedicalInsurancePlan" extends="InsurancePlan" discriminator-value="MIP">
+		<property name="copay"/>
+		<property name="coverageType" column="coverage_type"/>	
+	</subclass>
+</hibernate-mapping>
+
+AccidentalInsurancePlan.hbm.xml
+--------------------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.tpch.entities">
+	<subclass name="AccidentalInsurancePlan" extends="InsurancePlan" discriminator-value="AIP">
+		<property name="disabilityCoveragePercentage" column="disability_coverage_percentage"/>
+		<property name="internationalCoverage" column="international_coverage"/>
+	</subclass>
+</hibernate-mapping>

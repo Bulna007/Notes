@@ -1,0 +1,32 @@
+How to persist the association relationship in relational model?
+since it is one-to-many relationship, we need to store primary key of account entity class into foreign key of address to establish relationship. For any one-to-many association to persist the relationship we need to do the same operation
+
+How to fetch the association?
+take the primary key of account object and match with foreign key of address table to identify which address belongs to this account. For every one-to-many association to fetch the associated objects we need to perform same operation
+
+This is well-known to hibernate/jpa api. To hibernate framework/jpa api we dont need to tell what operation should be perform to store/retrieve. we only need to tell 2 things
+1. relationship Type
+2. foreign key column
+	
+<set name="addresses">
+	<key column="account_no" not-null="false"/> #foreign key column
+	<one-to-many class="Address"/> #my entity class is in which type of relationship
+</set>
+
+
+bike_registration
+registration_no
+model_nm
+manufacturer
+purchase_dt
+fuel_type
+color
+chasis_no
+engine_no
+
+challan
+challan_no
+description
+violation_type
+challan_dt
+amount

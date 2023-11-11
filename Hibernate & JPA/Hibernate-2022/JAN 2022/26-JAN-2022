@@ -1,0 +1,11 @@
+There are 6 types of databases are there
+1. Hierarchial database
+2. Network database
+3. Relational database
+4. Object orited database
+5. No-Sql or Semi-Structured database
+6. Un-Structured or Object storage database
+
+#5. No-Sql or Semi-Structured database
+In RDBMS we can store structured data, if we are storing semi-structured data as part of RDMBS database we run into several problems:
+1. designing the database schema in storing the data is complex

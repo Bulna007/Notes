@@ -1,0 +1,73 @@
+Table per concrete class
+------------------------
+per each concrete class in the hierarchy create a separate database table.
+	
+How to perform persistence operations?
+#1 How to store the data?
+
+Super class object in the table:
+directly store the entity object of the superclass into the superclass table
+
+Subclass object in the table?
+directly store in the subclass table
+
+While storing the data for any of the classes in the hierarchy, ensure the primary key column value is unique across the tables in the hierarchy. So that we can identify which record belongs to which entity class of the hierarchy, so that we can support polymorphic access of the objects
+
+Id Generators:-
+1. sequence = use the same sequence for all the entities of the hierarchy
+2. increment = union of max(pk) from all the tables in the hierarchy and max of these max(pk) to fetch the next primary key to be used
+3. identity = should not be used
+4. Table generator = ensure the pkColumnName is referred for all the entity classes in the hierarchy
+
+table_generator (table)
+pk_column_nm   pk_column_value
+account_pk     1
+customer_pk    10
+address_pk     20
+insurance_pk   23 (for all the entity classes in the hierarchy refer same pk)
+	
+uid/guid: yes those are globally unique
+
+#2. How to retrieve/read the object of data from database?
+	
+Subclass entity object:
+directly fetch the data from subclass table
+
+Superclass entity object:
+union the records from all the tables in the hierarchy by querying against the primary, since the pk value is unique across the tables, we get only one record from any of these tables, dependson the record belongs to which table return the appropriate entity object.
+Thus we can support polymorphic access of the data
+
+
+InsurancePlan.hbm.xml
+----------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.tpcc.entities">
+	<class name="InsurancePlan" table="insurance_plan">
+		<id name="insurancePlanNo" column="insurance_plan_no">
+			<generator class="increment"/>
+		</id>
+		<property name="planName" column="plan_nm"/>
+		<property name="description"/>
+		<property name="taxSaver" column="tax_saver"/>
+		<property name="minInsurredAmount" column="min_insurred_amt"/>
+	</class>
+</hibernate-mapping>
+	
+AccidentalInsurancePlan.hbm.xml
+--------------------------------
+<hibernate-mapping package="com.tpcc.entities">
+	<union-subclass class="AccidentalInsurancePlan" table="accidental_insurance_plan" extends="InsurancePlan">
+		<property name="coverageType" column="coverage_type"/>
+		<property name="disabilityCoveragePercentage" column="disability_coverage_percentage"/>
+	</union-subclass>
+</hibernate-mapping>
+	
+	
+MedicalInsurancePlan.hbm.xml
+-----------------------------
+<hibernate-mapping package="com.tpcc.entites">
+	<union-subclass name="MedicalInsurancePlan" table="medical_insurance_plan" extends="InsurancePlan">
+		<property name="networkType" column="network_type"/>
+		<property name="copay"/>
+	</union-subclass>
+</hibernate-mapping>

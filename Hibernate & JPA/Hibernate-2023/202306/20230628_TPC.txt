@@ -1,0 +1,29 @@
+How many types of table relationships are there in database?
+There are 3 types 
+1. one-to-one
+	1.1 direct one-to-one
+	1.2 one-to-many as one-to-one
+2. one-to-many or many-to-one
+3. many-to-many
+
+
+we need to map the above tables with their relationships interms of object relationships so that we can perform persistence operation on the underlying database interms of objects
+
+The classes supports #2 types of relationships
+1. Inheritance 
+2. Association
+
+now somehow we need to express the database table relationships interms of class relationships so that the data that exists in the tables can carried interms of objects along with their relationship also
+So there are 2 ways we can model table relationships interms of objects 
+1. Inheritance Mapping model
+2. Association Mapping Model
+
+1. Inheritance Mapping Model
+-----------------------------
+Inheritance Mapping model is about representing the Inheritance relationship across the entity classes interms of table relationships so that we can perform the database operation based on their hierarchy of relation is called "inheritance mapping model".
+	
+Mapping Inheritance Relationship between the classes in table model means, we should be able to perform operations on the tables based on the class relationships, which means the Subclass objects should be accessible via the Superclass reference Type, since the classes are having Inheritance hierarchy between them, then only it is said to be we persisted the data of the classes along with relationship.
+
+1. Table per class hierarchy
+2. Table per Subclass
+3. Table per Concreate class

@@ -1,0 +1,46 @@
+How many ways we can establish relationship between the classes?
+There are 2 ways classes can relation to each other
+1. Inheritance
+	1.1 Generalization
+	1.2 Specialization
+	1.3 Realization
+	
+2. Association
+	2.1 Association
+	2.2 Aggregation
+	2.3 Composition
+	
+There are few characteristics of the association relationship
+1. directionality = association relationship can be established as uni-directional or bi-directional association
+2. cardinality = refers to how many instances of another class are in relationship with our class
+3. ownership = the owner of relationship
+4. lifetime = existence of the object, means if the owner dies the dependent also will die
+
+2.1 Association = Two classes are said to be in association relationship with each other when a class has declared the other class as an attribute inside it and using the reference object the class is reusing the functionality. An Association also imply dependency, if there is an association relationship between 2 classes means those are dependent on each other.
+
+In case of association, there is no ownership of the association and no lifetime dependency between the classes, then those are called associated with each other
+
+2.2 Aggregation
+Aggregation is another form of association relationship where the objects are having ownership but there is no lifetime dependency between the components.
+For eg.. a school and teachers working in school, here the relationship owner is: school "because school owns the teachers". Now if the school has been closed, the teachers wont be removed, rather those are moved to another school
+if we see above we have ownership of the relationship, but no lifetime dependency
+
+2.3 Composition
+Composition is the highest level of association relationship here the objects in relationship has both ownership and lifetime as well.
+
+From the above we understood, the database tables are related with each other through primary key and foreign key in 3 ways
+1. one-to-one
+2. one-to-many/many-to-one
+3. many-to-many
+
+when we query the data from these tables, we get data along with the relationship data also. In order to store the data interms of objects we need to design the classes representing the database relationships. The classes can be related with each other in 2 ways
+1. Inheritance
+2. Association
+
+The ORM technology provided guidelines on how to map the database table relationships into class relationships so that we can represent the data of the tables with their relationships in object model is called "ORM Technology".
+-------------------------------------------------------------------------------------------------------------------------
+hibernate framework 
+hibernate is an orm technology framework, it takes care of querying the data from database table and returns them interms of objects
+
+how to populate the data from the databases into objects?
+#7 - 10 days = internals

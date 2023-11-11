@@ -1,0 +1,74 @@
+How to work with annotations in hibernate framework?
+----------------------------------------------------
+There are 2 places in our application we are using configuration files.
+	1. Mapping (.hbm.xml)
+	2. Configuration (.cfg.xml)
+
+#2 Hibernate Configuration (.cfg.xml) 
+We write configuration information pertaining to Hibernate Application, rather than a specific class, so we cannot define this configuration information by writing annotations on a specific class. So only way to avoid writing xml/properties configuration file is by using programmatic approach
+
+Configuration configuration = new Configuration();
+configuration.setProperty("connection.driver_class", "com.mysql.cj.jdbc.Driver");
+configuration.setProperty("connection.url", "jdbc:mysql://localhost:3306/db");
+configuration.setProperty("connection.username", "root");
+configuration.setProperty("connection.password", "root");
+configuration.addResource("com/ha/entities/Staff.hbm.xml");
+
+#1. Mapping (.hbm.xml)
+The other place where we use configuration files in hibernate is to provide mapping information describing an entity class. Since the mapping information we write is pertaining to an entity class itself, we can avoid writing this mapping file by using annotations.
+	
+What are annotations?
+Annotations are the alternate means of providing the configuration information to an java class. Annotations are written directly as part of the sourcecode of a java class, so these are called "Source Code Metadata"
+	
+The Hibernate Framework 3.x onwards the support of annotations has been added to allows us to bind mapping information about the entity classes
+
+Later on Jpa api has been introduced by Sun Microsystems in support of ORM Technologies and Hibernate is one of the implementations of Jpa api
+
+In later versions of Hibernate 3.x, they have deprecated Hibernate Annotations in-favour of Jpa annotations. Now we have to write mapping information about the entity classes by using jpa annotations only.
+	
+
+class Staff {
+	int staffNo;
+	String fullname;
+	Date dob;
+	String gender;
+	String mobileNo;
+	String emailAddress;
+	// accessors
+}	
+
+Staff.hbm.xml
+--------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.ha.entities">
+	<class name="Staff" table="staff">
+		<id name="staffNo" column="staff_no"/>
+		<property name="fullname"/>
+		<property name="dob"/>
+		<property name="gender"/>
+		<property name="mobileNo" column="mobile_no"/>
+		<property name="emailAddress" column="email_address"/>
+	</class>
+</hibernate-mapping>
+
+hibernate.cfg.xml
+------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/hibdb</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+		<property name="show_sql">true</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+	</session-factory>
+</hibernate-configuration>
+
+Test.java
+----------
+Configuration configuration = new Configuration().configure();
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+Session session = sessionFactory.openSession();
+
+Staff staff = session.get(Staff.class, 1);

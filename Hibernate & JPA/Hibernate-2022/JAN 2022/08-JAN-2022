@@ -1,0 +1,38 @@
+1. What is persistency?	
+2. Why do we need to persist the data for a longer amount of time permanently on a computer storage device?
+The business data that flow into the business has to stored for longer amount of time for future usage, because we are going to perform various different types of computation operations on that data whenever required.
+	
+We can store the data permanently on a piece of paper or a booking keeping of information. but there are lot of problems in storing the data on a paper or book manually.
+problems:-
+	1. time consuming in capturing and writing the data on a book/paper
+	2. data is not legitimate
+	3. information we wrote on the book/paper has wear and tear and might vanish in future
+	4. searching and reusing the data is going to be difficult
+	5. no security in protecting the access to the data
+	6. everytime in order to compute the data using the computing device we need to manually enter the data into the computer by looking at the information we stored on the book which is a very time consuming operation
+
+Instead of storing or writing the data on a piece of paper or a book, if we can directly store the data on computer device/system itself permanently we get lot of benefits
+	1. entering the data into the computer is not difficult and time consuming as there are many mechanisms or input devices through which we fed the data as an input to the computer, once fed we can store it permanently as well for future reuse
+	2. information is quite legitimate
+	3. no ware and tear
+	4. searching and identifying the data is very easy and quite fast
+	5. more secured than writing on a paper
+	6. everytime when we want to compute the data we can write application programs to quickly read the data from the storage itself in performing the operation which results in quite faster computation of the information
+-----------------------------------------------------------------------------------------------
+3. How to store the data permanently on a computer system?
+We can store the data on an secondary storage device of a computer based on Filesystem technics. The FileSystem technic allows us to store the data interms of Files and Folders of a computer
+1. File = File is a logical memory unit on a secondary storage of a computer in which we can stores characters/bytes of data which can be accessed uniquely using the Name of the File.
+		
+2. Folder = We can group bunch of related files and keep inside a folder for quickly locating and accessing the data
+-----------------------------------------------------------------------------------------------
+How to store the data on the Files?
+We can store the data on a File as a text of information or a sequence of set of charaters. but the information we stored on a File of a computer not only should be understood by a human, we wanted software programs also to read, interpret and perform the operation.
+	
+But we are storing the data in a text of characters it can be understood only by the humans only, so how to store the data on a File, where it can be understood by both humans and software application as well?
+	
+That is where data representation standards are introduced. There are 2 representations/formats of storing the data on a file of a computer are introdued.
+	1. human understandable format
+	2. machine/programable format
+	
+What are the programmable formats of storing the data on a File of a computer are there?
+There are several programmable formats of storing the data are available, let us explore each of the ways of storing the data and understand their advantages and dis-advantages of storing the data.

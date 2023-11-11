@@ -1,0 +1,104 @@
+How to fetch the data from database table interms of Objects while working with Hibernate Framework?
+#1 write entity class to hold the data of a database table
+rules:
+	1.1 recommended to be Serializable
+	1.2 attributes must have setters and getters
+	1.3 mandatory to have public access modifier default constructor
+	1.4 recommended to override equals/hashCode() methods
+	
+class Account implements Serializable {
+	private int accountNo;
+	private String accountHolderName;
+	private String accountType;
+	private String mobileNo;
+	private String emailAddress;
+	private String branchCode;
+	private double balance;
+	// accessors
+}
+
+Instead of we writing the boiler-plate logic for reading the data from table and bind it to entity class object, we can use Hibernate Framework provided api classes.
+	
+Hibernate Framework has provided Session class object which is intelligent enough in querying the data from table and bind to entity object
+
+To let the session map the data between table to entity class or viceversa we need to provide mapping information by writing Hibernate Mapping file
+	
+rules:-
+	1. The Mapping file should be named with same name as "Class name".
+	2. it is an Xml file but should be saved with an extension as ".hbm.xml" to distinguish between a normal xml and an hibernate mapping file
+	3. it should be kept under the same package of our Entity class only to quickly locate for which entity class what is the corresponding mapping file
+		
+Account.hbm.xml
+---------------
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping public "...">
+<hibernate-mapping>
+	<class name="com.netsafe.entities.Account" table="account">
+		<id name="accountNo" column="account_no"/>
+		<property name="accountHolderName" column="account_holder_nm"/>
+		<property name="accountType" column="account_type"/>
+		<property name="mobileNo" column="mobile_no"/>
+		<property name="emailAddress" column="email_address"/>
+		<property name="branchCode" column="branch_code"/>
+		<property name="balance" column="balance"/>
+	</class>	
+</hibernate-mapping>
+		
+To let the Session to connect to database and query the data we need to provide database details and other configuration information by writing hiberate configuration file
+rules:-
+	1. The hibernate configuration file by default must and should be written with filename as hibernate.cfg.xml only
+	2. it should be placed directly under classpath of our application only
+	
+hibernate.cfg.xml
+-----------------
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "...">
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/db</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+		
+		<mapping resource="com/netsafe/entities/Account.hbm.xml"/>	
+	</session-factory>
+</hibernate-configuration>
+
+Test.java
+----------
+Configuration
+takes care of reading configuration file and creates the object of SessionFactory
+
+SessionFactory
+#2 reasons
+1. it acts as factory for creating the object of Session
+2. it acts as Repository for storing the mapping/configuration information
+
+create SessionFactory by loading mapping/configuration inside it
+Session session = sessionFactory.openSession();
+
+class AccountAccessor {
+	public Account getAccount(int accountNo) {
+		Configuration configuration = null;
+		SessionFactory sessionFactory = null;
+		Session session = null;
+		Account account = null;
+		
+		configuration = new Configuration().configure();
+		//.configure() method reads the hibernate.cfg.xml from classpath and loads into it
+		sessionFactory = configuration.buildSessionFactory();
+		session = sessionFactory.openSession();
+		account = (Account) session.get(accountNo, Account.class);
+		session.close();
+		
+		return account;
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		AccountAccessor accountAccessor=  new AccountAccessor();
+		Account account = accountAccessor.getAccount(1);
+		sop(account);
+	}
+}

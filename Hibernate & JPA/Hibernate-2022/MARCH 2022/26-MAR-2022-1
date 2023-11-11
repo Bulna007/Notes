@@ -1,0 +1,61 @@
+What are transactions?
+Unit of work where all the actions taken part as part of the operation has to be either completely committed or completely rollback
+
+How to work with transactionality as part of java jdbc?
+Add a new employee into the organization, which involves inserting the data into 2 database tables
+1. employee table [emp_no, emp_name, designation, experience, mobile_no, email_address]
+2. payroll [payroll_no, business_unit_no, annual_compensation, bank_nm, ifsc_code, account_no]
+
+class EmployeeDao {
+	public void newEmployee(Employee employee, Payroll payroll) {
+		boolean flag = false;
+		Connection con = null;
+		PreparedStatement empPstmt = null;
+		PreparedStatement payrollPstmt = null;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/hibdb", "root", "root");
+			con.setAutoCommit(false);
+			
+			empPstmt = con.preparedStatement("insert into employee(emp_no, emp_nm, designation, experience, mobile_no, email_address) values(?,?,?,?,?,?)");
+			empPstmt.setInt(1, employee.getEmployeeNo());
+			empPstmt.setString(2, employee.getEmployeeName());
+			// substitute all the place holders into prepared statement object
+			empPstmt.executeUpdate(); // dml
+
+			
+			payrollPstmt = con.preparedStatement("insert into payroll(payroll_no, emp_no, business_unit_no, bank_nm, ifsc_code, account_no) values(?,?,?,?,?,?)");
+			// substitute all the place holders by reading the value from payroll object
+			payrollPstmt.executeUpdate();
+			
+			// all the lines above has executed without exception
+			flag = true;
+		}catch(ClassNotFoundException |  SqlException e) {
+			flag = false;
+		}finally {
+			try {
+				if(empPstmt!=null) {
+					empPstmt.close();
+				}
+			}catch(SqlException e) {}
+			
+			try{
+				if(payrollPstmt != null) {
+					payrollPstmt.close();
+				}
+			}catch(SqlException e) {}
+			
+			try {				
+				if(con != null) {
+					if(flag) {
+						con.commit();
+					}else {
+						con.rollback();
+					}
+					con.close();
+				}
+			}catch(SqlException e) {}
+		}		
+	}
+}

@@ -1,0 +1,104 @@
+id generators
+--------------
+primary key column of a table is used for uniquely identifying the record of a table so that it can be used as an foreign key in another table to establish relationship between the tables
+
+It is not recommeded to take one of the column/fields of the business data as a primary key column, because in future the business assumptions has been changed then the key column we considered may not hold and requires redesign of the entire database schema including the tables in which we have used this primary key as an foreign key
+In addition we need to rewrite application logic in performing the persistence operations
+
+To avoid the above problems always it is recommended to take surrogate key columns as primary key columns for the table (surrogate key: additional key not related to business/data)
+	
+The enduser cannot provide the data as an input for the surrogate key columns while persisting the data into the tables since these doesnt have an business representation/meaning attached to the enduser
+The system should be able to generate the key column values with which the data should be persisted into the database
+
+Either an database or an application byitself can generate the surrogate key column values while inserting the data.
+There are few limitations in generating these surrogate key columns by the database
+1. our application will be dependent on the underlying database in generating key columns and if we migrate from one database to another we may have to re-write the logic for generating key columns
+2. different databases has different technics in generating the values of the columns and few databases doesnt support any key generation capabilities
+3. not always we wanted the key to be integer in nature incrementing sequentially, but most of the databases supports only sequence number generation based keys only
+
+due to the above reason we may wanted to generate the primary key at the application scope/level rather than at database
+
+customer
+--------
+customer_no(pk)  customer_nm  mobile_no  email_address   dob        gender
+1                james        83938399   james@gmail.com 2001-10-20 male
+2                brown        2839938    brown@gmail.com 1989-11-23 male
+
+class CustomerBo {
+	int customerNo; // while fetching we will use, while storing we populate "0"
+	String customerName;
+	String mobileNo;
+	String emailAddress;
+	Date dob;
+	String gender;
+}
+
+class CustomerDao {
+	public int saveCustomer(CustomerBo bo) {
+		int customerNo = 0;
+		ResultSet rs = null;
+		Connection con = null;
+		Statement stmt = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd);
+			
+			// generate the primary key column value
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("select max(customer_no) from customer");
+			if(rs.next()) {
+				customerNo = rs.getInt(0);
+			}
+			customerNo++;
+			
+			pstmt = con.preparedStatement("insert into customer(customer_no, customer_nm, gender, dob, mobile_no, email_address) values(?,?,?,?,?,?)");
+			// populate the data into pstmt
+			pstmt.executeUpdate();
+			
+		}catch(ClassNotFoundException | SqlException e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return customerNo;
+	}
+}
+
+Looks like every application the database tables are designed to have primary key columns as surrogate key columns, it looks like programmers has to write the code for generating these key column values with which the data has to be persisted into the database
+
+For different tables we need different strategies of generating key column values and ensure the key generation works across all the environments. handling these id generations seems to be complex and a common requirement for every application, which looks like boiler-plate logic
+instead of we writing the boiler plate logic hibernate framework itself has provided id generators for generating these primary key column values
+
+What are id generators?
+id generators are the classes that are pre-built by the hibernate framework developers that takes care of generating the primary key column values with which hibernate framework will persist/save the entity object into the database table
+
+The Hibernate Framework has provided multiple different id generator classes that generates the primary key column values based on different strategies. There are total 11 id generators are there
+1. assigned
+2. increment
+3. identity
+4. native
+5. sequence
+6. hilo
+7. seq_hilo
+8. guid
+9. uuid
+10. foreign
+11. select
+
+
+#1. assigned
+the assigned id generator is the default id generator for each entity class we map in hibernate, which indicates you dont generate the user will assign the value of the primary key
+
+#2. increment
+increment id generator takes care of querying the last generated primary key column values from the database table and increments by 1 and returns as an id to be used for storing the data
+
+How to use this id generator?
+class Customer implements Serializable {
+	int customerNo;
+	String customerName;
+	Date dob;
+	String gender;
+	String mobileNo;
+	String emailAddress;
+}

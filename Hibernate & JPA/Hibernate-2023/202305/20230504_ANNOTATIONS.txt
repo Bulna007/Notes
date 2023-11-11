@@ -1,0 +1,45 @@
+How to work with annotations in hibernate framework?
+Annotations are one-way to replace the configuration information written in a configuration file, so that we again ease of programming the application. Annotations are written on the sourcecode of a class, describing the metadata of an class, so these are called sourcecode metadata.
+	
+
+In an hibernate application we are writing configuration information in 2 places
+1. hibernate mapping (*.hbm.xml) = instead of writing hbm.xml file describing mapping information for an entity class, we can annotations on the entity class itself
+
+2. hibernate configuration file (hibernate.cfg.xml/hibernate.properties) = hibernate configuration is not pertaining to any specific class, rather it represents the entire hibernate framework application configuration, so it cannot be replaced using annotations by writing it on a specific class, rather then only way to avoid physical configuration files in writing hibernate configuration is programmatic approach
+
+
+From hibernate 3+, the hibernate framework has marked deprecating all the hibernate framework annotations in support jpa api. Now while working with Hibernate framework we need to annotate the entity classes describing the mapping information using jpa annotations itself
+
+In jpa api there are 2 types of annotations are there
+1. Physical annotations = using these annotations we describe the details of the physical database tables pertaining to the entity class
+	
+2. Logical annotations = these annotations are used for attaching framework specific configuration to an entity class, customizing the behaviour of the entity class
+while writing the mapping information for an entity class, we need to use both of these annotations
+
+few more things to remember:
+1. while mapping the attributes to the columns of the table, we can write the annotations either at ATTRIBUTE LEVEL or at GETTER METHOD LEVEL. This is called Access Method
+2. it is recommended to write the annotations only at one place within the entity class for unification sake, either choose to write at ATTRIBUTE LEVEL or at GETTER METHOD LEVEL only dont mix and match
+
+
+@Entity = on the class level indicates to the hibernate framework it is an persistable entity class
+
+@Entity
+@Table(name="account")
+class Account {	
+	@Id
+	@Column(name="account_no")	
+	int accountNo;
+	@Column(name="account_holder_nm")
+	String accountHolderName;
+	@Column(name="account_type")
+	String accountType;
+	
+	void setAccountNo(int accountNo) {}
+	int getAccountNo() {}
+	
+	void setAccountHolderName(String accountHolderName) {}
+	String getAccountHolderName() {}
+	
+	void setAccountType(String accountType) {}
+	String getAccountType() {}
+}

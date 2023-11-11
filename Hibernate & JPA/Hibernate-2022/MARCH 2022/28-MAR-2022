@@ -1,0 +1,76 @@
+How to manage transactions while working with jdbc api?
+
+class EmployeeDao {
+	public void newEmployee(Employee employee, Payroll payroll) {
+		boolean flag = false;
+		Connection con = null;
+		PreparedStatement pstmt1 = null;
+		PreparedStatement pstmt2 = null;
+		
+		try {
+			Class.forName(driverClassName);
+			con = DriverManager.getConnection(url, un, pwd);
+			con.setAutoCommit(false);
+			
+			pstmt1 = con.preparedStatement("insert into employee values(?,?,?,?,?,?)");
+			// substitute positional parameters
+			pstmt1.executeUpdate();			
+			pstmt2 = con.prepareStatement("insert into payroll values(?,?,?,?,?,?)");
+			// substitute positional parameters
+			pstmt2.executeUpdate();
+			
+			flag = true;
+		}catch(ClassNotFoundException | SqlException e) {
+			flag = false;
+		}finally {
+			try {
+				if(pstmt1 != null) {
+					pstmt1.close();
+				}	
+			}catch(SqlException e) {}
+			try {
+				if(pstmt2 != null) {
+					pstmt2.close();
+				}	
+			}catch(SqlException e) {}
+			try {
+				if(con != null) {
+					if(flag) {
+						con.commit();
+					}else {
+						con.rollback();
+					}
+					con.close();
+				}	
+			}catch(SqlException e) {}
+		}
+	}
+}	
+
+#1. always after creating the connection, set autocommit = false 
+#2. use an boolean flag to track the outcome of the operation
+#3. within the finally block verify the state of operation through flag and either commit or rollback the transaction by using con.commit() or con.rollback();
+------------------------------------------------------------------------------------------
+How many types of transactions are there?
+There are 2 types of transactions are there
+1. global transaction
+2. local transaction
+
+#1. global transaction
+Within the transactional boundary if there are more than one transactional participating resource is there on whom we are issuing a commit or rollback, then it is called "global transaction".
+	
+#2 local transaction
+Within an transactional boundary if is only one single transaction participating resource on whom we are issuing a commit or rollback then it is called "local transaction"
+
+
+To work with local transactions we can use jdbc api, but jdbc api doesnt support working with global transactions. To work with global transactions java has provided jta api
+
+JTA stands for java transaction management api, which is used for working with global transactions in java
+------------------------------------------------------------------------------------------
+
+jta api
+	|-UserTransaction (transaction manager)
+		|-con1
+		|-con2
+begin
+commit/rollback

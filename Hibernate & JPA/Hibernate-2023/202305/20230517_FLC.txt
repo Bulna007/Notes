@@ -1,0 +1,139 @@
+Why do we need persistence level caching?
+	
+@WebServlet(urlPatterns={"/product"})	
+class GetProductServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		int productCode = 0;
+		ProductDao productDao = null;
+		Product product = null;
+		
+		productDao = new ProductDao();
+		productCode = Integer.parseInt(httpReq.getParameter("productCode"));
+		product = productDao.getProduct(productCode);
+		
+		httpReq.setAttribute("product", product);
+		httpReq.getRequestDispatcher("/product-details.jsp").forward(httpReq, httpResp);
+	}
+}
+
+class ProductDao {
+	public Product getProduct(int productNo) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Product product = null;
+		Cache cache = null;
+		try {
+			cache = Cache.getInstance();
+			if(cache.containsKey("product$"+productNo)) {
+				product = cache.get("product$"+productNo);
+			}else {
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				con = DriverManager.getConnection(url, un, pwd);
+				pstmt = con.preparedStatement("select * from product where product_no = ?");
+				pstmt.setInt(1, productNo);
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					product = new Product();
+					// wrap the resultSet record into product object
+					cache.put("product$"+productNo, product);
+				}
+			}			
+		}catch(Exception e) {}
+		return product;
+	}
+}
+
+
+class OrderDetailsServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		String orderNo = httpReq.getParameter("orderNo");
+		
+		
+		
+	}
+}
+order
+------
+o1  10/01/2023  paul 100
+
+order_products
+o1  p1
+o1  p2
+o1  p5
+
+o1  10/01/2023  paul 100 p1
+o1  10/01/2023  paul 100 p2
+o1  10/01/2023  paul 100 p5
+
+
+class OrderDao {
+	public OrderDetails getOrder(String orderNo) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		PreparedStatement pstmt1 = null;
+		ResultSet rs = null;
+		Product product = null;
+		OrderDetails orderDetails = null;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd);
+			pstmt1 = con.preparedStatement("select * from product where product_code = ?");
+			pstmt = con.preparedStatement("select * from order o inner join order_products op on o.order_no = op.order_no where order_no = ?");
+			
+			pstmt.setString(1, orderNo);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				// populate order details
+				productCode = rs.getInt("5");
+				pstmt1.setInt(1, productCode);
+				rs2 = pstmt1.executeQuery();
+				if(rs2.next()) {
+					// populate the product data
+				}
+				orderDetails.addProduct(product);
+				
+			}
+		}catch(Exception e) {}
+		return orderDetails;
+	}
+}
+
+
+class PersistenceManager {
+	Connection con;
+	Map<Class, EntityMapping> mappings;
+	
+	public Object get(Class classType, Object id) {
+		// build query from mapping
+		Cache cache = Cache.getInstance();
+		PreparedStatement pstmt = con.preparedStatement(sql);	
+		pstmt.setInt(1, id);
+		rs = pstmt.executeQuery();
+		if(rs.next()) {
+			Object obj = GenericMapper.mapResultToObject(classType, rs, mappings);
+		}
+		return obj;
+	}
+}
+
+class ProductDao {
+	public Product getProduct(int productCode) {
+		PersistenceManager persistenceManager = PersistenceManagerFactory.createPersistenceManager();
+		Product product = persistenceManager.get(Product.class, productCode);
+		return product;		
+	}
+}
+
+class OrderDao {
+	public OrderDetails getOrder(String orderNo) {
+		PersistenceManager persistenceManager = PersistenceManagerFactory.createPersistenceManager();
+		Order order = persistenceManager.get(Order.class, orderNo);
+		for(int productCode : order.getProducts()){ 
+			product = persistenceManager.get(Product.class, productCode);
+			orderDetails.add(product);
+		}
+		return orderDetails;
+	}
+}

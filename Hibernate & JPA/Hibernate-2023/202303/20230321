@@ -1,0 +1,21 @@
+There are lot of third-party libraries are available in java platform to work with ORM technology in java like
+1. Hibernate Framework
+2. iBatis (MyBatis)
+3. TopLink (EclipseLink)
+etc
+
+due to the huge adoption of these third-party libraries, the java platform has added the support for ORM technology by providing jpa api (java persistence api)
+	
+jpa is an api, and apis are always partial we need implementations to work with api so, sun microsystems has provided an implementation for the jpa api called jpa ri (reference implementation). Jpa api has been designed or influenced by hibernate framework developers.
+So hibernate framework developers added support in working with jpa api by providing their own implementation for jpa api. From hibernate 3.0 onwards hibernate framework has been distributed in #2 ways
+1. Hibernate Core          = The hibernate only framework components which are originally provided by the hibernate team.
+2. Hibernate EntityManager = Hibernate provided new implementation classes for jpa api to work with hibernate as an implementation of jpa api
+
+Hibernate 4/5 = most of the hibernate framework classes and annotations are marked as deprecated and moved towards jpa api
+-----------------------------------------------------------------------------------------------------------------------------------
+ORM Technology Frameworks or implementations (3/4 days)
+1. Database Table relationship
+2. join queries
+3. class relationship
+	
+4. Hibernate Framework (samplecode) (3/4 days)

@@ -1,0 +1,139 @@
+inverse
+-------
+@Entity
+@Table(name="product")
+class Product {
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="product_no")
+	int productNo;	
+	String productName;
+	String description;
+	String category;
+	String manufacturer;
+	double price;
+	
+	@OneToMany(mappedBy="product") // this associate is already persisting in the otherside of the relationship using product attribute
+	//@JoinColumn(name="product_no", nullable="true")
+	Set<Review> reviews; // persist fk
+	// accessors	
+}
+
+@Entity
+@Table(name="review")
+class Review {
+	@Id
+	@Column(name="review_no")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	int reviewNo;
+	int rating;
+	String remarks;
+	LocalDate postedDate;
+	String postedBy;
+	
+	@ManyToOne
+	@JoinColumn(name="product_no", nullable="true")
+	Product product; //persist fk
+	// accessors
+}
+
+
+Tables:
+product                review
+---------------        ------
+product_no (pk)        review_no (pk)
+product_nm             rating
+description            remarks
+category_nm            posted_dt
+manufacturer           posted_by
+price                  product_no (fk) (nullable)
+	
+	
+Product.hbm.xml
+----------------
+<hibernate-mapping package="com.inverse.entities">
+	<class name="Product" table="product">
+		<id name="productNo" column="product_no">
+			<generator class="increment"/>
+		</id>
+		<property name="productName" column="product_nm"/>
+		...
+		<set name="reviews" inverse="true">
+			<key column="product_no" not-null="false"/>
+			<one-to-many class="Review"/>
+		</set>
+	</class>
+</hibernate-mapping>
+
+Review.hbm.xml
+---------------
+<hibernate-mapping package="com.inverse.entities">
+	<class name="Review" table="review">
+		<id name="reviewNo" column="review_no">
+			<generator class="increment"/>
+		</id>
+		<property name="rating"/>
+		<property name="remarks"/>
+		..
+		<many-to-one name="product">
+			<column name="product_no" not-null="false" />
+		</many-to-one>
+	</class>
+</hibernate-mapping>
+	
+Test.java
+----------
+SessionFactory sessionFactory = SFRegistry.getSessionFactory();
+Session session = sessionFactory.openSession;
+Transaction transaction = session.beginTransaction();
+boolean flag = false;
+
+try {
+	
+	Review review = new Review();
+	review.setRating(3);
+	review.setRemarks("Better for the price");
+	review.setPostedDate(LocalDate.now());
+	review.setPostedBy("Alex");
+	
+	Product product = new Product();
+	product.setProductName("LG 240 liters smart refrigirator");
+	product.setDescription("LG Fridge");
+	product.setCategory("electronics");
+	product.setManufacturer("LG");
+	product.setPrice(34000);
+	Set<Review> reviews = new HashSet();
+	reviews.add(review);
+	product.setReviews(reviews);
+	
+	review.setProduct(product); // transient object
+	
+	
+	session.persist(product);	
+	// product data is inserted into product table, since the associate Set<Review> reviews are transient it will not update the foriegn key of those entity objects
+	
+	session.persist(review);
+	// while storing the review since the associated object is persistent state along with storing the review it persist the foreign key column representing that associate object (foreign key column is persisted)
+	
+	// now hibernate will update each associated Set<Review> reviews with primary key as foreign key in the child table (foreign key is persisted)
+
+	flag = true;
+}finally {
+	// commit or rollback
+	// close resource
+}
+
+hibernate executes the below sql queries in persisting/storing the above entity classes into db tables:
+1. insert into product(product_no, product_nm, description, category, manufacturer, price) values(?,?,?,?,?,?);
+
+2. insert into review(review_no, rating, remarks, posted_dt, posted_by, product_no) values(?,?,?,?,?,?);
+	  review_no: 1, product_no = 1
+						
+3. update review set product_no = ? where review_no = ? // un-necessary
+			
+since it is an bi-directional association, both the sides of entities are having the associated objects of each other, so hibernate while performing persistence operations like persit/merge it tries to save the association relationship between the objects in table relational model by persisting the foreign key
+since the associate objects exists both the sides, the foriegn key column will be persisted twice which is unnecessary.
+	
+	
+to avoid the above problem we need to mark one-side of the relationship with inverse="true"
+inverse = means we are telling the hibernate, am not the relationship owner, dont persist this association. persist the otherside of the assocation.

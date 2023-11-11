@@ -1,0 +1,61 @@
+No-Sql or Semi Structured Database
+----------------------------------
+What is semi-structured data?
+Different records of information has different set of fields, not all the records will have the same set of fields in same number, then it is called semi-structured.
+	
+To store such data it is not recommended to use RDBMS databases, to work well with this type of data there are no-sql databases introduced.
+	1. mangodb
+	2. casendra
+	3. couchdb
+	4. neo4j
+	5. oracle bigdata
+	5. amazon dynamodb
+	
+	
+These databases makes use of Hadoop FileSystem for storing the data so that they can easily achieve scalability interms of storage and computing. These database underlying store the data on Hadoop FileSystem interms of Files only.
+	
+These databases use different formats in storing the data on the underlying Files and will vary from database vendor to another vendor.
+
+For eg.. let us understand how does mongo db stores the data on the database
+In mongodb we create collections which are equal to tables in rdbms, with the collections we store documents which are equal to records in rdbms. each document holds a json data of varied fields.
+
+For each collection we create mongo db mandates an id column to be defined to uniquely identify the document within the collection.
+	
+collection: lab_reports
+{
+	"lab_report_no": 230, 
+	"patient_nm": "mathew",
+	"report_conducted_date": "31/01/2022",
+	"ref_doctor_nm": "juli",
+	"test_type": "malaria",
+	"wbc": 23,
+	"rbc": 384
+},
+{
+	"lab_report_no": 233,
+	"patient_nm": "kate",
+	"report_conducted_date": "31/01/2022",
+	"ref_doctor_nm": "don",
+	"test_type": "typhoid",
+	"platelets": 30000,
+	"fasting_sugar": 80
+}
+
+since the data is semi-structured we cannot use sql standard for querying the data, rather these databases provide their own api/query technic for accessing the data.
+-----------------------------------------------------------------------------------------------
+#6 Un-Structured or Object storage databases
+What is Un-Structured or Objects means?
+All the data in binary format is considered as un-structured like:
+1. images
+2. audio
+3. videos
+4. Files
+5. documents (pdf, doc, xls)
+etc
+
+We can store this data in RDBMS database by using blob columns. The RDBMS databases usually requires huge hardware/computing resources to perform operations. by storing un-structured data on RDBMS we occupy the storage space there by which we need to scale-out the database to runon one more machine due to which the cost of storing the data increases alot.
+	
+Instead of use un-structured or object-storage databases 
+1. Amazon S3
+
+These database will allows us to upload objects (videos, audios, images, docs) and generate an unique id through which we can always access the objects back	

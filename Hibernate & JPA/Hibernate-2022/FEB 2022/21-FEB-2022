@@ -1,0 +1,100 @@
+There are 5 Normal Forms are there
+1. 1NF
+2. 2NF
+3. 3NF
+4. BCNF
+5. 5NF
+
+by using the normalization technics we can break the raw data and create data model out of the raw data for the business. 
+We cannot directly apply the Normal Forms on the data, after taking the raw data, we need to begin with 1 NF there after sequentially apply one after the another to normalize the data
+
+atleast we need to apply till 3NF to say our data model is in normalized state
+
+#1. 1 Normal Form
+1. No repeating groups of data
+2. Every field must be atomic in nature
+3. Every table must and should have primary key
+
+1.1 No repeating groups of data
+For a group of columns within the table, the other attributes/fields has to be stored repeatedly which are called repeating groups of data
+
+For eg..
+if we are storing member and policy information together, for that member we might have to store several times the policy data as a member can have multiple policies
+
+member_no  member_nm  age  gender mobile_nbr  policy_no  plan_nm  tenure  insurred_amount
+m1         paul       23   Male   939383938   p1        jeevan a  32      800000
+                                              p2        quick30   12      300000
+	
+identify such repeating groups of data and break them into different tables
+
+member
+-------
+member_no(pk)  member_first_nm  member_last_nm  age  gender mobile_nbr
+
+member_policy
+-------------
+member_no(pk) policy_no(pk)  plan_nm  tenure  insurred_amount  
+
+-----------------------------------------------------------------------------------------------
+#2. 2 Normal Form
+-----------------
+2.1 The data model should be in 1NF
+2.2 all the non-key column should be fully dependent on all the parts of the key
+2.3 each table must and should have primary key
+
+2.2 all the non-key columns must be fully dependent on all the parts of the key
+if our table has single column as primary key column, then already the table is in 2Normal Form. but if our table has multiple columns as key column (composite primary key), then we need to check the non-key columns are dependent on all the parts of the composite key or not
+
+for example in the above data member_policy table has member_no policy_no as composite primary key. where the non-key columns plan_nm, tenure, insurred_amount are dependent on policy_no only. so separate those columns which are dependent on part of the key into another table as shown below.
+	
+policy
+-------
+policy_no(pk)  plan_nm  tenure  insurred_amount 
+
+member
+------
+member_no(pk)  member_first_nm  member_last_nm  age  gender mobile_nbr
+
+member_policy
+-------------
+member_no(pk)(fk) policy_no(pk)(fk)
+----------------------------------------------------------------------------------------------------
+3rd Normal Form
+----------------
+1. The data model should be in 2NF
+2. all the non-key attributes of the table should not be dependent on any other non-key columns of the table, which means eliminate transitive dependency
+3. each table should have primary key
+
+[student]
+student_no(pk)	student_first_nm     student_last_nm	qualification	 dob     gender	   mobile_nbr	  email_address
+
+[course]
+course_no(pk)	course_nm	duration	fee
+
+[student_course_faculty]
+student_no(pk)	 course_no(pk)	  faculty_no	 faculty_first_nm	faculty_last_nm	experience	mobile_nbr	email_address
+
+--------------------------------------------------------------------------------------------------
+[faculty]
+faculty_no(pk)    faculty_first_nm	 faculty_last_nm	experience	mobile_nbr	email_address
+
+[student_course_faculty]
+student_no(pk)	course_no(pk)	faculty_no(fk)
+
+[student]
+student_no(pk)	student_first_nm	student_last_nm	qualification	dob	gender	mobile_nbr	email_address
+
+[course]
+course_no(pk)	course_nm	duration	fee
+-------------------------------------------------------------------------------------------------- join queries
+--------------
+since we have broken down the data and distributed across the tables, sometimes we wanted to access the data across these tables to derive more meaningful information for eg.
+we wanted to know who are the students who joined for a course "core java" with faculty "james"
+here the data is distributed across 4 tables, to find who is the student who joined for a core java course with faculty james we need to join the data across the tables to derive
+
+always when we are joining the data across the tables we need to compare primary key column with foreign key column of the another table to drive which 2 records are related.
+	
+by comparing pk and fk we can join tables in 3 ways which are
+1. inner join
+2. left outer join
+3. right outer join

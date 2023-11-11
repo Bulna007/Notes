@@ -1,0 +1,110 @@
+How to work with annotations in hibernate application?
+There are 2 types of configurations we write while building application using hibernate framework.
+1. hibernate configuration file (hibernate.cfg.xml or hibernate.properties)	
+In hibernate configuration file, we define the configuration information related to application pertaining to database and hibernate configuration. Since it is not describing information about any specific class/component, we cannot represent the configuration information interms of annotations. We need to use programmatic approach in writing this configuration	
+	
+2. hibernate mapping file (*.hbm.xml)
+hibernate mapping defines the configuration information of an entity class to an underlying database table, as this information is about a specific class, we can alternatively define the same interms of annotations
+
+From hibernate 3.x onwards in favour of jpa api,they have deprecated hibernate annotations and we need to annotate the entity classes using jpa api annotations only
+
+There are 2 types of annotations are there in jpa/hibernate framework
+1. physical annotations
+using these annotations we map the entity classes and their attributes into the underlying tables/columns. since these permits us map the classes to the underlying tables, these are called "physical annotations"
+
+2. logical annotations
+using these annotations we attach hibernate specific configuration information to an entity class.
+
+There are 2 minimal annotations we need to write on an entity class to make it persistable entity class which are
+	@Entity = indicates it as an entity class
+	@Id = represents the attribute is representing the primary key column of the table
+	
+The other annotations we can write on an entity class goes below:
+1. @Table = binds the table against which the operations to be performed for this entity class. it is optional and can be ignored if our classname and tablename is same
+
+2. @Column = for each attribute we can bind an @Column(name="column_nm") mapping the attribute to the underlying column of the table. it is optional and if ignored will consider the attributeName as columnName
+	
+Hibernate allows us to write annotations inside an entity class at 2 places.
+	1. we can write annotations at an attribute level
+	2. we can write annotations at accessor(getter) method level
+
+Hibernate Framework reads these annotations based on the AccessorType, the AccessorType will be determined based on the place where we are writing @Id annotation
+There are 2 types of AccessorTypes are supported in reading annotations
+	1. FIELD
+	2. METHOD
+	
+
+@Entity
+@Table(name="address") 
+class Address {	
+	@Id
+	int addressNo;
+	String addressLine1;	
+	String addressLine2;	
+	String city;
+	@Transient
+	String state; // transient column (non-serializable/non-persistable)
+	int zip;
+	String country;
+
+	
+	public int getAddressNo() {}
+	public void setAddressNo(int addressNo) {}
+	
+	public String getAddressLine1() {}
+	public void setAddressLine1(String addressLine1) {}
+	
+	public String getAddressLine2() {}
+	public void setAddressLine2(String addressLine2) {}
+	
+	public String getCity() {}
+	public void setCity(String city) {}
+	
+	public String getState() {}
+	public void setState(String state) {}
+	
+	public int getZip() {}
+	public void setZip(int zip) {}
+	
+	public String getCountry() {}
+	public void setCountry(String country) {}
+}	
+
+Address.hbm.xml
+<hibernate-mapping>
+	<class name="Address" table="address">
+		<id name="addressNo" column="address_no"/>
+		<property name="addressLine1" column="address_line1"/>
+		<property name="addressLine2" column="address_line2"/>
+		<property name="city"/>
+		<!--
+		<property name="state"/>
+		-->
+		<property name="zip"/>
+		<property name="country"/>
+	</class>
+</hibernate-mapping>
+
+How to make an attribute transient?
+In an mapping file approach, hibernate persist only the attributes that are configured in mapping file with <property/> tag, if we want to make an attribute transient, we just need to ignore writing <property/> tag for that attribute.
+	
+	
+In an annotation approach when we mark an entity class with @Entity annotation, by default every attribute of that entity class is associated with a annotation @Basic 
+@Basic is an logical annotation defining how does that attribute should be fetched from the database
+@Transient = is a logical annotation written for an attribute to describe that attribute should not be persisted onto the underlying table/column
+
+
+hibernate.cfg.xml
+-------------------
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class"></property>
+		
+		<mapping class="com.ha.entities.Address"/>
+	</session-factory>
+</hibernate-configuration>
+
+Programmatic Approach
+---------------------
+Configuration configuration = new Configuration().configure();
+configuration.addClass(Address.class);

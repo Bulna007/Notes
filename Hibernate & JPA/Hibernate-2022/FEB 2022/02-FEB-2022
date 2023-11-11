@@ -1,0 +1,109 @@
+Relational database management systems supports storing the data interms of tables with columns defined as part of them. we store the data as records within these tables, but java applications wants to access the data and perform the operation interms of objects
+
+Why does java applications wants to hold the data interms of objects?	
+If we are writing our business logic in directly accessing the data from source system to perform the operation there are several problems we run into as described below:
+
+class SalesManager {
+	public double getTotalSaleAmountOfaDay(Date date) {
+		ResultSet rs = null;		
+		Connection con = null;
+		double totalAmount = 0;
+		PreparedStatement pstmt = null;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd);
+			pstmt = con.preparedStatement("select paid_amount from sales where sale_dt = ?");
+			pstmt.setDate(1, new java.sql.Date(date.getTime()));			
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				double paidAmount = rs.getDouble("paid_amount");
+				totalAmount = totalAmount + paidAmount;
+			}
+			
+		}catch(ClassNotFoundException | SqlException e) {
+			throw e;
+		}finally {
+			// close resources
+		}
+		return totalAmount;
+	}
+}
+	
+In the above code we want to perform the operation of calculating the total sale made by the store on a given day, where in it requires data from database so we wrote along with business logic the data access logic as well in fetching the data and perform the operation which has lot of problems:
+
+1. The business logic is exposed to the source system from where data is coming from, which means the business logic works with that source system only. In future if we want to get rid of the RDBMS and want to use no-sql database in storing the data, along with modifying the data access logic we need to even re-write the business logic also as it closely working with data access logic, which requires huge amount of re-development time and cost
+
+2. If we want our program to work with multiple source systems as the business logic is written directly to access the data from a specific source system inorder to make it work with different source systems we need to write multiple programs each per one source system to perform the operation.
+so that the business logic will be duplicated across all the source systems which will puts us into maintainability problems
+
+3. If our business logic is directly access the data from source system to perform operation, if there is a change in the format of the data it has stored in the source system, it not only affects the data access logic along with that business logic also has to be modified.
+	
+How to solve the above problem?
+Never let your business logic to directly access the data from underlying the source system rather pass the data as an input to your business logic interms of objects to perform operation.
+	
+class Sale {
+	int saleNo;
+	Date saleDate;
+	double paidAmount;
+	// accessors
+}	
+
+class SalesManager {
+	public double getTotalSaleAmount(List<Sale> sales) {
+		double totalAmount = 0;
+		
+		for(int i=0;i<sales.length;i++) {
+			Sale sale = sales.get(i);
+			totalAmount = totalAmount + sale.getPaidAmount();				
+		}
+		return totalAmount;
+	}
+}
+	
+// data access logic only
+class SalesDataAccessor {
+	public List<Sale> getSales(Date date) {
+		ResultSet rs = null;		
+		Connection con = null;
+		Sale sale = null;
+		List<Sale> sales = null;
+		PreparedStatement pstmt = null;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd);
+			pstmt = con.preparedStatement("select sale_no, sale_dt, paid_amount from sales where sale_dt = ?");
+			pstmt.setDate(1, new java.sql.Date(date.getTime()));			
+			rs = pstmt.executeQuery();
+			
+			sales = new ArrayList();
+			while(rs.next()) {
+				sale = new Sale();
+				sale.setSaleNo(rs.getInt("sale_no"));
+				sale.setSaleDate(rs.getDate("sale_dt"));
+				sale.setPaidAmount(rs.getDouble("paid_amount"));
+				sales.add(sale);
+			}
+		}catch(ClassNotFoundException | SqlException e) {
+			throw e;
+		}finally {
+			// close resources
+		}
+		return sales;
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		List<Sale> sales = null;
+		double totalAmount = 0;
+		SaleDataAccessor saleDataAccessor = null;
+		SalesManager salesManager = null;
+		
+		salesDataAccessor = new SalesDataAccessor();
+		sales = salesDataAccessor.getSales(new Date(2022, 0, 10));
+		salesManager = new SalesManager();
+		
+		totalAmount = salesManager.getTotalSaleAmount(sales);
+		System.out.println("total Sale amount : " +totalAmount);
+	}
+}

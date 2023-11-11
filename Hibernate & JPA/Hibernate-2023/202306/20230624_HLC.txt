@@ -1,0 +1,63 @@
+Hibernate/Jpa Entity object lifecycle
+An Entity object could exist at several different stages and move across based on the operations we performed on that entity object. The possible states in which an entity object could exists is
+1. Transient State
+2. Persistent State
+3. Detached State
+
+1. Transient State
+If there exists no record representing the entity object in the underlying database table and the entity object is not associated with any active session, then the entity object is said to be in "Transient State". For eg.. whenever we created a new entity object, it will not be associated with any session and doesnt have a record corresponding to it in the underlying database table, and hence it is considered as Transient object
+
+Product product = new Product();
+product.setProductNo(102);
+product.setProductName("Air Conditioner");
+// populated data
+
+The above Product object is said to be in Transient state
+
+2. Persistent State
+If there exists an record representing the entity object in the underlying database table and the entity object is associated with an active session, then it is said to be in "Persistent state". if an entity object is in persistent state, then any changes that takes place ontop of the entity object	would be tracked by the Session/EntityManager and would be persisted automatically on to the underlying database as shown below
+	
+try {
+	sessionFactory = SFRegistry.getSessionFactory();
+	session = sessionFactory.openSession();
+	transaction = session.beginTransaction();
+	
+	Product product = session.get(Product.class, 103); #Persistent State		
+	product.setDescription("Advanced RO+UV Water Purifier");
+	flag = true;
+}	finally {
+	if(flag) {
+		if(transaction != null) {
+			transaction.commit();
+		}else {
+			transaction.rollback();
+		}
+	}
+	if(session != null){
+		session.close();
+	}
+	SFRegistry.closeSessionFactory();
+	
+}
+
+In the above example upon making the changes to the product description attribute we havent called any update() or merge() method ontop of that object, even then also the session tracks these changes made and would be able to persist it automatically when we tried closing the session, which is why it is said to be in persistent state
+
+3. Detached State
+if there exits an record representing that object in the underlying database but the entity object is not associated with any active session, then that entity object is said to be in detached state. This means any changes that are made ontop of that entity object would not be tracked and will not be persisted automatically by the Session/EntityManager.
+	
+
+sessionFactory = SFRegistry.getSessionFactory();
+session = sessionFactory.openSession();
+transaction = session.beginTransaction();
+
+Product product = session.get(Product.class, 103); #Persistent State		
+session.close();	
+
+Now the product entity object will become detached.
+	
+Product product = new Product();
+product.setProductNo(103);
+// populated all the data into it
+
+session = sessionFactory.openSession();
+session.update(product);

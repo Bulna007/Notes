@@ -1,0 +1,87 @@
+How many ways in which we can store the data on the file of a computer?
+There are 2 ways we can store the data on the file
+1. human understandable format = humans can read the data and use it. its an simple english language/natural language text of information represented and stored on a file of the computer
+
+2. programmable format = since the programs cannot interpret natural language data, the data will be written in a format that can read and interpreted by the programs
+
+There are multiple programmable formats of storing the data are there
+1. Fixed width field size format
+all the fields of data we persit on a file will be defined with fixed field sizes based on which the data should be persisted on a file of the computer
+advantages:
+1. both human readable and machine readable
+2. allows us to read the data sequentially and randomly as well
+3. we can built programs which can easily interpret the data and process the data if we store in Fixed width field size format
+4. add, insert, update and delete operations on the data can be performed quite easily when compared with other formats of representation
+
+dis-advantages:
+1. huge amount of memory will be wasted by storing blank spaces to accomodate fixed field sizes
+2. difficult to estimate exact field sizes, requires historical data or knowledge on the business being conducted to choose appropriate sizes for the fields
+3. if the field sizes are changed, then we need to rewrite all the data that has been already stored on the file to new field sizes which is an tedious job
+4. we need to modify the programming logic to interpet the data basedon the new field sizes when those are changed
+5. more amount of data is being stored, means more wastage of data, that indicates cost of storage of the data would be increased
+
+since the business data is very huge in nature we endup in storing lot of blank spaces, due to which the wastage of storage increases and the cost of storage of the data would become very high, so it is not recommended to store business data in fixed width field size format
+
+2. csv (comma separated value) format 
+all the fields of data we are storing are separated or delimited using a "," comma between the fields. Now the fields are not given fixed sizes rather we interpret the data in programs based on "," and field position
+
+joseph,02/28/2023T07:30,6,230
+john,02/28/2023T10:30,23,3490
+
+	
+how to process the above data within the file?
+
+double getTotalSales() {
+	double totalSale = 0;
+	double billAmount = 0;
+	BufferedReader br = new BufferedReader(new FileReader(new File("d:\\sales.txt")));
+	while((String s = br.readLine()) != null) {
+		String[] fields = s.split(",");
+		billAmount = Double.parseDouble(fields[3]);
+		totalSale = totalSale + billAmount;
+	}
+	return totalSale;
+}
+
+From the above we can understand 
+1. read each line
+2. break the data based on ","
+3. extract the fields of data based on index position
+to process the data
+
+advantages:
+1. still it is both human and machine readable
+2. no wastage of memory as the fields are delimited by "," rather than fixed sizes
+3. cost of storage is very less, since we are not storing any blanks
+4. no need of history references or business knowledge in storing the data on a file, because we dont need to compute the field sizes while storing the data
+5. the file format itself is flexible to accomodate any sizes of data for fields so no need to modify the programs or migrate the existing data
+
+dis-advantages:
+1. only sequentially access is supported, no random access is supported
+2. inserting the record of data within the middle of a file is very difficult, we need to shift all the records
+3. updating/modifying a field of data is very difficult
+4. since we rely on "," to interpret the fields, if the actual data itself has "," the data will be wrongly interpreted which results in incorrect business operation/failure
+5. the boundaries of the data may not be extracted properly if the data is incorrectly stored
+6. there is no semantics attached to the data while storing the data, so it is hard to interpret the data from the file
+
+since we use the data to perform business operations, we cannot guarantee the accurracy in carrying the operation if we are storing the data in csv format.
+	
+3. Extensible Markup Language (XML)
+XML stands for Extensible Markup Language, it is not a programming language, rather it is an data representation standard used for storing the data on a file of the computer, so that software programs can read the data and perform operations on that data
+
+XML format allows the us to store the data in structured format and semantics are attached to the data
+
+<sales>
+	<sale>
+		<customer-name>joseph</customer-name>
+		<purchase-date>2023/02/12T10:02</purchase-date>
+		<quantity>4</quantity>
+		<bill-amount>232</bill-amount>
+	</sale>
+	<sale>
+		<customer-name>john</customer-name>
+		<purchase-date>2023/02/23T10:39</purchase-date>
+		<quantity>35</quantity>
+		<bill-amount>2443</bill-amount>
+	</sale>
+</sales>

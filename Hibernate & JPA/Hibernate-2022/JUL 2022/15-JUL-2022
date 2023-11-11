@@ -1,0 +1,23 @@
+CriteriaQuery 
+A query we want to construct with the query clauses and execute on the database. To create the object of CriteriaQuery, the jpa has provided an class called "CriteriaBuilder"
+	
+CriteriaBuilder acts as an builder class for creating the object of CriteriaQuery class by populating all the 3 parts of the query.
+	
+Unless we have an EntityManager we cannot connect to the database an execute an query, so EntityManager acts as an factory for creating the object of CriteriaBuilder, through which we can create an CriteriaQuery.
+	
+EntityManagerFactory emf = Persistence.createEntityManagerFactory("pu1");
+EntityManager em = emf.createEntityManager();
+CriteriaBuilder cb = em.getCriteriaBuilder();
+
+CriteriaQuery<Journey> selJourneysCq = cb.createQuery(Journey.class);
+#The above code doesnt represents which table we are querying, rather it represents the generic returnType of the query execution.
+	
+Into the above CriteriaQuery object we need to add the from, criteria and projection part
+               
+Root<Journey> root = selJourneysCq.from(Journey.class);
+#Here we build the from clause indicating the table from where we wanted to query the data from.	
+selJourneyCq.select(root);
+#here we are selecting all the columns of the table
+
+TypedQuery<Journey> typedQuery = em.createQuery(selJourneyCq);
+List<Journey> journeys = typedQuery.getResultList();

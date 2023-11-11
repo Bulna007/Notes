@@ -1,0 +1,358 @@
+1. What is persistency technology, why do we need it?
+2. forms of file-based persistency, what are the advantages/dis-advantages of them?
+3. what is a database management system, why do we need it?	
+4. types of database management system
+5. Relational database management System
+		- how to establish relationships between the tables
+		- basic concepts
+		- normalization / data modelling
+		- sql queries and joins
+6. class modelling
+----------------------------------------------------------------------------------------------------How we can implement ORM Technology by our own given a chance through jdbc api (Hibernate Framework)
+
+account
+--------
+account_no  account_holder_nm  account_type branch_code  mobile_no  email_address  balance
+
+In order to hold the data of the database table interms of objects, representing the structure of the table we need to create a class declaring attributes based on columns of the table. If we create a class based on the structure of the table, then it is called "Entity" class
+
+// entity class
+class Account {
+	int accountNo;
+	String accountHolderName;
+	String accountType;
+	String mobileNo;
+	String emailAddress;
+	String branchCode;
+	double balance;
+	// accessors
+}	
+
+when we query the data from above table, we want to map each record into one object of the entity class.
+class represents => structure of table	
+object holds => record of data
+
+class AccountAccessor {
+	private final String SQL_FIND_ACCOUNT_BY_ACCOUNTNO = "select account_no, account_holder_nm, account_type, mobile_no, email_address, branch_code, balance from account where account_no = ?";
+	
+	private final String SQL_FIND_ACCOUNT_BY_MOBILENO = "select account_no, account_holder_nm, account_type, mobile_no, email_address, branch_code, balance from account where mobile_no = ?";
+	
+		
+	public Account findAccountByAccountNo(int accountNo){		
+		ResultSet rs = null;
+		Connection con = null;
+		Account account = null;		
+		PreparedStatement pstmt = null;
+		
+		try {			
+			con = ConnectionManager.getInstance().newConnection();
+			pstmt = con.preparedStatement(SQL_FIND_ACCOUNT_BY_ACCOUNTNO);
+			pstmt.setInt(1, accountNo);
+			rs = pstmt.executeQuery();
+						
+			if(rs.next()) {
+				account = (Address) GenericMapper.mapRecordToObject(rs, Account.class);
+			}
+		}catch(ClassNotFoundException | SqlException e) {
+			throw e;
+		}finally {
+			try {
+				if(rs != null) {
+					rs.close();
+				}			
+			}catch(SqlException e) {
+				// ignore
+			}
+			try {
+				if(pstmt != null) {
+					pstmt.close();
+				}
+			}catch(SqlException e) {
+				// ignore
+			}
+			try{
+				if(con != null) {
+					con.close();
+				}
+			}catch(SqlException e) {
+				// ignore
+			}
+		}
+		return account;
+	}
+	public Account findAccountByMobileNo(String mobileNo) {
+		ResultSet rs = null;
+		Connection con = null;
+		Account account = null;		
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = ConnectionManager.getInstance().newConnection();
+			pstmt = con.preparedStatement(SQL_FIND_ACCOUNT_BY_MOBILENO);
+			pstmt.setString(1, mobileNo);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {	
+				account = (Account) Generic.mapRecordToObject(rs, Account.class);	
+			}
+			
+			return account;
+		}catch(ClassNotFoundException | SqlException e) {
+			throw e;
+		}finally {
+			try {
+				if(rs != null) {
+					rs.close();
+				}			
+			}catch(SqlException e) {
+				// ignore
+			}
+			try {
+				if(pstmt != null) {
+					pstmt.close();
+				}
+			}catch(SqlException e) {
+				// ignore
+			}
+			try{
+				if(con != null) {
+					con.close();
+				}
+			}catch(SqlException e) {
+				// ignore
+			}
+		}
+	}
+}
+
+address
+--------
+address_no  address_line1  address_line2  city  state  zip country
+
+class Address {
+	int addressNo;
+	String addressLine1;
+	String addressLine2;
+	String city;
+	String state;
+	int zip;
+	String country;
+	// accessors
+}
+
+class AddressAccessor {
+	private final String SQL_FIND_ADRESS_BY_ADDRESS_NO = "select address_no, address_line1, address_line2, city, state, zip, country from address where address_no = ?";
+	
+	public Address findAddressByAddressNo(int addressNo) {
+		ResultSet rs = null;		
+		Connection con = null;
+		Address address = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = ConnectionManager.getInstance().newConnection();
+			pstmt = con.preparedStatement(SQL_FIND_ADRESS_BY_ADDRESS_NO);
+			pstmt.setInt(1, addressNo);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				address = (Address) GenericMapper.mapRecordToObject(rs, Address.class);			
+			}
+			
+		}catch(ClassNotFoundException | SqlException e) {
+			throw e;
+		}finally {
+			try {
+				if(rs != null) {
+					rs.close();
+				}			
+			}catch(SqlException e) {
+				// ignore
+			}
+			try {
+				if(pstmt != null) {
+					pstmt.close();
+				}
+			}catch(SqlException e) {
+				// ignore
+			}
+			try{
+				if(con != null) {
+					con.close();
+				}
+			}catch(SqlException e) {
+				// ignore
+			}
+		}
+		return address;
+	}
+}
+-----------------------------------------------------------------------------------------
+We need connection object in each method of the data accessor classes, so if we write the code for creating the connection in every method, the code gets duplicated across all the places, so that if there is change required all the classes and methods where we wrote the code will be impacted
+
+db.properties
+----------------
+db.driverClassname=com.mysql.cj.jdbc.Driver
+db.url="jdbc:mysql://localhost:3306/netsafedb"
+db.username=root
+db.password=root
+
+#1 approach 
+------------
+class ConnectionManager {
+	private static Properties props;
+	static {
+		props = PropertiesReader.readProperties("orm-config.properties");
+	}
+	public static Connection newConnection() {
+		Connection con = null;		
+		try {			
+			Class.forName(props.getProperty("db.driverClassname"));
+			
+			con = DriverManager.getConnection(props.getProperty("db.url"), props.getProperty("db.username"), props.getProperty("db.password"));	
+		}catch(ClassNotFoundException | SqlException e) {
+			throw new ConnectionFailedException("unable to create connection");
+		}
+		return con;
+	}
+}
+
+#2. singleton
+--------------
+class ConnectionManager {
+	private static ConnectionManager instance;	
+	private Properties props;
+	
+	private ConnectionManager() {
+		props = PropertiesReader.readProperties("orm-config.properties");
+	}
+	
+	public static synchronized ConnectionManager getInstance() {
+		if(instance == null) {
+			instance = new ConnectionManager();
+		}
+		return instance;
+	}
+	
+	public Connection newConnection() {
+		Connection con = null;		
+		try {			
+			Class.forName(props.getProperty("db.driverClassname"));
+			
+			con = DriverManager.getConnection(props.getProperty("db.url"), props.getProperty("db.username"), props.getProperty("db.password"));	
+		}catch(ClassNotFoundException | SqlException e) {
+			throw new ConnectionFailedException("unable to create connection");
+		}
+		return con;
+	}
+}
+
+How many entity classes do we need to hold the data of an table?
+always when we querying the data from a table, the query always fetches same set of column of values, if we can create an entity class based on the columns of the table, then we can create multiple objects to hold different records of data of that table, creating multiple entity classes for a table, will unnecessarily duplicates the structure of the classes and multiples the development effort 
+
+In-Short:- So per table we always create one entity class only
+	
+It looks like whereever we query the data from account table always we bind the data into Account entity class only, so we endup in duplicating the code across the classes of our application in binding the data into same entity class, instead use Mapper class
+		
+class AccountMapper {
+	public static Account mapRecordToAccount(ResultSet rs) {
+		Account account = null;
+		
+		account = new Account();
+		account.setAccountNo(rs.getInt(1));
+		account.setAccountHolderName(rs.getString(2));
+		account.setAccountType(rs.getString(3));
+		account.setMobileNo(rs.getString(4));
+		account.setEmailAddress(rs.getString(5));
+		account.setBranchCode(rs.getString(6));
+		account.setBalance(rs.getDouble(7));	
+		return account;
+	}
+}	
+	
+class AddressMapper {
+	public static Address mapRecordToAddress(ResultSet rs) {
+		Address address = null;
+		
+		address = new Address();
+		address.setAddressNo(rs.getInt(1));
+		address.setAddressLine1(rs.getString(2));
+		address.setAddressLine2(rs.getString(3));
+		address.setCity(rs.getString(4));
+		address.setState(rs.getString(5));
+		address.setZip(rs.getInt(6));
+		address.setCountry(rs.getString(7));
+		return address;
+	}
+}	
+across all mappers in our application we need to write logic for reading the columns from the record and bind the data into corresponding attributes of the class looks like the code is not getting duplicated but the logic across the mappers would be same. Instead of writing multiple mappers in binding the data from different records to different classes if we can pass the columns to attributes of an entity class as an input to mapper we can avoid writing multiple Mapper classes for our application
+
+if we can take inputs of columnstoattributes and entity class to which data has to be binded, then the same entity class works for any table to any entity class that reduces huge amount of development and cost
+	
+class GenericMapper {
+	public static Object mapRecordToObject(ResultSet rs, Class<?> entityClass) {
+		Properties colsToAttributesProps = null;
+		Properties ormConfigProps = null;
+		String attributeName = null;
+		String setterMethod = null;
+		Object entityObject = null;
+		String columnValue = null;
+		Method method = null;
+		String propsFileName = null;
+		
+		ormConfigProps = PropertiesReader.readProperties("orm-config.properties");
+		propsFileName = ormConfigProps.getProperty(entityClass.getName());
+		
+		colsToAttributesProps = PropertiesReader.readProperties(propsFileName);
+		
+		entityObject = entityClass.newInstance();
+		for(String columnName : colsToAttributesProps.keySet()) {
+			columnValue = rs.getString(columnName);
+			attributeName = colsToAttributesProps.getProperty(columnName);
+			
+			setterMethod = "set"+attributeName.subString(0,1).toUpperCase() + attributeName.subString(1, attributeName.length);
+			method = entityClass.getDeclaredMethod(setterMethod, String.class);
+			method.invoke(entityObject, columnValue);
+		}
+		return entityObject;
+	}
+}
+
+account.properties
+-------------------
+account_no=accountNo
+account_holder_nm=accountHolderName
+account_type=accountType
+mobile_no=mobileNo
+email_address=emailAddress
+branch_code=branchCode
+balance=balance
+
+address.properties
+------------------
+address_no=addressNo
+addressLine1=address_line1
+addressLine2=address_line2
+city=city
+state=state
+zip=zip
+country=country
+
+orm-config.properties
+----------------------
+db.driverClassname=com.mysql.cj.jdbc.Driver
+db.url="jdbc:mysql://localhost:3306/netsafedb"
+db.username=root
+db.password=root
+
+com.safebank.entities.Account=account.properties
+com.safebank.entities.Address=address.properties
+
+
+class PropertiesReader {
+	public static Properties readProperties(String propsFileName) {
+		Properties props = new Properties();
+		props.load(PropertiesReader.class.getClassLoader().
+		getResourceAsStream(propsFileName));
+		return props;
+	}
+}

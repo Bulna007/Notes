@@ -1,0 +1,47 @@
+What is association relationship?
+A class can reuse few/all of the traits of another class using association relationship, it is an another dimension of resuability. Association establishes HAS-A relationship between the classes.
+	
+There 2 characteristics of association relationship
+1. Cardinality
+2. Directionality
+3. Ownership (optional)
+	
+	
+#1. Cardinality
+How many objects of a class is in association with the other class objects is indicated through cardinality. To derive the cardinality of the relationship we need to read the relationship both the sides.
+
+#2. Directionality 
+Directionality indicates which side we have represented the association. An association can be either uni-directional or bi-directional. In case of uni-directional only one side of the relationship is established. In bi-directional both the sides the objects are associated.
+Directionality is decided based on the usage of the classes within our application
+
+1..1	
+class Account {
+	Address address;
+}	
+
+1..*
+class Address {	
+}
+
+#3. ownership
+optionally an association relationship can have ownership indicates who owns the relationship
+Based on the above characteristics we can derive 3 forms of association
+1. association
+2. aggregation
+3. composition
+
+of the above 3 the highest degree of association is "composition".
+	
+How to derive whether 2 given classes are in which form of association relationship?
+It is derived based on 2 factors
+1. ownership of relationship
+2. lifetime/dependency between the objects
+
+1. association
+if a class holds the object of another class where there is no ownership and lifetime between the classes then those classes are said to be in association relationship
+	
+2. aggregation
+if a class holds the object of another class where there is ownership of the relationship but there is no lifetime dependency between the classes then those are said to be in aggregation relationship
+	
+3. composition
+if a class holds the object of another class where there is an ownership and lifetime dependencies between the classes then those are said to be in composition relationship

@@ -1,0 +1,42 @@
+How many ways we can establish relationship between the classes?
+There are 2 ways are there
+1. Inheritance
+2. Association
+
+1. Inheritance
+extending one class from another class in reusing all the functionality or traits of another class is called "Inheritance". There are 3 forms of inheritance relationship are there
+1.1 Generalization
+1.2 Specialization
+1.3 Realization
+
+1.1 Generalization
+Generalization is the another form of Inheritance relationship, where we identify common functionalities across several classes in our application and create an super class out of these common functionalities inorder to reuse them across all the classes who requires them.
+This process of identifying the common functionalities and wrapping them into a super class for achieving reusability is called "Generalization"
+	
+In-Short: we generalize the common functionalities across several classes into a super class.
+Note: In case of generalization the super class has been formed out of the common functionalities of several classes in our application, since the super class doesnt have its own existence or presence and doesnt provide any concreate functionality and is only being created for achieving reusability, always the super class would be "abstract". In case of generalization the inheritance relationship will be established from "bottom to top".
+	
+1.2 Specialization
+Specialization is the another form of Inheritance, here out of an existing concreate class of our application, we derive new classes (sub-class) to add additional functionality ontop of existing class that is specific to that subclass to serve the additional functionality to subset of classes in our application
+This process of creating new subclasses out of an existing concreate class in our application is called "specialization". Here the super class will be non-abstract only. Here the inheritance hierarcy will be established in top-down approach
+
+1.3 Realization
+Realization is another form of Inheritance, where a class is realizing or implementing an interface is called "Realization"
+	
+2. Association
+Association is an another form of achieving reusability between the classes, here we declare one class as an attribute in another class and using the reference/object of another class we reuse the functionality/data of another class. There are 3 forms of Association are there
+1. Association
+2. Aggregation
+3. Composition
+
+In Association relationship has few characteristics
+1. Directionality
+2. Cardinality
+3. Lifetime
+
+1. Directionality
+In case of Association relationship, it can be uni-directional or bi-directional. Uni-directional means we establish one side of the association only by declare other class as an attribute in our class representing relationship
+	
+In case of Bi-Directional association, we declare both the classes as attributes in each of the others establishing relationship from both the sides.
+	
+Note: The assocation relationship should be uni-directional or bi-directional should be choosen based on the usability of your classes in your application

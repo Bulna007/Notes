@@ -1,0 +1,117 @@
+What are id generators, why do we need to use them?
+id generators are the java classes provided as part of hibernate framework api, used for generating the surrogate key column values in storing the entity objects into the database
+
+Hibernate Framework has provided 11 id generators for generating the key column values based on different strategies
+1. assign
+2. increment
+3. identity
+4. native
+5. sequence
+6. hilo
+7. seq_hilo
+8. guid
+9. uuid
+10. foreign 
+11. select
+
+#1. assigned
+assigned is the default id generator used when we have not specified any id generator for an entity class. assigned generator means, the user is going to assign the id value and hibernate framework should not generate the id
+	
+How to use an id generator to generate and store the entity object?
+The developer dont have to write the code for instantiating the Id generators and invoking them for generating the ids in the application. Because we need to write the code for instantiating and invoking the id generator across all the places whereever we are storing the entity object which becomes boiler-plate logic
+
+We need to specify for which entity class, what id generator has to be used for generating id value in mapping file at id attribute level
+<id name="propertyName" column="column_nm">
+	<generator class="idGeneratorName"/>
+</id>
+
+At the time of instantiating the SessionFactory, he reads all the mapping files and identifies the IdGenerators to be used for each entity class and takes care of instantiating these Generator classes and keep them within the SessionFactory to avoid repeatedly instantiating the objects of the Id Generators
+	
+When we call the session.save(entityObject) method,the Session will quickly goes to the SessionFactory asking for an idgenerator object to be used for generating the id. By taking the IdGenerator object from SessionFactory, it invokes generate() method to generate the id.
+The Session object takes the id sets to the entity object with which it persists the data into the database.
+
+class Customer implements Serializable {
+	int customerNo;
+	String customerName;
+	Date dob;
+	String gender;
+	String mobileNo;
+	String emailAddress;
+	// accessors
+}
+
+Customer.hbm.xml
+-----------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.idgen.entities">
+	<class name="Customer" table="customer">
+		<id name="customerNo" column="customer_no">
+			<generator class="increment"/>
+		</id>
+		
+		<property name="customerName" column="customer_nm"/>
+		<property name="dob"/>
+		<property name="gender"/>
+		<property name="mobileNo" column="mobile_no"/>
+		<property name="emailAddress" column="email_address"/>
+	</class>
+</hibernate-mapping>
+
+hibernate.cfg.xml
+------------------
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/hibdb</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+		
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+		<property name="show_sql">true</property>
+		<mapping resource="com/idgen/entities/Customer.hbm.xml"/>
+	</session-factory>
+</hibernate-configuration>
+
+Test.java
+-----------
+boolean flag = false;
+try {
+	Configuration configuration = new Configuration().configure();
+	SessionFactory sessionFactory = configuration.buildSessionFactory();
+	
+	
+	Session session = sessionFactory.openSession();
+	Transaction transaction = session.beginTransaction();
+	
+	Customer customer = new Customer();
+	customer.setCustomerName("Joseph");
+	customer.setDob(new Date());
+	customer.setGender("Male");
+	customer.setMobileNo(938933);
+	customer.setEmailAddress("jospeh@gmail.com");	
+	session.save(customer);
+	
+	flag = true;
+}finally {
+	if(transaction != null) {
+		if(flag == true) {
+			transaction.commit();
+		}else {
+			transaction.rollback();
+		}
+	}
+	// close session
+	// close sessionFactory
+}
+
+Session session = sessionFactory.openSession();
+Transaction transaction = session.beginTransaction();
+
+
+#2. increment
+increment id generator generates the surrogate key column value by querying the last generated key column value + 1. The increment id generator fetches the max id for the first-time by querying the data from database table, stores the id value locally and increments it by +1 and returns always. The subsequent invocation of the increment generator returns the in-memory value of the id by incrementing 1 to avoid repeatedly hitting the underlying table in fetching the max id
+
+Supports: 
+	dataType: int, short, long
+	environment: multi-threaded 
+	limitation: should not be used in clustered environment

@@ -1,0 +1,26 @@
+Hibernate 4.x bootstrapping
+---------------------------
+Hibernate Framework requires external resources in order to perform persistence operations like
+1. Connection
+2. Transaction Manager etc
+
+The Framework itself has been built-in in acquiring these external resources and has integrations with many third-party libraries as well in providing the flexibility in procuring/gathering these resources
+For eg.. Connection is one of the external resource, hibernate framework itself has provided built-in intergrations in acquiring the Connection object through
+1. Framework built-in Connection pool support
+2. Third-party Standalone Connection pool libraries
+	2.1 c3p0
+	2.2 proxool
+	2.3 dbcp
+	2.4 hikari
+3. jee datasource connection pool
+
+The developer has provide relevant configuration in letting the Hibernate framework knows which of technics we wanted to be used by Hibernate for our application in acquiring these resources
+
+Instead of using the pre-defined third-party integrations in acquiring the external resources, can we plugin our own libraries in acquiring these external resources?
+For eg we have our own ConnectionPool library, and we want Hibernate Framework to work with our ConnectionPool library in grabbing the Connections rather than using pre-defined integration libraries. 
+From the above we can understand we are enhancing or extending the capabilities of the Framework in plugging in new implementations into the Hibernate Framework, this is not supported till Hibernate 3.x and has been added in Hibernate 4.x onwards
+
+Hibernate 4.x has added Service and ServiceRegistry to support pluggability into the Framework
+
+What is a Service?
+Service is a component that serves some functionality as part of it. 

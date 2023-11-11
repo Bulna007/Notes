@@ -1,0 +1,41 @@
+What is persistency?
+permanently storing the data on the storage devices of the computer	is called "persistency"
+
+Business data is long-lived data, that has to be repeated used for longer amount of time for performing various different types of operations on that data, so we should persist the data permanently so that it can be used in future for deriving various operations.
+	
+How many ways we can store the data permanently?
+There are 2 ways are
+1. book or a paper
+2. on the storage device of the computer
+
+1. book or paper
+we can write the information on a piece of paper, so that we can use it at later point of time whenever we need, but it has lot of dis-advantages
+1.1 the data written on a book or a paper has wear and tear, at somepoint in future the information we stored will be faded/vanished
+1.2 if the information grows huge, then searching and retrieving the data becomes very difficult
+1.3 information is not legitimate, because different people has different handwriting skills and it may not be understood by everyone
+1.4 not secured, any one can read the information that is written on a book if they has access to it
+1.5 to perform operations on that data, we need to manually feed the information as an input to the computer program 
+	1.5.1 its an time taking process in manually re-entering the data onto the computer
+	1.5.2 there could be a chance of human errors while feeding the data, this could lead to wrong/incorrect operation
+	
+to overcome the above problems and to permanently store the data, it is recommended to store the data on the storage device of the computer system
+advantages:
+1. no matter how long we live, the data lives more than our life. there is no wear and tear of information
+2. even the information grows huge, we can easily search and retrieve the data 
+3. the information stored on the computer is legitimate, everyone can understand the representation of the data
+4. information is secured we can enforce passwords on the data stored on the computer so that other people will not steal or read the data
+5. since the data is stored on the computer storage device, programs can directly read the data from the storage device to perform operations due to which we have an advantage
+	5.1 saves huge time in feeding the data
+	5.2 accuracy of performing operation is very high
+	
+How to store the data permanently on the storage device of a computer?
+we can store the data interms of files/folders. There are 2 formats of storing the data permanently on the files of the computer
+
+1. human understandable format
+2. programmable format
+
+1. human understandable format
+The data represented on a file can be read by the humans and can be understood by them is called "human understandable format". All the data we write on text format or pdf or word or powerpoint are few of the examples of human understandable format of representing the data
+
+2. programmable format
+The software programs cannot understand natural language representation of data, because they dont have artificial intelligence in interpreting the information. So we need special format called programmable format.

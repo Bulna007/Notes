@@ -1,0 +1,43 @@
+HQL/JPQL
+HQL stands for Hibernate query language and JPQL stands for Java Persistency Query Language.
+There are 2 reasons for which we are using HQL and JPQL
+1. The HQL and JPQL are object query language api, that makes the queries decouple from the underlying database schema.
+2. 	HQL/JPQL queries are independent of the database
+
+Few points to memorize while working with HQL/JPQL queries:
+1. The queries are case insenstive, we can write an HQL/JPQL query clauses in any case. we can use even mixed case letters also while writing the queries
+2. all the classnames and attribute names should be written matching with their names, these are not case-insensitive
+3. while writing the queries we need to fqn of the classnames, by default auto-import="true" so that we can avoid writing the fqn and required only if there is a conflict with then name.
+4. always the HQL/JPQL queries are designed to return multiple objects of data, if we want to fetch only one object from the database we need to use single query api like get(), load() and find() methods
+
+How to execute a HQL/JPQL queries?
+From Hibernate 5.x onwards the HQL apis are deprecated and we need to only use JPQL query apis only for executing HQL and JPQL queries.
+	
+There are 2 ways we can execute an HQL/JPQL queries in jpa api
+1. Query
+The Query class returns non-generic list of objects from the database upon executing the query.
+	
+2. TypedQuery
+TypedQuery returns generic list of objects from the database
+
+#1. Query class
+Session acts as an factory for creating the object of Query class, using which we can execute an HQL/JPQL queries.
+	
+Configuration configuration = new Configuration().configure();
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+Session session = sessionFactory.openSession();
+Query query = session.createQuery("from Parcel");
+List<Parcel> parcels = query.getResultList();
+
+
+Instead of using Query class we can use TypedQuery as below.
+TypedQuery typedQuery = session.createQuery("from Journey", Journey.class);
+List<Journey> journeys = typedQuery.getResultList();
+
+1. aggregate queries
+2. single column output queries
+3. query returns one record as an output
+4. partial columns from a table
+5. with where clauses
+6. groupBy
+7. join queries

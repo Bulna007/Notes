@@ -1,0 +1,87 @@
+Cascade options
+----------------
+When we perform operation on an entity object, how does the operation should be propagated on to the child associated objects can be managed through Cascade options.
+There are 5 cascade options are available/supported by hibernate
+1. none (default)
+2. all
+3. save-update
+4. delete
+5. orphan-delete
+
+3. save-update
+whenever we perform an save or update on an entity object, hibernate automatically propagates the operation onto the associated objects as well depends on the state of the child objects.
+if the child object is transient, it will persist it as well, if not it will update the child object automatically
+
+Review review = new Review();
+// populated data into review
+
+Product product = new Product();
+// populated data into product
+
+review.setProduct(product);
+session.persist(review);
+
+incase of cascade = "none", since the associated object Product is in transient state, while storing the review, as it cannot persist the foreign key column of product_no from the associated object product into review record, it throws exception indicating the associated child object is transient
+	
+if we enable cascade option as save-update as below
+<many-to-one name="product" class="Product" column="product_no" not-null="true" cascade="save-update" />
+	
+now when we save review object, hibernate identifies the associated product object as transient and saves the product first and then stores the review by persisting the associate product entity object primary key as foreign key inside it
+
+#update
+Product product = new Product();
+// populating the data
+
+Review review = session.get(Review.class, 10);
+review.setProduct(product);
+session.merge(review);
+
+now when we ask hibernate to update the review, it identifies the child associated object as transient and persist the product and update the review with the product foregin key
+
+#4. delete
+When we are deleting an parent object, if we have child associated objects for the parent, then database will not allow us to delete the parent without deleting the child records
+First we need to delete all the child objects then only we can delete the parent. For eg.. we want to delete an product, that has 2 reviews
+
+Product product  = session.get(Product.class, 10);
+session.delete(product);
+
+it results in an error saying child associated objects exists, so to delete the product, we need delete all the reviews associated with the product manually before deleting the product as below
+
+Product product = session.get(Product.class, 10);
+Iterator<Review> reviews = product.getReviews().iterate();
+while(reviews.hasNext()) {
+	Review review = reviews.next();
+	session.delete(review);
+	reviews.remove();
+}
+session.delete(product);
+
+we need to write lot of code in deleting/removing an parent object when those are associated with childs, instead of writing the above code we can use cascade as "delete" as below
+
+<set name="reviews" cascade="delete">
+	<key column="product_no" not-null="true"/>
+	<one-to-many class="Review"/>
+</set>
+
+session.delete(product);
+now hibernate takescare of deleting the child associated objects along with parent.
+	
+#5 orphan-delete
+when we dis-associate an child object from the parent, if the child object is not associated with any other parent object, then when we apply cascade="orphan-delete", the hibernate automatically deletes the child object
+
+Product product = session.get(Product.class, 10);
+Set<Review> reviews = product.getReviews();
+Iterator it = reviews.iterator();
+
+while(it.hasNext()) {
+	Review review = it.next();
+	if(review.getRating() < 3) {
+		it.remove();
+	}
+}
+session.update(product);
+
+when we dis-associate review object from product, and update the product hibernate checks whether the review is associated with any product, if not it deletes the child automatically.
+	
+#2. all
+all enables all the cascade options

@@ -1,0 +1,102 @@
+How many types of hibernate tools are there?
+There are 2 types of hibernate tools are there
+1. gui tools
+The gui tools has provided support for generating entity classes, mapping files from database tables. There are tools like reverse engineering, hibernate code generation etc through which we can generate the classes/mappings from database.
+	
+2. command-line tools
+There are 3 different command-line tools are provided
+1. SchemaExport
+2. SchemaUpdate
+3. SchemaValidate
+These 3 tools are 3 hibernate framework provided classes which are packaged inside hibernate-core.jar we need to run these classes by setting classpath to hibernate jars and each of these classes will provided different functionality as below.
+	
+1. SchemaExport
+if we have already an entity class, mapping files and hibernate configuration file pointing to an database, we can create/drop tables from the mapping file using SchemaExport tool
+
+class Account {
+	int accountNo;
+	String accountHolder;
+	Date dob;
+	String gender;
+	// accessors
+}
+
+Account.hbm.xml
+----------------
+<hibernate-mapping package="com.ht.entities">
+	<class name="Account" table="account">
+		<id name="accountNo" column="account_no"/>
+		<property name="accountHolderName" column="account_holder_nm"/>
+		<property name="dob"/>
+		<property name="gender"/>
+	</class>
+</hibernte-mapping>
+
+hibernate.cfg.xml
+------------------
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/hibdb</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+	</session-factory>
+</hibernate-configuration>
+
+In the above code, we have entity class, mapping and hibernate.cfg.xml files, to run the project we need database tables 
+1. one-way to create tables is we need an existing sql file defined with all the tables of our application then we can quickly execute the sql file to create db tables in our project
+
+2. instead of we creating tables by running sql file, we can use SchemaExport tool that helps us in 
+- creating schema and tables
+- dropping existing schema
+from the database
+SchemaExport is usually used under 2 cases frequently
+1. during the developer, the developer can quickly create tables out of the entity class he created to develop the application
+2. during unit testing, we need to create a new database with tables and after performing unittesting we need to drop the database that can be quickly done through SchemaExport
+
+d:\work:/>
+(eclipse javaproject)
+hibtools
+|-src
+|-bin
+|-lib
+	|-*.jar (hibernate jars)
+	
+
+antlr-2.7.7.jar
+dom4j-1.6.1.jar
+hibernate-commons-annotations-5.1.2.Final.jar
+hibernate-core-5.6.8.Final.jar
+jandex-2.4.2.Final.jar
+javassist-3.18.1-GA.jar
+jboss-logging-3.4.3.Final.jar
+jboss-logging-annotations-1.2.0.Beta1.jar
+jboss-transaction-api_1.2_spec-1.0.0.Final.jar
+mysql-connector-java-8.0.28.jar
+javax.persistence-api-2.2.jar
+byte-buddy-1.12.9.jar
+javax.activation-api:jar:1.2.0
+
+
+
+--- maven-dependency-plugin:2.8:tree (default-cli) @ hibernate-annotations ---
+G] The artifact xml-apis:xml-apis:jar:2.0.2 has been relocated to xml-apis:xml-apis:jar:1.0.b2
+hibernate:hibernate-annotations:jar:0.0.1-SNAPSHOT
++- org.hibernate:hibernate-core:jar:5.6.5.Final:compile
+|  +- org.jboss.logging:jboss-logging:jar:3.4.3.Final:compile
+|  +- javax.persistence:javax.persistence-api:jar:2.2:compile
+|  +- net.bytebuddy:byte-buddy:jar:1.12.7:compile
+|  +- antlr:antlr:jar:2.7.7:compile
+|  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.1.1.Final:compile
+|  +- org.jboss:jandex:jar:2.4.2.Final:compile
+|  +- com.fasterxml:classmate:jar:1.5.1:compile
+|  +- javax.activation:javax.activation-api:jar:1.2.0:compile
+|  +- org.hibernate.common:hibernate-commons-annotations:jar:5.1.2.Final:compile
+|  +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+|  \- org.glassfish.jaxb:jaxb-runtime:jar:2.3.1:compile
+|     +- org.glassfish.jaxb:txw2:jar:2.3.1:compile
+|     +- com.sun.istack:istack-commons-runtime:jar:3.0.7:compile
+|     +- org.jvnet.staxex:stax-ex:jar:1.8:compile
+|     \- com.sun.xml.fastinfoset:FastInfoset:jar:1.2.15:compile
+\- mysql:mysql-connector-java:jar:8.0.28:compile
+   \- com.google.protobuf:protobuf-java:jar:3.11.4:compile

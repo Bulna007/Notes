@@ -1,0 +1,115 @@
+Proxy design pattern
+---------------------
+We can add additional functionality ontop of an existing class, without modifying the outcome of existing class is called "proxy" class/design pattern
+
+The additional functionality we wanted to add is not common across all the classes of our application, in such case adding that additional functionality into the existing class will affect all the classes of our application, So to ensure the additional functionality is applied to a specific set of classes we proxy the original class.
+	
+The client who is requesting the object of an original class cannot differentiate between the proxy or the original class object since proxy also looks or adopts the same contract of the original, so that in our application we can easily swap between proxy and original without any impact.
+	
+There are 2 types of proxies are there
+1. design-time proxies 
+2. runtime proxies
+
+#1. design-time proxies
+The class for whom we wanted to create the proxy for adding additional functionality is well known at the design-time/development-time itself
+
+interface NetbankingService {}
+class NetbankingServiceImpl implements NetbankingService {}
+
+class SecureNetbankingServiceImpl implements NetbankingService {
+	private NetbankingService netbankingService;
+	
+	public SecureNetbankingServiceImpl(NetbankingService netbankingService) {
+		this.netbankingService = netbankingService;
+	}
+	
+	public double getBalance(String accountNo) {
+		// apply security check, if passed
+		return netbankingService.getBalance(accountNo);
+	}
+}
+
+#2. runtime proxies
+The class for whom we wanted to create proxy is not known at design-time or development-time. it will known only at runtime in such case the proxies has to be created at runtime only 
+Hibernate Framework creates the proxies on top of the Entity classes when we call the load(ClassType, id) at runtime, since it dont know for which class it has to create the proxy until we call the load() method by passing classType. Hibernate Framework internally uses javaassist library in creating the runtime proxies
+------------------------------------------------------------------------------------------
+Account account = session.load(Account.class, 10);
+int accountNo = account.getAccountNo();
+String accountHolderName = account.getAccountHolderName();
+String accountType = account.getAccountType();
+
+let us imagine how does this proxy class might look like:
+
+class Account$Proxy extends Account {
+	private Account account;
+	private boolean initialized;
+	
+	public Account$Proxy(Object id) {
+		account = new Account();
+		account.setAccountNo(id);
+		initialized=false;
+	}
+	public int getAccountNo() {
+		return account.getAccountNo();
+	}
+	public void setAccountNo(int accountNo) {
+		this.account.setAccountNo(accountNo);
+	}
+	public String getAccountHolderName() {
+		loadObject();
+		return account.getAccountHolderName();
+	}
+	public void setAccountHolderName(String accountHolderName) {
+		loadObject();
+		this.account.setAccountHolderName(accountHolderName);	
+	}
+	public String getAccountType(){ 
+		loadObject();
+		return account.getAccountType();
+	}
+	public void setAccountType(String accountType) {
+		loadObject();
+		this.account.setAccountType(accountType);
+	}
+	
+	private void loadObject() {
+		if(initialized == false) {
+			// fetch the mapping metadata for the entity class
+			// goes to dialect, to create sql query for fetching the against the primary key
+			// creates preparedStatement and substitutes the id
+			// executes the query and fetch the resultset 
+			// use GenericMapper to convert into object
+			this.account = account;
+			initialized=true;
+		}
+	}
+	
+}
+
+#1. 
+get(ClassType, id)
+whenever we call the get(ClassType, id), it goes directly to the database queries the data with the given primary key, fetches and populates the data into entity object and returns to us, so get() method supports eager loading
+
+load(ClassType, id)
+whereas when we call load(ClassType, id), it doesnt goes to the database and queries the data, rather it creates an runtime proxy using javaassist proxy generation library by populating the id into the proxy object and returns the reference of the proxy to us.
+	
+Account account = session.load(Account.class, 10);
+whenever we call any of the accessor methods on the proxy object returned, then the proxy goes to the database queries the data against the primary key supplied fetches and caches the data into the local reference of the proxy from which it returns the data.
+	
+So, any subsequent calls onto any of the accessor methods thereafter the first class, will only returns the data from local reference without hitting the database
+
+note:- if we call the accessor method on the primary key attribute, the proxy will not goes to the database, rather returns the prepouplated value that we supplied
+
+#2.
+when we call the get(ClassType, id), if the underlying record corresponding to the id we supplied is not available, the get method returns null
+Account account = session.get(Account.class, 10); //given there is not record with accountNo=10
+then get() method return null indicating no account object available with accountNo 10
+	
+whereas when we call load(ClassType, id), as it doesnt goes to the database for querying the data it returns proxy object to us by populating the id we supplied always
+
+Account account = session.load(Account.class, 10);
+it returns proxy object by populating the id value as load never goes to database
+
+now when we call accessor method on the proxy object, it goes to the database to query the data, since there is no record bearing the accountNo=10, it throws an ObjectNotFoundException
+
+String accountHolderName = account.getAccountHolderName();

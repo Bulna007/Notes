@@ -1,0 +1,16 @@
+How to represent relationship between the tables in RDBMS?
+There could be several data pertaining to a business needs to be persisted into RDBMS database, but all the data should not be stored in one single table in the RDBMS
+problems: 
+1. we endup in repeated storing the same data across the records of the table so that it result in data duplication and incurrs huge wastge of memory
+2. we will run into insertion anamolies, for eg.. if there is an customer who has not made any sale, but wanted to store the information about the customer, it will not be possible to have in our system, because we are writing sales along with customer together.
+3. we run into deletion anamoly. for eg.. there is movie cd rented by multiple customers, if the movie cd got corrupted we want to remove the cd information from our system, but while deleting the cd, the customer who has rented that cd data also will be lost
+4. we run into updation anamoly, if there is a customer came for asking us to update the mobile number while making an sale, then all the records pertaining to the customer will not have the same mobile number, and leads to data inconsistency
+
+To avoid the above problems, always break the data and distribute the data across multiple tables. if we are distributing the data across multiple tables, how to relate the records of data of one table with the records of data in another table?
+In-Short: how to relate the data across the tables?
+That is where we need to use primary keys and foreign keys for establishing the relationship between the data . There are 3 ways we can represent relationship between the data across the tables.
+1. one-to-one
+2. one-to-many/many-to-one
+3. many-to-many
+
+always RDBMS relationships are uni-directional, which means one side of the primary key should be written as foreign key in another table.

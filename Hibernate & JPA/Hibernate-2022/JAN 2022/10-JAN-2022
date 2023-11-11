@@ -1,0 +1,54 @@
+How to store the data permanently on a storage device of a computer?
+We can store the data on the permanent storage device of a computer using File Sytem technics interms of Files/Folder on a computer.
+
+File: File is a named logical memory location where group of data stored in terms of characters/bytes which can read/accessed uniquely
+Folder: Collection of Files grouped to gether to quickly locate and access is called a Folder
+
+How to store the data in Files?
+We can store the data in files interms of text/sequence of characters inside it. when we store the business data in the files, we can read it and understand, but we wanted programs/software applications to read and process the data that is stored in the Files.
+	
+Programs cannot understand the data that is stored interms of text of characters as programs cannot interpret natural/human language so we need to store the data in the file in a format where humans and programs also should be able understand and perform operations that where we have 2 formats of storing the data
+
+1. Human understandable format
+2. programmable/machine understand format
+
+How to store the data in programmable or machine understandable format?
+There are experts in the market performing research on how can we effectively store the data on a File so that programs can also read and perform operation and has introduced several forms of storing the data, let us explore those formats
+
+Business data usually contains multiple fields of information, instead of capturing the data in a natural language, if we can extract those fields of data and store in a specific format in a file, then we can program the data.
+	
+1. Fixed width field size format (FWFSF)
+In Fixed width field size format, each field of information is assigned a fixed width using which we store the data in a specific order of fields
+Rules:-
+	1. all the records should have same set of fields
+	2. For each record the fields should be stored in same order
+	3. Each field should be given fixed size
+for eg in a sale record we have below fields defined with each field size as shown below	
+customername = 12
+sale_dt = 10
+quantity = 3
+total_amount = 5
+discount = 3
+paid_amount = 5
+--------------------
+	            38 * 200 = 7900
+---------------------
+based on above semantics or data definition we can store the data in below format on the file	
+
+andrew      07/01/20220100200020001800
+jack        07/01/20220120180018001620 
+stephen     08/01/20220330239923002169
+
+replace jack with jackson
+
+		
+Now we can write program in java which can read each record and extract the fields of data based on the field sizes and perform operation
+
+advantages:-
+	1. the data is both human and machine understandable format
+	2. it supports both sequential and random access of the data, at any point of time we can jump onto a specific record in the file and can read it because each record has fixed set of characters in length
+	3. modifying the field of information is very easy since each field has fixed in size
+
+dis-advantages:-
+	1. huge amount of memory is wasted because of fixed width
+	2. 

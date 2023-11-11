@@ -1,0 +1,93 @@
+Java framework package (6 months) (15k) (6/7 months)
+1. Spring Framework with Spring Boot (Fee: 7k) (7 months) [6:45 am - 8:00 am] [1 hour 15 mins]
+	 [started before 2 months] [core module] [8 topics] [singleton/classloaders]
+	 core
+	 aop
+	 tx
+	 jdbc
+	 orm
+	 datajpa
+	 mvc
+	 security
+	 cloud
+	 boot
+2. Hibernate Framework and Jpa Api [duration: 4 months] [Fee: 6k] [7:00 pm - 8:00 pm]
+3. SOAP WebServices [duration: 5 months] [Fee: 7k] [8:15 pm - 9:15 pm]
+4. Restful Services
+5. Microservices
+----------------------------------------------------------------------------------------------
+Java Realtime tools [2 months] [9:30 am - 10:30 am]
+duration: 1 month, 15 days
+Fee: 3k, 
+10 tools
+ant, maven, gradle
+log4j, sl4j
+junit, mockito
+git, svn
+sonarqube
+
+Java design patterns [within 1 month] [9:30 am morning]
+duration: 1 month, 10 days
+Fee: 3k
+design patterns: 21 	
+---------------------------------------------------------------------------------------------	
+Devops with AWS [6/7 months]
+Today: [8:30 pm] [demo]
+Fee: 12k / existing students: 10k
+Regular: 9:30 pm - 10:30 pm
+
+Amazon Web Service cloud platform [AWS]
+Duration: 3 months
+Fee: 5k [9:30 am - 10:30 am]
+Tentatively : 1 month, 15 days
+-----------------------------------------------------------------------------------------------
+Hibernate Framework and Jpa api
+Duration: 4 months (+/- 10 days)
+Timings: 7:00 pm - 8:00 pm 	
+Daily live notes will be provided on weekly basis
+all the examples are live examples
+no facebook group, no twitter groups = no examples will be uploaded
+no videos, no youtube channels, no recordings = everything is registered in brain rather than in videos
+1/2 days = if you miss the class no problem, every day revision will be there on previous content so you will be able to cope up
+telegram group = google meet or zoom meeting = can share class room update
+full topic = will permit you in next batch as a backup
+Saturday = regular time
+Sunday = 11:30 am - 12:30 am (if required) (90% no sundays)
+---------------------------------------------------------------------------------------------
+Pre-requisite:-
+1. Core Java
+	oops principles
+	interfaces/abstract classes
+	inheritance
+	exception handling
+	collection
+	i/o streams
+	multi-threading/synchronization
+	concurrency 
+	serialization
+	lamda
+	streaming api
+	generics
+	default interface
+	
+2. Advanced Java (as of today) (optional)
+Basic idea of web application developer
+and servlet programming (1/2 example)
+	
+3. jdbc api (good programming knowledge)
+4. sql knowledge
+	oracle database (or) mysql database
+	1. ddl
+		- create
+		- alter
+		- drop
+		- truncate
+	2. dml
+		- insert
+		- update
+		- delete
+	3. dql
+		- select
+		- aggregate, correlated sub-queries
+		- joins (inner/left-outer/right-outer join)
+	no pl/sql knowledge required

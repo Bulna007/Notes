@@ -1,0 +1,72 @@
+Annotations are the alternate means of writing the configuration information describing the information about a class. Annotations are directly written on the sourcecode of the java class, so these are called sourcecode metadata
+
+In hibnerate we write configuration information aspart of #2 places
+1. in mapping = we can write the mapping information interms of annotations directly by writing on the entity class
+2. hibernate configuration = since it is not pertaining to any specific class, rather it represents global configuration information of the hibernate framework application, we cannot write this on any class, the only way to eliminate writing configuration file is through programmatic approach
+
+The Hibernate entity classes should be annotated with jpa 2.1 api annotations favouring the api. There are 2 types of anotations are there
+1. Physical Annotations = used for describing the physical database tables mapping the entity class
+2. Logical Annotations  = used for attaching hibernate framework specific configuration onto an entity class
+	
+@Entity
+@Table(name="account")
+class Account implements Serializable {
+	
+	@Column(name="account_no")
+	@Basic
+	private int accountNo;
+	@Basic
+	private String accountHolderName;
+	
+	private String accountType;
+	private double balance;
+	
+	public void setAccountNo(int accountNo) {}
+	@Id
+	public int getAccountNo() {}
+	
+	public void setAccountHolderName(String accountHolderName) {}
+	@Column(name="account_holder_nm")
+	public String getAccountHolderName() {}
+	
+	public void setAccountType(String accountType) {}
+	@Column(name="account_type")
+	public String getAccountType() {}
+	
+	public double getBalance() {}
+	public void setBalance(double balance) {}
+	
+	public int annualInterest;
+	
+	// accessors
+}	
+
+1. @Entity (Logical) = makes the class as persistable entity class
+2. @Table (Physical) = maps the entity class to the underlying table (optional), if we didnt specific it takes the classname as table name to persist the data
+
+3. @Id =  For every entity class, the id property is mandatory to be managed/persisted through hibernate. @Id is used for marking one of the property of the entity class as Id/primary key column represented attribute
+
+4. @Column(name="columnName") = for each property/attribute of the entity class we can map it to corresponding column of the table using @Column annotation and is optional. in absence the attributeName would be considered as column name to be used for persistency
+
+Hibernate allows us to place the annotations at 2 AccessTypes
+1. FIELD         = we can write annotations directly on the attributes of the entity class
+2. METHOD LEVEL  = instead of on the fileds we can write on the getter methods of the attributes of the entity class
+	
+recommendation: METHOD LEVEL, but most of the people use FIELD LEVEL only. 
+but always write annotations only at one of the place either at FIELD or METHOD dont mix-and-match. In case if we have written the annotations on both the places, the Hibernate determines the ACCESS TYPE based on @Id annotation where it has been written
+
+The only annotations that are required in making an entity class persistable is #2
+	@Entity
+	@Id
+
+For each attribute within the entity class, we need to annotation it with @Basic indicating it is an persistable attribute and it is optional, incase of absence it will be automatically treated as written.
+
+For eg.. if we dont want an attribute of the entity class to be persistable. In case of working with annotations, by default as every attribute is annotated with @Basic, those are persistable by default, the only way to make the attributes transient or non-persistable is by writing @Transient annotation on that attribute
+
+How to achieve the above in case of mapping file?
+dont declare the attribute as <property	/> in mapping file that makes that attribute transient
+	
+	
+hibernate.cfg.xml
+we need to declare the above annotated entity class using
+<mapping class="fqnEntityClass"/>

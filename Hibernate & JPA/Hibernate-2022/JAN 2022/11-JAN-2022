@@ -1,0 +1,89 @@
+There are 2 formats in which we can store the data on a File
+1. Human understandable format
+2. Programmable/Machine Understandable Format
+
+How to store the data on a File in programmable/machine understandable format?
+In business data there are several fields of information will be on which we perform business operation, extract the fields of data and store them in a representation format which can be identified and processed easily.
+To help us in storing these fields of data, there are several programable formats are introduced as below.
+	
+#1. Fixed with field size format
+--------------------------------
+For each field of input define the fixed size with which we need to store the data.
+rules:-
+	1. all the records should have same number of fields
+	2. all the records should have fields appeared in same order
+	3. all the fields should be of fixed in size
+if we follow above rules in storing the data, it can be extracted and processed using the software programs by reading the information record by record (or) line by line and delimiting the fields based on field sizes and can perform processing
+
+advantages:-
+	1. both human readable and programmable format
+	2. we can access the data sequentially and randomly as well
+	3. we can modify the fields of information easily
+	
+dis-advantages:-
+	1. huge amount of memory will be wasted because of fixed field sizes, always the business data is huge and the more the amount of data we store the more wastage of memory would be resulted by storing the data in Fixed with field size format
+	2. Its quite difficult in deriving the field sizes in storing the data, unless we have past historical data we cannot determine the nature and size of the data. in case of no historical references we need to make assumptions in deriving the fields sizes which might result in either too small or too large in holding the data which might result in failure of capturing the data
+	3. always the business is an changing entity, the assumptions under which we constructed and stored the data with fixed field sizes may not be suitable in future due to change in business conditions, in such case we might have to modify the field sizes based on the business changes, accomadating such changes in the field sizes is not so easy.
+	it requires re-formatting the existing data which we captured earlier based on the new boundaries of the fields along with that we need to re-develop/modify the software applications in processing the data based on new boundaries which we redefined. it seems quite complex job and requires huge amount of time and redevelopment cost inccurs because of changes in the boudaries of the data
+	
+From the above we can understand Fixed-width field size format is not suitable for storing large volumes of data which is especially business data and accomodating the changes in future seems to be quite complex and not recommended to use
+
+#2. comma-separated value (csv) format
+---------------------------------------
+In csv format we capture and store the fields of the business data delimited by "," to identify the fields rather than "fixed-with", so that we can identify the fields based on "," and process them easily
+
+daysales.csv
+-------------
+stephen,08/01/2022,10,2000,200,1800
+andrew,08/01/2022,13,1800,180,1620
+	
+We can write program which can read the record of data line by line and delimite the data by "," to identify the fields and extract the data to process it
+
+advantages:-
+	1. both human and machine readable
+	2. no need to have historical data or no need to make any assumptions in deriving the boundaries of the data. one can quickly jump start in storing the fields of data in csv format without any business decisions or brain storming
+	3. no wastage of memory as there are no field sizes defined
+	4. it is flexible and suitable for storing business data as the fields sizes are not restricted
+dis-advantages:-
+	1. doesnt support random access of the records of data because we cannot derive the record size to jump to a specific record in the file
+	2. modifying the field of information is quite complex as we need to shift or unshift the data to accomodate space in writing the modified data, we need to write complex programming in modifying the fields of information
+	3. searching and identifying the data based on a field is very difficut as we dont the boundaries of the fields to search
+	4. if the actual data itself contains the "," then deriving the boundaries of the data is not possible and semantics of the data will be broken
+	
+looks like csv format of storing the data has quite a number of disadvantages like
+1. performing file operations like modifying the data for a field, or searching a record or deleting a record or inserting a record requires huge amount of complex logic to handle these operations
+2. business data in general can container any arbitary set of characters, in such case if the actual data itself contains "," the information stored will not be interpreted properly and the data will be mis-read
+
+so csv is not an ideal choice for storing business data.
+	
+3. Extensible Mark-up Language (XML)
+------------------------------------	
+XML Stands for extensible markup language, it is not programming language, rather it is used for storing the data on a File, so that we can easily read the data and perform operations on it. Anything that is stored interms of tags is called markup since xml uses tags for representing data it is called markup language
+
+daysales.txt
+-------------
+<sales>
+  	<sale>
+		<customername>joseph</customername>
+		<sale-dt>08/01/2022</sale-dt>
+		<quantity>10</quantity>
+		<total-amount>2000</total-amount>
+		<discount>200</discount>
+		<paid-amount>1800</paid-amount>
+	</sale>
+	<sale>
+		<customername>andrew</customername>
+		<sale-dt>08/01/2022</sale-dt>
+		<quantity>13</quantity>
+		<total-amount>1800</total-amount>
+		<discount>180</discount>
+		<paid-amount>1620</paid-amount>
+	</sale>
+</sales>
+
+in xml we store the data intags, so that tags are used for representing the semantics of the data, we can easily understand which data is representing what information by looking at the tags in which the data is bounded. using the tags we can identify the boundaries of the data easily based on start/end tag
+The biggest advantage of storing the data in xml format is each field has semantics attached and well-defined boundaries are there, so there is no chance of mis-interpreting the data if we store in xml formation
+
+advantages:-
+	1. human and machine understandable format
+	2. semantics and structure of data can help us in easily deriving the data, there is no chance of mis-interpreting the data

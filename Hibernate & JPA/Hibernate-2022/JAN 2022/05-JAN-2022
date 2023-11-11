@@ -1,0 +1,126 @@
+Java Framework batch/package
+duration: 6/7 months
+Fee: 15k
+1. Spring Framework with Spring Boot [7k] [6:45 am - 8:00 am] [7 months] [already: 2 months before] [planning to take backup from Friday]
+2. Hibernate Framework and Jpa api [6k] [7:00 pm - 8:00 pm] [4 months]
+Java Integration-Tier Technology [7k] [8:15 pm - 9:15 pm] [5 months]
+-----------------------------------------------------------------------
+3. Soap Web Services [3 topics]
+4. Restful Services
+5. MicroServices [1 month] [after spring boot, microservices will be covered in morning time only]
+
+No vidoes, no youtube channles, no subscriptions and students are also not permitted to record the sessions, if found admission will be cancelled without fee refund.
+----------------------------------------------------------------------------------------------	
+Hibernate Framework and Jpa api
+Duration: 4 months
+Timings: 7:00 pm - 8:00 pm IST
+Fee: 6k
+For missed topics email us@: tech.sriman@gmail.com | durgasoftonlinetraining@gmail.com
+
+Pre-requisite:-
+[What areas I should already know in order to join this course]
+1.Core Java
+	Oops principles
+	interfaces and abstract classes
+	inheritance
+	collections
+	i/o streams
+	multi-threading
+	concurrency
+	synchronization
+	serialization
+	exception handling
+	streaming api
+	lamda
+	generics
+2. jdbc api [good programming knowledge is required]
+3. database technology
+	1. tables
+	2. constraints
+		- primary key
+		- foreign key
+		- unique key
+		- composite primary key
+	3. sql
+		- ddl [create, alter, drop, truncate]
+		- dml [insert, update, delete]
+		- dql [select, aggregate, joins, inner queries, correlated sub-queries, having, groupby]
+	no pl/sql knowledge is required for hibernate
+4. good to have basic knowledge of servlet programming, but no mandatory
+-----------------------------------------------------------------------------------------------
+Hibernate and Jpa api, course content
+1. Introduction to Persistence Technology [10 days]
+	1.1 what is persistency, why do we need to permanently store the data 	
+	1.2 File-based Persistency technics
+		- various different formats of persisting the data on a File 
+		- what are the dis-advantages in File based persistency
+	1.3 what is a database management system, why those are introduced
+		- types of databases
+		- compare rdbms, no-sql, object-storage database
+				
+2. Basics of Relational database management system [10 days] 
+	- Tables
+	- Relationships
+	- Normalization and 3 Normal Forms
+	- How to establish Relationship between the Tables
+		- one-to-one
+		- one-to-many
+		- many-to-many
+
+3. Problems in persisting the data using jdbc api in relational database management system, how to overcome it using ORM technology [5 days]		
+	3.1 Introduction to Hibernate Framework and Jpa api
+
+4. How to overcome the dis-advantages with Jdbc api and perform persistency operations [generic coding] [7 days] [mini hibernate framework]
+-------------------------------------1 Month 10 days approx------------------------------------
+		
+Hibernate 5 & Jpa 2.1 
+XML Configuration and Annotation 
+		
+5. Basic Hibernate Api and objects
+	- hibernate mapping file
+	- hibernate configuration file
+	- what the hibernate objects [Session, SessionFactory, Configuration]
+6. Working with Hibernate Transactions
+7. Hibernate Bootstrapping
+	1. Hibernate 3 legacy
+		1. programmatic approach
+		2. properties approach
+		3. xml-based approach
+	2. Hibernate 4 [Custom Hibernate Service in customizing the Hibernate Framework]
+	3. Hibernate 5
+8. Get vs Load
+9. Introduction to Jpa api
+	- working with Jpa api
+		- configuration approach
+		- annotation-driven approach
+10. Hibernate First-level caching
+11. ID Generators [xml|annotation]
+		- Hibernate ID Generators
+		- Jpa ID Generators
+12. Entity Object lifecycle
+13. DML operations  [Hibernate | Jpa]
+
+-------------------------- [very important](realtime) ----------------------------------------
+14. Inheritance Mapping model [hibernate | Jpa] [xml|annotation]
+		1. Table per class hierarchy
+		2. Table per sub-class
+		3. Table per concreate class
+15. Assocation Mapping model [xml|annotations][hibernate|jpa][uni-directional|bi-directional]
+		1. One-To-One association mappings (2ways)
+		2. One-To-Many
+		3. Many-To-Many
+16. 
+		Fetch Types
+		Inverse *****
+		Cascade *****
+		N+1 problem in Hibernate ******
+17. HQL|JPQL Queries (joins)
+		Named-Queries
+		Named Parameters
+		Jpa api | Hibernate5 api
+		
+18. Criteria Api 
+	Hibernate Criteria api is deprecated and removed in Hibernate5
+	Jpa api Criteria Api (joins)
+
+19. Hibernate 2nd Level Caching

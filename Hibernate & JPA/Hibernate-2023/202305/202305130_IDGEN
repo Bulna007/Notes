@@ -1,0 +1,159 @@
+How many types of ID Generators are supported by hibernate framework/jpa api
+There are 4 types of ID generators are supported
+1. AUTO 
+2. IDENTITY
+3. SEQUENCE
+4. TABLE 
+
+2. Identity generator
+The databases like mysql and ms-sql server supports AI & IDENTITY columns, the database itself while inserting the data will generate the key column value sequentially with which the data will be persisted. Here the role of IDENTITY generator is to fetch the ID with which the current record has been stored in the database. 
+	
+advantages:-
+	1. works across all the environments like multi-threaded/concurrent envs and even in clustered env
+dis-advantage:
+	1. works only on few databases that supports IDENTITY / AI Column Types
+	2. only supports integer types
+	
+class Product {
+	private int productNo;
+	private String productName;
+}	
+
+#1. Mapping Approach
+
+<hibernate-mapping package="com.idg.entities">
+	<class name="Product" table="product">
+		<id name="productNo" column="product_no">
+			<generator class="identity"/>
+		</id>
+	</class>
+</hibernate-mapping>
+
+#2. Annotation Approach
+
+@Entity
+@Table
+class Product {
+	@Id
+	@Column(name="product_no")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int productNo;
+	
+	@Column(name="product_nm")
+	private String productName;
+}	
+		
+#2. Sequence Generator
+Sequence generator works only with the databases like oracle that supports sequence datastructure. Sequences are the datastructures supported by oracle database, these are used for generating the sequence no uniquely.
+For each table we wanted the key column value to be generated create one oracle sequence. For eg.. to insert the data into product table with product_no generated 
+
+1. we need to create one sequence for product_no
+create sequence product_no_seq start with 1 increment by 1 minvalue 1 maxvalue 99999999 nocycle;
+
+2. now we can fetch the next value or current value from sequence using below sql query
+select seq_nm.curr_val from dual; = only curr_value can be fetched after atleast onetime we invoked next_val
+
+select seq_nm.next_val from dual; = will increment the sequence and gives the next value
+
+3. to insert the data into product table, we can write the sql query as below that generates the seq_value using seq with which it inserts the data
+insert into product(product_no, product_nm) values(product_no_seq.next_val, ?);
+
+instead of we writing the code in generating the seq_no using sequence and use the generated value for inserting the data into table, we can use Sequence Id generator.
+To the sequence id generator we need to supply the name of sequence we have created in the oracle database, so that it uses that sequence specified in generating the next_val using which the session/entityManager inserts the data of the entity object
+
+class Product {
+	private int productNo;
+	private String productName;
+}	
+
+#1. Mapping Approach
+
+<hibernate-mapping package="com.idg.entities">
+	<class name="Product" table="product">
+		<id name="productNo" column="product_no">
+			<generator class="sequence">
+				<param name="sequence">product_no_seq</param-name>
+			</generator>
+		</id>
+	</class>
+</hibernate-mapping>
+
+note:
+1. if we have not specified the sequence name to be used for generating. The hibernate framework creates an default sequence with name hibernate_sequence and uses it for generating the next_val for all the tables whichever has not specified the sequence name
+
+#2. Annotation Approach
+
+@Entity
+@Table
+@SequenceGenerator(name="product_seq_gen", sequenceName="product_no_seq", allocationSize=1)
+class Product {
+	@Id
+	@Column(name="product_no")
+	@GeneratedValue(generator="product_seq_gen")	
+	private int productNo;
+	
+	@Column(name="product_nm")
+	private String productName;
+}
+
+#3. AUTO
+it is the default generator for an ID column if we have not specified the generation strategy. 
+
+@Column(name="product_no")
+@Id
+@GeneratedValue
+int productNo;
+
+The AUTO id generator works based on primary key column type.
+	1. pk column is of integer type, then it either works as SEQUENCE or IDENTITY generator depends on the underlying database on which we are running the application
+	2. pk column is String Type, then it works as UUID generator
+
+
+#1. Mapping Approach
+class Product {
+	private int productNo;
+	private String productName;
+}	
+
+#1. Mapping Approach (To-do)
+
+<hibernate-mapping package="com.idg.entities">
+	<class name="Product" table="product">
+		<id name="productNo" column="product_no">
+			<generator class="native">
+				<param name="sequence">product_no_seq</param-name>
+			</generator>
+		</id>
+	</class>
+</hibernate-mapping>
+
+#2. Annotation Approach
+
+@Entity
+@Table
+class Product {
+	@Id
+	@Column(name="product_no")
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private int productNo;
+	
+	@Column(name="product_nm")
+	private String productName;
+}
+
+and for VARCHAR column types we can use UUID generator as below
+
+@Entity
+@Table
+class Product {
+	@Id
+	@Column(name="product_no")
+	@GeneratedValue(strategy=GenerationType.AUTO)	
+	private UUID productNo;
+	
+	@Column(name="product_nm")
+	private String productName;
+}
+
+#4. Table generator
+The TableGenerator uses an underlying database table for generating the ID for the each table in the database.

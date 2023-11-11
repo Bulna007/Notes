@@ -1,0 +1,13 @@
+Jpa Inheritance Mapping
+1. SINGLE_TABLE = Table Per Class hierarchy
+2. JOINED       = Table per Subclass
+3. TABLE_PER_CLASS = Table per Concrete class
+	
+1. How to write mapping for SINGLE_TABLE
+SuperClass
+we need specificy Inheritance Strategy we choose using
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="insurance_plan_type")
+	
+For each class in the hierarchy we need to define discriminator-value
+@DiscriminatorValue("")

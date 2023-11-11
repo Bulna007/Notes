@@ -1,0 +1,97 @@
+@Entity
+@Table(name="bill")
+class Bill {
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="bill_no")
+	int billNo;
+	LocalDate billGeneratedDate;
+	String customerName;
+	String mobileNo;
+	LocalDate dueDate;
+	double amount;
+	
+	//ItemizedBill itemizedBill;
+	// accessors
+}
+
+@Entity
+@Table(name="itemized_bill")
+class ItemizedBill {
+	@Id
+	@Column(name="bill_no")
+	@GenericGenerator(name="foreigngen", strategy="foreign", parameters={@Parameter(name="property", value="bill")})
+	int billNo; // persisting
+	long localMessages;
+	long internationalMessages;
+	long localVoiceMinutes;
+	long internationalVoiceMinutes;
+	double previousDue;
+	
+	@OneToOne
+	@PrimaryKeyJoinColumn
+	Bill bill;
+	// accessors	
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+@Entity
+@Table(name="job")
+class Job {
+	@Id
+	@Column(name="job_no")
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int jobNo;
+	String jobTitle;
+	int experience;
+	String company;
+	String position;
+	//Set<Applicant> applicants;
+}	
+
+@Entity
+@Table(name="applicant")
+class Applicant {
+	@Id
+	@Column(name="application_no")
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int applicantNo;
+	String applicantName;
+	String qualification;
+	int experience;
+	String mobileNo;
+	String emailAddress;
+	
+	@ManyToMany
+	@JoinTable(name="job_applicants", 
+						 joinColumns={@JoinColumn(name="applicant_no")}, 
+						 inverseJoinColumns={@JoinColumn(name="job_no")})
+	Set<Job> appliedJobs;
+	
+}
+	
+	
+job              applicant            job_applicants 
+job_no (pk)      applicant_no (pk)    job_no (pk) (fk)         
+job_title        applicant_nm         applicant_no (pk) (fk)
+experience       qualification
+company          experience
+position         mobile_no
+                 email_address
+	
+<set name="appliedJobs" table="job_applicants">
+	<key column="applicant_no"/>	
+	<many-to-many column="job_no"/>
+</set>
+	
+	
+1. bi-directional (inverse)
+2. fetch types
+3. cascade
+4. N+1 problem
+
+HQL
+Native Sql queries
+NamedQueries
+
+Criteria Api
+2nd Level Cache

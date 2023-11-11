@@ -1,0 +1,18 @@
+How many ways we can establish relationship between the tables?
+There are 3 types of relationships we can establish between the tables
+1. one-to-one
+2. one-to-many or many-to-one
+3. many-to-many
+
+#1. one-to-one
+a record in one table is in relationship with only one record of another table then the tables are said to be in one-to-one relationship
+There are 2 ways we can establish one-to-one relationship between the tables
+	1.1. direct one-to-one relationship
+	1.2. one-to-many as one-to-one
+
+1.2 one-to-many as one-to-one
+For any given 2 tables we establish one-to-many as one-to-one relationship given
+	1. if both the tables has their own identity (primary key)
+	2. we need to decide the owner of the relationship to identify which side primary key has to be written as foreign key in another table
+	
+by writing foreign key in another table the 2 tables will get into one-to-many relationship to make them act as one-to-one relationship we need to make foreign key column as unique.

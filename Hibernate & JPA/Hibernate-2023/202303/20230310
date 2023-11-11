@@ -1,0 +1,28 @@
+RDBMS (Relational Database Management System)
+Relational database management system allows us to store the data interms of Tables with predefined set of columns aspart of them while creating the table
+The data is stored in the Tables as Records or Tuples. Each Table is defined with columns of fixed length, and the data is stored in tabular fashion.
+	
+because of the data is being stored in structured format with well-defined semantics attached to it, even the database also knows what fields of information has been stored in each table. So when we want to access the data, we dont need to memorize the address location of the data or traverse through all the records to identify and access the data
+since the database also knows what data has been stored we can ask the database itself to retrieve the desired set of data, thus making the relational database management system very powerful
+
+How to represent relationship between the data?
+all the data aspart of the business should not be stored in onesingle table, because we run into data manageability issues. different entities of the data should be stored in separate tables. to establish relationship between the records of data across the tables we need to use primary key column and foreign key column.
+	
+primary key column = primary key columns holds unique values across the records of data within a table, so that it acts as logic address per each record, so that it can be used for establishing relationship between the data across the tables
+
+foreign key column = its an column that is always referrencing the primary key column of another table ie.. why it is called foreign (remote) key column. in this column we store the primary key column value of another record of other table to indicate my table record is in relationship with which record of another table
+
+every table in RDBMS dont need to have an primary key column, but if it wants to get in relationship with another table, then it must and should have an primary key column
+
+advantages:-
+	1. all the data is stored in structured format with semantics attached to it, so that the database knows what data has been stored in each table, so that it can help us in querying and accessing the data without memorizing the address of the data, which is the real and powerful feature of RDBMS
+	2. to establish relationship between the data we dont use addresses unlike the Hierarchial or Network databases, rather we use logic adress called "primary key", so we have plenty of advantages:
+		2.1 no wastage of memory
+		2.2 not restrictive to be hierarchial relationship in nature, we can represent any kind of relationship based on the real-world data
+		2.3 we dont need to manipulate or change the address in another tables when there is change of records in my table, since we are not using physical address for representing relationship
+	3. supports sequential access and random access of the records of the data
+	4. performing the operations on the data is quite faster, since all the data or fields are defined with fixed width
+	
+dis-advantages:-
+	1. doesnt works well for semi-structured or un-structured data
+	2. programming the relational data is very difficult

@@ -1,0 +1,94 @@
+#one-to-many
+------------
+@Entity
+@Table(name="branch")
+class Branch {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int branchNo;
+	String branchName;
+	String location;
+	String branchManager;
+	String contactNo;
+	
+	@OneToMany
+	@JoinColumn(name="branch_no")
+	Set<Account> accounts;
+	
+}
+
+@Entity
+@Table(name="account")
+class Account {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int accountNo;
+	String accountHolderName;
+	String accountType;
+	double balance;
+	
+}
+--------------------------------------------------------------------------------------------
+#many-to-one
+
+@Entity
+@Table(name="contractor")
+class Contractor {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="contractor_no")
+	int contractorNo;
+	String businessName;
+	LocalDate establishedDate;
+	String contactNo;
+	
+}
+
+@Entity
+@Table(name="work_contract")
+class WorkContract {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int workContractNo;
+	String description;
+	LocalDate allotedDate;
+	double awardedAmount;
+	int estimatedDays;
+	
+	@ManyToOne
+	@JoinColumn(name="contractor_no")
+	Contractor allotedContractor;
+}
+-------------------------------------------------------------------------------------------
+#direct one-to-one
+
+@Entity
+@Table(name="bill")
+class Bill {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int billNo;
+	LocalDate billDate;
+	String customerName;
+	String mobileNo;
+	double amount;
+}
+
+@Entity
+@Table(name="itemized_bill")
+@GenericGenerator(name="ibfgn", generator="foreign", parameters={@Parameter(name="property", value="bill")} )
+class ItemizedBill {
+	@Id
+	@GeneratedValue(generator="ibfgn")
+	int billNo;
+	LocalDate fromDate;
+	LocalDate toDate;
+	int localMinutes;
+	int isdMinutes;
+	int localSms;
+	int isdSms;
+	
+	@OneToOne
+	@PrimaryKeyJoinColumn
+	Bill bill;
+}

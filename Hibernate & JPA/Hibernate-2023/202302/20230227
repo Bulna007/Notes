@@ -1,0 +1,84 @@
+What is persistence, why do we need to persist the data?
+Permanently storing the data on the storage device of a computer system is called "persistency". if we persist the data we can use the data at later point of time for performing various different operations on the data
+
+we can store permanently the data on a machine using files/folder. There are 2 formats in which we can store the data on the file of a computer
+1. human understandable format
+2. machine/programmable format
+
+1. human understandable format
+We can store the natural language data that can read by humans easily like paragraphs, sentences etc in a text file is called "human understandable format". There are many ways we can store the human understandable data on a computer system like
+1. msword
+2. powerpoint
+3. excel
+4. pdf
+5. paint
+6. text file
+
+2. programmable format
+we wanted to store permanently the data on a computer system,not just for humans to read and understand we wanted the programs also to read the data and perform operations on that data
+
+if we store the data in natural language text of characters programs cannot understand or interpret the data to perform operations. for eg.. if we are storing the sales information of the customers made in a store in natural language format as below.
+    
+sales.txt
+Joseph on 27, Feb 2023 at 10:00 AM IST has purchased a 10 products for a bill amount: 200 INR. Jones on 27, Feb 2023 at 10:02 AM IST has purchase 23 products for a bill amount: 3459 INR
+    
+because programs doesnt have artificial intelligence in interpreting human languages. so we need to store the data in a format where programs can interpret the data and perform operations on them. 
+
+If we look at the above information we have written in sales.txt not everything is the data required for programs to perform operation, there are few computable data/fields on which we need to perform operation like
+customer name
+purchase date
+quantity
+bill amount
+
+so instead of storing the text of sentences if we can capture only these fields of information and store it on a file, then programs can easily interpret and perform operations on the data
+
+How to store the fileds of data on a file so that programs can interpret and perform operations?
+There are many formats in which we can store the data on a file to perform operations let us explore each of them
+
+1. Fixed with Field size format (FWFS)
+In Fixed with field size format, each field should be given fixed size and the data should be written in records/rows with fields of the defined size. The programs can read or access the data and interpret the information based on field sizes
+
+15            16               3 6 
+Joseph        02/27/2023T10:0016 200   
+Jones         02/27/2023T10:0223 3459  
+Adam          02/27/2023T10:0223 3459  
+Mark          02/27/2023T10:0223 3459  
+James         02/27/2023T10:0223 3459  
+Susan         02/27/2023T10:0223 3459  
+Rick          02/27/2023T10:0223 3459
+    
+     
+For eg.. we want to write a program to perform total sale made in the store let us see how can we do this
+    
+double getTotalSales(File file) {
+    String line = null;
+    double billAmount = 0.0;
+    double totalSales = 0.0;
+    BufferedReader br = new BufferedReader(new FileReader(file));
+    
+    
+    while ((line = br.readLine()) != null) {
+        String s = line.substring(34, 40);
+        billAmount = Double.parseDouble(s.trim());
+        totalSales = totalSales + billAmount;
+    }
+    return totalSales;
+}    
+    
+advantages:-
+1. both human understandable and machine/program understandable format
+2. we can build programs easily which reads the data and interprets the fields based on sizes to perform operations
+3. it supports sequential and random access of the data as well
+4. we can search for specific records based on the fields easily
+5. we can perform delete operation of the records
+6. we can add records or insert records easily within the file
+
+dis-advantages:-
+1. huge amount of memory in storing the data will be wasted
+2. before storing the data on the file, we should estimate the field sizes to be take for each field, if we derive the field sizes as big, too much memory will be wasted, if we derive field sizes as small there is a data loss, this methodology only works when we can derive the right sizes for each field
+3. we need historical data or past business experience in deriving the field sizes unless otherwise deriving the field sizes is very difficult
+4. in case if the field sizes we derived has been changed in future, again we need to rewrite all the data that is stored in the file based on the new field sizes which takes huge amount of time
+5. when there is a change in field sizes, its not just the data should be re-written, even the application programs reading the data should also be reprogrammed
+6. the business data will be huge in nature, so if we are storing the business data in fixed width field size format we endup in wasting huge amount of memory in storing "blank" characters due to which the cost of storage will be high
+
+From the above we can understand fixed width field size format is not ideal for storing business data and cannot be used.

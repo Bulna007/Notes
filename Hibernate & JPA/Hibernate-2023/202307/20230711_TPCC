@@ -1,0 +1,39 @@
+Table per concrete class
+------------------------
+	
+@Entity
+@Table(name="insurance_plan")
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@GenericGenerator(name="gen1", strategy="increment")
+class InsurancePlan implements Serializable {
+	@Id
+	@Column(name="plan_no")
+	@GeneratedValue(generator="gen1")
+	protected int planNo;
+	@Column(name="plan_nm")
+	protected String planName;
+	protected int tenure;
+	@Column(name="premium_amt")
+	protected double premiumAmount;
+	@Column(name="insurred_amt")
+	protected double insurredAmount;
+	protected String status;
+	// accessors
+}
+
+@Entity
+@Table(name="medical_insurance_plan")
+class MedicalInsurancePlan extends InsurancePlan {
+	private int copay;
+	@Column(name="coverage_type")
+	private String coverageType;
+}
+
+@Entity
+@Table(name="accidental_insurance_plan")
+class AccidentalInsurancePlan extends InsurancePlan {
+	@Column(name="disability_coverage_percentage")
+	private int disabilityCoveragePercentage;
+	@Column(name="international_coverage")
+	private boolean internationalCoverage;
+}

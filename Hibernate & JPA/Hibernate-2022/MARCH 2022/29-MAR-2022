@@ -1,0 +1,81 @@
+How many types of transactions are there?
+There are 2 types of transactions are there
+1. global transaction
+Within the transactional bournday there are multiple transactional participation resources on whom we are issuing a commit/rollback at oneshot is called "global transactions"
+	
+2. local transaction
+Within the transactional boundary there is only one single transactional participating resource on whom we are issuing a commit/rollback is called "local transaction".
+
+jdbc api doesnot support working with global transactions, it only supports managing local transactions. To work with global transactions java/sun microsystems has provided JTA api stands for Java Transaction Management api.
+	
+In jta api there is an transaction manager class "UserTransaction", on whom we issue commit/rollback, he inturn takes care of committing/rollbacking across all the resources at oneshot to support global transactions
+
+From above we can understand in java there are 2 apis are there to work with transactions
+1. jdbc api
+2. jta api
+so while working with local transactions to switch to global transactions again we need to rewrite the code with other api which is an drawback while working with java
+
+To overcome the above problem hibernate framework has provided unified transaction api which is org.hibernate.Transaction class
+	
+interface Transaction {
+	void commit();
+	void rollback();
+}	
+
+class JdbcTransactionImpl implements Transaction {
+	Connection con;
+	
+	public void commit() {
+		con.commit();
+	}
+	void rollback() {
+		con.rollback();
+	}
+}
+
+class JtaTransactionImpl implements Transaction {
+	private UserTransaction userTransaction;
+	
+	public void commit() {
+		userTransaction.commit();
+	}
+	void rollback() {
+		userTransaction.rollback();
+	}
+}	
+	
+hibernate.cfg.xml
+-------------------
+<property name="hibernate.transaction.coordinator_class">jta</property>
+	
+	
+class ProductDao {
+	public void saveProduct(Product product) {
+		SessionFactory sessionFactory = null;
+		Transaction transaction = null;
+		Session session = null;
+		boolean flag = false;
+		
+		try {
+			sessionFactory = SessionFactoryRegistry.getSessionFactory();
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			
+			session.save(product);
+			flag = true;
+		}finally {
+			if(transaction != null) {
+				if(flag) {
+					transaction.commit();
+				}else {
+					transaction.rollback();
+				}
+			}
+			if(session != null) {
+				session.close();
+			}
+		}
+	}
+}	
+	
+The session object has been created with Connection, configured with autocommit=false

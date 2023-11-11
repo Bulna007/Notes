@@ -1,0 +1,21 @@
+What is entity object lifecycle?
+The various different states in which an object could exists during its existence describes the lifecycle of an object. based on the operations we perform on the object, the object could move across various different states. There are 3 different states underwhich an entity object can exists in hibernate application
+1. transient
+if there is no record representing the object exists in database table and if the object is not associated with the active session, then the object is said to be in "transient" state
+
+2. persistent
+if the object is associated with an active session and there exists an record representing the object in the database table then the object is said to be in "persistent" state
+
+if an object is in persistent state means, any changes on the entity object would be tracked and persisted automatically by the session 
+
+3. detached
+if the record representing the object exists in database table but the object is not associated with the session, then the object is said to be in "detached" state
+--------------------------------------------------------------------------------------------
+#main / actual content of Hibernate Framework
+
+#70 tables
+#microservices, #10/#20, #40/#50 microservice (functional)
+These tables are having relationship with other tables (primary keys/foriegn keys)	
+
+5 mins
+will connect tomorrow, please check for class timings in telegram group i updated guys

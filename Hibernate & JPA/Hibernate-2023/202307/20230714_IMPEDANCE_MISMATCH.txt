@@ -1,0 +1,85 @@
+Object/Relational Impedance Mismatch
+The way the objects holds the data and related with each other are quite different from the way the tables represent the data with relationship with each other. So while mapping the object model into relational model we encounter conceptual/fundamental differences between them. Unless we address these differences between these 2 worlds, we cannot map the object into relational world.
+	
+These differences identified between them are called "Impedance Mismatch". There are 5 types of differences we encounter while modelling an objects into relational world
+1. Granularity
+2. Subtypes / Inheritance
+3. Identity
+4. Association
+5. Data Navigation
+
+1. Granularity
+Granularity means the number of components with which an system/entity has been represented. In an object model, we might have number of classes of higher granularity than the relational tables.
+	
+For eg.. in an Inheritance Mapping model, we might have multiple classes within an inheritance hierarchy that should be persisted into one single table thus these 2 worlds here are at different granularity.
+
+Similarly in class model, an object can hold other classes witin them which is called "object composition", whereas in relational tables we cannot declare one table as a columnType inside another table	which means tables cannot be composed in each other. in such cases the number of objects we have and the corresponding tables into which we need to perform the operation on is not the same which is called "granularity mis-match"
+	
+2. Subtypes / Inheritance
+In the object model, classes can express relationship through Inheritance. There can be an parent/super class from which several subclasses might be derived to reuse the data and represent relationship between them. But in database model, tables cannot have subTypes we cannot declare/extend/inherit a table from another table
+
+So how to persist the data of class objects of an inheritance hierarchy into the relational model representing the relationship of the objects?
+	
+3. Identity Mis-match
+In the database world, the notation of equality is defined through primary key, 2 records in the given table are equal when their underlying primary key values are same.
+	
+But when it comes to object world, there are 2 types of equalities are defined between objects
+1. a == b = which compares the 2 references are pointing to the same object or not
+2. a.equals(b) = checks to see they hold the same data are not
+
+looks like none of these 2 equalities are matching 2 relational equality.
+	
+Person person1 = session.get(Person.class, 1);
+
+Person person2 = session.get(Person.class, 2);
+
+person1 == person2 = false
+person1.equals(person2) = false
+	
+to overcome this dis-advantage we need override equals() & hashCode() methods in class and ensure the database identity and class identity are matching
+	
+tables = we have candidate keys
+person
+person_no  person_nm  age  gender  email_address mobile_no
+           (unique)                (unique)       
+
+
+class Person {
+	int personNo;
+	String personName;
+	int age;
+	String gender;
+	String emailAddress;
+	String mobileNo;
+	
+	//accessors
+}
+	
+	
+When do we say #2 records are same in the person table?
+1. if the primary key column values for any 2 records are matching, then those 2 records are same.
+2. alternatively we defined unique columns in table	which are person_nm & email_address which are also acting as candidate keys to match the equality of the records. If #2 records has same person_nm or same email_address then those are said to be same
+
+When do we say #2 objects are same in the Person class?
+In java world, the object identity is determined by using #2 methods either via == or .equals() to ensure both these equalities are matching we need to override these equals() & hashCode() methods in each class we define.
+	
+but we cannot create/define equals() & hashCode() on all the attributes of the class, because it mis-matches with the database equality. To ensure these 2 worlds identities will match we need equals() & hashCode() to be constructed using id property of the class.
+But determining the object equality based on id property will not work always, because always the id property value for an object may not be available. So the way to determine 2 objects are same or not should be constructed based on candidate columns of the table
+
+in the above example we can say #2 person objects are same, when their names or same or their email_addresses are same, so construct object equality by overriding the equals() & hashCode() methods on candidate columns of the table
+
+#4. Association
+In Object model, we can represent relationship between the objects through association. one object can be kept inside another object by declaring it as attribute inside another. but we cannot declare one table inside the another.
+	
+The only way we can represent relationship between the tables is through pk and fk, then how to model the object relationships expressed via association interms of table relationships
+
+
+#5. Data Navigation
+
+In object model, we can walk/navigate from one object to another object through their assocations for eg.. we can access the address of a person by using person.getAddress()
+	
+but incase of database we cannot navigate from one record into the related record, they only way to fetch the related address of a person is to join these 2 tables on a where clause
+
+This is the fundamental difference in the way we access the associated/related entities
+
+if we can address the problems/mis-matches between these 2 worlds, then we can achieve ORM.

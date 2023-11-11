@@ -1,0 +1,79 @@
+tables with relationship exists
+
+entity classes based on the relationship of the underlying table and should manage peristence operations based on their relationship
+
+customer
+customer_no  fullname age gender address_no (fk) (not null)
+
+address
+address_no  address_line1  city  state zip  country
+
+class Customer {
+	int customerNo;
+	String fullname;
+	int age;
+	String gender;
+	Address address;
+	// accessors
+}
+
+class Address {
+	int addressNo;
+	String addressLine1;
+	String city;
+	String state;
+	int zip;
+	String country;
+	// accessors
+}
+
+Customer customer = new Customer();
+Address address = new Address();
+#populated data into customer object
+customer.setAddress(address);
+
+session.save(customer);
+
+How to represent table relationship into entity class relationship?
+	
+#1. entity mappings [15/20 days]
+revise one-to-one, one-to-many/many-to-one, many-to-many
+relationship between entity classes 
+  [5/7 days]
+	1. inverse
+	2. fetch joins
+	3. n+1 problem
+	4. cascade
+
+#2. how to write hql queries and fetch multiple objects of data from database?
+datajpa = you jpql queries	[3 days]
+
+#3. criteria api = no one uses, but everyone ask in interviews [3/4 days]
+advantages:
+
+#4. 2nd-level cache [2 days]
+--------------------------------------------------------------------------------------------
+Relationship Mappings
+
+In real world the database tables are related with other tables via primarykey and foriegn key relationship based on their business relationship
+
+when we are modelling those tables of the database into entity classes we need to map these table relationships into class relationships, and we need to let the hibernate understand how did we represented the table relationships interms of class modeling to perform persistence operations, that is where relationship mappings comes into picture
+
+How many types of relationships can be there between the tables?
+1. one-to-one
+2. one-to-many / many-to-one
+3. many-to-many
+
+These table relationships should be modelled interms of classes in java. How can we establish relationship between the classes in java?
+There are 2 ways 
+1. Inheritance
+2. Association
+
+So there are 2 ways we can map an table relationships into class relationship which is either as 
+	inheritance mappings
+	association mappings
+	
+we need to learn both of them to understand how to represent relationship of tables in object world.
+	
+#1. Inheritance Mappings
+Inheritance Mapping model refers to mapping an inheritance relationship of an entity classes into the underlying table relationship

@@ -1,0 +1,13 @@
+#5. No-Sql or Semi-Structured databases
+RDBMS supports storing structured data as part of the database tables. It is not recommended to store semi-structured and non-relational data as apart of RDBMS database as we run into quite a number of problems:
+
+What is semi-structured data?
+For a given data/information the fields will vary record by records
+(or)
+Not all the records of data has same set of fields, different records has various differents fields of data
+
+#1. designing the database schema is very complex for storing semi-structured data
+#2. programmer has to write complex logic in managing and persisting the data into databases tables when we are storing semi-structured data
+#3. un-necessary joins between the tables as we converted fields/columns of the table into records in another table, so query operations will results in poor performance and more usage of cpu/ram
+#4. query filtering/searching and accessing the data becomes very heavy due to more records of data to be filtered
+#5. we use relationship columns for co-relating the data which doesnt make any sense

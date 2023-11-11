@@ -1,0 +1,105 @@
+Bootstrapping Hibernate Application
+Bootstrapping refers to instantiation of hibernate core objects in bringing up the hibernate framework into action to perform persistence operation is called "bootstrapping" the Framework
+
+There are different ways of bootstrapping the hibernate framework are available
+1. hibernate 3
+There are 3 ways of bootstrapping the hibernate framework components are available
+	1.1 hibernate properties file approach
+	1.2 hibernate configuration file approach
+	1.3 programmatic approach
+	
+2. hibernate 4
+using Configuration object in instantiating the object of SessionFactory has been marked as deprecated that is shown below.
+Configuration configuration = new Configuration.configure();
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+
+and introduced Services & ServiceRegistry approach, has been added to customize the behaviour of hibernate framework components
+
+3. hibernate 5
+restored the Configuration approach back and added Metadata Sources api has been added in configuring and instantiating the core objects
+
+4. hibernate 6
+all the above #3 mechanisms are available and can be used
+
+The Service/ServiceRegistry and Metadata Sources are considered as the most advanced options in bootstrapping the hibernate framework and can be avoided unless we need to tweak. For most of our usage, we can live with hibernate 3 bootstrapping options
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Hibernate 3 bootstrapping
+Hibernate 3 and the successor versions of it supports three bootstrapping options, in instantiating the hibernate core objects
+1. properties file approach
+2. hibernate xml configuration file approach
+3. programmatic approach
+
+
+#1. properties file approach
+instead of defining the hibernate configuration information in hibernate.cfg.xml, we can describing the configuration in the properties file as well. The name of file should be hibernate.properties only and should be placed within the classpath of the application.
+	
+all the properties we define within this properties file must and should be prefixed with "hibernate." to let the hibernate identify and use them
+
+hibernate.properties
+--------------------
+hibernate.connection.driver_class=com.mysql.cj.jdbc.Driver
+hibernate.connection.url=jdbc:mysql://localhost:3306/db
+hibernate.connection.username=root
+hibernate.connection.password=welcome1
+hibernate.show_sql=true
+hibernate.dialect=org.hibernate.dialect.MySQLDialect
+hibernate.transaction.factory_class=jdbc
+
+
+the only difference between hibernate.cfg.xml and hibernate.properties is incase of properties we cannot define mapping files inside the properties file, so those has to be added manually into the Configuration object upon creating it as below
+
+#1.
+Configuration configuration = new Configuration();
+when we tried creating the object of Configuration by using the default constructor, the default constructor of the Configuration object looks for hibernate.properties under the classpath of the application, if it appears, reads the properties and loads into configuration object otherwise creates as empty
+
+
+#2.
+add the mapping files programmatically to the Configuration object that has been created above
+configuration.addMappingResource("com/bh/entities/Trip.hbm.xml");
+
+
+#3. 
+instantiate the object of SessionFactory using the above configuration
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+
+
+what is the purpose of using properties file?
+1. the only reason of bootstrapping the hibernate framework using properties file is for the sake of convinience , we can avoid writing complex xml file (hibernate.cfg.xml) and use properties a way easy than xml in terms of syntax, so that we can quickly bootstrap the application
+
+2. avoid using the properties file while running in the real application, because we have lot of entity class and we endup in writing lot of code in java class interms of configuring them, only while testing few entity classes, may be we can quickly bring the application withthose classes using an properties file
+--------------------------------------------------------------------------------------------------------------------------------------
+#2. hibernate xml configuration file
+
+This is the most recommended approach of configuring the hibernate framework in most of usecases for bootstrapping the framework components. by default we should write the hibernate configuration information within the file with name "hibernate.cfg.xml" only and should be placed within the classpath of the application because when we create the object of Configuration and invoke the configure() method it looks for the default file under the classpath directly
+
+Configuration configuration = new Configuration(); //looks for hibernate.properties, it not presents creates as empty
+
+configuration = configuration.configure(); 
+this looks for hibernate.cfg.xml under the classpath, if not found throws an exception and terminates the application
+
+
+If we want we change the default name of the configuration file as any or location of the file as well, for eg.. if we are working on multiple databases we need to write #2 separate configuration files defining the information of the respective databases and entities information, in such case we need to bootstrap the core objects as below
+
+for eg..
+hibernatehr.cfg.xml
+hibernatepayroll.cfg.xml
+then we can bootstrap the objects as below
+
+Configuration configuration = new Configuration().configure("location/filename.cfg.xml");
+lets say these files are placed under classpath: com/bh/common/hibernatehr.cfg.xml, then we need to write below code to bootstrap
+
+Configuration configuration = new Configuration().configure("com/bh/common/hibernatehr.cfg.xml");
+--------------------------------------------------------------------------------------------------------------------------------------
+#3. programatic approach
+here we can completely avoid writing an configuration file, let it be properties/xml and bootstrap the core objects using programmatic apis as below
+
+Configuration configuration = new Configuration(); // created as empty
+configuration.setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
+configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/db");
+...
+configuration.addMappingFile("com/bh/entities/Trip.hbm.xml");
+
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+
+this approach is used, when we have our own configuration file within our application, and wanted to avoid hibernate specific configuration files

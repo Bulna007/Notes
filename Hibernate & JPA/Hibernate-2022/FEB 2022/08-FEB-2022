@@ -1,0 +1,12 @@
+How to establish relationship between the tables?
+Write the primary key of a table as a foreign key in another table to establish relationship between the tables
+
+How many types of relationships are there?
+There are 3 types
+1. one-to-one relationship
+2. one-to-many / many-to-one relationship
+3. many-to-many relationship
+
+The relationship between the tables are derived purely based on business assumptions and requirements only, we cannot derive relationship between the tables based on their table names or column names or data.
+	
+In RDBMS the relationships are represented in uni-directional only either of the primary keys has to be written as foreign keys in another table, but we should not write both sides of the keys in each other tables.

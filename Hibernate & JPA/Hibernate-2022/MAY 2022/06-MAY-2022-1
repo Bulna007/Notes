@@ -1,0 +1,100 @@
+How to work with composite primary keys in Hibernate/jpa api?
+A composite primary key contains more than one column combined together will acts as primary key of the table, then it is called "Composite Primary Key"
+	
+loan_application
+loan_no (pk)
+applicant_nm
+applied_dt
+loan_type
+dob
+gender
+unique_identification_no
+branch_code (pk)
+loan_amount
+
+There are 2 ways of mapping an entity class which has composite primary keys in hibernate framework
+1. using composite-id declaration
+2. using an key class
+		
+#1. composite-id declaration
+
+class LoanApplication implements Serializable {
+	String applicationNo;
+	String branchCode;
+	String applicantName;
+	Date appliedDate;
+	String loanType;
+	Date dob;
+	String gender;
+	double loanAmount;	
+	// accessor
+}
+
+LoanApplication.hbm.xml
+------------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.ck.entities">
+	<class name="LoanApplication" table="loan_application">
+		<composite-id>
+			<key-property name="applicationNo" column="application_no"/>
+			<key-property name="branchCode" column="branch_code"/>
+		</composite-id>
+		<property name="applicantName" column="applicant_nm"/>
+		<property name="appliedDate" column="applied_dt"/>
+		<property name="loanType" column="loan_type"/>
+		<property name="dob"/>
+		<property name="gender"/>
+		<property name="loanAmount" column="loan_amount"/>
+	</class>
+</hibernate-mapping>
+
+LoanApplication pk = new LoanApplication();
+pk.setLoanNo("L00009389");
+pk.setBranchCode("SBIN00098");
+LoanApplication loanApplication = session.get(LoanApplication.class, pk);
+
+The drawback is we need to instantiate the entity object by populating the key attribute values to fetch the entity class itself
+	
+#2 use a separate key class
+Write a separate primary key class declared with only the columns represeting the primary key of your table. The key class must and should be serializable
+	
+class LoanApplicationNo implements serializable {
+	protected String applicationNo;
+	protected String branchCode;
+	// accessors
+}	
+
+class LoanApplication implements Serializable {
+	LoanApplicationNo loanApplicationNo;
+	String applicantName;
+	Date appliedDate;
+	String loanType;
+	Date dob;
+	String gender;
+	double loanAmount;	
+	// accessors
+}
+	
+LoanApplication.hbm.xml
+------------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.ck.entities">
+	<class name="LoanApplication" table="loan_application">
+		<composite-id name="loanApplicationNo">
+			<key-property name="applicationNo" column="application_no"/>
+			<key-property name="branchCode" column="branch_code"/>
+		</composite-id>
+		<property name="applicantName" column="applicant_nm"/>
+		<property name="appliedDate" column="applied_dt"/>
+		<property name="loanType" column="loan_type"/>
+		<property name="dob"/>
+		<property name="gender"/>
+		<property name="loanAmount" column="loan_amount"/>
+	</class>
+</hibernate-mapping>	
+	
+LoanApplicationNo loanApplicationNo= new LoanApplicationNo();
+loanApplicationNo.setApplicationNo("L000029383");
+loanApplicationNo.setBranchCode("SBIN00093");
+
+LoanApplication loanApplication = session.get(LoanApplication.class, loanApplicationNo);

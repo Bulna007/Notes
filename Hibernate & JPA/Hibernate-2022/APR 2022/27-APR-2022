@@ -1,0 +1,43 @@
+We can classify the data into 3 categories based on the nature of the data and caching requirements
+1. long-lived data (static data)
+It is a good candidate for caching, since the data will not be changed during the runtime of the application. since the data is finite in nature and doesnt gets modified during the runtime we can cache the data during the startup of the application ifself.
+	
+2. moderate data
+The data that is going to get changed rarely is called "moderate data". This data is not finite and gets populated through the end-user operations while the application is running. 
+This type of data should be cached only on-demand while the application is accessing the data. since it is infinite data keeping the data into the Cache makes the application/cache run out of memory. So we need proper eviction and retention policies in removing the data
+Since the data is going to be modified during the runtime, we should have a mechanism for identifying and marking the stale data in the Cache
+
+3. short-lived data (frequenly modified data)
+In general it is not recommended to cache the data that is going to be changed very frequently.
+But in case if the frequency at which the data is being accessed is more than the interval of change, then it can be considered for caching to improve performance. Since it is a frequently modified data we should cache the data to shortest-interval of time as possible
+
+The first-level cache of the Hibernate Framework is called "Session Cache" where the Cache is kept to the scope of Session/operation to which the data is being cached.
+Why what is the reason?
+	
+class Employee {
+	int empNo;
+	String employeeName;
+	
+	@Basic(fetch=FetchType.Lazy)
+	Department department;
+}	
+class Department {
+	int departmentNo;
+	String departmentName;
+}
+
+we have Employee association with Department indicating an employee is working in which Department.
+	
+	
+Session session = sessionFactory.openSession();	
+Query query = session.createQuery("from Employee e where e.gender=?");
+query.setParameter(1, "female"); #10000, #10
+
+List<Employee> employees = query.getResultList();
+for(Employee employee : employees) {
+	Department department = employee.getDepartment(); // goes to the database and fetch the dept of the employee 
+}
+session.close();
+
+The frequency at which we are accessing the Department data is very high within the operational scope/ shorted-interval of time. So if such data is repeatedly accessed without caching, we might endup in creating more number objects in jvm memory with same data and repeatedly hits the database in fetching the same data, which leads to poor performance of the application
+instead we can cache the data to the shorted possible time here we can cache to the scope of the operation that is where Session-level cache comes into picture	

@@ -1,0 +1,29 @@
+InsurancePlan.hbm.xml
+<hibernate-mapping package="com.tpcc.entities">
+	<class name="InsurancePlan" table="insurance_plan">
+		<id name="planNo" column="plan_no">
+			<generator class="increment"/>
+		</id>
+		<property name="planName" column="plan_nm"/>
+		<property name="tenure"/>
+		<property name="premiumAmount" column="premium_amt"/>
+		<property name="insurredAmount" column="insurred_amt"/>
+		<property name="status"/>
+	</class>
+</hibernate-mapping>
+
+MedicalInsurancePlan.hbm.xml
+<hibernate-mapping package="com.tpcc.entities">
+	<union-subclass name="MedicalInsurancePlan" table="medical_insurance_plan" extends="InsurancePlan">
+		<propery name="copay"/>
+		<property name="coverageType" column="coverage_type"/>
+	</union-subclass>
+</hibernate-mapping>
+
+AccidentalInsurancePlan.hbm.xml
+<hibernate-mapping package="com.tpcc.entities">
+	<union-subclass name="AccidentalInsurancePlan" table="accidental_insurance_plan" extends="InsurancePlan">
+		<propery name="disabilityCoveragePercentage" column="disability_coverage_percentage"/>
+		<property name="internationalCoverage" column="international_coverage"/>
+	</union-subclass>
+</hibernate-mapping>

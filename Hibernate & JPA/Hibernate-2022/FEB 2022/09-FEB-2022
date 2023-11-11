@@ -1,0 +1,18 @@
+1. one-to-many relationship
+------------------------
+A record in one table is in relationship with multiple records of the another table, then that relationship is said to be in one-to-many relationship.
+	
+How to establish one-to-many relationship?
+1. The one-side of the relationship table should have primary key
+2. write the pk of the one-side of the relationship as foreign key in many side of the relationship so that the tables will be into one-to-many relationship
+
+2. one-to-one relationship
+-----------------------
+A record in one table is in relationship with only one record in another table, then the tables are said to be one-to-one relationship
+
+There are 2 ways/types of representing one-to-one relationship
+1. direct one-to-one relationship
+2. one-to-many as one-to-one
+
+#2. one-to-many as one-to-one
+------------------------------

@@ -1,0 +1,191 @@
+get(classType, id) vs load(classType, id)
+-----------------------------------------
+#1.
+get(classType, id):
+when we call the get(classType, id) on the Session object, it directly goes to the database and fetches the entity object by querying the data against the primary key supplied and returns the object. So it supports eager loading
+
+load(classType, id):
+when we call load(classType, id), it doesnt goes to the database, rather it creates an runtime proxy object for our entityClass supplied using javaassist proxy generation libraries and populates the id into the proxy object and returns to us
+
+only when we call any of the accessor methods apart from id attribute accessors, the proxy goes to the database and fetches the record of data against the primary key and caches it locally and returns the value. Subsequent calls on these accessor methods will returns the prefetched data that is stored locally. So from above we can understand load(classType, id) supports lazy loading
+
+#2. 
+get(classType, id):
+if the primary key value supplied record doesnt exists in the database table, the get(classType, id) returns the null value indicating the no data found.
+	
+load(classType, id):
+since load(classType, id) doesnt hits the database it dont know whether the record is available or not, so it simply creates the proxy object wrapping the id into it and returns the object
+
+in-short: always load() method returns proxy irrespective of record exists or not
+when we call any of the accessor methods on the proxy object, if the record doesnt exist it throws ObjectNotFoundException
+
+Account proxy = session.load(Account.class, 10);
+String accountHolderName = proxy.getAccountHolderName(); // throws ObjectNotFoundException
+
+#3.
+get(classType, id):
+always supports eager loading only, which means it immediately fetches the data from database whenever we call
+
+load(classType, id):
+load(classType, id) by default supports lazy loading only, but we can turnoff lazy loading support by going to the mapping file of the corresponding entity class and mark for that class lazy="false"
+	
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.gvl.entities">
+	<class name="Account" table="account" lazy="false">
+	</class>
+</hibernate-mapping>
+when we turn off the lazy loading by setting lazy="false",the load() method behaves as get() method only
+
+#4. 
+get(classType, id):
+while using the get(classType, id) to ensure the object has been returned by it we can verify the object reference against the null condition
+Account account = session.get(Account.class, 10);
+if(account != null) {
+	// use the object
+}
+
+load(classType, id):
+but while using the load(classType, id) method we cannot check the object existence against the null condition, because load never returns the null object if the record doesnt exists
+so to ensure our code doesnt breaks or quits, because of in-existency of the object we have to write our code in try/catch block only while using the object
+
+Account account = session.load(Account.class, 10);
+try {
+	account.getAccountHolderName();
+}catch(ObjectNotFoundException e) {}
+// remains lines of code
+
+#5.
+get(classType, id):
+get(classType, id) always supports only eager loading.
+
+load(classType, id):	
+by default load(classType, id) method supports lazy loading by creating an runtime proxy. In case if the entity class has been declared as final, then it cannot create runtime proxy ontop of the entity class, so it behaves as get() only and perform eager loading
+
+final class Account implements Serializable {
+	protected int accountNo;
+	protected String accountHolderName;
+	// accessors
+}
+
+There is a ways to support lazy loading even the class has been declared as final by proxying the interface as below
+	
+interface IAccount extends Serializable {
+	int getAccountNo();
+	void setAccountNo(int accountNo);
+	
+	String getAccountHolderName();
+	void setAccountHolderName(String accountHolderName);
+}	
+
+final class Account implements IAccount {
+	protected int accountNo;
+	protected String accountHolderName;
+	// accessors
+}	
+	
+IAccount account = session.load(Account.class, 10);
+
+Account.hbm.xml
+----------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.gvl.entities">
+	<class name="Account" table="account" proxy="IAccount">
+	</class>
+</hibernate-mapping>	
+	
+class Account$Proxy implements IAccount {
+	IAccount account;
+	
+}	
+	
+#6.
+get(classType, id)
+as the get(classType, id) fetches the data immediately from the database we dont need a session object to be available for accessing the data by using accessor methods
+
+Account account = session.get(Account.class, 1); // query got executed and data is pouplated
+session.close();
+session = null;
+String accountHolderName = account.getAccountHolderName();
+
+load(classType, id):
+since load method supports lazy loading, it doesnt executes the query when we call load(), it returns proxy. so when we call the accessor methods on the proxy, as the proxy goes to database for fetching the data we need an active session object now. if we close the session prior to using the proxy, we get an exception
+
+Account account = session.load(Account.class, 1); //data will not be fetched from db, returns proxy
+session.close();
+session = null;
+String accountHolderName = account.getAccountHolderName();
+// the above code throws exception since thereis not session object
+
+------------------------------------------------------------------------------------------
+
+
+1st First-Level cache
+First-level cache in hibernate framework is called "Session"/"Session-level" cache. by default when we create the object of the Session in Hibernate application, the Session object internally creates an Cache and holds with it.
+	
+//non-singleton	
+class Cache {
+	
+}	
+
+since the Cache is created at session-level it is not singleton
+
+Session session = sessionFactory.openSession();
+Customer customer = session.get(Customer.class, 1);
+The above get() method fetches the data from database for customerno = 1 and populates into entity object and returns 
+
+Customer customer = session.get(Customer.class, 1);
+now again when we call session.get(Customer.class, 1), the session object will not goes to the database and fetch the data, rather it looks into the Cache it has and returns the entity object to us.
+
+session.close();
+The cache object kept inside the session will also be closed. This indicates the Cache object is not global, it is local to Session only
+
+Session session = sessionFactory.openSession();
+// a new object of the session along with Cache will be created
+
+Customer customer = session.get(Customer.class, 1);
+again data will be fetched from database
+
+How does the Cache class looks like within the Session, how does it holds the data?
+
+class Cache {
+	Map<Class, Map<Object, Object>> dataMap;
+	public Cache() {
+		dataMap = new HashMap<>();
+	}
+	public Object get(Class classType, Object id) {
+		Map<Object, Object> entityMap = null;
+		
+		if(dataMap.containsKey(classType)) {
+			entityMap = dataMap.get(classType);
+			if(entityMap.containsKey(id)) {
+				return entityMap.get(id);
+			}
+		}
+		return null;
+	}
+	public void put(Object id, Object entity) {
+		Map<Object, Object> entityMap = null;
+		Class<?> classType = null;
+		
+		classType = entity.getClass();
+		if(dataMap.containsKey(classType) == true) {
+			entityMap =dataMapget(classType);
+		}else {
+			entityMap = new Map<>();
+			dataMap.put(classType, entityMap);
+		}
+		entityMap.put(id, entity);
+	}
+	
+	public boolean containsKey(Class classType, Object id) {
+		Map<Object, Object> entityMap = null;
+		
+		if(dataMap.containsKey(classType)) {
+			entityMap = dataMap.get(classType);
+			if(entityMap.containsKey(id)) {
+				return true
+			}
+		}
+		return false;
+	}
+}

@@ -1,0 +1,37 @@
+How many types of annotations are there in hibernate framework?
+There are 2 types of annotations are there
+1. Physical annotations = Using these annotations we map the database tables and columns to the entity class and its attributes
+2. Logical annotations = used for binding hibernate specific configurations to the entity class
+	
+There are 2 places at which we can write annotations in hibernate application on an entity class.
+1. Attribute level = we can write field level annotations at attribute level
+2. Method level = we can write field level annotations at the getter method level
+Hibernate reads the annotations based on the AccessorType
+The AccessorType can be either
+1. FIELD
+2. METHOD
+it determines the AccessorType based on @Id annotation we wrote, if we have written @Id on attribute level,the AccessorType is considered as FIELD and reads all of the annotations binds to the attributes of the entity classes ignoring method level annotations and viceversa
+
+It is recommended to use Method level annotations to detach/promote clean coding without messing up our domain/entity classes with annotations.
+	
+What are the minimal annotations to be written to make entity class persistable?
+1. @Entity
+2. @Id
+	
+How to make an attribute as transient while working with
+1. annotations = @Transient
+2. xml-based mapping = dont map the attribute in mapping file
+
+What is the default annotations with which all the attributes are annotated by default?
+@Basic has an attribute fetch = Lazy
+------------------------------------------------------------------------------------------
+How to work with Jpa api?
+To support orm technologies java has not provided any api in favour of ejb (entity beans), so vendors has comeup with their own third-party libraries/frameworks
+	1. hibernate framework
+	2. iBatis (MyBatis)
+	3. TopLink (EclipseLink)
+	
+By increasing popularity of orm technologies sun microsystems has introduced jpa api
+jpa api needs implementation, because apis are partial
+	|-jpa ri implementation 
+	|-hibernate 

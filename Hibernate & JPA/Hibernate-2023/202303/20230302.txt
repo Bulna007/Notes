@@ -1,0 +1,88 @@
+How many formats of storing the data on the File of a computer are there?
+There are 2 formats in which we can store the data
+1. human understandable format
+2. programmable format
+
+2. programmable format
+instead of storing the data as a sequence of set of characters in english like language, we need to capture only the fields of data on which we wanted to perform computation operation and store these fields in such a way that programs should be able to read, interpret and extract the data to perform operations on the data is called "programmable format"
+There are multiple programmable formats are available for storing the data
+1. Fixed width field size format
+2. comma separated value text (csv)
+3. xml
+
+3. XML 
+XML stands for eXtensible Markup Language. XML is an data representation format using which we will store the data on a file of the computer.
+3.1 XML stores the data in structured format, so that we can easily derive the boundaries of the fields. 
+3.2 XML allows us to bind the semantics to the data, so that by looking at the data we can identify what is that information is representing
+"identification of the data is stored along with the data"
+because of XML stores the data in structured format by attaching semantics to the data, every one can easily interpret the data and there is no chance of mis-interpreting the data.
+	
+In addition XML supports representing relationship between the data
+All the business data will have relationship across the entities, how to represent relationship across the data while storing?
+For eg.. when we are storing the customer information and sales information, these 2 entities are related with each other "relationship:" "this customer has made this sale"
+	
+While storing the data in csv format or fixed width field size format, we cannot represent relationship between the data while the entities are stored separately, because these are linear representation models
+	
+customer.csv
+joseph,838394893,joseph@gmail.com,1992/02/22,Male
+john,384948774,john@yahoo.com,1990/04/30,Male
+andy,93494894,andy@rediff.com,1987/04/23,Female
+
+sales.csv
+1,2023/02/12,28,383
+2,2023/02/13,12,736
+	
+so the only way to represent the relationship is store them together in one single line as below
+customer-sales.csv
+joseph,838394893,joseph@gmail.com,1992/02/22,Male,1,2023/02/12,28,383
+john,384948774,john@yahoo.com,1990/04/30,Male,2,2023/02/13,12,736
+andy,93494894,andy@rediff.com,1987/04/23,Female
+joseph,838394893,joseph@gmail.com,1992/02/22,Male,1,2023/02/15,8,38
+	
+but by storing the data together we endup in data duplication as above, So from the above we can understand fixed-width field size format or csv format doesnt support relationship between the data
+
+where as XML format supports representing relationship between the data by storing the data hierarchial. hierarchial means "parent and child" relationship
+
+customer-sales.xml
+
+<customers>
+	<customer>
+		<customer-name>joseph</customer-name>
+		<mobile-no>937347844</mobile-no>
+		<email-address>joseph@gmail.com</email-address>
+		<dob>1991/02/12</dob>
+		<gender>Male</gender>
+		<sales>
+			<sale>
+				<sale-no>1</sale-no>
+				<sale-date>2023/02/12</sale-date>
+				<quantity>2</quantity>
+				<bill-amount>354</bill-amount>
+			</sale>
+			<sale>
+				<sale-no>2</sale-no>
+				<sale-date>2023/02/13</sale-date>
+				<quantity>20</quantity>
+				<bill-amount>1354</bill-amount>
+			</sale>
+		</sales>
+	</customer>
+</customers>
+
+advantages:-
+1. both human readable and machine readable
+2. data is structured and semantics are attached to the data, so we can easily read or interpret the data to perform operations.
+3. XML supports representing relationship between the data by using hierarchial relationship model
+4. since XML is an simple-text based language, we can use the XML in any operating system platform and any programming language programs can read/store the data in XML format, So XML is inter-operable
+5. supports both sequential and random access of reading the data
+6. there are lot of methodologies and apis are available for storing and accessing the data from XML document like sax, dom, stax, xquery, xpath etc
+7. we can validate the data that we stored in XML document by using DTD or XSD languages
+
+dis-advantages:-
+1. too verbosed, more than the data, the semantics attached around the data describing the data is more, due to which we endup in consuming more storage memory for representing or storing the data
+2. since XML stores the data in hierarchial model, these usually consumes huge cpu and memory in processing the data and even handling/programming hierarchial structures are more complex
+3. everyone cannot use XML or write the data in XML format, prior knowledge on XML is required to use it. (it is not everyones data format)
+4. there are too many methodologies are available for reading/processing the data, that makes the people difficult to use XML
+5. learning curve required for using xml is very high
+
+From the above we can understand XML is not meant for storing and processing large volumes of data (Business Data). it is only suitable for storing configuration information pertaining to the classes of an application

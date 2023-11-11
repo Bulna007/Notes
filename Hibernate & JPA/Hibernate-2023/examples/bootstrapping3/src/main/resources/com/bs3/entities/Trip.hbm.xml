@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping package="com.bs3.entities">
+	<class name="Trip" table="trip">
+		<id name="tripNo" column="trip_no" />
+		<property name="tripName" column="trip_nm" />
+		<property name="source" />
+		<property name="destination" />
+		<property name="days" />
+		<property name="startDate" column="start_dt" />
+		<property name="endDate" column="end_dt" />
+		<property name="tripCost" column="trip_cost" />
+	</class>
+</hibernate-mapping>

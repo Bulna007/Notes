@@ -1,0 +1,26 @@
+Hibernate Framework
+Hibernate is an persistency technology related framework. To understand the Hibernate Framework and the purpose of it, first we need to understand what is persistence technology, why do we need to use it?
+	
+What is persistency technology?
+Persistency means writing or storing the data permanently on the storage device of a computer like (harddisk or pendrive etc)	is called "Persistency"
+	
+Why do we need to persistence the data permanently on a storage device of a computer?
+The organizations while conducting the business would generate huge amount of data. The nature of the data that is generated is long-lived data that has to be used for longer amount of time and would perform various different types of operations on that data to derive useful information for the business
+
+How to store the business data for long amount of time?
+#1 write it or store it on a physical medium like an paper or book
+The business organization can store the data on a book or a paper so that they can use it for longer amount of time, but it has its own dis-advantages:
+1.1 The more and more amount of data we need more paper or books for storing, so keeping track of the data and accessing, searching the data would become very difficult
+1.2 The data that is written on the paper is not permanent and would dis-appear after sometime
+1.3 the information written on the paper may not be legitimate and would become difficult to read and understand because different people has different ways of representing the characters (hardwriting is different)
+1.4 even though we stored the data on the paper, to perform operations on the data we need pass the data as an input to the computer program, manually feeding the data as an input to the computer
+	1.4.1 takes lot of time
+	1.4.2 chances of performing mistakes while passing the data to the computer is high
+
+From the above we can understand instead of storing the data on a paper, if we can some how store the data permanently on the computer storage device itself, the programs by themself can quickly read the data and perform operations on that data, so that we will have lot of advantages:
+1. any amount of data can be stored, searched and accessed quickly
+2. legitimate, no chance that someone cannot read the data
+3. the data would live for longer amount of time there is no chance the data will be faded
+4. the programs by themself can read and quickly process the data so that no manually intervention is required thus
+	4.1 saves huge time
+	4.2 accuracy is high

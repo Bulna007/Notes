@@ -1,0 +1,28 @@
+There are 3 types of relationships we can establish between database tables
+1. one-to-one
+2. one-to-many or many-to-one
+3. many-to-many
+
+#1. one-to-one relationship
+2 tables are said to be in one-to-one relationship with each other when one record a table is in relationship with only one record of the another table
+there are 2 ways we can represent one-to-one relationship between the tables
+	1.1 direct one-to-one
+		1. The record in table doesnt have existence without the record primary key table
+		2. There is no independent identity of the record in the 2nd table 
+		
+		then we establish one-to-one relationship by writing primary key of the table as a primary key and foreign key in another table
+		
+	1.2 one-to-many as one-to-one
+		1. Each of the entities has their own identity
+		2. Each of the entities can exists independent of each other 
+		
+		then we need have each table a separate primary key then we should writing primary key of a table as foregin key in another table and to make this relationship one-to-one we have to make foregin key as unique
+		
+#2. one-to-many relationship
+a record in one table is in relationship with multiple records of another table, then the relationship is said to be in one-to-many
+write the primary key of one table as a foreign key in another table
+
+#3. many-to-many relationship
+many records of a table or in relationship with many records of the another table
+
+ONSH214022022 = L4Qgn5

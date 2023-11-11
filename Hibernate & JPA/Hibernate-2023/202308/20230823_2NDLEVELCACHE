@@ -1,0 +1,219 @@
+Hibernate 2nd Level Cache
+-------------------------
+Any ORM technology framework like Hibernate Framework or Jpa api suffers from 2 problems:
+1. huge memory consumption = because of graph of objects along with their associated objects are loaded into the jvm memory thus increasing the consumption of jvm heap space
+
+2. poor performance = due to repeated fetches of the data from the database tables. for eg.. N+1 problem while fetching the associations increases the round trips to the database and hence results in poor performance problems
+
+unless we apply proper tunning parameters and cache practices in place we cannot overcome these problems
+
+1. Tunning Parameters
+1.1 avoid bi-directional associations between entity classes, unless required. Always draw associations between the classes based on their usage within the application
+
+1.2 FetchType
+	1.2.1 on collection associations always apply FetchType=LAZY only, 
+	Be careful when we use LAZY, because we might run into N+1 problem. we should apply batch_size for such collection associations to avoid the impact of N+1
+	
+	1.2.2 for object association depends on the requirement we need to either choose to be LAZY or EAGER. For eg.. When we are fetching the Policy information, most of the time we fetch PolicyHolder information as well.
+	So if we apply fetchType as LAZY for policyHolder associated object, it unnecessarily makes an another roundtrip to the database in fetching the PolicyHolder information and impacts the performance. Such associated objects which are mandatorily retrieved along with their parent object should be identified and marked as EAGER
+	
+1.3 avoid navigating through associations while fetching the child data. Use HQL queries only to fetch associated objects
+Product product = session.get(Product.class, 10);
+Set<Review> reviews = product.getReviews(); #dont navigate through associations
+
+1.4 specify the max_fetch depth parameter
+<property name="hibernate.max_fetch_depth">2</property>
+
+1.6 Apply proper Cache mechanism in place
+--------------------------------------------------------------------------------------------------------------------------------------
+Without proper Cache Mechanism in place, the ORM technology applications runs into memory/performance issues, so we need use Cache mechanism while building the application using hibernate/jpa 
+
+Already the Hibernate Framework or jpa api has provided first-level cache and the default cache that is available within the hibernate application. 
+How long the data will be cached in First-level cache?
+The First-level Cache is scoped to the operation level or session level, that stores the data to the shortest possible interval of time until we complete the operation. because per each operation in our application we open a new session object.
+	
+The reasons for having first-level cache:
+	1. to avoid repeated fetching of the same data within an operation. For eg.. when we query all the reviews whose rating is more than >4. and try to fetch the product for whom this review has been given by navigating through associate as shown below
+	
+	TypedQuery<Review> typedQuery = session.createQuery("from Review r where r.rating > ?");
+	List<Review> reviews = typedQuery.getResultList(); #1000
+	for(Review review : reviews) {
+		Product p = review.getProduct();
+	}
+	r1 -> p1
+	r2 -> p2
+ 	r3 -> p1
+	r3 -> p1
+	if hibernate has not made the first-level cache as default cache. then in above case, within the scope of the operation we might endup in fetching #3 times the product data from database and endup in creating duplicate instances of product in jvm memory.
+		
+	2. to avoid concurrent problem, so that multiple users would modify the isolated copies of the data at the same time
+	
+but the first-level cache would not address the problems with memory/performance completely. 
+		
+#100000 users accessing the application concurrently
+all them are querying the information about a product = 103
+		
+-> #1 -> session object -< goes to db to fetch product=103
+-> #2 -> session object -<
+	
+class ProductServlet extends HttpServlet {
+	void service(httpReq, httpResp) {
+		ProductDao dao =new ProductDao();
+		Product product = dao.getProduct(productNo);
+	}
+}	
+
+class ProductDao {
+	public Product getProduct(int productNo) {
+		Session session = sessionFactory.openSession();
+	}		
+}		
+From the above we can understand the scope of the first-level cache is per user, per operation of the application.
+
+In an application we can categorize the data into 3 types.
+1. Long-lived data
+By nuature this data will not be modified during the lifetime of the application. Any changes to this data happens only during the downtime of the application only. 
+	
+2. Moderate data
+rarely undergoes changes, for example in an e-commerce application the data related to products, manfacturers and sellers would not change frequenlty. The chances of having them modified is very rare. 
+	
+3. Short-lived data
+Frequently gets modified during the runtime of the application by the end-users operations
+
+First-level cache doesnt help us in optimizing the memory/performance, since the lifetime of the cache itself is confined to the scope of the operation, but in an application
+1. There are concurrent users trying access the application and many of the times across these users would be accessing all the types of data
+2. Here the data could be long-lived or moderately modified data as well.
+	
+if the data is cached per user, per operation the per each user we would endup in fetching the data repeatedly from the database increasing round-trips and duplicate objects being stored in the jvm memory
+
+So from the above we can understand we need a cache at much higher-scope than operation that would exist in caching the data across the users accessing the application, which is nothing but Application-level Cache.
+So hibernate to support caching the data at the application scope has provided 2nd level cache
+
+2nd Level Cache is also called as SessionFactory Cache, here the Cache would be created along with the SessionFactory of the application, per database and would be closed while shutting down/closing the SessionFactory.
+	
+	
+Few more points to analyze the way we need to Cache the data in 2nd Level Cache:
+1. 2nd Level cache exists through out the lifetime of our application, but we have data of different characteristics in nature like long-lived data, moderately modified data and short-lived, so not every data is suitable to be Cached in the sameway
+  1. long-lived data can be cached permanently (read-only)
+	2. moderately modified data should not be cached permanently, when there is a change in data we should identify and stale (read-write) (transactional)
+	3. short-lived data, most of the time avoid Caching, since we dont get much benefit of Caching them (dont cache)
+	
+since every ENTITY is not cacheable with same characteristics, we should mark each entity and whether it should be cached or not. If should be cached how (permanently/modifiable) in our application, based on this Session object would decide what entities should be cached in 2nd level cache and how.
+	
+2. since the data we are storing in 2nd level is runtime data, it might grow over the runtime of the application that leads to Cache running out of memory issues, so we need to have proper Cache Management technics like
+	1. how many entries must be cached per an entityType
+	2. How long the data must be cached (TTL)
+	3. eviction policies like LRU, MRU, idle: 20 mins
+	
+3. since different data (entities) should be cached with different characteristics, it is adviced to maintain them as part of different Cache (Regions), so that managing them and maintaining becomes easy
+
+Hibernate integrates with 3rd party Cache Framework in the market to implement 2nd Level Cache. There are many third-party libraries or frameworks provides Cache capabilities	that can be used in an application like
+1. oscache
+2. swarncache
+3. jcache
+4. ehcache
+5. coherence
+6. redis cache
+7. mem cache
+8. hazelcast cache
+etc
+
+EHCache is considered as very popular opensource cache framework available in the Java, and hibernate has integration with EHCache. EHCache is an distributed cache framework, that helps in maintaining the data across the nodes of the cluster. 
+		
+EHCache 2.x = legacy
+EHCache 3.7 (latest) = not backward compatible with older version
+
+Hibernate Framework 5.x has integration with EHCache 2.x version only.
+Hibernate Framework 6.x 
+
+How to work with EHCache?
+We have different data we want aspart of our application, each of them has their own semantics and requirements of Caching. So EHCache allows us define Cache with configurations specific to the type of the data we want to store, using which we can create Cache to maintain the data
+
+cache.xml
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<cache-template name="defaultTemplate">
+		<key-type>java.lang.String</key-type>
+		<value-type>java.lang.String</value-type>
+		<heap unit="entities">200</heap>
+	</cache-template>
+	
+	<cache alias="productCache" uses-template="defaultTemplate">
+		<value-type>com.ecommerce.dto.Product</value-type>
+	</cache>	
+	<cache alias="reviewsCache" uses-template="defaultTemplate"/>
+</config>
+
+Configuration configuration = new XmlConfiguration(this.getClass().getClassLoader().getResource("cache.xml"));
+CacheManager cacheManager = CacheManagerBuilder.newCacheManager(configuration);
+cacheManager.init();
+
+Cache<String, Product> productCache = cacheManager.getCache("productCache", String.class, Productor.class);
+productCache.put(1, p1);
+
+Product product = productCache.get(1);
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+class Product implements Serializable {
+	int productNo;
+	String productName;
+	String description;
+	String manufacturer;
+	String category;
+	double price;
+	Set<Review> reviews;
+	// accessors	
+}	
+
+class Review implements Serializable {}
+
+Product.hbm.xml
+----------------
+<hibernate-mapping package="com.slc.entities">
+	<class name="Product" table="product">
+		<cache usage="read-write"/>
+		
+		<id name="productNo" column="product_no">
+			<generator class="identity"/>
+		<id>
+		<property name="productName" column="product_nm"/>
+		...
+		<set name="reviews" inverse="true">
+			<cache usage="read-write"/>
+			<key column="product_no" not-null="true"/>
+			<one-to-many class="Review"/>
+		</set>
+	</class>
+</hibernate-mapping>
+
+Product p = session.get(Product.class, 1); //2nd level cache
+p.setPrice(1000);
+session.merge(p);
+
+Set<Review> reviews = p.getReviews(); // review id
+reviews.forEach(r ->{
+	r.getPostedBy();
+})
+
+ehcache.xml
+<?xml version="1.0" encoding="utf-8"?>
+<ehcache>
+	<cache name="com.slc.entities.Product" maxEntriesLocalHeap="100" eternal="true"/>
+	<cache name="com.slc.entities.Product.reviews" maxEntriesLocalHeap="100" eternal="true"/>
+	<!--<cache name="com.slc.entities.Review" maxEntriesLocalHeap="100" eternal="true"/>-->
+</ehcache>
+
+
+hibernate.cfg.xml
+------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		
+		<property name="hibernate.cache.use_second_level_cache">true</property>
+		<property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.internal.EHCacheRegionFactory</property>
+		<property name="hibernate.cache.provider.configuration_file_resource_path">/ehcache.xml</property>
+	</session-factory>
+</hibernate-configuration>

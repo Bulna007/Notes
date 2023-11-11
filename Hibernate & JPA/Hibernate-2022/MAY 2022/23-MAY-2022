@@ -1,0 +1,34 @@
+Inheritance Mapping models
+Inheritance Mappings refers to mapping an inheritance relationship between the entity classes into the relational database tables
+
+class InsurancePlan {
+	int insurancePlanNo;
+	String planName;
+	String description;
+	int taxSaver;
+	double minInsurredAmount;
+	double maxInsurredAmount;
+	// accessors
+}
+
+class AccidentalInsurancePlan extends InsurancePlan {
+	String coverageType;
+	double disabilityCoveragePercentage;
+	// accessors
+}
+
+class MedicalInsurancePlan extends InsurancePlan {
+	String networkCoverage;
+	int copay;
+	// accessors
+}
+
+There are 3 ways we can map an inheritance relationship between the entity classes into relational database tables
+1. Table per class hierarchy
+For all the classes within the inheritance hierarchy, we will create only one single table with columns as representing attributes of all the classes of the hierarchy.
+	
+2. Table per subclass
+Per each subclass in the inheritance hierarchy, create a separate table representing the subclass, in relationship with super class table
+
+3. Table per concreate class
+Per each concreate class within the hierarchy create individual tables with parent/subclass attributes

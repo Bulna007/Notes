@@ -1,0 +1,54 @@
+HQL/JPQL
+---------
+HQL stands for Hibernate query language and JPQL stands for Java persistency query language. Till now we are using get(), load() and find() for querying and accessing the data from the database based on id property or primary key
+
+Always we dont want to fetch a single object from the database based on id/primary key property rather we wanted to construct complex queries with filter condition in accessing the data from the database.
+	
+To support querying or accessing the data from database we need to use sql queries. but while working with sql queries we have lot of problems:
+1. while working with sql queries we refer to db tablenames and column name as part of the queries we write, which makes our java code tightly coupled with underlying database, if there is a change within the tablename or column name, again we need to modify the code inside the java program.
+	
+2. The sql queries that we write as part of our code are specific a database, while switching from one database to another, the query language we used will not work and the queries are not portable across the databases.
+So while moving across the databases we need to rewrite the queries based on the database query language support and may require to change the code to wrap the data as well. it incurrs considerable amount of cost in rewriting the code and maintaining the application
+
+To overcome the above problem hibernate framework/jpa api has introduced hql/jpql query language.
+The hibernate/jpa has introduced their own query language with query clauses/constructs and criterias which are independent of the underlying database. 
+1. while writing the hql/jpql queries we dont refer to tablenames or column names of the database rather we refer entityClassName and attributeNames of those classes in building the queries. Hibernate takes care of translating the entityClassnames/attributeNames into corresponding table/column names through mapping information.
+in future if there is a change in tablename or column name we dont need to rewrite the queries since we are not using their names, only change is modify the mapping information for the entity
+
+Now the java code will be decoupled from the underlying database. So hql/jpql queries are called Object query language since we refer classnames and attribute names.
+	
+#2. when we are using the hql/jpql in writing the queries as these queries are independent of the database, hibernate requires to translate these queries into database specific queries using dialect.
+so switching from one database to another database only need to change the dialect we are using. 
+So we can easily achieve database portability using hql/jpql languages
+-------------------------------------------------------------------------------------------
+From Hibernate 5.x onwards the hibernate apis pertaining to 
+ 1. query language
+ 2. criteria api are deprecated and are marked for removal in future verions of the hibernate
+we need to use jpa query and criteria apis to work with hibernate framework
+
+Syntax of HQL/JPQL query
+we can drop the select clause and projection clause in case if we want to query the entire object. within the hql/jpql queries we need to use the fqn entityClasses to identify the class uniquely
+	
+from com.inverse.entities.Parcel
+
+there is a clause or option in mapping file called auto-import="true/false" for each entity class
+<hibernate-mapping package="com.inverse.entities">
+	<class name="Parcel" table="parcel" auto-import="true">
+	</class>
+</hibernate-mapping>
+by default the value of auto-import is "true", which indicates while writing the hql/jpql queries we dont need to write the fqn, the corresponding packages are imported automatically
+which means the above query can be written as 
+
+from Parcel
+
+in case without our application if there are multiple entity classes with same name under different package, then we need to use fqn class to resolve them.
+	
+To execute the hql/jpql queries the hibernate and jpa has provided query api support 
+
+Hibernate:
+Configuration configuration = new Configuration().configure();
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+Session session = sessionFactory.openSession();
+Query query = session.createQuery("from Parcel");
+
+List<Parcel> parcels = query.getResultList(); // execute the hql query by translating it using the help of dialect and collects the ResultSet into object directly and returns to us

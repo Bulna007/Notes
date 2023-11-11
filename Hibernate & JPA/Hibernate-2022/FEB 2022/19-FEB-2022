@@ -1,0 +1,55 @@
+Normalization
+--------------
+always while storing the data into the database tables we need to normalize the data otherwise we run into insertion/delete/updating anomolies
+
+In order to identify and distribute the data across the tables, EF Codd has introduced normal forms.
+Normalization is a technic of breaking down the data and distribute across multiple tables to effectively store the data in database.
+There are total 5 Normal forms are there each of them defined with set of rules that should be applied on the data to Normalize
+1. 1NF
+2. 2NF
+3. 3NF
+------------------------------
+4. BCNF (Boy Cott Normal Form)
+5. 5NF
+
+Each of these Normal Forms has to be applied sequentially one on top of another begining from 1st NF to 5th, unless we applied 1NF we cannot apply 2NF rules on the data to normalize.	
+In order for a give data to be normalized atleast we need to apply till 3NF.
+	
+#1. 1NF
+--------
+1. No Repeating groups of data
+2. Each field in the table should be atomic in nature
+3. Every table must have a primary key
+
+What is repeating groups of data?
+For a group of fields in the table, the other fields of the table should be stored repeatedly.
+	
+member_no  member_first_nm  member_last_nm  age   gender	 mobile_no  
+---------
+1          alex             a               30    male     	 093930303 
+
+(fk)	    
+member_no policy_no  plan_nm  tenure  policy_amt   issued_amt 
+--------- --------
+1         p1         jeevan    12     10000        10/11/2021
+
+#2. 2NF
+---------
+1. Your data model should be already in 1NF
+2. all the non-key attributes of your table should be fully dependent on all the parts of the key
+3. every table must and should have primary key
+
+
+student
+------
+student_no(pk)	student_first_nm     student_last_nm	qualification	dob	gender	 mobile_nbr	email_address
+
+
+student_course_faculty
+---------------------
+student_no(pk)	course_no(pk)	faculty_no	faculty_first_nm	faculty_last_nm	experience	mobile_nbr	email_address	
+
+
+course
+------
+course_no(pk) course_nm	   duration	fee

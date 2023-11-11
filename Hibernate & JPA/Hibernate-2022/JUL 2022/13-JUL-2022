@@ -1,0 +1,105 @@
+How to work with join queries in hql/jpql?
+if we want to fetch the data from multiple tables together based on the relationship between them then we need to use join queries
+we join the tables based on pk and fk column of the tables.
+There are 3 types of joins are there
+1. inner join = records matching in both the tables will be returned as an outcome
+2. left outer join = all the records of the table to the left along with matching records of the right table 
+3. right outer join = all the records of the table to the right along with matching records of the left table
+
+In HQL we can write joins in 2 ways
+1. implicit join
+in case of implicit join we dont use join keyword in joining the tables/entity classes in fetching the data, rather we use the association object to perform the joins
+
+2. explicit join
+
+#1. implicit join
+
+@Entity
+@Table(name="member")
+class Member {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int memberNo;
+	String policyHolderName;
+	int age;
+	String gender;
+	
+	@OneToMany(mappedBy="member")
+	Set<Policy> policies;
+}
+
+@Entity
+@Table(name="policy")
+class Policy {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int policyNo;
+	int planNo;
+	String planName;
+	int tenure;
+	double premiumAmount;
+	double insurredAmount;
+	
+	@ManyToOne
+	@JoinColumn(name="member_no")
+	Member member;
+}
+
+find all the policies issued to the member whose policyHolderName is "alex"
+select p.* from policies p inner join member m on p.member_no = m.member_no where m.policy_holder_nm = ?
+	
+The above query can be written in hql using implicit join as below.
+select p from Policy p where p.member.policyHolderName = :phn
+
+In the above query by referring the associated object p.member which indicates as join query to executed based on the association mapping
+
+Few points to note:
+1. always an implicit join performs inner join only
+2. we cannot perform implicit joins on collection associations since we cannot dereferrence a collection type
+
+
+#explicit join
+
+@Entity
+@Table(name="account")
+class Account {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int accountNo;
+	String accountHolderName;
+	String accountType;
+	double balance;
+	
+	@OneToMany(mappedBy="account")
+	Set<Address> addresses;
+}
+
+
+
+@Entity
+@Table(name="address")
+class Address {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	int addressNo;
+	String addressLine1;
+	String addressLine2;
+	String city;
+	String state;
+	int zip;
+	String country;
+	
+	@ManyToOne
+	@JoinColumn(name="account_no")
+	Account account;
+}
+
+select a.* from account a inner join address ad on a.account_no = ad.account_no where ad.city=?
+	
+select a from Account a inner join a.addresses ad where ad.city=?
+                                     |
+																	join based on association
+																	mapping
+
+
+give me all the bikes registration details who are penalized with traffic challan of violation_type = helmet

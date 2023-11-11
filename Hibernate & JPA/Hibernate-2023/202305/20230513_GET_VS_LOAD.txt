@@ -1,0 +1,51 @@
+What is the different between session.get(Class, Object id) and session.load(Class, Object id)
+	
+1. 
+get(Class, Object): always supports eager loading, upon calling the get(..), it goes to the database immediately and queries and populates the data into entity object and returns
+
+load(Class, Object): supports lazy loading bydefault, upon calling the load(..), it will not goes to the database rather quickly returns an proxy class object by populating the pk value.
+The proxy has the logic for querying and loading the data from database upon requested
+
+2. 
+get(Class, Object): incase of get(..) if the underlying record of data with the given id(pk) doesnt exists in the table, it returns null
+load(Class, Object): since it doesnt goes to the database, it dont know whether record exists or not, so it always returns proxy object.
+while accessing the data using proxy object, by using the accessor methods, if the corresponding record doesnt exists, it throws an ObjectNotFoundException indicating the record not found
+
+3. 
+get(Class, Object): always supports eager loading only
+load(Class, Object): bydefault supports lazy loading, it we want we can disable lazy loading using lazy=false attribute on the entity class within the mapping file
+
+<hibernate-mapping>
+	<class name="Passenger" table="passenger" lazy="false">
+	</class>
+</hibernate-mapping>
+
+4. 
+
+get(Class, Object): always works as eager only irrespect of the class is final or not
+load(Class, Object): by default supports lazy loading, if the underlying entity class is marked as final
+		
+final class Passenger {}
+then it works same as get by eager loading only
+
+we can make the load(..) method supports lazy loading, even the class is marked as final by proxying the interfaces.
+	
+5. 
+incase of get(..)	the object that is returned can be check against null to verify its presence to perform operation.
+whereas incase of load(..) since it always returns the proxy irrespective of the record exists or not, we cannot check for null condition to verify the presence of the object. but while accessing it runs into exception, so always use load(..) if we are sure the underlying object of the pk value exists or else sorround the code in try/catch block to avoid abnormal termination
+
+6.
+incase of load(..) always we need have active session in accessing the data using proxy, as proxy goes to the database in fetching the data when we call the accessor methods.
+	 
+session = sesionFactory.openSession();
+passenger = session.get(Passenger.class, 1);
+session.close();
+// i can access the passenger data
+passenger.getPassengerName();
+
+	
+session = sesionFactory.openSession();
+passenger = session.load(Passenger.class, 1);
+session.close();
+
+passenger.getPassengerName(); // runs into exception because of session has been closed

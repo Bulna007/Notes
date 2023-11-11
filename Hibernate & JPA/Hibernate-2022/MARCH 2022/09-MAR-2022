@@ -1,0 +1,31 @@
+How can we call a method on a class without holding the concrete reference of the class?
+We need to use reflection api
+
+#1. by using the Class reference of the class we can access the generic reference of the Methods of the class
+	
+Method[] methods = clazz.getDeclaredMethods();
+Method method = clazz.getDeclaredMethod(String methodName, Class<?> argTypes);
+
+#2. now we can invoke the method on an object by passing parameters
+Object obj = clazz.newInstance();
+method.invoke(Object obj, Object[]{} parameterValues);
+
+we can call object.method() when we have concrete reference of the object. but when we have generic reference of a class object we cannot invoke object.method(parameters) instead we need to use method.invoke(object, parameters);
+
+So to invoke Method we need reference of the Method of the Class which can be accessed using Class reference
+
+
+class NetBankingManager {
+	public String transfer(String fromAccount, String toAccount, double amount) {
+		return "3903335353";
+	}
+}
+
+class Invoker {
+	public Object invoke(Class<?> clazz, Object[] params, String methodName, Class<?> paramTypes) {
+		Object obj = clazz.newInstance();
+		Method method = clazz.getDeclaredMethod(methodName, paramTypes);
+		Object ret = method.invoke(obj, params);
+		return ret;
+	}
+}

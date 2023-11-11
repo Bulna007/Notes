@@ -1,0 +1,34 @@
+Entity object lifecycle
+What are the various different states in which an entity object can exists within the lifecycle of an entity object?
+	
+The different activities takes place ontop of an object after the object has been created and before the object is being destroyed, all the states in which an object exists is called lifecycle of an object
+
+An hibernate entity object can exists in one of 3 states
+1. Transient State
+An entity object is said to be in transient state, if there is no record corresponding to that entity object exists in the database table and the object is not associated to the active Session of the hibernate
+
+Customer customer = new Customer();
+customer.setCustomerNo(19);
+The customer entity object above is not associated with Session object and there is no record with customerNo=19 exists in the table, which indicates the above entity object is in "transient" state
+
+2. Persistent State
+An entity object is said to be in persistent state, if the object is associated with an active session and has an record corresponding to the object in database.
+	
+Any changes on the object would be tracked by the Session object and will be persisted automatically on the underlying database table, there by which we call the object as "persistent" state object
+
+Customer customer = session.get(Customer.class, 10);
+customer.setMobileNo("893837889");
+session.close(); 
+#when we close the session, all the changes we applied on the object will be written to the database by the session object automatically without need of calling update/merge method
+
+
+3. Detached State
+An object is said to be in detached state, for a given entity object there is a record exists in the database, but the object is not associated with an active session
+
+Customer customer = session.get(Customer.class, 10);
+session.close();
+#what is the state of Customer object?
+The customer object is in detached state as it is not associated with any Session	
+
+
+What operations on entity object will put through the object in these states?

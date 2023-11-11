@@ -1,0 +1,33 @@
+What are the types of database management systems are there?
+There are 6 types of database management systems are there
+1. Hierarchial database
+2. Network database
+3. Relational database
+4. Object oriented database
+5. No-Sql or Semi-Structured database
+6. Un-Structured or Object storage database
+
+3. Relational database (RDBMS)
+RDBMS allows us to store the data interms of Tables. Each table is defined with fixed-set of columns with data types and size of the columns. The data is stored in records which are called tupples. Each record has same number of columns.
+	
+How to access the data from the database table?
+Since we defined the data definition information of the table, the database knows which table has what columns of data, so that we never need to memorize the address location of the data rather we can ask the database to provide the database on the data itself.
+	
+For eg.. we can ask rdbms to fetch and return records of data from sales table where customer_nm=joseph. The database which column of the table represents customer_nm so it goes through each of the records matching with customer_nm column value with 'joseph' and can return matching records of data, so we never need to memorize the address rather we can access the data through data itself.
+	
+How to store the data of the application within the RDBMS database?
+We should not store all of the data of our application in one single table, which makes the data redundant across the records, so always identify the related fields of data and place them together in tables. In this way break the data and distribute it across multiple tables.
+	
+If we break the data and distribute across multiple tables, how to represent relationship between the data across the tables?	
+Each record in the table has an unique address, but it is not recommended to represent relationship between the records of 2 tables through the address as it becomes complex manage and maintain
+
+As all the tables in RDBMS are defined with semantics and structure we can establish relationship between the tables by writing one of the column of data of a table in another table as relationship column, so that we can avoid using addresses in establishing relationship.
+	
+But uniquely identifying the record in relationship with my record in another table is not possible if there multiple records in another table with same data, so how to solve this problem?
+	
+To help us in uniquely identifying a record of data in a table, inorder to establish relationship with another record of another table, the primary key column has been introduced.
+	
+Primary Key = is a column defined inside a table, so that we can uniquely identify a record of information within the table to establish relationship with another record of other table.
+Foreign key = is a column of another table primary key in which we store the values of the primary key of other table to establish relationship between the records of the tables
+
+In RDBMS we establish relationship between records of tables through data itself by writing interms of primary key and foreign key	
