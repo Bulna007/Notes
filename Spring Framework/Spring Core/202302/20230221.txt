@@ -1,0 +1,72 @@
+class MessageWriter {
+	private IMessageConverter messageConverter;
+	void writeMessage(String message) {
+		String cMessage = null;
+		
+		cMessage = messageConverter.convert(message);
+		System.out.println(cMessage);		
+	}	
+	public void setMessageConverter(IMessageConverter messageConverter) {
+		this.messageConverter = messageConverter;
+	}
+}
+interface IMessageConverter {
+	String convert(String message);
+}
+class HTMLMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<html><body>"+message+"</body></html>";
+	}
+}
+class PDFMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<pdf>"+message+"</pdf>";
+	}
+}
+
+application-context.xml
+<beans>
+	<bean id="messageWriter" class="com.sc.beans.MessageWriter">
+		<property name="messageConverter" ref="pdfMessageConverter"/> 
+	</bean>
+	
+	<bean id="htmlMessageConverter" class="com.sc.beans.HTMLMessageConverterImpl"/>
+	<bean id="pdfMessageConverter" class="com.sc.beans.PDFMessageConverterImpl"/>
+</beans>
+
+class Test {
+	public static void main(String[] args) {
+		BeanFactory beanFactory = new XMLBeanFactory(new ClassPathResource("com/sc/common/application-context.xml"));
+		MessageWriter messageWriter = (MessageWriter) beanFactory.getBean("messageWriter");		
+		IMessageConverter messageConverter = (IMessageConverter) beanFactory.getBean("htmlMessageConverter");
+		messageWriter.writeMessage("Welcome to Spring Framework");
+	}
+}
+
+What will happen when we tried creating the BeanFactory?
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/cdi/common/application-context.xml"));
+1. Resource = is an interface which has relevant functionality for reading a resource from the disk (filesystem)
+There are 2 implementations for the Resource interface
+1. FileSystemResource = reads the file from the physical directory location using "absolute path"
+2. ClassPathResource  = reads the file from the pysical location by using relative path from the CLASSPATH of the application and it uses ClassLoaders in reading the files of the project
+
+here we are creating the object of Resource implementation and passing it as an input to XMLBeanFactory
+
+2. while the XMLBeanFactory is being created, it goes to Resource object we passed and request for the underlying spring bean configuration file.
+2.1 here we are passing ClassPathResource object as an input to the XMLBeanFactory, so ClassPathResource quickly goes to the classpath of our application and locates the spring bean configuration file relative from the classpath and returns the file as an input to XMLBeanFactory
+
+2.2 upon taking the XML from the ClassPathResource, the XMLBeanFactory performs 2 checks
+2.2.1 well-formness check = which means the XML has been written as per the syntactic rules of XML or not
+2.2.2 validity = is the XML has been written with the valid tags defined by the spring developers or not
+
+if these checks are failed, the XMLBeanFactory throws an exception and terminates the program
+
+3. if the given XML is well-formed and valid then XMLBeanFactory quickly goes to the jvm memory and creates an logical memory partition within the jvm memory called "ioc container" or "core container"
+then reads the spring bean configuration file and places it as an in-memory metadata within the ioc container and returns the reference as an BeanFactory to us
+
+2. what will happens when we call beanFactory.getBean("beanId");
+when we ask for an bean definition object, the beanFactory goes to the in-memory metadata of the ioc container searching for the bean definition with the given id and once found, it reads the fqnClass and instantiates the object for it and places the object within the ioc container as key=id and value=object and returns the reference of the object to us
+
+by default, when we repeatedly request the same bean definition, it will not create new object rather it returns the existing object it has already created from the ioc container
+
+MessageWriter messageWriter = (MessageWriter) beanFactory.getBean("messageWriter");

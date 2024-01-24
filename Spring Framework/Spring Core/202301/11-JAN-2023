@@ -1,0 +1,65 @@
+What is Spring Framework, how is it different from other frameworks?
+Spring is an Framework, that support developing multiple application types and it is an end-to-end application development framework. 
+	
+Spring Framework support developing multiple application development types inpar with jee
+then why spring framework, when we can develop application using jee itself?
+jee:
+#1
+jee is an api, api stands for application programming interface, and always standard apis are partial and provides only interfaces & abstract classes always we need an implementation to work with an api, thus making api difficult to use
+
+#2 
+jee api is very huge in nature, and it has lot of classes within it. one class is interdependent on another class. so learning the api is very difficult and takes huge amount of time.
+since the classes are interdependent on each other we cannot learn the api partially to develop an application
+
+#3
+apis will not provide boiler-plate logic, programmer has to write lot of code in building an application using api due to which
+1. we need more amount of time in developing application
+2. more man power resources required
+3. more cost, due to more time and more resources
+4. chances of increasing the bugs would be high
+5. more testing time required for certifying the application and the cost of testing the application is very high
+from this we can understand apis doesnt support rapid application development
+
+framework:
+#1 
+frameworks provides bunch of classes all the classes are concrete classes that can be directly used without the need of implementation thus making easy to use
+
+#2 frameworks provides less number of classes when compared with apis and all the classes provided by the framework are independent of each other, thus making the framework easy to learn and use
+we can learn framework partially and can develop the application
+
+#3. framework developers has written boilter plate logic within the classes they provided, so we dont need to write huge amount of code in building an application using framework, due to which we have plenty of advantages:
+1. takes less time for development
+2. less number of resources required for building the application
+3. cost of development will be less
+4. testing time required in verifying the application will be less
+5. chances of increasing the bugs would be less
+taking all these factors into account framework supports rapid application development
+
+From the above we can understand we have plenty of advantages of developing an application using Spring Framework rather than using jee api
+
+Light weight application development framework
+Spring Framework is an very big framework, despite of being big it is still considered as light weight application development framework, because spring framework has been distributed by breaking it into several modules, where each module of the framework is independent of another module. The foundation or the fundamental module of the framework is core where all the other modules of the framework are dependent only on the core module.
+	
+So the programmer to develop an application using spring framework, dont have to learn everything in the spring and dont have to use all the modules of the spring, he can pick the module of his choice based on the nature of the application he is building and can start developing the application
+
+So rather than worried about how big it is, we need to think about what we want out of it, thus making it very light weight 
+
+
+The salient features of spring framework are
+1. versatile
+flexibile enough to integrate into any of the existing application irrespective of the technologies in which the application has been developed, thus enriching the functionality of the system.
+	
+2. non-invasive
+spring framework classes will not creep into our application classes, so always our application will be decoupled from spring framework. at anypoint of time if we dont want to use spring framework, we dont need to modify the code in our application to detach it from spring.
+----------------------------------------------------------------------------------------------------------------------------------
+Spring Core
+
+lot of classes
+based on the functionality or nature of code written inside the class, we can classify the classes broadly into 3 types
+1. pojo
+2. java beans
+3. component/bean classes
+
+1. pojo
+plain old java object.
+if the class can be executed without any external third-party references then the class can be called as "pojo" class

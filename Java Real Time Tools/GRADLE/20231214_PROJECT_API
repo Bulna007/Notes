@@ -1,0 +1,208 @@
+The Project Api
+---------------
+A buildscript file represents an Project object api in Gradle. A Project is an abstract concept, we can map a Gradle project to any software component that needs to be build like java-library project, java-application project or a groovy project etc. All the top level properties and blocks defined in buildscript file are part of the Project api
+
+standard project properties which we can access in buildscript file are:
+1. project = implicit reference of the current buildscript object
+2. name = the name of the project directory
+3. path = the absolute path of the project
+4. Description = description of the project
+5. projectDir=The directory containing the buildscript file of the project
+6. buildDir=project directory/build
+--------------------------------------------------------------------------------------------------------------------------------------
+How to build a java project using Gradle?
+A project can be any of the below types
+1. java library project = The project will be build to generate a Jar file that is distributable
+2. java application = The project will be build and an executable jar with Main-Class defined in manifest.mf would be generated 
+3. web application  = The project will be build to an War file
+
+
+gradle has provided lot of pre-defined TaskTypes that can be reused in building the projects. For each type of project of a specific technology (java, groovy, kotlin etc), the build step activities that needs to be applied in building the project would be same across, so declaring the tasks from these TaskTypes in building the project aspart of gradle buildscript would result in redundancy.
+	
+so instead, gradle has provided pre-defined plugins for each type of technology/project type, these plugins are pre-build/written with group of tasks that needs to be applied in specific order along with conventions/configurations in building the project.
+	
+
+
+For eg.. to build the java project we need to apply java plugin
+upon applying the java plugin, 
+1. it imports/enforces the standardized directory structure as a convention
+project (directory)
+|-src
+  |-main
+		|-java
+		|-resources
+	|-test
+		|-java
+		|-resources
+|-build.gradle
+|-settings.gradle
+|-build
+	|-libs
+	
+incase if we want to customize the directory structure we can do so easily when compared with maven.	
+
+2. dependency management
+For every java project we need third-party libraries as dependencies, that can be reused in quickly building the projects. 
+
+1. identifying the right verion of dependencies
+2. downloading/resolving 
+3. verifying the authenticity of these libraries
+4. adding them to the classpath inorder to use them aspart of build process
+are the challenging tasks in java projects
+
+2.1 Repositories
+
+Gradle supports dependency management, thus by eliminating the manual process of managing these dependencies in building the projects.
+	
+Gradle supports #3 types of repositories	
+1. Local File repository = we can add the local filesystem directory as a repository from which we can add the dependencies to the project
+note: based on Local File repository we can add maven local repository ~/.m2/repository as an File repository in building the gradle projects.
+
+2. Gradle Cache = gradle uses the concept of gradle cache, upon downloading the dependencies from remote/central repositories those are cached locally and reused across the builds of different projects on that machine by using gradle cache.
+The default location of the gradle cache is = ~/.gradle/caches
+
+3. Central Repositories/Remote Repositories = gradle supports any of the central repositories like maven or ivy to be defined as repositories or any other corporate repositories in building the projects
+
+2.2 dependency configurations (dependency scopes)
+at a core the gradle supports declaring dependencies and adding them to the classpath of the project through dependency configurations.
+different technology projects has different scopes at which the dependencies needs to be configured, so the gradle has provided dependency scopes aspart of the plugins.
+	
+The java plugin adds a number of dependency configurations to the project as below.
+1. implementation = implementation only dependencies (runtime/compile)
+2. compileOnly = compile-time only dependencies, not used at runtime
+3. annotationProcessor = annotations processors used during compilation
+4. runtimeOnly = runtime only dependencies
+5. testImplementation = implementation only dependencies for tests
+6. testCompileOnly = additional dependencies only for compiling the tests, not used at runtime
+7. testRuntimeOnly = runtime only dependencies for running the tests
+
+java library plugin
+8. api = The api configuration should be used declare dependencies in our project, when these are exported by the library api. whereas implementation configuration should be used to declare dependencies that are internal to the component/project
+	
+
+(provided)    (compile)        (runtime) = maven
+compileOnly  implementation   runtimeOnly
+      |       |          |         |
+     compileClassPath   runtimeClassPath
+	
+
+2.3 gradle supports transitive dependencies. 
+There are 2 types of dependencies are there :
+	1. direct dependencies = these are the dependencies that are directly requrired by the component/project. These are also called as first-level dependencies 
+		
+	2. transitive dependencies = these are the dependencies required for your project, because you are using another dependencies and they need them.
+	
+gradle supports resolving transitive dependencies and them to your project. 
+
+Constraints on transitive dependencies:
+dependency constraints allow you to define the version or the version rage of both dependencies declared in the build script and transitive dependencies. it is the preffered way to express constrains that should be applied to all the dependency configurations
+
+build.gradle
+dependencies {
+	implementation("org.apache.httpcomponents:httpclient")
+	
+	constraints {
+		implementation("org.apache.httpcomponents:httpclient:4.5.3") {
+			because("the previous version of this dependency has vulenerabilities")
+		}
+		implementation("commons-codec:commons-codec:1.11") {
+			because("version 1.9 pulled from httpclient has bugs")
+		}
+	}
+}
+
+3. Archetypes
+There is no concept of Archetypes in gradle, because gradle buildscripts are very minimal unlike maven pom.xml. But to facilitate creating the project of specific type with standardized directory structure and plugins configured gradle has provided gradle cli tool called "gradle init"
+	
+4. build abstraction or build lifecycle
+When we apply plugins, the plugins imports additional tasks based on the type of the project and configurations/conventions. So that we dont need to write any tasks to build our project.
+	
+5. Tools support
+all the java ides supports gradle as well
+
+Note:
+In a maven project, for each project we need to define gav coordinates to identify uniquely the project, so that is can be published into an local/remote maven repositories and can be reused in another projects. 
+But not all the projects we build are libraries, so declaring gav coordinates for all the projects doesnt makes sense as those are not published and reused. So in gradle we dont need to declare gav coordinates for every project unless we want to distribute it.
+	
+artifactId = of the project is the directory name of the project	
+--------------------------------------------------------------------------------------------------------------------------------------
+what is the buildscript block?
+all the gradle provided core tasks, repositories and plugins can be used directly in a gradle project. Incase if we want to use any external third-party tasks or plugins that are distributed as jars, those must be declared under buildscript {} block
+
+custom task (standalone project) jar -> project
+custom plugin (standalone project) jar -> project
+--------------------------------------------------------------------------------------------------------------------------------------
+There are few configuration files we need to know in gradle project, let us explore
+1. build.gradle
+build.gradle is the buildscript file in gradle project, where we declare plugins, tasks to be applied in build the project
+The only configuration file needed for building an gradle project is build.gradle only.
+	
+When we are generating the gradle project using gradle init tool, it generates few more additional configuration files as below.
+2. settings.gradle
+3. gradle.properties
+
+gradle supports multi-module gradle projects, in which we create one rootProject and inside it we add sub-projects as modules. we can apply common configurations, dependencies across all the sub-projects using the help of multi-module gradle project
+
+so by default when we create the project using gradle init tool, it prompts for creating multi-module project or a single project. Incase if we have choose multi-module project it creates an root project with multiple sub-projects as lib and web
+incase if we have choose single project only, then also it sets up multi-module project with only one single module.
+	
+2. settings.gradle
+settings.gradle is a groovy script just like build.gradle. when we are working on multi-module project in gradle, per each module we have in the gradle project we need to write one build.gradle but only on settings.gradle will be there and would be executed for each build.
+	
+in a multi-module project only we need to write settings.gradle, that holds the configurations that should be applied across the modules of the rootProject, but in a single project the settings.gradle is optional
+
+The settings.gradle will be executed before any build.gradle script or even before Project instance is created representing the project. Representing the settings.gradle, the gradle creates Settings object. In this Settings object we can add subprojects to be build, modify the parameters from commandline and access Gradle object itself to register lifecycle handlers etc.
+	
+use settings.gradle if your settings are build-related and not necessarily project-related and requires logic before possible sub-projects are included.
+	
+rootProject
+sub-projects or modules
+repository
+The rootProject name defaults to the name of the directory containing the settings file
+
+3. gradle.properties
+The gradle.properties is a simple java properties file that is automatically included into the scope of the Project object and is also called as "Project properties" file. if we want to fine tune the gradle system to modify the behavior of the build process then we can define properties in gradle.properties
+
+few of the properties are:
+org.gradle.caching=(true,false)
+org.gradle.parallel=(true,false)
+org.gradle.logging.level=(quite, warn, lifecycle, info, debug)	
+note: gradle.properties is also optional
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

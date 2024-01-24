@@ -1,0 +1,149 @@
+dependency scopes
+-----------------
+dependency scopes are used for controlling the way the dependency must be available within the classpath during the different phases of building the project using maven. There are 6 scopes are available
+
+1. compile  = (default scope), these dependencies are available through out all the phases of the build like compile, test, package etc
+2. provided = will be available in the classpath during compile and test phase, but will not be packaged or bundled into the artifact
+3. runtime  = these dependencies are not added to the classpath during compilation, but will be bundled into the artifact.
+4. test     = will be available under the classpath during test phase only
+5. system   = it is same as provided. but the dependency would be reffered from the local system path instead of from repository
+6. import   = we can import the dependencies of one pom inside the another pom file using import
+	
+Distributing dependencies or using local libraries in maven
+1. Distribute dependencies in an organization environment
+In an organization, a project upon building might produce an library that acts as dependency for another project within the organization, how can we have the project1 library that is produced to be added as dependency in project2 while working with maven?
+	
+since the project1 is an internal library which is private to the organization we cannot publish it onto the maven central repository. That is where the organization has to setup an remote repository to distribute the dependencies produced internally.
+	
+2. How can we use a local system library in maven build?
+The developer while working on a project, he wanted to use an local library produced on his system as dependency within the maven project. This can be done by installing the dependency into the local maven repository of the developers machine by using mvn install plugin as shown below.
+	
+mvn install:install-file -DgroupId= -DartifactId= -Dversion= -Dfile=filepath -Dpackging=jar/war/ear -DgeneratePom=<true,false>
+---------------------------------------------------------------------------------------------------------------------------------------------
+1. Standardized Directory Structure
+2. Dependency Management
+	2.1 Types of repositories
+	2.2 Customizing the Maven Install through settings.xml
+	2.3 Transitive Dependency Management
+	2.4 dependency mediation technic
+	2.5 dependency tree
+	2.6 excluding transitives
+	2.7 dependency scopes
+	2.8 installing local dependencies
+	
+3. Archetypes
+---------------------------------------------------------------------------------------------------------------------------------------------
+3. Archetypes
+Archetypes are pre-built project templates, that can be quickly imported in setting up an maven project.
+	
+mvn archetype  plugin
+mvn archetype:generate -DgroupId= -DartifactId= -Dversion= -DarchetypeGroupId= -DarchetypeArtifactId -DarchetypeVersion= 
+	
+	
+	
+	
+corejava
+webapplication
+enterprise application
+library
+
+
+project
+|standardized directory structure
+|-pom.xml
+  <groupId>[GROUPID]
+	<artifactId>[ARTIFACTID]
+	<version>[VERSION]
+	
+	
+project
+|-src
+  |-main
+	  |-java
+		|-resources
+	|-test
+		|-java
+		|-resources
+|-pom.xml
+
+pom.xml
+<modelVersion>
+<groupId>
+<artifactID>
+<version>
+<packaging>
+
+<dependencies>
+</dependencies>
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

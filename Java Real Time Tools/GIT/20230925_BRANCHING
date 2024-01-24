@@ -1,0 +1,290 @@
+How to remove the last commit made within the repository?
+git reset --hard HEAD~
+
+organizer (repo)
+
+#1. git init creates initializes an empty repository
+drivers-license-renewal-task.txt (newly)
+on 26th Sep driver license renewal appointment.
+	
+git add .
+git commit -m "added driver license renewal task" = C1
+
+
+.git
+|-logs
+	|-refs
+		|-heads
+			|-main
+
+main
+00000000000 C1
+
+.git
+|-refs
+	|-heads
+		|-main
+		
+main
+C1
+
+
+#2. 	
+car-service-appointment.txt (newly)
+git add .
+git commit -m "car service schedule" = C2
+
+.git/logs/refs/heads/main
+0000000  C1
+C1       C2
+.git/refs/heads/main
+C2
+
+
+#3. 
+edited: drivers-license-renewal-task.txt
+added office address:
+1-2/28
+
+git add .
+git commit -m "added office address"  #C3
+	
+.git/logs/refs/heads/main
+0000000  C1
+C1       C2
+C2       C3
+
+.git/refs/heads/main
+C3
+
+to take out the last commit from the repository we made we need to use the below command:
+git reset HEAD~
+
+.git/logs/refs/heads/main
+0000000  C1
+C1       C2
+C2       C3
+
+.git/refs/heads/main
+C2
+
+How to rewrite the git log in the git repository?
+Let us say we did a commit to the repository and make an mistake while writing the commit message. how to edit the commit message?
+	
+if you dont have any staged commits in the repository branch, we can quickly modify the last commit message using	
+
+git commit --amend
+
+What are git ignore files?
+
+javaproject 
+|-src
+	|-main
+		|-java
+			|-GeoLocator.java
+		|-resources
+|-target 
+	|-classes
+	|-bin
+.gitignore	
+	
+projectdir
+|-Vagrantfile
+|-.vagrant
+|-.gitignore
+	
+
+git status
+modified: src/main/java/GeoLocator.java
+
+untracked:
+/target
+/target/bin
+/target/classes
+.vagrant
+
+always the thumb rule is never commit/push any binary files that are being generated/computed based on the source code of the project into the repository
+for e.g.. 
+	1. when we are working on a java project the .class/.jar/.war/.ear etc are the binaries that are generated out of the compilation and packaging process which are computed based on the sourcecode of the project
+	2. when we are working on vagrant, the .vagrant directory is generated on the machine where we ran vagrant up. this directory holds the info about the vm that has been created on that machine and should not be versioned or pushed to the repo
+	
+because:
+1. each time when we perform the build or operation on the sourcecode these files/directories are computed/generated based on the source code. so we dont need to commit these computed/generated files to maintain the versioning for them
+2. by storing these computed/generated files into the repository, it increases the diskspace on the repo
+3. the bandwidth consumption in cloning and pushing the changes of the repository will be very high
+4. time required for cloning and pushing the repo changes will be more
+
+How to avoid these files to be commited/pushed or not been appeared in untracked files of the repository?
+at the root of the repository create an file called .gitignore in which specify the files or directories to be ignored based on the name or pattern
+
+.gitignore
+-----------
+target/
+*.jar
+*.class
+.vagrant/
+	
+we need to commit the .gitignore file also into the repository.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

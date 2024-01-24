@@ -1,0 +1,91 @@
+Requirements of managing and distributing the sourcecode to support collaborative application development:
+1. instead of developers maintaining the changeset, the scm repository itself should be able to manage/list the files/folders that are newly created/modified by the individual developers in the team
+2. The scm server/repository should have intelligence in allowing the developer to merge the sourcecode by detecting whether the changes he is merging is latest or is he overriding the changes of the other developers
+3. these servers should be capable of versioning the sourcecode/files on the server, so that always the developers can go back to the previous versions of the changes to recover incase of accidental loss
+4. should enforce authentication and role-based access in controlling the access to the various different repositories of different teams
+5. audit capabilities should be there
+6. all the sourcecode transfers over the network should be secured
+7. periodical backups and recovery incase of crash should be supported
+8. the sourcecode that resides on the scm server should be secured and should become accessible to the users on the machine directly
+
+taking all these requirements into account, the sourcecode management repositories are introduced.
+	
+The sourcecode management repositories can be classfied into #2 categories
+1. Gen-1 Repositories
+
+1.1 visual sourcesafe
+1.2 wincvs
+1.3 pvcs
+1.4 rational clearcase
+1.5 perforce
+	
+2. Gen-2 Repositories
+2.1 Subversion
+2.2 Git
+--------------------------------------------------------------------------------------------------------------------------------------
+1. Gen-I repositories
+Gen-I repositories has been designed fullfilling the typical requirements (we have listed above) in support of collaborative application development. These repositories works based on a strategy "Lock-Modify-Unlock".
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

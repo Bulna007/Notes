@@ -1,0 +1,59 @@
+class MessageWriter {
+	IMessageConverter messageConverter;
+	void writeMessage(String message) {
+		String convertedMessage = null;
+		
+		messageConverter = new PDFMessageConverterImpl();
+		convertedMessage = messageConverter.convert(message);
+		System.out.println(convertedMessage);
+	}
+}
+
+interface IMessageConverter {
+	String convert(String message);
+}
+
+final class HTMLMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<html><body>"+message+"</body></html>";
+	}
+}
+
+class PDFMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<pdf>"+message+"</pdf>";
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		MessageWriter messageWriter = new MessageWriter();
+		messageWriter.writeMessage("Welcome to Strategy Design Pattern");
+	}
+}
+-----------------------------------------------------------------------------------------------------------------------------------
+1. openjdk-11
+download: https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin.zip
+extract the zipfile and place it in c:\program files\java\ drive
+
+then create 2 environment variables
+JAVA_HOME=c:\program files\java\jdk-11.0.2
+PATH=%JAVA_HOME%\bin
+
+2. apache maven
+download: https://dlcdn.apache.org/maven/maven-3/3.8.7/binaries/apache-maven-3.8.7-bin.zip
+extract and place it in c:\ drive directly
+	
+then create 2 environment variables	
+MAVEN_HOME=c:\apache-maven-3.8.7
+PATH=%MAVEN_HOME%\bin
+
+3. sts3 ide
+locate and download sts3 (spring-tool-suite-3.9.12.RELEASE-e4.15.0-win32-x86_64.zip) ide: 
+https://dist.springsource.com/release/STS/index.html
+https://dist.springsource.com/release/STS/3.9.12.RELEASE/dist/e4.15/spring-tool-suite-3.9.12.RELEASE-e4.15.0-win32-x86_64.zip
+extract it and place it in d:\ drive
+
+goto the folder and click on sts icon will open the ide
+-----------------------------------------------------------------------------------------------------------------------------------
+maven build tool

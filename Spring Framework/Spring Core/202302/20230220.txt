@@ -1,0 +1,54 @@
+class MessageWriter {
+	private IMessageConverter messageConverter;
+	void writeMessage(String message) {
+		String cMessage = null;
+		
+		cMessage = messageConverter.convert(message);
+		System.out.println(cMessage);		
+	}	
+	public void setMessageConverter(IMessageConverter messageConverter) {
+		this.messageConverter = messageConverter;
+	}
+}
+
+interface IMessageConverter {
+	String convert(String message);
+}
+class HTMLMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<html><body>"+message+"</body></html>";
+	}
+}
+class PDFMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<pdf>"+message+"</pdf>";
+	}
+}
+
+application-context.xml
+<beans>
+	<bean id="messageWriter" class="com.sc.beans.MessageWriter">
+		<property name="messageConverter" ref="pdfMessageConverter"/>
+	</bean>
+	<bean id="htmlMessageConverter" class="com.sc.beans.HTMLMessageConverterImpl"/>
+	<bean id="pdfMessageConverter" class="com.sc.beans.PDFMessageConverterImpl"/>
+</beans>
+
+BeanFactory
+|-XMLBeanFactory
+
+class Test {
+	public static void main(String[] args) {
+		BeanFactory beanFactory = new XMLBeanFactory(new ClassPathResource("com/sc/common/application-context.xml"));
+		MessageWriter messageWriter = (MessageWriter) beanFactory.getBean("messageWriter");		
+		messageWriter.writeMessage("Welcome to Spring Framework");
+	}
+}
+
+Resource
+|-ClassPathResource = if the configuration files are under classpath or within the project
+|-FileSystemResource = if the configuration files are outside the project, to refer them using absolute path
+
+How to create an maven project?
+1. project archetype: maven-archetype-quickstart
+maven repository: https://mvnrepository.com/

@@ -1,0 +1,31 @@
+defaultTasks 'compile'
+tasks.register("clean") {
+    doLast {
+        println "cleaning the target/ directories"
+    }
+}
+def createDirsTask = tasks.register("createDirs") {
+    //dependsOn tasks.clean
+    doLast {
+        println "creating target/ directories"
+    }
+}
+// tasks.named("createDirs") {
+//     dependsOn 'clean'
+// }
+createDirsTask.configure {
+    //enabled = false
+    dependsOn tasks.clean
+}
+
+def compileTask = tasks.register("compile") {
+    dependsOn 'createDirs'
+    doLast {
+        println "compiling the project"
+    }
+}
+compileTask.configure {
+    onlyIf {
+        project.hasProperty("javaVersion") && project.javaVersion == "11"
+    }
+}

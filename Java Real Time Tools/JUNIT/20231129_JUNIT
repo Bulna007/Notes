@@ -1,0 +1,170 @@
+Unit Testing
+-------------
+What is unit testing?
+Unit Testing is the process of testing & certifying the code written by developer is working properly or not by himself, before it is being delivered to the qa for further testing. Unittesting automation became integral part of ci/cd pipeline implementations.
+	
+How to conduct the unit testing?
+The developer upon writing a component or a program, he/she has to test the component by himself manually
+1. take fixed or pre-defined set of inputs with which we want to conduct the testing, these are called "test fixtures"
+2. manually compute the expected output by evaluating the program logic.
+3. execute or run the original component with those pre-defined set of inputs or test fixture
+4. verify the output produced by the program is matching with expected output or not
+	4.1 if matching = mark the test as passed
+	4.2 if not matching = mark the test as failed, and trace the program to identify the failure
+	
+in this way we need to conduct the testing with all the possible combination of inputs to verify whether the program is producing the expected output or not. These combinations with which we conduct the testing is called "testcases"	
+		
+The unit testing has to be conducted repeatedly over the time, whenever there is a change in the component along with that component all the related components has to be tested to certify the code changes we made are not breaking or not failing.
+		
+Performing the unit testing on the entire code each time while delivering the code to the qa is a tedious job and delays the delivery of the application. to overcome this problem the unittesting automation has been introduced.
+	
+There are many unit testing automation frameworks are there using which we can implement test automation like
+1. JUnit
+2. TestNG
+3. Selenium
+4. WebDriver
+5. Cactus
+etc
+
+out of the above the most popular unittest automation library/framework is "JUnit".
+	
+How to write JUnit testautomation code to test the program is working properly or not?
+While working with any test automation code, always we need to place the sourcecode of our application in src/main/java and test automation code in src/test/java
+
+#1 sourcecode program
+
+package pkg1;
+public class Calculator {
+	public int add(int a, int b) {
+		int sum = a + b;
+		return sum;
+	}
+}
+
+#2 testcode to testing the above program
+
+package pkg1;
+public class CalculatorTest {
+	Calcuator calculator;
+	int a;
+	int b;
+	int na;
+	int nb;
+	int expectedSum;
+	int nExpectedSum;
+	
+	@BeforeEach
+	public void setUp() {
+		calculator = new Calculator();
+		a = 10;
+		b = 20;
+		expectedSum = 30;
+		na = -10;
+		nb = -5;
+		nExpectedSum = -15;
+	}
+	
+	@Test
+	void testAddWithPositiveNumbers() {
+	  int actualSum = 0;
+		actualSum = calculator.add(a, b);
+		Assert.assertEquals(expectedSum, actualSum); // if not matching it marks the test as failed.
+	}
+	
+	@Test
+	void testAddWithNegativeNumbers() {
+		int actualSum = 0;
+		actualSum = calculator.add(na, nb);
+		Assert.assertEquals(nExpectedSum, actualSum);
+	}
+	
+	@AfterEach
+	void tearDown() {
+		calculator = null;
+		a = 0;
+		b = 0;
+		na = 0;
+		nb = 0;
+	}
+}
+	
+mvn clean package
+	
+validate
+compile
+test
+package
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+		
+	

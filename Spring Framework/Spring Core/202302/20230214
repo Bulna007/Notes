@@ -1,0 +1,108 @@
+class MessageWriter {
+	IMessageConverter messageConverter;
+	
+	void writeMessage(String message) {
+		String cMessage = nulll;
+				
+		cMessage = messageConverter.convert(message);
+		System.out.println(cMessage);
+	}
+	public void setMessageConverter(IMessageConverter messageConverter) {
+		this.messageConverter = messageConverter;
+	}
+}
+
+interface IMessageConverter {
+	String convert(String message);
+}
+class HTMLMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<html><body>"+message+"</body></html>";
+	}
+}
+class PDFMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<pdf>"+message+"</pdf>";
+	}
+}
+
+class MediaMessageWriter {
+	IMessageConverter messageConverter;
+	
+	void writeMediaMessage(String message) {
+		String mediaMessage = null;
+		mediaMessage = messageConverter.convert(message);
+		// adding media formatting
+		System.out.println(mediaMessage);	
+	}
+	public void setMessageConverter(IMessageConverter messageConverter) {
+		this.messageConverter = messageConverter;
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		MessageWriter messageWriter = (MessageWriter) ObjectFactory.createObject("messageWriter.class");		
+		MediaMessageWriter mediaMessageWriter = (MediaMessageWriter) ObjectFactory.createObject("mediaMessageWriter.class");
+		
+		
+		messageWriter.writeMessage("Welcome to Strategy Design Pattern");
+		mediaMessageWriter.writeMessage("Welcome to Strategy Pattern");
+	}
+}
+
+To avoid coupling, we should not write classname of an java class inside another java class, we should externalize them by writing in a file, read the classname and instantiate the object.
+To quickly identify a class, for each class we can give an identifier and store them inside a properties file.
+	
+sourcecode = is an artifact (java class, file) that can be either an java class or a file or any other entity, that is required for running our application is called "sourcecode"	
+From this we can understand we have 2 types of sourcecode
+1. java sourcecode
+2. non-java sourcecode = properties, or xml file that contains configuration or data that acts as an input for executing the application
+	
+	
+d:\work:/>
+strategypattern
+|-src
+  |-main
+		|-java
+		|-resources
+			|-appClasses.properties
+			
+appClasses.properties
+---------------------
+htmlMessageConverter.class=com.sdp.beans.HTMLMessageConverterImpl
+pdfMessageConverter.class=com.sdp.beans.PDFMessageConverterImpl
+
+messageWriter.class=com.sdp.beans.MessageWriter
+messageWriter.class.messageConverter=htmlMessageConverter.class
+	
+mediaMessageWriter.class=com.sdp.beans.MediaMessageWriter
+mediaMessageWriter.class.messageConverter=htmlMessageConverter.class
+
+
+
+class ObjectFactory {
+	public static Object createObject(String lclassname) {
+		
+		Properties props = new Properties();
+		props.load(new FileInputStream(new File("d:\\work\\strategypattern\\target\classes\\appClasses.properties")));
+		
+		String fqnClass = props.getProperty(lClassname);
+		Class clazz = Class.forName(fqnClass);
+		Object obj = clazz.newInstance();
+		
+		// additional logic in reading dependencies and manage them
+		
+		return obj;
+	}
+}
+
+In the above code we are using absolute path in reading the properties file, but it is not recommended, because when move the project from one location to an another location, the directory path will be changed, and again we need to modify the code and recompile, repackage to execute it.
+
+Instead use relative paths in reading the resources of the project. upon compiling or while packaging all the resources of our project are part of classpath of our project, we can read the resources from the classpath location by taking the help of ClassLoader since classloader knows the classpath of our project
+
+We can get the reference of the java classloader using Class object, we can use ClassName.getClass().getClassLoader()
+	
+The above code can be re-written using
+InputStream in = ObjectFactory.getClass().getClassLoader().getResourceAsStream("appClasses.properties");
+props.load(in);

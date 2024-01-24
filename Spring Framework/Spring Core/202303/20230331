@@ -1,0 +1,140 @@
+Instance Factory Method Instantiation
+abstract class Truck {
+	int truckNo;
+	String model;
+	String manufacturer;
+	int capacity;
+	int tires;
+	double price;
+	// accessors
+	abstract void drive(int loadNo);
+}
+class MiniTruck extends Truck {
+	void drive(int loadNo) {}
+}
+class TipperTruck extends Truck {
+	void drive(int loadNo) {}
+}
+class TruckBuilder {
+	int truckNo;
+	String model;
+	String manufacturer;
+	int capacity;
+	int tires;
+	double price;
+	
+	TruckBuilder(int truckNo) {}
+	// accessors
+	public Truck build(String truckType) {
+		// instantiates appropriate implementation of the truck
+		// populates the data
+		return truck;
+	}
+}
+
+class CargoManager {
+	private Truck truck;
+	
+	public int schedule(int loadNo) {
+		truck.drive(loadNo);
+		sop("scheduled the truck for the loadNo : " + loadNo)
+		return 3;
+	}
+	public void setTruck(Truck truck) {
+		this.truck = truck;
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="truck" class="Truck" p:truckNo="1" p:model="tata928" p:manufacturer="Tata" p:capacity="2838" p:tires="4" p:price="383844"/>
+<bean id="cargoManager" class="CargoManager" p:truck-ref="truck"/>
+
+here we cannot configure Truck class as an bean definition directly, because Truck is an abstract class and ioc container will try to instantiate the object of Truck by using new operator or Class.forName("").newInstance(). since it is an abstract class ioc container fails in creating the object
+	
+In order to create the object of Truck implementation
+	1. create the object of TruckBuilder
+	2. populate the data into Builder object
+	3. on the builder instance, call the build() method that returns the object of Truck
+	
+So here we are asking ioc container to invoke an factory method on the object of another class (builder) to return the object of the truck, which is nothing but instance factory method instantiation
+
+<bean id="miniTruckBuilder" class="TruckBuilder">
+	<constructor-arg value="293"/>
+	<property name="model" value="Tata Mini 890"/>
+	<property name="manufacturer" value="Tata"/>
+	<property name="capacity" value="3934"/>
+	<property name="tires" value="4"/>
+	<property name="price" value="39489"/>	
+</bean>
+
+<bean id="miniTruck" factory-bean="miniTruckBuilder" factory-method="build">
+	<constructor-arg value="mini"/>
+</bean>
+	
+<bean id="cargoManager" class="CargoManager" p:truck-ref="miniTruck"/>
+
+Test.java
+----------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/ifmi/common/application-context.xml"));
+CargoManager cargoManager = beanFactory.getBean("cargoManager", CargoManager.class);
+int tripNo = cargoManager.schedule(93);
+sop("trip no : " + tripNo);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

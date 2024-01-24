@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+
+	<bean id="team" class="com.uci.beans.Team">
+		<property name="players" ref="players" />
+	</bean>
+
+	<util:list id="players" value-type="java.lang.String"
+		list-class="java.util.ArrayList">
+		<value>Rohit Sharma</value>
+		<value>Virat Kohli</value>
+		<value>Dhoni</value>
+	</util:list>
+</beans>

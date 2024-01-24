@@ -1,0 +1,75 @@
+Spring Framework with Spring Boot
+Fee: 8k
+Timings: 7:00 AM IST - 8:00 AM IST
+Duration: 6/7 months
+Framework Package : 13k [spring framework with spring boot, hibernate & jpa api, restful services and microservices]
+Notes: only on weekly basis
+No vidoes, no recordings and students are not allowed to record the sessions, if found the admission will be cancelled without fee refund.
+	
+Hibernate Framework & Jpa api = 7:00 PM IST - 8:00 PM IST [22ND FEB]
+Restful Services = 8:00 AM IST - 9:00 AM IST
+
+Microservices will be conducted either at Restful Service or Spring Framework Time
+
+This is an add-on batch, and the classes has been started sometime around January 15th and we completed
+1. introduction spring framework
+2. strategy design pattern
+
+Today onwards we are going to start spring core
+backup will be provided to the students on saturday/sunday: 1 or 2 hours
+1. core
+2. aop
+3. jdbc
+4. transactions
+5. mvc
+6. orm
+7. datajpa
+8. security
+9. webflux/reactor
+10. cloud
+11. boot
+12. spring + restful services integration
+-----------------------------------------------------------------------------------------------------------------------------------
+
+class MessageWriter {
+	IMessageConverter messageConverter;
+	
+	void writeMessage(String message) {	
+		String cMessage = null;
+		
+		//messageConverter = new HTMLMessageConverterImpl();
+		cMessage = messageConverter.convert(message);
+		System.out.println(cMessage);
+	}
+	public void setMessageConverter(IMessageConverter messageConverter) {
+		this.messageConverter = messageConverter;
+	}
+}
+
+interface IMessageConverter {
+	String convert(String message);
+}
+
+class HTMLMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<html><body>"+message+"</body></html>";
+	}
+}
+
+class PDFMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<PDF>"+message+"</PDF>";
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		MessagWriter messageWriter = new MessageWriter();
+		IMessageConverter messageConverter = new HTMLMessageConverterImpl();
+		messageWriter.setMessageConverter(messageConverter); // dependency management logic
+		
+		messageWriter.writeMessage("Welcome to Spring Framework");
+	}
+}
+
+Instead of we instantiating and managing the dependencies between the classes we need to take the help of spring core.

@@ -1,0 +1,83 @@
+Build Tools
+-----------
+What is a build tool, why do we need to use build tools?
+Performing an sequence of activities in running an software application is called "Build Process", and these activities would differ from application to application and technology to technology in which we developed the application.
+	
+For eg.. inorder to build or run an java application we need to perform bunch of activities	
+#1 Incase of jdk or standalone java application:
+1.1 we need to identify and download the external dependencies required for compiling and running the project
+1.2 prepare the classpath with all the dependent libraries and modules
+1.3 modify the configuration files pertaining to the environment on which we are deploying the application
+1.4 compile the sourcecode of the project
+1.5 package the application into Jar
+1.6 run/execute the jar application
+
+#2. Incase of an distributed web application:
+2.1 we need to identify and download the external dependencies required for compiling and running the project
+2.2 prepare the classpath with all the dependent libraries and modules
+2.3 modify the configuration files pertaining to the environment on which we are deploying the application
+2.4 compile the sourcecode of the project
+2.5 package the application into war
+2.6 deploy the application into the deployment directory of the java web server
+2.7 start the server to make the application available
+
+The above activities needs to be performed by the developers as well as devops engineers or deployers as well.
+	
+1. developers:
+Each time during the development when the developer has modified the sourcecode of the application, to verify the changes he/she made looks good or not, he has to run the software application and perform an test. Inorder to run the software application the developer has to carry/perform all the above described activities manually.
+	
+For every change to verify, performing the build activities manually is going to eatup huge amount of time and delays the development of the application. So to overcome these problems	developers can use Integrated development environments (IDEs) for building and running the application quickly to verify the changes he made
+
+Even though the IDEs can be of great help in speeding up the development of the project, sometimes while working with legacy applications, which might comprises of several modules and each of them are inter-dependent on each other. having these modules setup in IDEs and building them together to run the application will be a very complex job and may not be possible. In such case the developers has to perform the build activities manually only these projects
+
+2. devops or deployment engineers
+The devops engineers or the deployers are responsible for deploying/delivering the application across the env like dev, test, uat, prod etc. In order to deploy the application the devops/deployment engineers should be able to perform the build activities as described above. But since these people are not aware of the technologies in which the application has been build and has zero knowledge on the project, they themself will not be able to perform these activities.
+	
+since the developers are well aware of the set of activities that needs to be performed inorder to build/run the application, they are responsible for documenting these activities and provide it as input to the devops engineers, this document is called "installation/deployment guide"	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

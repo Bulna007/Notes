@@ -1,0 +1,32 @@
+There are 3 types of classes are there in a typical application
+1. pojo
+pojo stands for plain old java object, if a class can be compiled and executed without any external third-party libraries as dependencies, then the class can be called as pojo class
+	
+2. java bean
+java beans class objects are used for holding/storing the data in jvm memory. These classes will contain only attributes with accessor methods along with default constructor, then only the class is called java bean
+
+3. component/bean
+Any class that contains arbitary methods containing logic for performing operation, then it is called component class
+	
+we distribute the functionality of the application across multiple classes to achieve resuability through modularity. So a class in application will not be isolated rather it has to talk to another class to fulfill the functionality.
+	
+if class cannot be completed without using the functionality of another class, then the class is said to be dependent on another class. The programmer has to write the code for managing the dependencies between the classes. Instead of developer writing the code, we can make use of the spring core.	
+	
+Spring Core is about managing the dependencies between the classes of our application.
+-----------------------------------------------------------------------------------------------------------------------------------
+Spring core can manage dependencies between any 2 arbitary set of classes, but it gives some recommendations in writing the classes inorder to be managed by spring core, so that we get lot of advantages of using the spring framework.
+Spring core recommends us to write our classes based on strategy design pattern, and give them to spring core, so that those classes can be better managed.
+	
+What is an design pattern?
+design pattern is an 3 part rule
+there are recurring problems for which the expertise people has identified or computed solution that can be applied in solving the problem, under the give context/circumstances is called design pattern
+
+whenever we run into a problem, rather than we investigating how to solve it, we can refer the design pattern that is already document with solution, so that we can quickly solve our problem.
+	
+Strategy design pattern is not documented or provided by spring develpers rather it is one of the design patters provided by Gang Of Four people
+
+What is a strategy design pattern?
+The strategy design pattern has provided 3 standard rules/guidelines that should be followed in writing classes in our application so that our classes will become better
+1. Favour composition over inheritance
+2. Always design to interfaces, never design to concreate classes
+3. code should be open for extension and should be closed for modification

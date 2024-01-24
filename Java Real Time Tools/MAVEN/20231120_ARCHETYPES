@@ -1,0 +1,149 @@
+What are archetypes, why do we need to use them?
+Archetypes are pre-built project templates, that can be used for creating maven projects quickly. Maven has provided lot of archetypes for different types of projects. In addition third-party vendors also published their own archetypes to help the people quickly setting up their projects while working with their technologies.
+few of the maven provided archetypes are:
+1. maven-archetype-archetype
+2. maven-archetype-mojo
+3. maven-archetype-quickstart
+4. maven-archetype-webapp
+5. maven-archetype-simple-j2ee
+
+In addition we can create our own archetype and publish into local maven repository or remote repositories, so that we can reuse in creating the projects of our own with default configurations defined inside it very quickly
+
+
+How to create our own archetype?
+There are 2 ways we can create archetypes in maven:
+1. using maven-archetype-archetype archetype project
+2. create archetype from an existing project
+
+2. create archetype from an existing project
+Let us setup an standard spring boot project, so that we can convert this into archetype project and publish into local maven repository. So whenever we want to create a spring boot project we can use this archetype in quickly creating.
+	
+basicboot
+|-src
+  |-main
+	  |-java
+			|-BootApplication.java
+		|-resources
+		  |-application.yml
+|-pom.xml
+  |-parent (spring-boot-starter-parent)
+	|-starter dependencies
+	|-plugins
+	
+upon creating the boot project, we can create an archetype out of the above project as below
+1. goto the root directory of the project and run the below command
+mvn archetype:create-from-project
+
+this will generate an archetype under target/generated-source directory with name archetype
+
+2. move the archetype folder from target/generated-sources directory and place it in a different location as independent project
+3. rename the directory with an appropriate name like basicboot-archetype.
+The archetype generated, has the below directory layout:
+
+bootbasic-archetype
+|-pom.xml
+  [gav coordinates of the archetype]
+|-src
+  |-main
+	  |-resources
+			|-META-INF
+				|-archetype-metadata.xml
+			|-archetype-resources [contains the project contents from which we generated that should be included in creating the project]
+				|-src
+					|-main
+						|-java
+							|-BootApplication.java
+						|-resources
+							|-application.yml
+				|-pom.xml
+					|-parent (spring-boot-starter-parent)
+					|-starter dependencies
+					|-plugins
+					
+4. verify the contents of the archetype-resources, that must be used in creating the project
+5. check archetype-metadata.xml for files to be included in creating the project out of the contents of archetype-resources
+
+6. install this archetype into local maven repository by running the below command
+mvn clean install
+
+Now we can create a new maven project by using our newly created archetype as below:
+mvn archetype:generate -DgroupId=org -DartifactId=projectname -Dversion=1.0.0 -DarchetypeGroupId=realtime.org -DarchetypeArtifactId=bootbasic-archetype -DarchetypeVersion=1.0.0
+this will create a new project from the contents of the existing archetype bootbasic-archetype.
+
+
+1. standardized directory structure
+2. dependency management
+	2.1 types of repositories
+	2.2 transitive dependency management
+	2.3 dependency mediation technic
+	2.4 dependency tree plugin
+	2.5 inclusion & exclusion of transitive dependencies
+	2.6 dependency scopes
+3. customizing maven install through settings.xml
+4. installing a local artifact into local maven repository
+5. archetypes
+6. plugins & goals
+7. build abstraction
+
+7. Build abstraction through build lifecycle
+---------------------------------------------
+Maven Build Lifecycle
+
+#1 or 2 days
+jacoco
+sonarqube
+
+2. introduction to junit #1 day
+3. log4j introduction #1 day
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+						
+				
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

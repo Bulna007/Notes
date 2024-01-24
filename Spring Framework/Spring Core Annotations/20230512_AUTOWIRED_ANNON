@@ -1,0 +1,334 @@
+@Autowired annotation
+---------------------
+autowiring: instead of we managing the dependencies manually through configuration, the ioc container takes care of identifying and injecting the dependencies automatically
+
+@Autowired annotation is the another way of achieving autowiring, so here we dont define the dependencies between the bean definitions, rather ioc container auto-detect the dependencies and inject when we annotation @Autowired annotation.
+How does @Autowired annotation identifies and injects the dependencies?
+	1. identifying the dependencies
+	always it identifies the dependent bean matching with type only
+	2. how does it injects the dependency?
+	based on place we have written the annotation
+	
+How many places within a class we can write the @Autowired annotation?
+we can apply @Autowired annotation at 4 places within a class
+	1. Attribute Level
+	2. Setter level
+	3. Constructor level
+	4. Arbitary method level
+	
+1. setter level
+----------------
+class Radio {
+	private TransReceiver transReceiver;
+	
+	void listen() {
+		transReceiver.tune();
+		sop("listening..");
+	}
+	
+	@Autowired
+	public void setTransReceiver(TransReciever transReceiver) {
+		this.transReceiver = transReceiver;
+	}
+}
+
+class TransReceiver {
+	int frequency;
+	public void tune() {}
+}
+
+application-context.xml
+-----------------------
+<bean id="radio" class="Radio"/>
+
+<bean id="transReceiver" class="TransReceiver">
+	<property name="frequency" value="108"/>
+</bean>
+<context:annotation-config/>
+
+Test.java
+----------
+ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+Radio radio = context.getBean("radio", Radio.class);
+
+
+2. constructor level
+write @Autowired on Constructor to inject the dependent through Constructor argument
+
+class Radio {
+	private TransReceiver transReceiver;
+	
+	void listen() {
+		transReceiver.tune();
+		sop("listening..");
+	}
+	
+	@Autowired
+	public Radio(TransReciever transReceiver) {
+		this.transReceiver = transReceiver;
+	}
+}
+
+class TransReceiver {
+	int frequency;
+	public void tune() {}
+}
+
+3. Attribute Level
+------------------
+we dont need any setter or constructor when we applied @Autowired on attribute level. ioc container injects the dependent object to the target class attribute directly through reflection without invoking setter/constructor even if it exists.
+	
+if we dont want to apply any post processing or initialization or validation upon/while injecting the dependency then we can directly use attribute level injection
+
+class Radio {
+	@Autowired
+	private TransReceiver transReceiver;
+	
+	void listen() {
+		transReceiver.tune();
+		sop("listening..");
+	}
+}
+
+class TransReceiver {
+	int frequency;
+	public void tune() {}
+}
+
+4. Arbitary Method level
+instead of injecting the dependent via setter/constructor we can inject the bunch of dependencies through arbitary method injection. here we can write any method with fixed signature
+signature:
+	1. should be public
+	2. returnType should be void
+	3. methodname can be anything
+	4. should declare parameters as dependent classTypes objects that we want to inject through this method
+now annotation such method with @Autowired annotation, so that ioc container will invoke the method automatically during the time of creating the object of the target class by passing dependents as parameters
+	
+
+class Radio {
+	private TransReceiver transReceiver;
+	private Equalizer equalizer;
+		
+	@Autowired
+	public void newRadio(TransReceiver transReciever, Equalizer equalizer) {
+		this.transReciever = transReciever;
+		this.equalizer = equalizer;
+	}
+	
+	void listen() {
+		transReceiver.tune();
+		sop("listening..");
+	}
+}
+
+class TransReceiver {
+	int frequency;
+	public void tune() {}
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+@Autowired(required) property
+
+@Autowired annotation has an property/attribute inside it called required. that indicates the @Autowiring is mandatory or optional while creating the Target class. The default value of required is "true" if we didnt specify anything, that means the ioc container should mandatory perform the inject of the dependent on whom we have written @Autowired while creating the object
+
+if we look at the below example we wrote @Autowired on setter method, even though the setter injection is optional, but @Autowired(required=true), that makes the ioc container run/throw exception if the dependent is not available
+
+To make the autowiring optional we can write @Autowired(required=false)
+	
+class Radio {
+	private TransReceiver transReceiver;
+	
+	void listen() {
+		transReceiver.tune();
+		sop("listening..");
+	}
+	
+	@Autowired
+	public void setTransReceiver(TransReceiver transReceiver) {
+		this.transReceiver = transReceiver;
+	}
+}
+
+class TransReceiver {
+	int frequency;
+	public void tune() {}
+}	
+	
+application-context.xml
+-----------------------
+<bean id="radio" class="Radio"/>
+
+
+Test.java
+----------
+ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+Radio radio = context.getBean("radio", Radio.class);
+	
+	
+How about writing @Autowired(required=false) on a constructor where dependent bean is missing
+class Radio {
+	private TransReceiver transReceiver;
+	
+	void listen() {
+		transReceiver.tune();
+		sop("listening..");
+	}
+	
+	@Autowired(required=false)
+	public Radio(TransReceiver transReceiver) {
+		this.transReceiver = transReceiver;
+	}
+}
+
+class TransReceiver {
+	int frequency;
+	public void tune() {}
+}
+	
+application-context.xml
+-----------------------
+<bean id="radio" class="Radio"/>
+
+
+here even though @Autowire is optional, the constructor injection is mandatory
+--------------------------------------------------------------------------------------------------------------------------------------
+Working with @Autowired on constructor level
+1. we cannot write @Autowired(required=true) on multiple constructors, because both cannot be mandatory to be invoked while creating the object. at anypoint of time we can call only one constructor in creating the object of a class, so writing @Autowired(required=true) on multiple constructors is meaningless
+
+2. even writing @Autowired annotation on multiple constructors with one of them as required=true is also not a valid option, because we are mandating one constructor to be invoked, then rest of them being annotated with @Autowired is meaningless
+
+so incase if we are writing @Autowired on constructors then all of them should be required=false only or else write @Autowired annotation on only 1 constructor
+	
+
+class Radio {
+	private TransReceiver transReceiver;
+	private Equalizer equalizer;
+		
+	@Autowired(required=false)
+	public Radio(TransReceiver transReciever, Equalizer equalizer) {
+		this.transReciever = transReciever;
+		this.equalizer = equalizer;
+	}
+	
+	@Autowired(required=false)
+	public Radio(TransReceiver transReciever) {
+		this.transReciever = transReciever;
+		this.equalizer = equalizer;
+	}
+	
+	void listen() {
+		transReceiver.tune();
+		sop("listening..");
+	}
+}
+
+class TransReceiver {
+	int frequency;
+	public void tune() {}
+}
+
+application-context.xml
+-----------------------
+<bean id="radio" class="Radio"/>
+
+<bean id="transReceiver" class="TransReceiver">
+	<property name="frequency" value="108"/>
+</bean>
+
+<bean id="equalizer" class="Equalizer"/>
+
+
+Test.java
+----------
+ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+Radio radio = context.getBean("radio", Radio.class);
+--------------------------------------------------------------------------------------------------------------------------------------
+@Qualifier annotation	
+
+The default qualifier for a bean definition is beanId, but avoid using it because we will become tighly coupled.
+if we dont use @Qualifier annotation along with @Autowired annotation in case of ambiguity, the default qualifier value it looks for is the attributeName itself
+
+class Radio {
+	private TransReceiver transReceiver;
+	
+	void listen() {
+		transReceiver.tune();
+		sop("listening..");
+	}
+	
+	@Autowired
+	public setTransReceiver(TransReceiver transReceiver) {
+		this.transReceiver = transReceiver;
+	}
+}
+
+class TransReceiver {
+	int frequency;
+	public void tune() {}
+}
+	
+application-context.xml
+-----------------------
+<bean id="radio" class="Radio"/>
+<bean id="transReceiver" class="TransReceiver">
+	<property name="frequency" value="108"/>	
+</bean>
+
+<bean id="transReceiver2" class="TransReceiver">
+	<property name="frequency" value="208"/>
+</bean>
+
+<context:annotation-config/>
+
+Test.java
+----------
+ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+Radio radio = context.getBean("radio", Radio.class);
+--------------------------------------------------------------------------------------------------------------------------------------
+Stereotype annotations
+There are 5 stereotype annotations are there
+1. @Component
+2. @Controller
+3. @Service
+4. @Repository
+5. @RestController (4.x+)
+
+The purpose of these annotations are to make the classes as bean definitions. The base annotation is @Component and rest of all the annotations are inherited or extended from @Component annotation, so together all these group of annotations are called Component annotations as well since all are extending from @Component
+
+if all the annotations works same, why do we need 5 annotations?
+These annotations are designed keeping in view of the typical classes in an web application. In an webapplication we have typically 3 tiers of clases
+1. controller (servlet)
+2. business logic (service)
+3. persistence logic (repository)
+these are called roles/stereotypes so for each class role, the spring framework has provided an annotation, if we use relevant annotation based on stereotype of the class, we can differentiate one class from another based on their role and we can apply common processing logic if required based on the stereotype annotation
+
+
+@Component
+class Aeroplane {
+	public void fly() {
+		sop("flying..");
+	}
+}	
+	
+application-context.xml
+-----------------------
+<context:component-scan base-package="com.stereotype.annotations"/>
+
+Test.java
+---------
+ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+Aeroplane aeroplane = context.getBean("aeroplane", Aeroplane.class);
+
+<context:annotation-config/> only enables few bean post processors only @Autowired @Qualifier @Required etc. But incase if we are annotating the classes with stereotype annotations, we need to enable relevant bean postprocessors by using 
+<context:component-scan base-packages="pkg1, pkg2"/>
+
+when we write <context:component-scan/> it internally enables <context:annotation-config/> so we dont need to explicitly write <context:annotation-config/> at all
+
+
+here we dont define any bean definitions in spring bean configuration file, because we annotated the classes with stereotype annotations to configure them as bean definitions, but still we used bean configuration file to enable post processors only. we can avoid using the bean configuration file by creating the ioc container as AnnotationConfigApplicationContext as below
+
+ApplicationContext context = new AnnotationConfigApplicationContext("com.stereotype.annotation");
+	
+@Scope
+by default a bean will be created with singleton scope, if we wanted to change we can use @Scope annotation along with stereotype annotation
+
+@Lazy = to lazily instantiate the object for the bean definition, even after creating the ioc container with ApplicationContext

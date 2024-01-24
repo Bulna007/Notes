@@ -1,0 +1,10 @@
+Spring Transaction
+------------------
+Project Architectures
+A project often refers to the several classes within the application that are designed based on various design patterns are put together and integrated with each other to have them working together is called an "Architecture of the Project".
+In-Short: Patterns of Patterns = an Hybrid Pattern often referred as Architecture
+
+The project architectures differs from project to the project, but across the projects of similar technology, the architectures would be more/less would be same. 
+	
+How does the project architecture looks like if it has been build using Servlet/Jsp technology?
+Servlet/Jsp technology

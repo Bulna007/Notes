@@ -1,0 +1,5 @@
+git branch
+-----------
+A git branch can be viewed as an sub-repository created out of the main/master branch, in which a developer can work on an extension or feature without breaking the working copy of the master/main code.
+	
+	

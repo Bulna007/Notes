@@ -1,0 +1,190 @@
+Query-based approach
+---------------------
+
+class CourseBo {
+	int courseNo;
+	String courseName;
+	int duration;
+	double fee;
+	// accessors
+}
+
+@Repository
+class CourseDao {
+	private final String SQL_GET_NO_OF_COURSES = "select count(1) from course";
+	private final String SQL_GET_COURSE_NM_BY_COURSE_NO = "select course_nm from course where course_no = ?";
+	
+	private final String SQL_GET_COURSE_BY_COURSE_NO = "select course_no, course_nm, duration, fee from course where course_no = ?";
+	
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
+	public int getNoOfCourse() {
+		return jdbcTemplate.queryForObject(SQL_GET_NO_OF_COURSES, Integer.class);
+	}
+	
+	public String findCourseNameById(int courseNo) {
+		return jdbcTemplate.queryForObject(SQL_GET_COURSE_NM_BY_COURSE_NO, String.class, courseNo);
+	}
+	
+	public CourseBo findCourseByCourseNo(int courseNo) {
+		return jdbcTemplate.queryForObject(SQL_GET_COURSE_BY_COURSE_NO, new CourseRowMapper(), courseNo);
+	}
+	
+	// write the data extraction logic into an object
+	private final class CourseRowMapper implements RowMapper<CourseBo> {
+		public CourseBo mapRow(ResultSet rs, int rowNo) {
+			CourseBo bo = new CourseBo();
+			bo.setCourseNo(rs.getInt(1));
+			bo.setCourseName(rs.getString(2));
+			bo.setDuration(rs.getInt(3));
+			bo.setFee(rs.getDouble(4));
+			return bo;
+		}
+	}
+	
+}
+
+RowMapper = is used for mapping one row/record into one object. always the jdbcTemplate passes one record by iterating through ResultSet, here we need to only write the logic for converting that record into object. we should not iterate.
+
+@Configuration
+@PropertySource("classpath: db.properties")
+class JavaConfig {
+
+	@Bean
+	public DataSource dataSource(@Value("${db.driverClassname}") String driverClassname, @Value("${db.url}") String url, @Value("${db.username}") String username, @Value("${db.password}") String password) {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassname(driverClassname);
+		dataSource.setUrl(url);
+		dataSource.setUsername(username);
+		dataSource.setPassword(password);
+		return dataSource;
+	}
+	
+	@Bean
+	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		return jdbcTemplate;
+	}
+}
+
+db.properties
+-------------
+db.driverClassname=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/jlearning
+db.username=root
+db.password=welcome1
+
+
+
+class JdbcTemplate {
+	private DataSource dataSource;
+	
+	public JdbcTemplate() {}
+	public JdbcTemplate(DataSource dataSource) {}
+	public void setDataSource(DataSource dataSource) {}
+	
+	// static sql-query, that returns only one value upon executing, can you extract that value as ClassType and return to me
+	public Object queryForObject(String sql, Class<?> classType) {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		Object ret = null;
+		
+		try {
+			con = dataSource.getConnection();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				if(classType == Integer.class) {
+					obj = rs.getInt(1);
+				}else if(classType == Float.class) {
+					obj = rs.getFloat(1);
+				}else if(classType == String.class) {
+					obj = rs.getString(1);
+				}else if(classType == Date.class) {
+					obj = rs.getDate(1);
+				}
+				// for all ResultSet supported Types, the conditions will be there here
+			}
+		
+		}catch(SqlException e) {
+			throw new DataAccessException(e);
+		}finally {
+			// close resources
+		}
+		return obj;
+	}
+	
+	public Object queryForObject(String sql, RowMapper rowMapper, Object.. sqlParams) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Object obj = null;
+		int index = 1;
+		
+		try {
+			con = dataSource.getConnection();
+			pstmt = con.preparedStatement(sql);
+			for(Object sqlParam : sqlParams) {
+				if(sqlParam instanceof Integer.class) {
+					pstmt.setInt(index, sqlParam);
+				}else if(sqlParam instanceof String.class) {
+					pstmt.setString(index, sqlParam);
+				}else if(sqlParam instanceof Float.class) {
+					pstmt.setFloat(index, sqlParam);
+				}
+				index++;
+			}
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				obj = rowMapper.mapRow(rs, 1);
+			}else {
+				throw new EmptyRecordException("no record/data exits");
+			}
+		
+		}catch(SqlException e) {
+			throw new DataAccessException(e);
+		}finally {
+			//close resources
+		}
+		return obj;
+	}
+	
+	public List<Object> query(String sql, RowMapper rowMapper, Object.. sqlParams) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		List<Object> list = null;
+		int index = 1;
+		int rowNum = 1;
+		
+		try {
+			con = dataSource.getConnection();
+			pstmt = con.preparedStatement(sql);
+			for(Object sqlParam : sqlParams) {
+				if(sqlParam instanceof Integer.class) {
+					pstmt.setInt(index, sqlParam);
+				}else if(sqlParam instanceof String.class) {
+					pstmt.setString(index, sqlParam);
+				}else if(sqlParam instanceof Float.class) {
+					pstmt.setFloat(index, sqlParam);
+				}
+				index++;
+			}
+			rs = pstmt.executeQuery();
+			list = new ArrayList();
+			
+			while(rs.next()) {
+				Object obj = rowMapper.mapRow(rs, rowNum);
+				list.add(obj);
+				rowNum++;
+			}
+		}catch(SqlException e) {
+			throw new DataAccessException(e);
+		}finally {
+			//close resources
+		}
+		return objs;
+	}
+}

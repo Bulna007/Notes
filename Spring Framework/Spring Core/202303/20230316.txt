@@ -1,0 +1,33 @@
+How many bean scopes are there?
+There are 4 bean scopes are there
+1. singleton
+2. prototype
+3. request
+4. session
+
+1. singleton = only one object of the bean definition should be created within the scope of the ioc container and should return the same object, whenever requested.
+	
+2. prototype = each time we request for the object for the bean definition from the ioc container, the ioc container should return a new instance of the bean definition.
+	
+singleton design pattern
+------------------------
+For any given class, if we can create only one single object within the scope of the application, then that class is called "singleton" class
+How to make a class as Singleton class?
+by default every class in java is not singleton, when we create a class, jvm allows us to create any number of objects for that class, so every class is not singleton bydefault.
+Then how to make a class as Singleton?
+	
+*** what is singleton class, how to create a class as singleton?	
+	
+	
+class DateUtils {
+	private static DateUtils instance;
+	
+	private DateUtils() {} // dont let the other classes instantiate the object by declaring the constructor of the class as private
+	
+	public static DateUtils getInstance() { // let the other class create the object of your class by exposing an static factory
+		if(instance == null) {                    // method
+			instance = new DateUtils();	
+		}		
+		return instance;
+	}	
+}

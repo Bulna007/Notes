@@ -1,0 +1,38 @@
+ioc container
+ioc is an principle and it is about collaborating the objects and managing the lifecycle of the objects
+
+There are 2 ways of collaborating the objects are there
+1. dependency pulling
+	1.1 dependency lookup
+	1.2 contextual dependency lookup
+	
+2. dependency injection
+	2.1 setter injection
+	2.2 constructor injection
+
+
+1.2 contextual dependency lookup
+
+@WebServlet(urlPatterns = {"/account"})
+class AccountServlet extends HttpServlet {
+	public void service(HttpServletRequest httpReq, HttpServletResponse httpResp) {	
+
+	}
+}
+
+The Servlet want to access the environment in which it is running? For eg.. 
+1. the servlet want to know the host/port of the server on which it is running	
+2. location on the disk where the application is deployed
+
+By using the ServletContext object we can get the information about the environment in which the application/servlet program is running.
+ServletContext.getHostName();
+ServletContext.getPost();
+ServletContext.getRealPath();
+
+ServletContext object is created by the Servlet Container, while deploying the application by wrapping the information about the application. per each application the container will creates only one ServletContext object
+
+For accessing the ServletContext object of our application we need ServletConfig.
+ServletConfig.getServletContext();
+
+
+ServletConfig = Configuration information of an Servlet will be stored inside this object. The ServletContainer by reading the servlet configuration we have written in web.xml or annotations and creates an ServletConfig object per every servlet in our application while loading/instantiating the Servlet class object

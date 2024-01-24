@@ -1,0 +1,163 @@
+Aware Interfaces
+----------------
+Aware interfaces / injection or interface injection is used for accessing the internal objects of the ioc container within a bean definition
+
+class Rocket {
+	private int rocketNo;
+	private String rocketName;
+	private int weight;
+	
+	public void propel() {
+		sop("rocket is propelling with rocketNo: "+ rocketNo + " rocketName : "+ rocketName + " weight: " + weight);
+	}
+}
+
+class LaunchPad {
+	public void launch() {
+		Rocket rocket = null;
+		BeanFactory beanFactory = null;
+		
+		beanFactory = new XmlBeanFactory(new ClassPathResource("com/ai/common/application-context.xml"));
+		rocket = beanFactory.getBean("rocket", Rocket.class);
+		rocket.propel();
+		sop("launched rocket");
+	}
+}
+
+application-context.xml
+------------------------
+<bean id="rocket" class="Rocket" p:rocketNo="29" p:rocketName="pslv3" p:weight="938"/>
+<bean id="launchPad" class="LaunchPad"/>
+
+Test.java
+----------
+BeanFactory	beanFactory = new XmlBeanFactory(new ClassPathResource("com/ai/common/application-context.xml"));
+LaunchPad launchPad = beanFactory.getBean("launchPad", LaunchPad.class);
+launchPad.launch();
+
+In the above program we are unnecessarily creating 2 ioc containers, the ioc container that is created in Test class has both rocket and launchPad bean definitions, within the LaunchPad bean definition object instead of creating one more ioc container we can get the object of Rocket from existing ioc container itself
+
+To access the rocket bean definition object inside the LaunchPad class, current/existing ioc container of the LaunchPad
+How to access/get the reference ioc container inside then bean definition?
+	
+
+ioc container = collaborating the objects and managing the lifecycle 
+dependency pulling
+1. dependency lookup = getting the reference of the object by lookingup the object in an public registry
+2. contextual dependency lookup = there are few objects that are internal to the container which are not publicly exposed. such objects should be provided to our class by container itself. our class should follow the contract (interface) provided by the container and override the method.
+	
+so while creating our object, container will pass the dependent object (internal object) into our class by invoking the contractual method on our class
+note: the contextual dependency look works only when our class is managed/instantiated by the container.
+
+
+There are lot of internal objects inside the ioc container are there
+1. ApplicationEventPublisher
+2. BeanFactory (itself) (implicit and internal object)
+	
+since these are not publicly exposed, the container itself has to provide these objects. To get these objects from the container our class should be written following the contract provided by the container.
+for different objects there are different contracts, based on the internal object we need, we need to write our class implementing from the appropriate interface and override method.
+	
+The contractual method will be invoked by ioc container by passing the dependent object (internal object) at the time of creating the object of our class.
+
+In the above example we want BeanFactory object inside LaunchPad, since BeanFactory is an implicit or internal object of the ioc by itself we can access that inside the LaunchPad by implementing an contractual interface
+	
+interface BeanFactoryAware {
+	void setBeanFactory(BeanFactory beanFactory);
+}
+
+class LaunchPad implements BeanFactoryAware {
+	private BeanFactory beanFactory;
+	
+	public void launch() {
+		Rocket rocket = null;
+		rocket = beanFactory.getBean("rocket", Rocket.class);
+		rocket.propel();
+		sop("launched rocket...");
+	}
+	
+	public void setBeanFactory(BeanFactory beanFactory) {  // ioc container will invoke this method by passing BeanFactory
+		this.beanFactory = beanFactory;
+	}
+}
+
+ioc container will invoke the setBeanFactory(beanFactory) while creating the object of LaunchPad.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

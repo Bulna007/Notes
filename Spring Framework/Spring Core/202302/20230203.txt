@@ -1,0 +1,35 @@
+class MessageWriter {
+	IMessageConverter messageConverter;
+	void writeMessage(String message) {
+		String cMessage = null;
+		
+		messageConverter = new PDFMessageConverterImpl();
+		cMessage = messageConverter.convert(message);
+		System.out.println(cMessage);
+	}
+}
+
+interface IMessageConverter {
+	String convert(String message);
+}
+class HTMLMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<html><body>"+message+"</body></html>";
+	}
+}
+class PDFMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<pdf>"+message+"</pdf>";
+	}	
+}
+
+class Test {
+	public static void main(String[] args) {
+		MessageWriter messageWriter=  new MessageWriter();
+		messageWriter.writeMessage("Welcome to Strategy Design Pattern!");
+	}
+}
+
+In the above example our MessageWriter class is loosely coupled from HTMLMessageConverterImpl or PDFMessageConverterImpl, but those are not completely loosely coupled. because still if my MessageWriter wants to switch from HTML to PDF MessageConverter, we need to modify the code inside the MessageWriter so we cannot call them as completely loosely coupled.
+
+In the above example, the MessageWriter wants to talk to HTML/PDF Message Converter classes, to talk to the Converter classes, it needs the object of other class.	

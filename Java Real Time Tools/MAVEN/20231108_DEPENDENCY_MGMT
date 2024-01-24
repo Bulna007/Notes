@@ -1,0 +1,172 @@
+dependency management
+---------------------
+For every java project we need external libraries to be added as dependencies inorder to build or execute the application. 
+	
+How does these dependencies are managed, so that these can be used in building the application?
+There are many ways we can manage the dependencies
+1. manually download the dependencies and add to the build/classpath of the application to package, deploy or execute the application. but this approach has lot of drawbacks:
+drawbacks:
+1.1 identifying these dependencies and downloading from the internet is time consuming job and cannot guarantee the authenticity of the libraries
+1.2 since everyone in the team requires these dependencies, all of them has to go through process of searching, identifying and downloading these dependencies to contribute for development or delivery of the application, which leads to huge amount of time waste and unnecessary bandwidth consumption in repeatedly downloading the same set of dependencies across the members of the team
+1.3 there is no concrete place within the application that describes what dependencies are required of which versions to build the application, so the developers has to gothrough the iterations in compiling/running the application to identifying the dependencies based on exceptions (ClassNotFoundException/NoClassDefFoundError), thus leads to huge amount of time
+1.4 since all the members in team has ability of browsing and downloading the dependencies of their own from internet, people might endup in downloading different versions of the dependencies thus leads to version in-compatibility issues
+1.5 as there is no control over usage of the dependencies, the team might endup in using an third-party library that requires licensing and results in compliance and legal issues
+
+looks like manually managing the dependencies has lot of challenges.
+	
+2. push the external libraries or dependencies aspart of the sourcecode management repository	
+To overcome the problems in manually managing the dependencies, as an alternate people used sourcecode management repositories for quickly distributing the libraries across the members of the team.
+	
+Along with sourcecode of the project, the libraries/dependencies required for building/packaging/running the application are also published/published into the sourcecode repositories itself, so that when the team checkout/pull the sourcecode from the scm repository along with sourcecode the libraries/depenencies will also be downloaded and made available to the team.
+	
+even though the scm repositories helps to certain extent in distributing the dependencies, it has its own problems:
+1. the sourcecode management repository servers will be filled with huge amount of storage in repeatedly storing the same libraries across the branches and tags of the repository
+2. In addition to the above across the several projects, the dependencies could be same, this leads to repeatedly storing the same dependencies of several projects into the sourcecode management repositories that leads to huge diskspace wastage.
+3. the time required for downloading/checkout the sourcecode from repository would be high since the repo stores libraries as well, that leads to the delay in building and delivering the application
+
+To overcome all the above problems in managing the depencencies, maven has introduced dependency management feature.
+	
+1. dependency identification 
+------------------------------
+Maven inorder to manage and distribute the dependencies around the world, it has introduced the concept of repositories. Maven has hosted an repository called "Maven Central Repository". It acts as an one-stop solution for publishing and distributing the dependencies across the world. All the opensource contributors or thrid-party vendors can publish and distribute their dependencies through maven central repository.
+	
+How to uniquely identify a dependency among the others?
+There are several different third-party vendors or opensource contributors produces different libraries or artifacts and publish them into maven central repository. There is always a chance that these artifacts produced by different vendors around the world might run into naming conflicts, how do we identify these dependencies uniquely and use them?
+	
+To help us in uniquely identifying the dependency management uses dependency identification mechanism.
+A dependency in maven can be either an Jar, War, Ear or an Zip file which is termed as artifact in general. Each dependency will be identified with groupId, artifactId and version knows as GAV Co-oridinates
+
+1. groupId = organization or a groupname who owns that artifact, usually used as domainname to uniquely differentiate
+2. artifactId = identity or name of the artifact
+3. version: version number of the project
+4. type: indicates the packaging type (jar, war, ear or zip) 
+	
+For eg.. the mysql-conntor-j jar file is published into maven central repository with GAV co-ordinates as 
+groupId=com.mysql
+artifactId=mysql-connector-j
+version=8.2.0
+
+For every maven project we create we need to specify the GAV co-ordinates for the project. Because a project may act as a dependency for antoher project so to make it identifiable maven requires GAV coordinates, so that we can add it to the pom.xml as an dependency.
+	
+2. declarative dependency management
+-------------------------------------
+during the development of the project, based on the technologies we planned to use, we can derive what dependencies are required for building and packaging the application. Instead of we manually downloading and adding them to the buildpath or packaging them into the application we can declare all of such dependencies in pom.xml under dependencies section as shown below.
+	
+pom.xml
+--------
+<project>
+  <modelVersion>4.0.0</modelVersion>
+	<groupId>tools.org</groupId>
+	<artifactId>istore</artifactId>
+	<version>1.0.0</version>
+	<dependencies>
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>8.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>5.0</version>
+		</dependency>
+	</dependencies>
+</project>
+
+upon delcaring these dependencies in pom.xml, maven while building the application takes care of downloading these dependencies from maven central repository and adds them to the classpath or packages them into the final distribution bundle.
+There are 2 advantages of using declarative dependency management:
+1. The developers dont need to go through the process of identifying, browing and downloading the dependencies from the internet. 
+2. the whole team knows what dependencies are required of which versions in building the projects since all the dependencies are declared in pom.xml
+
+How do we know the GAV cooridinates of the dependencies?
+There are millions of artifacts being produced and distributed by the people around the world, how can we know the GAV cooridinates of each of them?
+To help us in identifying and using the artifacts from maven central repository, the maven team has provided an repository console page which is "www.mvnrepository.com". we can browse through and search for the artifacts here and pick the GAV coordinates of the dependencies to be used aspart of our project in pom.xml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

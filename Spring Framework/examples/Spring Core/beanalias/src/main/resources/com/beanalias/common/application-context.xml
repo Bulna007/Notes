@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<bean id="person" name="person1,person2"
+		class="com.beanalias.beans.Person">
+		<constructor-arg value="9388" />
+		<constructor-arg value="Jordan" />
+		<constructor-arg value="33" />
+		<constructor-arg value="Male" />
+	</bean>
+	<alias name="person1" alias="jordan,k"/>
+</beans>

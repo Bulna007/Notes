@@ -1,0 +1,11 @@
+Introduction to Spring Framework
+Spring is an Framework, Struts is also an Framework. using struts framework we can develop web applications.
+
+The Javaee has provided servlet and jsp apis using which we can build web applications, but the amount of code we need to write in building the web applications using these technologies is very high and time required for building the application is huge.
+Instead of that apache organization has provided an Framework called "Struts Framework"
+	
+In a web application we typically has 4 types of components
+1. view component = contains logic for rendering the data to the user
+2. presentation-tier components = through which user can interact with the application
+3. business-tier components = using which we perform business logic on the data
+4. persistence-tier component = contains logic for storing the data permanently on the storage device

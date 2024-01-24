@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group 'org.tools'
+version '1.0'
+
+
+dependencies {
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    compileOnly 'jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1'
+    implementation project(':services')
+}

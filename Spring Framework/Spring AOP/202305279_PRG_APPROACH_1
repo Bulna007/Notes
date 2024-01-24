@@ -1,0 +1,35 @@
+programmatic aop approach
+--------------------------
+logging: is used for tracing the flow of execution of a program, the helps us in identifying the errors and debugging the application.
+
+class Calculator {
+	public int add(int a, int b) {
+		int sum = 0;		
+		sum = a + b;		
+		return sum;
+	}
+}
+
+class Robot {
+	public void init() {}
+}
+
+1. logging is an secondary logic, and even it is an cross-cutting logic, so dont write secondary logic or cross-cutting logic directly within the primary business logic of our application, rather than write it seperately in another class.
+2. upon writing the aspect logic in another class, we need to take the help of aop in advicing the aspect logic on the target class, joinpoints
+3. now we need to tell the aop how do we want to apply/advice the aspect logic ontop of the target class joinpoint. The advice should be decided based on what type of aspect logic we want to advice
+once we identified the advice or how do we want to apply, we need to let the aop understand it. The spring aop api has provided standard interfaces, we need to write our aspect logic in a class by implementing the spring provided standard advice interfaces.
+Since our class is implementing from advice interfaces, our class is called as "Advice class" and it contains aspect logic
+
+	
+class LoggingAdvice implements MethodInterceptor {
+	public Object invoke(Class target, Object[] args, Method method) {
+		logger.info("entered into add(10, 20)");
+		
+	}
+}
+
+inside the invoke method we need to write aspect logic (for eg.. here logging) to perform cross-cutting logic onbehalf of the target class joinpoint. So inside the invoke we need information about the target class joinpoint for whom it needs to apply the aspect logic
+
+	
+calc.add(10, 20);
+robot.init();

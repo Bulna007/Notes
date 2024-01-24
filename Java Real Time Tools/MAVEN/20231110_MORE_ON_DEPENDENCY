@@ -1,0 +1,92 @@
+Repositories
+------------
+Repositories are used for publishing and distributing the binaries/artifacts to the world. To help us in serving various different purposes maven supports 3 types of repositories
+
+1. maven central repository
+2. remote repository
+3. local maven repository
+
+1. local maven repository
+upon running an maven build for the first-time on a machine using maven engine/cli, it creates an local maven repository on the machine under the default location as $USER_HOME/.m2 directory
+The local maven repository is just an organized directory layout in which the artifacts are being stored and used. under the .m2/ directory the artifacts are kept in an organized / standardized directory structure so that the maven can quickly reference these artifacts in building the projects
+
+$USER_HOME
+|-.m2/
+  |-repository/
+	  |-groupId (directories)
+		  |-artifactId (directories)
+			  |-version (directory)
+				  |-artifact.(jar|war|ear|zip)
+					|-artifact.pom (describing the details of the artifact or metadata)
+					
+There are several advantages are there of having an local maven repository setup on the machine by maven
+1. across the projects that are build on the machine, the dependencies could be same, instead of repeatedly downloading the dependencies and storing them on the disk which shootsup the disk storage space, maven will downloads and caches the libraries in the maven local repository. So that these libraries can be reused across the projects we are building on that machine.
+
+2. can avoid repeatedly downloading the same artifacts over the network, thus reduces the network bandwidth and latency in downloading the dependencies
+
+
+2. maven central repository
+A central repository is hosted on the public network and is made accessible openly to the whole world. It acts as an marketplace in publishing and distributing the artifacts by various different opensource contributors or third-party vendors around the world.
+There are lot of organizations came forward and has hosted various different central repositories freely. few of them are
+1. maven central repository (popular)
+2. jcenter repository
+3. bitnary
+4. sonota repository
+etc
+---------------------------------------------------------------------------------------------------------------------------------------------
+3. Remote repository
+Remote repositories are introduced to solve typical problems we encounter while working in an organization/corporate environment.
+problems:
+1. within the organization there are many people/developers working in building their applications across their workstations. So per each workstation atleast once the artifacts are being downloaded from maven central repository and cached locally for specific amount of time and reused. In such environments the bandwidth consumption in downloading these dependencies across the developers workstations seems to be very high and increases the network traffic and cost of the network as well.
+
+Many of the times due to the high traffic it results in poor network performance and delays the build/delivery of the application as well.
+	
+2. as everyone has access to the maven central repository, there is no control or restriction over using the dependencies in building the application, this will put us in risk of using the libraries which are not certified or would result in legal or licensing issues
+
+3. many of the organizations, asper their security standards or restrictions may not allow the workstations to be connected to the direct internet, in such case there is no way to use maven in building the applications, since we cannot connect to maven central repository
+
+4. since maven central is an public repository, the organizations doesnt have a way to publish their internal libraries or products that are manufactured to be distributed privately.
+	
+To overcome all of the above problems maven has introduced, remote repositories
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

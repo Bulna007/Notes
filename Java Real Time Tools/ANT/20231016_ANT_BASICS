@@ -1,0 +1,64 @@
+devops engineers or deployment engineers are responsible for moving the application across the environments. In order to move the application across the env, they need to build the application. But the process of building the application is not known to the ops engineers as they dont know the technical details of the application. Since the developers are the one who knows how to build/deploy the application, they need to provide complete details on how to build and deploy the application by writing the deployment guide or installation guide of the application.
+	
+By looking at the deployment/installation guide the ops engineers should be able to deploy the application. but there are quite a number of challenges involved in manually deploying the application.
+	
+1. there are several activities that should be conducted in building/deploying an application which takes huge amount of time 
+2. In order to build/deploy the application there are series of activities that needs to be conducted in a specific sequence order and based on the outcome of one activity the other activity has to be kicked-off which is quite complex and difficult to understand.
+3. aspart of the build/deployment process they might be few configuration files needs to be modified, the syntax and semantics these files are not know to the ops engineers and might lead to build/application deployment failures
+4. since it is an repeatitive job that has to be conducted repeated whenever a new code needs to be deployed, the chances of failures could be high while deploying manually.
+5. if there is a failure while building the application at any stage, the ops engineer may not be aware of the failures and might have to start from scratch.
+	
+From the above we can understand manually building/deploying the application is very complex job and takes huge amount of time, since it is repeatitive instead of we manually performing it, we can have automation in place.
+So to automate the process of building/deploying the application, the build tools are introduced.
+1. ANT
+2. MAVEN
+2. GRADLE
+etc
+
+using the build tools like ant, maven or gradle we write the build automation script, that contains series of steps/activities that needs to be executed in a specific order inorder to build the sofware application.
+	
+	
+ANT
+===
+ANT stands for another neat tool and is used for building and deploying java applications. unlike its predecesors the ANT works across all the operating system platforms since ant is also written in java language.
+	
+to build an application using ant we need to write build script file describing the tasks to be executed or applied on the project and place the file inside the project directory.
+The file should be written with name as build.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<project name="basicAnt" basedir=".">
+	<target name="print">
+		<echo>ant build</echo>		
+	</target>
+</project>
+
+ant print
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

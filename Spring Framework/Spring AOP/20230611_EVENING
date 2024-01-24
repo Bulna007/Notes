@@ -1,0 +1,37 @@
+MethodBeforeAdvice
+------------------
+class LoanManager {
+	public boolean approveLoan(long loanNo) {
+		sop("in approveLoan()");
+		return true;
+	}
+}
+
+class AuditAspect {
+	public void doAudit(Joinpoint jp) {
+		String methodName = null;
+		Object[] args = null;
+		
+		methodName = jp.getSignature().getName();
+		args = jp.getArgs();
+		sop(methodName+"("+args[0]+") has been called by Robert at : " + LocalDateTime.now());		
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="loanManager" class="LoanManager"/>
+<bean id="auditAspect" class="AuditAspect"/>
+
+<aop:config>
+	<aop:aspect ref="auditAspect">
+		<aop:before method="doAudit" pointcut="execution(returnType pkg.className.methodName(args))"/>
+	</aop:aspect>
+</aop:config>
+
+Test.java
+---------
+ApplicationContext context = new ClassPathXmlApplicationContext("a-c.xml");
+LoanManager lm = context.getBean("loanManager", LoanManager.class);
+boolean approved = lm.approveLoan(939L);
+sop("approved ? : " + approved);

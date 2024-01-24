@@ -1,0 +1,20 @@
+SVN Repository Layout structure
+-------------------------------
+The SVN Repository layout comprises of #3 directories in it
+projectrepo
+|-trunk
+	|-project
+|-branches
+	|-rb-1.0
+		|-projectsourcecode
+|-tags
+	|-hotfix-1.0
+		|-projectsource
+		
+
+Phase-I - [Apr 2023 - Jul 2023] [active release #wip]
+
+trunk = the work in-progress code is always present in trunk, all the developers will begin their development from the truck directory only.
+	
+Phase-II [Aug 2023 - Dec 2023]	-> #production (#failure)
+

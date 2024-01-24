@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="contract" class="com.pcnamespace.beans.Contract"
+		p:duration="24" p:slaInDays="90" p:qos="1 bug per 1000 lines" />
+
+	<bean id="project" class="com.pcnamespace.beans.Project"
+		c:projectNo="937" c:title="Insurance System" c:contract-ref="contract"
+		p:clientName="uhg" p:teamSize="7" />
+</beans>

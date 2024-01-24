@@ -1,0 +1,293 @@
+GIT 
+GIT stands for "global information tracker" is an distributed version control system. All the existing version control systems works based on center server model. 
+	
+central server model:	
+For performing any operations on the repository the developers/clients workstations has to be connected with the central server. The developers inorder to start working on the sourcecode, they need to checkout the workingcopy of the repository which contains minimal footprint like sourcecode and revisionno of the repository being checkedout along with timestamps of the sourcecode.
+	
+To perform any repository operations like revision history, difference between any #2 revisions of a file or identify the diff in working copy with previous revision of the file or commit or rollback the clients needs to be online/connected with the central server only, otherwise there are merely helpless
+
+where as when it comes to GIT distributed repository version control system:
+distributed repository version control system:
+here the developer/client clones the entire repository from GIT Server which acts as an standalone repository of its own. The full copy of the repository exists on each developer/client workstations so that all the repository operations can be performed locally without the need to be connect to the server.
+	
+A commit history or repository log or commit/rollback operations takes place locally at the client workstation repository itself. upon completing all the changes at the client level, to colloborate these changes with other developers in the team the developer/client can push their changes into central git server so that other developers can pull these changes into their local repositories
+
+Based on the principles and design of GIT version control system, there are many third-party software manufacturing vendors built products (GIT Server/Client) Softwares and distributed to the people either commercial or opensource.
+1. GitHub
+2. BitBucket
+3. GitLab
+4. GitGogs
+etc
+
+The organizations has to procure the licenses of the GIT Server software from one of these vendors. Need to have an VCS Administrators or devops engineers take care of
+1. provisioning/setting up the infrastructure 
+2. install/configure the GIT Server software scaled to work on a cluster
+3. administer it by creating users/granting permissions
+4. monitor and manage it
+5. periodically backup so that incase of crash they can recover 
+
+Hosting the GIT Servers in-house and managing them is very complex and requires manpower resources and cost in maintaining and managing them.
+	
+So Many of the GIT third-party software manufacturing vendors offers GIT as an SAAS service. The providers by themself host these GIT Servers on their cloud infrastructure, manages and maintains by them. The organizations has to signup into their subscription packages which are based on
+1. users licenses
+2. number of repositories
+and has to use these GIT Servers instead of hosting them In-House
+
+From the above we can understand GIT Servers are offered to the world in different subscription/distribution models as below:
+1. The GIT Providers provides the GIT Server as an SAAS Service, where it is hosted by the GIT providers itself on their cloud infrastructure and offer it as an service based on subscription model
+
+2. Few vendors supports hosting the GIT Servers onto the cloud/on-premise infrastructure of the organizations itself. These servers are maintained and managed by GIT provided based on special licensing/subscription models
+
+3. Self-Hosted (on-premise): The organizations procure the GIT Server software by procuring licenses and host it on their own infrastructure and maintain by themself
+
+GIT Client Software
+-------------------
+There are different client-tools are available in working with GIT Servers in managing the repositories
+1. GitBash = powerful command-line utility to manage the repositories hosted on the GIT Servers and is popularly being used.
+In Windows: we need to download/install the GitBash utility 
+In Linux/Mac: In Major Linux distros or Mac os the GitBash utility is distributed as part of the operating system itself.
+	
+2. GIT GUI (Desktop)	= not being used in the market and not developer/user friendly
+3. IDE integrations = Majority of the IDEs provides plugins/extensions to the GIT where we can manage the repository operations using the IDE itself 
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Working on Git Repository
+To work with Git Repository we dont need Git Server to be hosted and available, An individual can install the Git Client software and can create an repository on his local system, can perform all the repository operations individually.
+
+only when the developers wants to colloborate his changes in the local repository with other developers in the team, then we need to have GIT central server and the repository itself or changes needs to be pushed to the central server so that other users in the team can pull and use it
+
+So let us understand how can we manage to perform repository operations on a local repo, so that we can sync the local repository with central server repository at later point of time.
+
+Pre-requisite: Install GitBash utility
+
+1. How to create an git repository on the local machine?
+create an project directory into which you want to initialize an repository
+
+mkdir projectdir
+cd projectdir
+
+git init
+
+git init - is the command initializes an empty repository into the current directory where it has been executed and creates an default branch called "Master"
+
+
+#2 Git File Lifecycle statuses
+There are 4 different statuses in which a file can exist in the Git repository
+1. untracked = any file/folder that is newly created inside the repository will be in untracked status.
+2. modified = when we modify an existing file of the repository, then it will be moved to modified status
+2. unmodified = an comitted file will be moved to unmodified status
+3. staged = files that are modified are moved to the staged status, so that those can be commited
+
+
+#3. how to see the repository status?
+to see the status of the repository and check which files are untracked, modified or staged we need to use below command
+
+git status
+
+
+How does the git repository captures the author information who is comitting the files into the repository?
+There are 2 levels at which we can configure the author information, so that git client utility uses it to capture the commit history
+1. repository level
+2. global
+
+#1. repository level
+for a specific repository we can configure user & email address indicating who is author committing these files as below
+git config user.name username
+git config user.email emailAddress
+
+this information we configured will be stored within the repository under the diretory .git/config file. Now any files we commit within that repository will be marked by that user itself
+
+#2. global level (system level)
+if we want to use the same author information across all the repositories on your machine we can configure user & email address at global level using below commands
+
+git config --global user.name username
+git config --global user.email emailAddress
+
+The global configuration is stored in $USER/.gitconfig file
+
+
+How to remove the user.name or user.email that we set globally?
+git config --global --unset-all user.name
+git config --global --unset-all user.email
+
+if we want to unset these for a repository locally dont use --global switch
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,169 @@
+How to build an java project using maven?
+1. create the java project based on maven standardized directory structure
+2. write pom.xml describing the information about the java project to the maven build tool
+pom stands for project object model, it holds the information about the project and it is not an buildscript file, we dont need to write build instructions it it
+There are 4 mandatory or minimilistic elements we need to write in pom.xml inorder to build an java project
+1. modelVersion
+2. artifactId
+3. groupId
+4. version
+
+1. modelVersion = is the version of the pom file being used for writing the pom.xml
+2. groupId = is the organization for whom the project belongs to. it is an usual practice of writing groupId as organization domain since domain names are unique around the world.
+3. artifactId= the project name
+4. version = is the version of the project we are working
+with a groupId:artifactId = combination we can identify the project uniquely around the world.
+	
+project1
+|-src
+  |-main
+	  |-java
+		  |-App.java
+		|-resources
+|-pom.xml
+
+Note:-
+src/test/java and src/test/resources directory are optional, and should create when we have unit tests for our project.
+	
+package com.myproject.test;
+public class App {
+	public static void main(String[] args) {
+		System.out.println("App is build with Maven!");
+	}
+}
+
+pom.xml
+--------
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>tools.org</groupId>
+	<artifactId>project1</artifactId>
+	<version>1.0.0</version>
+</project>
+
+goto the root directory of the project and run the below maven cli
+mvn clean package
+	
+The above command cleans the directories and creates new directory under the root of the project as 
+target
+|-classes
+then compiles, packages the jar file and place inside the target directory of the project.
+---------------------------------------------------------------------------------------------------------------------------------------------
+2. Dependency Management
+In a java project we use external libraries that are provided by third-party vendors or opensource software manufactures, that are being used in developing the java applications quickly. unless these libraries or dependent jars are added to the classpath we cannot compile and run the application. since our application will not work without these libraries, these are called dependencies.
+	
+How to manage the dependencies required for running/building an java application?
+The developers or ops engineers has to manually download the dependencies and add to the classpath of the application to compile, package and execute the project. There are lot of challenges are there in manually downloading the dependencies:
+
+1. The developers or ops engineers working on the project should browse through the internet in identifying and downloading the dependencies. But there is no gurantee that these people landup into the right set of libraries and there is no way to gurantee the authenticity of these libraries
+
+2. all the developers/ops engineers working on the project should download these libraries, so that everyone has to gothrough the process of searching, identifying the right set of libraries which takes huge amount of time. and the amount of bandwidth consumption in repeatedly downloading the same set of libraries is going to be very high
+
+3. For building and running the java application we need bunch of dependencies, there is no concreate place within the project where it has been listed which libraries of what versions are needed. So the developers or the ops engineers in the team find hardtime in identifying the libraries and their versions required for building and executing the project. So they endup in repeatedly conducting the build that lands up in ClassNotFoundExceptions or NoClassDefFoundError, through which they need to identify the missing libraries and download them to the build path in building the application.
+Many of the times they endup in downloading the wrong versions of these libraries as well.
+	
+4. since everyone in the team has the freedom of downloading and adding the libraries into the project, there is no control over which dependencies and what versions are being used in the project, that eventually leads to version mis-match and in-compatibility problems in working or building the project
+
+5. If everyone within the team is allowed to download and use the libraries of the choice, there is a chance of running into legal and licensing issues in using the libraries
+
+These are all the problems we run into if we are manually managing the dependencies, to overcome the above problems and quickly distribute the libraries across the developers or ops engineers within the team the maven has introduced dependency management.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

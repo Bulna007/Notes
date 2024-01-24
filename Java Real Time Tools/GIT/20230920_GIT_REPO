@@ -1,0 +1,149 @@
+What are the lifecycle statuses in which a file could exist within the Git Repository?
+There are 4 different stages in which a file could exist in the Git Repository
+1. Untracked 
+A newly created file/folder within the repository will be in untracked state and these files will not be comitted by default unless we stage them.
+	
+2. Unmodified
+upon comitting an modified file, it will be moved to Unmodified state
+
+3. Modified
+if we edit an existing file within the repository, then it will be moved to modified state
+
+4. Staged
+files that are ready to be comitted are in staged state
+
+What are the git commands available to move the files across these stages in the repository?
+1. Untracked -> Staged
+git add .
+	
+2. Modified -> Staged	
+git add .
+git add -u
+
+or we can use git add filename to stage a specific file in the repository directory to an staged status irrespective of the file is in Untracked or Modified state
+
+3. Staged -> Unmodified
+git commit -m "commit message"
+	
+upon comitting the Staged files (which are in Untracked / Modified state previously) will be moved to UnModified state
+
+4. Untracked -> Staged >- Untracked
+A new file that is Staged for commit, how to move back to Untracked state?
+git restore --staged filePath
+
+will un-stage the file by keeping it back to Untracked state
+
+5. Modified -> Staged >- Modified
+An existing file that is modified and staged should be unstaged and put back into modified state, how can we do this?
+	
+git restore --staged filePath
+
+git restore --staged filePath - is the command using which we can unstage an staged file and move back to its previous state which might be Untracked / Modified
+
+6. UnModified -> Modified -> Staged -> Original State (UnModified) (reverting changes)?
+An existing file has been modified and staged. Now we want to unstage and remove/revert the changes that are made on that file and put back to UnModified state	(Original File), how can we revert the changes of a file after staging and before committing?
+	
+This can be done in #2 stages
+1. unstage the file, so that it will be moved back to Modified state
+2. restore the file so that the changes on the file will be taken out
+
+git restore --staged filePath = un-stage the file into Modified state
+git restore filePath = it reverts the file contents and put back to unmodified (original) file
+--------------------------------------------------------------------------------------------------------------------------------------
+Till now we learnt how to move the files in the repository across the Lifecycle stages like UnModified, UnTracked, Staged and Modified. But upon commiting an file into the repository, how to take back the changes we have committed into the Repository?
+	
+Inorder to understand this we need to explore and understand how does git stores/organizes the files inside the repository and how does it maintains the commit information within it
+
+
+Git Repository Directory Structure
+----------------------------------
+When we create/initialize an Git Repository within an directory, the git will creates an .git directory in which it holds the information about the repository and objects that are committed into the Repository. Below is the directory structure of the .git of the repository
+
+.git (directory)
+|-hooks
+|-info
+|-objects
+|-logs
+|-refs
+----------
+|-config
+|-index
+|-HEAD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

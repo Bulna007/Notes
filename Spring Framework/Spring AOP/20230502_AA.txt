@@ -1,0 +1,82 @@
+class Cache {}
+
+class Calculator {
+	int add(int a, int b) {
+		int sum = 0;    
+		sum = a + b; // primary business logic		
+		sop("in add()");
+		return sum;
+	}
+}
+
+public class LoggingAdvice implements MethodInterceptor {
+
+	@Override
+	public Object invoke(MethodInvocation invocation) throws Throwable {
+		String methodName = null;
+		Object[] args = null;
+
+		methodName = invocation.getMethod().getName();
+		args = invocation.getArguments();
+		System.out.print("entered into " + methodName + "(");
+		for (int i = 0; i < args.length; i++) {
+			if (i == 0) {
+				System.out.print(args[i]);
+				continue;
+			}
+			System.out.print("," + args[i]);
+		}
+		System.out.println(")");
+		Object ret = invocation.proceed();
+		System.out.println("exiting from method : " + methodName + " with ret: " + ret);
+		return ret;
+	}
+
+}
+
+class CacheAdvice implements MethodInterceptor {
+	public Object invoke(MethodInvocation invocation) {
+		Cache cache = null;
+		String methodName = null;
+		Object[] args = null;
+		String key = null;
+		Object ret = null;
+		
+		
+		cache = Cache.getInstance();
+		methodName = invocation.getMethod().getName();
+		args = invocation.getArguments();
+		key = methodName+"(";
+		for(int i=0;i<args.length;i++) {
+			if(i == 0) {
+				key += args[i];
+				continue;
+			}
+			key += ","+args[i];
+		}
+		key +=")";
+		
+		if(cache.containsKey(key)) {
+			ret = cache.get(key);
+			return ret;
+		}
+		// if not found in the Cache
+		ret = invocation.proceed();
+		
+		cache.put(key, ret);
+		return ret;		
+	}
+}
+
+Test.java
+---------
+ProxyFactory pf = new ProxyFactory();
+pf.setTarget(new Calculator());
+
+pf.addAdvice(new CacheAdvice());
+pf.addAdvice(new LoggingAdvice());
+
+
+Calculator proxy = (Calculator) pf.getProxy();
+int sum = proxy.add(10, 20);
+int sum = proxy.add(10, 20);

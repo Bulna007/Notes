@@ -1,0 +1,96 @@
+Aware Interfaces
+-----------------
+Aware interfaces are also called as "Aware Injection" and it is even called as "interface injection". The struts 2.0 supports supports dependency injection through interface injection only
+
+due to few reasons: we want to avoid injecting Rocket into LaunchPad, (let us understand the reasons later)
+if we dont want to inject Rocket into LaunchPad means, there are only #2 options left
+1. create the object of Rocket inside the LaunchPad class methods
+2. pull the object of Rocket inside the LaunchPad class
+
+instead of creating, it looks like pulling is a better option even though we still have tightly coupling with logical classname of another class.
+
+To pull the object, someone has to create the object, the responsibility of creating the objects is taken care by ioc container, so that I can pull the object from the ioc container. In order to pull the object from ioc container we need BeanFactory (nothing but ioc container).
+	
+
+class LaunchPad {
+	
+	void lauch() {
+		Rocket rocket = null;
+		BeanFactory beanFactory = null;
+		
+		beanFactory = new XmlBeanFactory(new ClassPathResource("com/ai/common/application-context.xml"));
+		rocket = beanFactory.getBean("rocket", Rocket.class);
+		rocket.propel();
+		sop("launched rocket");
+	}
+	
+}	
+
+class Rocket {
+	int rocketNo;
+	String rocketName;
+	int weight;
+	
+	void propel() {
+		sop("rocket propelled..");
+	}
+}
+
+application-context.xml
+------------------------
+<bean id="rocket" class="Rocket">
+	<property name="rocketNo" value="29"/>
+	<property name="rocketName" value="I932"/>
+	<property name="weight" value="3934"/>
+</bean>
+<bean id="launchPad" class="LaunchPad">
+	<property name="rocket" ref="rocket"/>
+</bean>
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/ai/common/application-context.xml"));
+LaunchPad launchPad = beanFactory.getBean("launchPad", LaunchPad.class);
+launchPad.launch();
+
+In the above code we have a problem:
+Inside the LaunchPad:launch() method we are unnecessarily creating one more ioc container to pull the object of rocket bean definition. whereas we have an existing ioc container created in test class, that already has rocket bean definition inside it. instead of creating additional ioc container if we can use the existing ioc container to get the object for the bean definition rocket, it would be more efficient solution
+
+
+So if we want to get the rocket from the existing ioc container inside the LaunchPad class, inside the LaunchPad we need to get the reference of the ioc container, in which LaunchPad is there
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

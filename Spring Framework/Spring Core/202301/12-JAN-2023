@@ -1,0 +1,22 @@
+The whole functionality of the application cannot be build into one single class/component, always it is recommended to encourage modularity to achieve reusability.
+If we dont modularize the application, we would run into code duplication and endup with difficulties in understanding and maintaining the application
+
+modularize = distribute the functionality of the application by breaking down into several classes or components
+From the above we can understand an Application is built out of lot of components. The components of an application can be broadly classified into  3 types
+1. pojo
+2. java bean
+3. component/bean
+
+1. pojo 
+pojo stands for plain old java object, we can call a class as an pojo class if we are able to execute the class without an external third-party libraries then it is called as "pojo" class.
+	
+2. java bean
+java beans are the classes used for storing data within the objects of those classes, so that it can passed across the classes of our application.
+A java class is called an java bean only when, it has  attributes declared with accessor methods (setters/getters). Along with that the java bean class must and should contain default constructor.
+within the java bean class we should not write any other methods or functionality apart from attributes/accessors.
+		
+3. component/bean
+A component/bean class contains arbitary set of methods containing logic for performing an action or an operation, then such classes are called "component/bean" classes
+Majority of our classes in an application are components classes, as we need to write functionality in building an application.
+
+Every class may not be completed by itself, it may have to use functionality of another class to fulfil the business functionality. That means a class cannot be isolated from another class

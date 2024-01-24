@@ -1,0 +1,146 @@
+Instance Factory Method Instantiation
+To understand the instance factory method instantiation, let us learn builder design pattern.
+	
+Factory:
+Factory classes are used for creating the object of another class, we need to use factory classes for creating the object of another classes for 2 reasons:
+1. To abstract the complexity in creating the object of another class
+2. To hide the classname of another class in instantiating the object of another class (to achieve loose coupling)	
+	
+Builder is one more design pattern used for creating the object of another class. Let us understand why Builder pattern should be used when we have factory design pattern.
+	
+Factory always takes care of creating the object of another class as empty object, but sometimes we wanted the object of another class to be instantiated by populated with data, this cannot be achieved easily through Factory
+
+abstract class Truck {
+	int truckNo;
+	String model;
+	String manufacturer;
+	double price;
+}
+
+class MiniTruck extends Truck {
+	int capacity;
+	int mileage;
+	
+}
+
+class TipperTruck extends Truck {
+	int height;
+	String hydrolicType;
+	
+}
+
+class TruckFactory {
+	public static Truck createTruck(String truckType, int truckNo, String model, String manufacturer, double price) {
+		Truck truck = null;
+		
+		if(truckType.equals("mini")) {
+			truck = new MiniTruck();
+		}else if(truckType.equals("tipper")) {
+			truck = new TipperTruck();
+		}
+		return truck;
+	}
+}
+
+In the above example, we can can make use of the factory class to create the implementation of the Truck with data, by passing the data as parameters to the factory method of the factory class. but there are problems with this approach as below:
+1. if there are more number of attributes to be populated with data while creating the object, then we need to declare more parameters for the factory method in passing the data, which is not recommended. Because passing the more number of arguments/parameters in calling an method could be errorneous
+2. not all the values are needed while creating the object of the class, few are mandatory and others are optional, in that case also while calling the factory method we should supply values for all the parameters declared
+
+
+To overcome the above problems in creating the object of another class with data, builder design pattern has been introduced.
+
+class TruckBuilder {
+	int truckNo;
+	String model;
+	String manufacturer;
+	double price;
+	
+	TruckBuilder(int truckNo) {
+		this.truckNo = truckNo;
+	}
+	public void setModel(String model) {}
+	public void setManufacturer(String manufacturer) {}
+	public void setPrice(double price) {}
+	
+	public Truck build(String truckType) {
+		Truck truck = null;
+		
+		if(truckType.equals("mini")) {
+			truck = new MiniTruck();
+		}else if(truckType.equals("tipper")) {
+			truck = new TipperTruck();
+		}
+		truck.setTruckNo(truckNo);
+		truck.setModel(model);
+		truck.setManufacturer(manufacturer);
+		truck.setPrice(price);
+		return truck;
+	}
+}	
+
+TruckBuilder builder = new TruckBuilder(10);
+builder.setModel("Mini 1010");
+builder.setManufacturer("Tata Motors");
+builder.setPrice(230000);
+
+Truck truck = builder.build("mini");
+Truck truck2 = builder.build("mini");
+
+Fluent Builder Pattern
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	

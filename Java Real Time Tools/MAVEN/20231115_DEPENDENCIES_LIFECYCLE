@@ -1,0 +1,165 @@
+Transitive dependency management
+--------------------------------
+While working with java applications we use apis/third-party libraries as dependencies in building the project. These third-party libraries we use in-turn has other libraries as dependencies which are called "Transitive dependencies". Unless we add third-party libraries and their transitive dependencies into the project we cannot build or run the application
+
+Identifying these transitive dependencies is a tedious job. Either we need to refer the vendor documentation or go through the trail and error of deploying and looking at the exceptions to identify what dependencies are missing in our application. Thus compiling the list of dependencies required for running the application is very difficult and setting up the project takes huge amount of time.
+	
+To overcome this problem maven has introduced transitive dependency management technic.
+1. How does this works?
+The vendor while publishing their third-party libraries/ apis into the maven central repository, along with gav coordinates defined for the library in respective pom, they need to declare what are the dependencies it requires to work aspart of the pom file itself.
+	
+for eg.. when apache is publishing the apache-poi.jar library into the maven central repository they need to furnish the information about this library in apache-poi.pom file as below
+
+<modelVersion>4.0.0</modelVersion>
+<groupId>org.apache.poi</groupId>
+<artifactId>poi</artifactId>
+<version>5.2.3</version>
+<dependencies>	
+	<dependency>
+		<groupId>commons-codec</groupId>
+		<artifactId>commons-codec</artifactId>
+		<version>1.15</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-collections4</artifactId>
+		<version>4.4</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-math3</artifactId>
+		<version>3.6.1</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>commons-io</groupId>
+		<artifactId>commons-io</artifactId>
+		<version>2.11.0</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>com.zaxxer</groupId>
+		<artifactId>SparseBitSet</artifactId>
+		<version>1.2</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-api</artifactId>
+		<version>2.18.0</version>
+		<scope>compile</scope>
+	</dependency>
+</dependencies>
+
+and publish the library with pom file into maven central repository.
+	
+2. while using the library
+when we are using this library as dependency by declaring in pom.xml of our project. The maven build tool identifies the transitive dependencies the apache-poi depends on and downloads and makes all of them available to our project. Its not just apache-poi transitive dependencies, in turn these transitive dependency -> dependencies also will be downloaded and added to the classpath. This process recursively goes down until all the transitives are identified and resolved by adding them to the project.
+	
+This process of identifying and adding the dependencies into the project is called "Transitive dependency management".
+	
+Looks like when we add a dependency to our project, maven does lot of things behind the scenes in compiling and adding the dependencies to our project. So it is not easy to trace back which dependency of our project is added as transatitive dependency from what other dependency. To help us in identifying the dependencies and transitives and how those got included maven has provided an tool or plugin called dependency:tree
+
+within the root of the project run the command 
+mvn dependency:tree
+
+that displays all the dependencies and their in-turn transitives with their versions as tree on the console
+
+How to exclude a transitive dependency that is added to the project?
+1. identify the transitive dependency has added through which other dependency in our project by running mvn dependency:tree command
+for eg.. when we run dependency:tree plugin we got the below tree of dependencies
+
+boot.org:bootcore:jar:1.0.0
++- org.springframework.boot:spring-boot-starter:jar:3.1.5:compile
+|  +- org.springframework.boot:spring-boot:jar:3.1.5:compile
+|  |  \- org.springframework:spring-context:jar:6.0.13:compile
+|  |     +- org.springframework:spring-aop:jar:6.0.13:compile
+|  |     +- org.springframework:spring-beans:jar:6.0.13:compile
+|  |     \- org.springframework:spring-expression:jar:6.0.13:compile
+|  +- org.springframework.boot:spring-boot-autoconfigure:jar:3.1.5:compile
+|  +- org.springframework.boot:spring-boot-starter-logging:jar:3.1.5:compile
+|  |  +- ch.qos.logback:logback-classic:jar:1.4.11:compile
+|  |  |  +- ch.qos.logback:logback-core:jar:1.4.11:compile
+|  |  |  \- org.slf4j:slf4j-api:jar:2.0.7:compile
+|  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.20.0:compile
+|  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.20.0:compile
+|  |  \- org.slf4j:jul-to-slf4j:jar:2.0.9:compile
+|  +- jakarta.annotation:jakarta.annotation-api:jar:2.1.1:compile
+|  +- org.springframework:spring-core:jar:6.0.13:compile
+|  |  \- org.springframework:spring-jcl:jar:6.0.13:compile
+|  \- org.yaml:snakeyaml:jar:1.33:compile
+\- org.projectlombok:lombok:jar:1.18.26:compile
+
+
+for eg.. here we want to exclude org.springframework:spring-expression:6.0.13, then trace back the direct dependency through which this dependency got included into our project which is org.springframework.boot:spring-boot-starter:jar:3.1.5
+	
+pom.xml
+---------
+<dependencies>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter</artifactId>
+		<version>3.1.5</version>
+		<exclusions>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-expression</artifactId>
+				<version>6.0.13</version>
+			</exclusion>
+		</exclusions>
+	</dependency>
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok:jar</artifactId>
+		<version>1.18.26</version>
+	</dependency>
+</dependencies>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

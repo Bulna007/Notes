@@ -1,0 +1,166 @@
+Collection Dependency Injection
+What is collection dependency injection?
+Injecting the collection of values as a dependent into the target class object attributes is called "collection dependency injection". ioc container supports 4 types of collections to injected as dependencies into the target classes
+1. List
+2. Set
+3. Map
+4. Properties
+
+even though we can configure java.util.* collection classes as bean definitions directly and can inject them as dependents into the target class attributes, these collections will be empty. we dont want to inject empty collection class objects as dependents into the target class, rather we want to populate data into these collection class objects.
+	
+unfortunately	none of these collection classes has setters or constructors to populate values into them using ioc container, so to support injection collection class objects with populated data as dependents, ioc container has provided special tags for us
+
+class Game {
+	List<String> players;
+	Set<String> umpires;
+	
+	public Game(Set<String> umpires) {
+		this.umpires = umpires;
+	}
+	
+	public void setPlayers(List<String> players) {
+		this.players = players;
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="game1" class="Game">
+	<constructor-arg>
+		<set>
+			<value>Simon</value>
+			<value>KettelBerg</value>
+			<value>Nitin</value>
+		</set>
+	</constructor-arg>
+	<property name="players">
+		<list>
+			<value>Rohit Sharma</value>
+			<value>Virat Kohli</value>
+			<value>Dhoni</value>
+		</list>
+	</property>
+</bean>
+
+<bean id="game2" class="Game">
+	<constructor-arg>
+		<set>
+			<value>Simon</value>
+			<value>KettelBerg</value>
+			<value>Nitin</value>
+		</set>
+	</constructor-arg>
+	<property name="players">
+		<list>
+			<value>Rohit Sharma</value>
+			<value>Virat Kohli</value>
+			<value>Dhoni</value>
+		</list>
+	</property>
+</bean>
+
+Test.java
+----------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/cdi/common/application-context.xml"));
+Game game = beanFactory.getBean("game", Game.class);
+sop(game);
+
+class Stadium {
+	Map<String, Game> matches;
+	Properties matchWinningTeam;
+	
+	public Stadium(Properties matchWinningTeam) {
+		this.matchWinningTeam = matchWinningTeam;		
+	}
+	
+	public void setMatches(Map<String, Game> matches) {
+		this.matches = matches;
+	}
+}
+
+<bean id="stadium" class="Stadium">
+	<constructor-arg>
+		<props>
+			<prop key="IndiaVsPakistanT202023">
+				India
+			</prop>
+			<prop key="IndiaVsAustraliaOneDaySeries2023">
+				India
+			</prop>
+		</props>
+	</constructor-arg>
+	<property name="matches">
+		<map>
+			<entry key="IndiaVsPakistanT202023" value-ref="game1"/>
+			<entry key="IndiaVsAustraliaOneDaySeries2023" value-ref="game2"/>
+		</map>
+	</property>
+</bean>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

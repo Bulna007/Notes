@@ -1,0 +1,53 @@
+What is logging, what is the purpose of logging?
+Logging is used at various different stages across the development through the delivery of the application.
+#1 development = during the development time, the developers greatly rely on logging for debugging the logical errors that creeps up during the execution of the program. The developers writes intermediate log statements to generate the output while the program is executing, using which they can trace the problems in the program.
+	
+2. during the test, stage and production environments
+in these environments we cannot run the application under debugging mode to troubleshoot or debug the errors. there could be some errors that might appear or our application run into during its execution within these environments, the only way we can see these errors is through logging. if we never see these errors, we never get a chance to fix them and can never improve the quality of the application.
+	
+Typical requirements of logging:
+1. The log statements written should be turned on/off depends on the environment in which we are running the application.
+2. The log output that is generated should be persisted, so that it can used at later point in time for further analysis and troubleshooting
+3. In an application we might want to write the logging into multiple destinations like
+	1. whole application log destination
+	2. module level log
+	3. errors and infos in different log destinations
+The log statements should be written to multiple destinations seemlessly. for eg.. on to console, file or to an database
+4. The log statements written should be serialized and persisted in the order in which those are emitted/written in the code, even incase of multi-threaded and concurrent environments as well.
+5. The log messages should be formatted nicely, so that those are readable
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

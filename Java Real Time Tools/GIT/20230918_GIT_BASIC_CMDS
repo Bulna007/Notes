@@ -1,0 +1,120 @@
+How many lifecycle stages in which a File could exists in git repository?
+There are 4 stages in which a file could exist in git repository
+1. untracked  = any file that is newly created within the repository directory will be treated as untracked
+2. unmodified = a comitted file will be moved to unmodified state
+3. modified = when we edit an existing file in the repository, then it will moved to modified state
+4. staged   = files that are modified and are made ready for commit are called staged
+
+
+1. How to create empty/initialize a repository?
+create a directory 
+mkdir projectdir
+cd projectdir
+
+git init = an empty repository will be initialized inside the current directory in which we typed the command
+
+2. how to see the status of the repository?
+git status
+should be inside the repository directory and shows all the untracked, modified and staged files in the repository
+
+3. There are 2 levels at which we can configure the authorinfo to the git client tool
+1. local = the user.name & user.email will be seeded to the repository level under git/config file of that repository
+2. global = across all the repo in the system the same authorinfo will be used for writing the commit history and the config info is stored at $USER/.gitconfig file
+
+git config --global user.name username
+git config --global user.email emailAddress
+
+without --global it will configure local to the repository
+
+to remove the author information
+git config --global --unset-all user.name
+git config --global --unset-all user.email
+--------------------------------------------------------------------------------------------------------------------------------------
+
+1. How to move the files to staged state?
+upon creating a new file (untracked) or modify an existing file (modified) we cannot directly commit them unless we stage these files in git. inorder to do so we need to use below command
+
+git add . = will stage all the untracked and modified files in the repository
+git add filename = will only stage the specified file 
+git add -u = will stage all the modified files ignoring untracked files
+
+2. how to commit a staged file?
+git commit -m "commit message"
+	
+3. How to see all the commits made into the repository?
+git log
+shows all the commits to the repository in an chronological ascending order
+
+4. how to see the difference between working copy of a file with committed version?
+git diff filename
+
+shows the difference between current file and prev commited file
+
+
+5. How to un-stage an modified file that is in staged status?
+if we have staged an existing file to move back to an modified state we need to use below command
+git restore --staged filename
+
+will put back the file into modified state, but will not remove the changes we made in the file.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

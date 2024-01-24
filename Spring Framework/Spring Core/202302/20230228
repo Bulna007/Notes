@@ -1,0 +1,30 @@
+How many ways are there in collaborating the objects?
+There are 2 ways are there in collaborating the objects
+1. dependency pulling
+1.1 dependency lookup
+1.2 contextual dependency lookup
+
+2. dependency injection
+2.1 setter injection
+2.2 constructor injection
+
+
+1.2 contextual dependency lookup
+to get the container objects into our classes, our class should be written based on the contract defined by the underlying container, then only the container will passes the dependent object into our class, this is called "contextual dependency lookup"
+	
+2. dependency injection
+instead of our class writing the code for creating or pulling the dependent object, the underlying container (ioc container) takes care of instantiating the class objects and injects the dependent objects into another class which is called "dependency injection"
+	
+what does the term ioc means?
+ioc stands for inversion of control, incase of dependency injection the roles of the classes are inversed, where the dependent object of a class is being injected into the Target class rather 
+	
+the class is pulling the dependency, so it is called inversion of control
+-----------------------------------------------------------------------------------------------------------------------------------
+What is Setter Injection?
+The dependent objects are injected into the Target class, by invoking the setter on the target class attributes, which is called "setter injection"
+	
+MessageWriter
+IMessageConverter messageConverter;
+
+interface IMessageConverter {}
+class HTMLMessageConverter implements IMessageConverter {}

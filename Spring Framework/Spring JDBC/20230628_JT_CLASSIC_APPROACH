@@ -1,0 +1,22 @@
+Classic Approach
+----------------
+The ClassicApproach of Spring Jdbc resembles the java jdbc style programming. In ClassicApproach we greatly rely on Callback programming/mechanism
+
+Let us understand what is callback mechanims or callback programming?
+Callback mechanism is the process through which the logic within our components are called by other classes by passing the required resources as input, since our code is called by someother classes/components of our application, it is called Callback mechanism
+
+In ClassicApproach 
+1. we greatly rely on Callback mechanism
+	
+2. all the database operations are performed in #2 phases of execution like: select, insert, update or delete operations are carried in 2 phases of execution
+Those phases are 
+ 1. preparing = In the preparing phase we construct objects like PreparedStatements, Statement etc that is required for executing the queries
+ 2. callback = we execute the PreparedStatement or Statement, gather the results and use them
+ 
+ 
+For eg.. if we want to execute an sql query to get all the students in the jlearning system
+select student_no, student_nm, age, gender, mobile_nbr, email_address from student, we need to use PreparedStatement or Statement. Let us use PreparedStatatement now.
+	
+To perform this operation we need #2 phases of execution, the spring jdbc has provided 2 standard interfaces called
+1. PreparedStatementCreator = write the code for creating the preparedStatement
+2. PreparedStatementCallback = write the code for executing the preparedStatement, gather the ResultSet data into objects and return it

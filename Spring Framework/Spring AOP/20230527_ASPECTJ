@@ -1,0 +1,61 @@
+Principles of AOP
+1. Aspect
+2. Advice
+3. Joinpoint
+4. Pointcut
+5. Target
+6. Proxy
+7. Weaving
+
+java has not provided any support in building java programs based on aop principles, so there are lot of third-party vendors provided various different libraries to support developing aop-based applications aspart of java language.
+1. AspectJ
+2. Google Guice
+3. JBoss AOP
+4. Spring AOP
+5. AspectWerkZ
+6. Nanning
+7. Dynaop
+8. JAC (Java Aspect Components)
+
+aop is not an replacement of oop paradigm in building the software applications, rather aop works in conjunction with oop principles in managing the cross-cutting logic that we write using oop.
+
+Spring AOP module has provided bunch of api classes in support of building aop applications aspart of spring framework, but if we write our application classes by referring spring framework provide aop api classes, our code will become invasive (tighly coupled with spring framework), so to help us in making our application non-invasive spring has added the support for AspectJ Library
+
+Now instead of writing the application classes with spring aop api classes, we can very well write our application classes using AspectJ api classes and pass it as an input to Spring Framework runtime (ioc), spring can interpret the classes written using aspectj api and apply relevant functionality equivalently the same way if we have written the code using spring aop. Thus our application classes becomes non-invasive
+
+How many ways of working with spring aop are there?
+There are 3 ways are there
+1. Programmatic aop approach (using spring aop api) (#1 eg.. per usecase aop) (grabing internals/basics of aop)
+2. Declarative AspectJ Aop approach     (converting prog to aspectj)
+3. Annotation-driven AspectJ Aop approach (annotation [multiple eg..])
+--------------------------------------------------------------------------------------------------------------------------------------
+spring aop has provided integration with aspectj, these both libraries has their own features, but what is the result of working with aop by using the combination of them
+
+1. joinpoint
+spring aop  = supports joinpoint as METHODS only
+aspectj aop = supports joinpoint as constructor, static-blocks, assignments, initializers (anonymous blocks), destructors 
+              (finalizers), methods
+
+spring aop + aspectj (joinpoint supported?): only METHOD since the runtime on which we are running the code is spring
+
+2. pointcuts
+There are 2 types of pointcuts are there
+2.1 static pointcut = always specifies fixed list of joinpoints on whom the aspect should be applied
+2.2 dynamic pointcut = in dynamic point along with joinpoints it attaches an conditional expression, that will be evaluated at runtime to decide whether the aspect should be applied on the target class joinpoint or not. 
+	
+For eg..
+transferFunds(String transferType, String frmAc, String toAc, double amount) {} (joinpoint)
+
+// aspect logic (cross-cutting logic)
+aop = aspect logic + static pointcut(transferFunds)
+aop = aspect logic + dynamic pointcut(transferFunds: when(transferType:neft))	
+	
+spring aop = supports both static and dynamic pointcuts
+aspectj aop = only supports static pointcuts but doesnt support dynamic points
+
+spring aop + aspectj aop = only static pointcut
+
+3. weaving
+There are 2 types of weaving are there
+1. compile-time weaving
+2. runtime weaving

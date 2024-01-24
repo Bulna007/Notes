@@ -1,0 +1,81 @@
+What is bean autowiring?
+instead of we declaring the dependencies between the bean definitions, ioc container takes care of identifying the dependencies and manage them automatically, is called "bean autowiring"	
+	
+by default autowiring is off, to manage dependencies automatically, we need to enable the autowiring by writing an attribute on the bean definition autowire="mode"	
+There are 3 modes of autowiring are there
+1. byName
+2. byType
+3. constructor
+4. autodetect (deprecated)
+	
+mode of autowiring indicates 2 things:
+1. how to identify the dependent bean
+2. how to inject
+
+1. byName 
+1.1 inject the dependent bean via setter injection
+1.2 identify the dependent bean matching with targetClass attributeName with bean definition id within the ioc container, if the matching is found, inject it via setter injection
+
+2. byType
+2.1 inject the dependent bean via setter injection
+2.2 identify the dependent bean matching with targetClass attributeType with bean definition classType, if found inject it via setter injection
+
+3. constructor
+3.1 inject the dependent bean via constructor arguments (injection), that means the targetClass should have an parameterized constructor delcaring dependents as parameters
+3.2 identify the dependent beans matching with argumentType of the constructo matching with bean definition ClassType, if found pass them as arguments to the target class constructor while creating the object of target class
+	
+	
+class Radio {
+	private TransReceiver transReceiver;
+	private Tuner tuner;
+	
+	public Radio(TransReceiver transReceiver) {
+		
+	}
+	
+	public Radio(Tuner tuner) {
+	}
+	
+	public void listen(int stationNo) {
+		transReceiver.receive();
+		sop("listening to the station : " + stationNo);
+	}
+	
+	//public setTransReceiver(TransReceiver transReceiver) {}
+}	
+
+
+class TransReceiver {
+	int frequency;
+	String signalType;
+	
+	public void receive() {
+		sop("receiving at frequency : " + frequency + " of signalType : "+ signalType);
+	}
+	
+	public void setFrequency(int frequency) {}
+	public void setSignalType(String signalType) {}
+}
+
+class Tuner {
+	void autoTune() {
+		sop("tunning the frequency");
+	}
+}
+	
+	
+application-context.xml
+-----------------------
+<bean id="radio" class="Radio" autowire="byType"/>
+<bean id="analogReceiver" class="TransReceiver" p:frequency="293" p:signalType="analog"/>
+<bean id="digitalReceiver" class="TransReceiver" p:frequency="293" p:signalType="digital"/>
+
+
+<bean id="tuner" class="Tuner"/>
+
+
+Test.java
+----------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/ba/common/application-context.xml"));
+Radio radio = beanFactory.getBean("radio", Radio.class);
+radio.listen(100);

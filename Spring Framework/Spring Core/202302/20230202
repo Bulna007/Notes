@@ -1,0 +1,32 @@
+How to create a project using maven?
+1. goto the workspace directory and type the below command on the command-prompt
+syntax: 
+mvn archetype:generate -DgroupId=<org> -DartifactId=<projectName> -Dversion=1.0.0 -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4
+	
+mvn archetype:generate -DgroupId=core -DartifactId=strategydp -Dversion=1.0.0 -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4
+	
+2. how does the project directory structure looks like
+d:\work:/>
+strategydp
+|-src
+  |-main
+	  |-java [sourcecode: .java]
+		|-resources [non-java sourcecode: .properties, .xml] [by default resources directory will not be created, we need to create it manually]
+	|-test [optional]
+		|-java
+		|-resources
+|-pom.xml
+------------------------------------------
+|-target [only after building the project]
+  |-classes
+	  |-*.class
+	|-*.jar
+	
+pom.xml = pom stands for project object model
+it holds the project information like
+1. jdk version
+2. packaging: jar/war
+3. dependencies (jar)
+
+#3. How to compile and package the project?
+d:/work/strategydp:/> mvn clean verify

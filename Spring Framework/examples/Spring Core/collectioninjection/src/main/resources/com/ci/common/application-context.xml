@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="game1" class="com.ci.beans.Game">
+		<constructor-arg>
+			<set>
+				<value>Simon</value>
+				<value>Nitin</value>
+				<value>Steve Buckner</value>
+			</set>
+		</constructor-arg>
+		<property name="players">
+			<list>
+				<value>Dhoni</value>
+				<value>Virat Kohli</value>
+				<value>Rohit Sharma</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="game2" class="com.ci.beans.Game">
+		<constructor-arg>
+			<set>
+				<value>Tucker</value>
+				<value>Billy</value>
+				<value>David</value>
+			</set>
+		</constructor-arg>
+		<property name="players">
+			<list>
+				<value>Raina</value>
+				<value>Jadeja</value>
+				<value>Hardik Patel</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="wankhedeStadium" class="com.ci.beans.Stadium">
+		<constructor-arg>
+			<map>
+				<entry key="IndiaVsPakistanT202023" value-ref="game1" />
+				<entry key="IndiaVsAustraliaODI2023" value-ref="game2" />
+			</map>
+		</constructor-arg>
+		<constructor-arg>
+			<props>
+				<prop key="IndiaVsPakistanT202023">India</prop>
+				<prop key="IndiaVsAustraliaODI2023">India</prop>
+			</props>
+		</constructor-arg>
+	</bean>
+
+</beans>
+
+
+
+
+
+
+
+
+
+
+
+

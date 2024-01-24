@@ -1,0 +1,74 @@
+dependency scope
+-----------------
+The dependencies/libraries we add to project buildpath are not required to be presented during all the stages of the build process of our application.
+For eg.. we want few dependencies/libraries to be available during compilation and few during packaging/execution and someother libraries needs to be added only while compile/executing the testcode of our application
+
+the way we can control in having these dependencies included into the buildpath by maven is through dependency scopes. While declaring the dependency in the pom.xml along with gav coordinates we need to specify the scope of the dependency as well as shown below
+
+pom.xml
+<project>
+   <modelVersion>4.0.0</modelVersion>
+	 <groupId></groupId>
+	 <artifactId></artifactId>
+	 <version></version>
+	 <dependencies>
+	 	<dependency>
+			<groupId></groupId>
+			<artifactId></artifactId>
+			<version></version>
+			<scope>runtime</scope>
+		</dependency>
+	 </dependencies>
+</project>
+ 
+There are 6 scopes defined by the maven that can be added while delcaring dependency in the pom.xml
+
+1. compile (default scope)
+if we declare a dependency in pom file without specifying scope, then the default scope of the dependency will be "compile".
+The dependency declared with scope: compile, will be available through out  all th phases of the project build means: ["compilation", "packaging", "test", "running"]	
+
+2. provided
+The dependency will be available in the classpath during compilation and test phase. But will not be bundled aspart of the artifact
+For eg.. the servlet-api and jsp-api libraries needs to be available in classpath during compilation, but those should be packaged into the war/ear file since these are already available on the runtime servers.
+	
+3. runtime
+These dependencies will not be available during build/test phases. but will get bundled into the artifact while packaging
+For eg.. The jdbc driver jars should not be part of classpath while compiling but should be packaged into the war/ear while shipping the application.
+	
+4. test
+Will be available only during the phase od test
+
+5. system
+Same as provided. but the dependency will be referred from the local system path rather than from repository
+
+6. import
+The dependencies that are part of an pom file can be imported into another pom project using import scope
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,19 @@
+ioc principle: ioc is all about collaboration of objects and managing the lifecycle of the objects 
+How many ways of collaborating the objects are there?
+There are 2 ways of collaborating the objects are there
+1. dependency pulling
+	1.1 dependency lookup
+	1.2 contextual dependency lookup
+	
+2. dependency injection
+	2.1 setter injection
+	2.2 constructor injection
+	
+1. dependency pulling
+it is an old methodology of managing the dependencies and while using it our application classes will become tightly coupled. There are 2 more types of dependency pulling are there
+1.1 dependency lookup
+dependency lookup is the process of acquiring the dependent object by performing a lookup/search into an registry/repository. For eg.. incase of connection pooling, the application server based on the connection pool configuration creates an connectionpool and associates an DataSource object binds it to the jndiRegistry of the application server.
+	
+our application has to goto the jndiRegistry of the application server perform an lookup with the key associated with that datasource object and get the object to use it for getting an connection from the pool
+
+since our application is performing an lookup for dependent object DataSource from jndiRegistry to get it, this approach is called "dependency lookup"

@@ -1,0 +1,131 @@
+Maven
+Maven is an build tool that is used for building & package java applications and is purely written in Java Language. 
+There are 6 features, that makes the maven build tool outstanding and powerful from other build tools that are existing in the market
+1. Standardized Directory Structure
+2. Dependency Management
+3. Plugins
+4. Build Abstraction
+5. Tools Support
+6. Archetypes
+
+In ANT build tools, the developers has to write the buildscript file in which they need to write build instructions on what tasks or targets needs to be applied in building the application, unlike these tools when it comes to maven the developers dont have to write an build instruction file indicating what tasks or activities should be applied in building the project, this makes maven as an declarative build management tool rather than an buildscript tool
+
+"Maven is an declarative build management tool, that is purely written in java-language and is used for building java applications"
+
+How does maven builds the java application, without writing instructions in a buildscript file?
+javaproject
+|-src
+|-build
+  |-classes
+	|-dist
+|-build.xml
+
+<project name="javaproject1" basedir="." default="init">
+	<target name="clean">
+		<delete dir="${dist.dir}"/>
+		<delete dir="${classes.dir}"/>
+		<delete dir="${build.dir}"/>
+	</target>
+	
+	<target name="createdirs">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${classes.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+	</target>
+	
+	<target name="compile">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}"/>
+	</target>
+	
+	<target name="package">
+		<jar destfile="${dist.dir}${file.separator}${ant.project.name}.jar" basedir="${classes.dir}"/>
+	</target>
+	
+</project>
+	
+By looking at the above build.xml, we can easily understand for any java projects the build activities that needs to be applied in building the application would be same across
+1. delete/clean
+2. create directories
+3. compile
+4. package
+5. execute
+
+instead of repeatedly writing the same build instructions for each java project, the maven itself takes care of applying the build activities automatically for the java project we only have to specify what type of project it is
+
+1. Standardized Directory Structure
+In Java there is no standard project directory structure that is defined by Sun microsystems or oracle in creating the java projects. It is left to the descretion of the developers in choosing the directory structure of the project to organize the sourcecode of the project. This brings lot of dis-advantages or challenges in developing/building the java applications as below
+	
+1.1 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+	

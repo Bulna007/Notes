@@ -1,0 +1,9 @@
+task goClean {
+    doFirst {
+        println "cleaning first"
+    }
+    doLast {
+        println "sweeping last"
+    }
+}
+goClean.group="extension"

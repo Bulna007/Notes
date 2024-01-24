@@ -1,0 +1,80 @@
+Gen#2 Repository
+----------------
+Gen#2 repositories works based on the strategy: copy-modify-merge, through which they resolve majority of the problems we have in Gen#1 repositories
+
+Always an Source Code Management Repositories has 2 parts within them
+1. Server software
+2. Client software
+
+Based on the principle or strategy of "copy-modify-merge" there are several vendors in the market manufactured and distributed the server/client software as opensource and commercial available
+
+Server Software:
+1. Collabnet
+2. VisualSVN Server (free)
+3. Apache Subversion Server (free)
+	
+Client Software:
+1. Tortoise SVN Client
+--------------------------------------------------------------------------------------------------------------------------------------
+How to do collaborative application development using Subversion?
+The initial project will be setup by the architect/lead or one of the developer in the team and passes it to the Subversion administrator asking to import and setup the repository for the team
+
+The Subversion administrator:
+1. create the repository representing the project
+2. creates each member in the team as an user in the repository assigning them to groups and granting permissions
+3. imports the project into the repository so that it can be distributed to all the members in the team to support collaborative development.
+	
+Subversion will works based on the concept of revision no unlike the other version control systems using version no. In general we have version no for each file in the repository, so that always we can back track or fetch the previous changes on that files.
+	
+unlike that when it comes to subversion it has revisionno and the revision no will be for individual files rather the revision no will be given for repository.
+when we import the initial project into the repository, the repository is at revisionno: 1. Now each change/commit to the repository increments the revision no of the repository to +1 irrespective of how many files we are commiting.
+	
+	
+To start with development of the project, the developers of the team perform below activities:
+1. the developers has to create an working copy of the repository intheir local machines. this can be done by checkout the repository from the server
+checkout = fetch the code from repository (create an working copy of the code)
+	
+upon checkout the code along with sourcecode, the metadata of the repository also will be copied to the local system. per each directory within the sourcecode of the repository the svn maintains the metadata in a folder called ".svn"	directory
+
+2. once the working copy has been created on the developers machine, he can continue to modify the sourcecode without locking the files.
+
+the developers while working on the sourcecode, they dont need to keep track of the changesets, rather the svn client utility computes which files are modified or created newly through the help of .svn metadata 
+
+3. upon completing the changes on the localcopy the developer can commit the changes to the svn server directly.
+	
+
+project
+|-src
+	|-A.java (modified)
+	|-B.java
+	|-.svn
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

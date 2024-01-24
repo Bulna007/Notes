@@ -1,0 +1,177 @@
+Maven Plugin
+------------
+There are several build steps or activities or actions like compile, package, copy resources etc that should be performed in building an project. In Ant a build step or activity is represented by an Task, that takes care of perform the action, there are neomorous number of pre-defined tasks are provided aspart of the Ant engine that can be used in building the project.
+	
+Similarly incase of maven, an build step/activity is represented by a Plugin/goals which is considered as a basic building block in maven.
+	
+A plugin can be seen as an component which contains multiple goals. Each goal represents an action or operation to be performed aspart of the build process. Group of related goals are kept together within a Plugin component.
+	
+For example Maven Archetype is a plugin. This mean Archetype is an component and it has #2 goals (related to archetype management)
+	1. generate            = create a new project from an archetype
+	2. create-from-project = create an archetype from an existing project
+mvn archetype:generate
+mvn archetype:create-from-project
+
+another example of an plugin is Install plugin it is an component, and it has #2 goals
+1. install     = The install goal is used for installing an artifact like archetype, project artifact into the local maven repository
+2. install-file = adding an local library on the Filesystem into the local maven repository
+
+mvn install:install
+mvn install:install-file
+
+How to run an plugin?
+There are 2 ways we can run an plugin in maven
+1. we can run a plugin and goal directly
+2. we can associate a plugin and its goal aspart of the build lifecycle of the maven.
+	
+1. we can run a plugin and its goal directly
+mvn pluginName:goal 
+---------------------------------------------------------------------------------------------------------------------------------------------
+Maven build lifecycle (or) build abstraction
+--------------------------------------------
+For all the standard actions or operations we perform in building the project, the maven team has provided pre-defined plugins. There are lot of pre-defined plugins (with goals defined) are there shipped aspart of the maven engine. In addition there are several third-parties build their own plugins and distributes them freely to the world through maven central repo.
+	
+These plugins/goals has to be applied or put together in a specific order in building the project. Incase of Ant we have achieved it by writing build.xml, whereas in case of Maven we have not written any build script file in applying these plugins/goals for building the project why?
+	
+Let us understand Why we dont need to write an Build Script file while working with Maven?
+Maven enforces stricltly the conventions over configurations "CoC principle". So if we have followed the standardized directory structure in creating the project, the activities/actions that needs to be applied in building the maven project would be same across the projects.
+	
+So if maven encourages the developers in writing the build instruction file in applying these plugins/goals in building the project, then all the build script files for all the java projects would look like same and duplicated because of "CoC".
+	
+So rather than maven enforcing the developers in writing the build script file in applying the build activities (thru plugins), the maven has defined these standard build steps/activities with plugins needs to be executed aspart of maven build lifecycle.
+	
+There are 3 lifecycles are defined by maven
+1. default lifecycle
+2. clean
+3. site
+
+each lifecycle has been defined with standard phases. Phases represents the stages in which the build will be conducted. We can think of an Phase as an Target in ANT
+So a Phase represents group of plugin/goals that has to be executed for performing an action aspart of the build process.
+	
+#1 Phases in default lifecycle:	
+1. validate          = validates the project is correct and all necessary information is available or not
+2. compile           = compiles the sourcecode of the project
+3. test              = tests the sourcecode with available unit testcases placed under src/test/java
+4. package           = packages the application as an jar/war/ear
+5. integration-tests = executes all the integration tests
+6. verify            = verify the package produced is meeting quality criteria or not
+7. install           = installs the package into local maven repository
+8. deploy            = publishes to the remote repository
+
+#2. clean lifecycle
+it has only 1 phase clean
+
+#3. site lifecycle
+it has only 1 phase site, for generating the project documentation
+
+
+How to run the build for a project?
+We need to specify the lifecycle and phase till which we want maven to perform the build operations or activities as below
+mvn lifecycle:phase lifecycle:phase lifecyle:phase
+here for default lifecycle phases the lifecycle name is not required, because by default it consider as default only.
+	
+The clean and site are kept into separate lifecycle, because we may not always wants to clean the project during build or generate site documentation.
+	
+advantages:-
+	1. build abstraction = 
+	
+maven project1 = 	mvn clean verify
+      project2
+			project3
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+

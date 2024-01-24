@@ -1,0 +1,43 @@
+There are 2 salient features are there in spring framework
+1. versatile application development framework
+2. non-invasive application development framework
+
+#1. versatile application development framework
+versatile meaning: flexible
+The Spring Framework is versatile enough in such a way where it can creep into any of the existing investments, means any projects that are build on any technologies. It can integrate with any projects that are build on any technology and can enrich their functionality by identifying the gaps of the system.
+	
+So inorder to use the spring framework we dont have to rewrite the application from the scratch, rather we can integrate spring framework with the existing technologies in which the application has been built.
+For eg..
+when we develop the application using struts framework, the struts can help us in building web applications and only web aspects of the application (which are view and presentation-tier components). but we need to use api for building business/persistence tier components due to which we might endup in writing lot of boiler-plate logic and may become tedious job to maintain the application
+
+so to make the end-to-end application better we can use spring framework here, the spring can integrate with struts framework and can enrich the business/persistence tier of the application eliminating the problems with apis.
+	
+So from this we can understand we dont need to rewrite the application from scratch to use spring, we can integrate spring with existing components/system easily
+------------------------------------------------------------------------------------------------------------------------
+#2. Non-invasive application development framework
+
+while working with an api or a framework in developing an application, we need to write the programming language by referring or using the framework classes. So that we can use the functionality provided by the Framework.
+	
+But when our application classes are written by using the Framework classes, our class will become tightly coupled with framework.
+	
+class DoctorAppointmentAction extends org.apache.struts.Action {
+	public ActionForward execute(ActionForm form, HttpServletRequest request, HttpServletResponse response, ActionMappings mappings) {
+	
+	}
+}
+
+For eg.. at somepoint after development, if we found the framework is not suitable for developing the application, we want to quit using the framework, inorder to do that we need to remove the framework dependencies (jars) from the project.
+When we remove framework dependencies from the project, all the code in our project starts complaining with compile-time errors stating the frameworks classes are not found.
+Now I need to modify the code in my application to separate/detach my application classes from framework classes
+1. which involves huge amount of time
+2. we almost endup in zero code left after detaching from the framework
+looks like we need to redo the development of the application with a new framework
+
+Unlike any other framework, spring framework is completely non-invasive 
+(invasive : means creeping into others, framework classes will creep into our classes)
+non-invasive: doesnt creeps into
+
+So while working with spring framework, inorder to use spring framework functionality in our application we dont need to write our code using the spring framework classes.
+that means our code is separate and spring framework is separate, we dont refer spring framework classes in our application, but still we get the functionality of spring framework into our project (magic!)
+	
+In future if we dont want to use the spring framework in building our application, any time we can quit by just removing the dependencies from our project, but we dont need to rewrite the application code to decouple from spring framework. this is called "non-invasive"

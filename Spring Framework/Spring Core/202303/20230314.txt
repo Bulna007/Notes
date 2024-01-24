@@ -1,0 +1,45 @@
+Bean Scopes
+What is bean scopes?
+Bean Scopes is about how does the ioc container has to instantiate the object for a bean definition would be indicated through bean scopes
+
+There are 5 bean scopes are available
+1. Singleton
+2. Prototype
+---------------------------- 
+3. Request              }  while learning spring mvc 
+4. Session              }  these scopes will be used
+----------------------------
+5. Global Session (deprecated) (no more available) (portlet applications)
+	
+By default when we configure a class as bean definition, the default scope of the bean definition is "singleton". Singleton means ioc container creates only one single object for that bean definition and returns always the reference of the same object upon requesting.
+	
+the other scope for a beandefinition is "prototype" (non-singleton). each time when we request for the bean definition object ioc container instantiates a new object for the bean definition and returns.
+	
+How to specify the scope for a bean definition?
+	
+class FuelTank {
+	int capacity;
+	String fuelType;
+	
+	public void setCapacity(int capacity) {}
+	public void setFuelType(String fuelType) {}
+	//toString
+}	
+	
+application-context.xml
+-----------------------
+<bean id="fuelTank" class="FuelTank" p:capacity="10" p:fuelType="petrol"/>
+
+BeanScopesTest.java
+--------------------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/bs/common/application-context.xml"));
+
+FuelTank fuelTank = beanFactory.getBean("fuelTank", FuelTank.class);
+FuelTank fuelTank1 = beanFactory.getBean("fuelTank", FuelTank.class);
+
+since the default scope is "singleton" ioc container will return the same object it has previously created without creating one more object.
+Then how to change the scope of the bean definition?
+we need to write an attribute at the bean definition level scope="scope"
+	
+<bean id="fuelTank" class="FuelTank" p:capacity="10" p:fuelType="petrol" scope="prototype"/>
+now the ioc container returns a new object everytime when we call beanFactory.getBean("fuelTank");

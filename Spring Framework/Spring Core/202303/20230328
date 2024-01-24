@@ -1,0 +1,68 @@
+Static Factory Method Instantiation
+-----------------------------------
+Not every class in java can be created using new operator or just by invoking constructor on the class. few class needs to be instantiated by calling static factory methods on the class we wanted to create the object
+	
+class Appointment {
+	private int appointmentNo;
+	private String name;
+	private String location;
+	private Calendar appointmentDate;
+	private String status;
+	
+	// setter
+}	
+
+application-context.xml
+------------------------
+<bean id="appointment" class="Appointment">
+	<property name="appointmentNo" value="384"/>
+	<property name="name" value="dentist appointment"/>
+	<property name="location" value="2 town, near high court"/>
+	<property name="appointmentDate" ref="appointmentDate"/>
+	<property name="status" value="accepted"/>
+</bean>
+
+<bean id="appointmentDate" class="java.util.Calendar"/>
+
+here if we configure Calendar as an bean definition, ioc container will tries to instantiate the object of the class by invoking the constructor (newInstance() or new operator), but we cannot instantiate Calendar class object using new operator, we need to invoke static factory method on that class getInstance()
+	
+we need to let the ioc container know it should invoke the static factory method inorder to instantiate the object of the Calendar, that can be done using static factory method instantiation
+
+<bean id="appointmentDate" class="java.util.Calendar" factory-method="getInstance"/>
+now ioc container invokes the static factory method getInstance() on the class and the returned object will be placed as bean definition within the ioc container with the given id.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

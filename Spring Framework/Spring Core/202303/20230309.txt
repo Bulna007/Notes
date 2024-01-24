@@ -1,0 +1,35 @@
+p & c namespace
+instead of writing the lengthy property and contructor-arg tags for perform setter and constructor injection, the spring has provided the shortened form of them using p and c namespace, so that we can avoid writing lot of configuration
+
+class Project {
+	int projectNo;
+	String title;
+	String client;
+	int teamSize;
+	Contract contract;
+	public Project(int projectNo, String title, Contract contract) {}
+	public setClient(String client) {}
+	public setTeamSize(int teamSize) {}
+}
+
+class Contract {
+	int duration;
+	int slaDays;
+	String qos;
+	// setters	
+}
+
+application-context.xml
+-----------------------
+<bean id="contract" class="Contract" p:duration="24" p:slaDays="90" p:qos="1 bug per 100 lines of code"/>
+<bean id="project" class="Project" c:projectNo="93894" c:title="Insurance Management System" c:contract-ref="contract" p:client="Athena" p:teamSize="7"/>
+
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/pcnamespace/common/application-context.xml"));
+Project project = beanFactory.getBean("project", Project.class);
+sop(project);
+-----------------------------------------------------------------------------------------------------------------------------------
+Nested Bean Factories
+Nested BeanFactories are used for managing the bean dependencies between the bean definitions across the ioc containers.

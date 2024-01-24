@@ -1,0 +1,12 @@
+Git remote repositories
+-----------------------
+In order to support collaborative application development, we need remote repositories. Since GIT is an distributed repository management tool, each developer can create their own local repositories and can commit the code into their local, but if these changes has to be shared with other members in the team, then we need push these changes into remote repository server so that other people in the team can pull and see the changes.
+	
+There are several git server providers are there
+1. BitBucket
+2. GitHub
+3. Gitgogs
+4. GitLab
+etc
+
+GIT Password: ATBBWUZ7Qndg2HNcbLNktUkghN9t0C113672

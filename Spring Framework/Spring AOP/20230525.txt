@@ -1,0 +1,36 @@
+within the application we write #2 types of logics
+1. primary business logic
+it is the mandatory code that needs to be exists within the application, without that the primary functionality of the application cannot be fulfilled.
+	
+2. secondary logic
+secondary logic is the piece of code that is written and works along with primary business logic and is meant for enhancing or enriching the primary functionality of the application. Always the secondary logic is optional to be exists within the application, without the secondary logic also the core functionality of the system can be fulfilled.
+	
+The secondary logic is something that is commonly exists across several classes within the application, so it is also called as "cross-cutting logic"	
+	
+In a typical application, the primary business logic and cross-cutting logic is written together (intermingled)	in such a way those cannot be seperated easily. since the secondary logic is optional, at any point of time within the application we might want to get rid off it, in such case we cannot easily seperate primary business logic from secondary logic of our application.
+since the secondary logic has been written across several classes within the application, removing the secondary logic incurrs huge amount of 
+1. rework
+2. efforts
+3. testing
+instead we can use AOP
+
+AOP
+AOP stands for Aspect Oriented Programming. AOP is meant for managing in applying the secondary logic / cross-cutting logic across various classes within our application.
+	
+AOP instructs us to keep primary business logic and secondary logic seperately within individual components, but we wanted them to be executed together. 
+To have them executed together, we need to refer one inside the another, but this eventually results in writing them together which leads to huge maintaince when we wanted to get rid off it.
+	
+That is where AOP suggest us to keep them seperated without even referencing each other. then we wanted these #2 logic to be executed together we need to let the AOP does the job for us. Pass both primary business logic component and secondary logic component to AOP asking them to mix each other to have them executed together, so that we can easily make them work. in future if we want to get rid off them we can stop asking AOP to apply secondary logic for that specific component so that we can easily manage.
+--------------------------------------------------------------------------------------------------------------------------------------
+AOP programming paradigm
+
+AOP is not an api or programming language, rather AOP is an programming paradigm introduced in addressing the problems in managing the cross-cutting logic in an application. Every programming paradigm provides principles, that should be followed in developing the software programs.
+	
+Principles of AOP:
+1. Aspect
+2. Advice
+3. Joinpoint
+4. Pointcut
+5. Weaving
+6. Proxy
+7. Target

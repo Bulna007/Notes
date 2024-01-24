@@ -1,0 +1,13 @@
+defaultTasks "hiGradle"
+
+abstract class MessageTask extends DefaultTask {
+    @TaskAction
+    def print() {
+        println "Hello Gradle Task"
+    }
+}
+
+tasks.register("helloGradle", MessageTask)
+tasks.register("hiGradle", MessageTask) {
+    dependsOn 'helloGradle'
+}

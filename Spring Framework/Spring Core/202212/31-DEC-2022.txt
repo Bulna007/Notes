@@ -1,0 +1,64 @@
+Introduction to Spring Framework
+Spring is an Framework, spring supports developing multiple application development types unlike the struts framework. We can build
+1. core applications
+2. persistence-tier applications
+3. distributed web applications
+4. integration-tier applications
+5. enterprise applications
+etc
+using spring framework. In addition Spring Framework supports developing end-to-end application whereas a struts framework supports only building web application aspects of building an application which is partial.
+	
+In comparision with JEE:
+Using the spring framework we can develop multiple appliation development types inpar with JEE. Then why do we need to use Spring Framework since we can build the same type of application using JEE 
+
+JEE is an api. API stands for application programming interface. 
+API are nothing but bunch of classes provided by the language or a third-party library using which we can develop software applications, these set of classes acts as helpers in building applications are called "API"
+There are 2 types of API are there
+1. java standard apis = These are the bunch of classes provided by the java language or oracle in building software applications.	
+2. third-party apis = These are the classes provided by the software vendors or organizations, rather than from oracle or java language
+Apache poi = is an third-party library that is provided by apache organization, to help us in quickly reading/writing the data in excel sheet
+
+
+The java standard apis partial, those are not complete, which means they provide interfaces & abstract classes only. To work with apis we need to use implementations provided by the vendors. So we cannot directly work with apis, we need to use an implementation to work with api, which makes many people difficult to understand and use apis
+
+In addition always the standard apis provided huge number of classes and these classes are inter-dependent on each other. since there are huge number of classes it takes more time to learn and understand the api. since there are inter-dependencies it takes more complexity to understand the api and one cannot learn the api partially to use it, we need learn the complete api inorder to build the application
+
+Apis doesnt provide boiler-plate logic. Boiler-plate logic is the piece of code that is redundant across the projects and should be written by everyone to accomplish the functionality
+
+For eg.. to execute an sql query we need to write below lines of code in java jdbc api
+
+try {
+	Class.forName("com.mysql.cj.jdbc.Driver");
+	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/db", "root", "root");
+	Statement stmt  = con.createStatement();
+	ResultSet rs = stmt.executeQuery("select * from emp");
+	while(rs.next()) {
+		// wrap the data into objects
+	}
+}catch(ClassNotFoundException | SqlException e) {
+	e.printStackTrace();
+}finally {
+	if(stmt != null) {
+		stmt.close();
+	}
+	if(con != null) {
+		con.close();
+	}
+}
+
+its not we any one to execute any sql query need to write the same piece of code, which is redundant across the projects.
+	
+try {
+	Class.forName("com.mysql.cj.jdbc.Driver");
+	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/db", "root", "root");
+	Statement stmt  = con.createStatement();
+	ResultSet rs = stmt.executeQuery("select * from dept");
+	while(rs.next()) {
+		// wrap the data into objects
+	}
+	
+}catch(ClassNotFoundException | SqlException e) {
+	
+}
+
+if apis are not providing boiler-plate logic, the programmer has to write the repeated code in the project in accomplishing the functionality due to which we run into several problems:

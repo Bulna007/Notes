@@ -1,0 +1,59 @@
+logging aspect
+--------------
+class Calculator {
+	int add(int a, in b) {
+		int sum = 0;
+		sum = a + b;
+		return sum;
+	}
+}
+
+class LoggingAdvice implements MethodInterceptor {
+	public Object invoke(MethodInvocation methodInvocation) {
+		String methodName = null;
+		Object[] args = null;
+		
+		methodName = methodInvocation.getMethod().getName();
+		args = methodInvocation.getArguments();
+		System.out.println("entered into " + methodName+"(");
+		for(Object arg: args) {
+			System.out.println(","+ arg);
+		}
+		System.out.println(")");
+		
+		args[0] = (Integer) args[0] + 1;
+		args[1] = (Integer) args[1] + 1;
+		
+		// cross-cutting logic before the targetClass method executes
+		
+		Object ret = methodInvocation.proceed(); // invokes the targetClass method
+		
+		System.out.println("exiting from " + methodName + " with retVal : " +ret);
+		ret = (Integer) ret + 1;
+		
+		return ret;
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		ProxyFactory pf = new ProxyFactory();
+		pf.setTarget(new Calculator());
+		pf.addAdvice(new LoggingAdvice());
+		
+		Calculator proxy = (Calculator) pf.getProxy();
+		int sum = proxy.add(10, 20);
+		System.out.println("sum : " + sum);
+	}
+}
+
+proxy = contains the mixture of targetClass with aspect advice logic together. around advice: before executing any of the code inside the targetClass, we wanted to execute aspect logic, and after completing the execution of targetClass method, again we want to again aspect logic
+
+1. proxy.add(10, 20) will takes the control to the invoke method, here the invoke method has been called instead of targetClass method add(), since invoke is called instead of targetClass method, the returnValue that is supposed to be returned by the targetClass method should be returned by invoke() itself, so that is the reason the invoke() method has Object as returnType
+
+2. within the invoke method we need to write the logic for performing the cross-cutting logic onbehalf of the targetClass method, so to do that we need the info about targetClass method that can be accessed using MethodInvocation.
+	
+we have 3 control points in around advice:
+1. we can see parameters, can modify and invoke the targetClass method with modified parameters
+2. we can have control over executing the targetClass method
+3. we can see the returnValue and even modify the returnValue and return modified returnValue to the caller

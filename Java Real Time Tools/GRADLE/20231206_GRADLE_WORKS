@@ -1,0 +1,76 @@
+Gradle is an opensource build automation tool, used for build applications that are built on any jvm based languages like java, scala, golang, groovy, kotlin, andriod platform applications etc
+
+Why Gradle, why not Ant or Maven?
+Ant
+drawbacks:
+1. redundantly need to write buildscripts across the projects
+2. developers or ops engineers needs to understand the targets/tasks defined along with their order of execution to understand how to conduct the build for the project, that makes harder to build application while using Ant
+
+Maven:
+drawbacks:
+1. strictly enforces "CoC" convention over configuration in building the projects
+2. lack of flexibility in customizing the build activities in build the application. To perform an addition action or an operation during the build process
+	2.1 We need to write our own custom plugin, and publish it into the maven remote repository
+	2.2 need to configure the plugin and its goal to be associated to an phase of the maven build lifecycle
+unless people knows the details of how maven conducts the build and plugin development process we cannot customize the build activities that makes it very complex
+
+To overcome the above problems with Ant and Maven build management tools, Gradle has been introduced.
+	
+How does Gradle build tool works?
+Gradle build tool works based on tasks and plugins.
+Incase of Maven, as it supports building java applications only, it always assumes any project as java project (given package: jar) based on the packaging type we declared in pom.xml, it applies standard build lifecycle phases in building the projects by executing all the plugins/their goals.
+	
+In-short: Incase of Maven, it is fixed/pre-defined that what build activities or actions to be applied in building the applications and is always the same.
+	
+Incase of Maven, the basic building block in performing the build activities or actions is an Plugin, whereas in Gradle the basic building-block is Task.
+	
+Gradle doesnt make any assumptions of a project and doesnt not apply any standard build lifecycle or phases like maven in building the project. Because Gradle supports building any jvm based language applications, so for different projects	the build activities or actions to be applied will be different. This means the Tasks the needs to be applied in building the projects would be different from one project to another.
+Like Ant, while working with Gradle, the developers dont have to write build script files in defining the tasks that needs to be executed in building the projects.
+	
+For any #2 projects of different technology the tasks that should be applied in building the project would be different. But the projects of the same nature (language & technologies) if those are created based on standard conventions, then the tasks needs to be applied in building those projects would be same. That is where Gradle has abstracted the process of building each type of project by providing plugins
+
+A plugin represents 2 things
+1. standard conventions
+2. group of pre-defined tasks that are pre-created to be executed in an defined order in building a specific type of project
+
+From the above we can understand, Gradle has provided built-in plugins for each type of project with standard conventions and tasks defined aspart of them. so based on the type of the project we are working on, we need apply appropriate plugins in building the project using Gradle.
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	

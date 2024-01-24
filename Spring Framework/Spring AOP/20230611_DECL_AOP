@@ -1,0 +1,57 @@
+#1. AroundAdvice
+----------------
+class Calculator {
+	public int add(int a, int b) {
+	  sop("in add()");
+		return a + b;
+	}
+}
+
+1. Spring + AspectJ aop, we dont write advice class by extending/implementing from spring provided interface. The advice classes are pojo class only
+By implementing the Advice interface, we indicate spring aop #2 things
+	1.1 which type of Advice it is (Around, Before, After, ThrowsAdvice)
+	1.2 indicates the method in which we have written the aspect logic
+but now when we are not implementing any interface how does the spring aop knows which type of advice, and in which method we have written aspect logic?
+That is why declarative aspectj aop has been brought into picture. we define which type of advice and in which method we have written aspect logic in spring bean configuration file declaratively, that is the reason it is called "Declarative AspectJ Aop"
+	
+
+class LoggingAspect {
+	public Object log(ProceedingJoinPoint pjp) {
+		String methodName = null;
+		Object[] args = null;
+		
+		methodName = pjp.getSignature().getName();
+		args = pjp.getArgs();
+		args[0] = args[0] + 1;
+		args[1] = args[1] + 1;
+		
+		sop("entered into " + methodName+"("+args[0]+","+args[1]+")");
+		
+		Object ret = pjp.proceed(args);
+		
+		sop("exiting from " + methodName + " with retValue: " + ret);
+		return ret;
+	}
+}	
+
+application-context.xml
+-----------------------
+<bean id="calculator" class="Calculator"/>
+<bean id="loggingAspect" class="LoggingAspect"/>
+
+<aop:config>
+	<aop:aspect ref="loggingAspect">
+		<aop:around method="log" pointcut="execution(* com.aa.beans.Calculator.*(..))"/>
+	</aop:aspect>
+</aop:config>
+
+
+Advice LoggingAspect:log() aspect logic around the targetClass method and generate proxy class at runtime. then instantiate the object of Proxy and return to me whenever I requested. We need to tell this to Spring ioc container
+
+
+Test.java
+---------
+ApplicationContext context = new ClassPathXmlApplicationContext("a-c.xml");
+Calculator calculator = context.getBean("calculator", Calculator.class);
+
+int sum = calculator.add(10, 20);

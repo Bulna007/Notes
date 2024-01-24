@@ -1,0 +1,47 @@
+spring core
+1. bean lifecycle
+2. lookup method injection
+3. bean scopes
+4. difference between beanFactory and ApplicationContext
+5. Factory Beans
+6. Aware Interfaces
+7. PostProcessors
+are most important and always should be remembered from working perspective
+all the annotations we have learn in spring core are mandatory.
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

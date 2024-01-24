@@ -1,0 +1,117 @@
+4. FilterSet
+FilterSet are used for replacing tokens or placeholders in a task such as copy etc
+
+project
+|-src
+  |-*.java
+	|-db.properties
+|-build
+	|-classes
+	  |-db.properties (replaced token values)
+	|-dist
+|-build.properties	
+|-build.xml
+
+db.properties
+--------------
+db.driverClassName=#{driverClassName}
+db.url=#{url}
+db.username=#{username}
+db.password=#{password}
+
+
+build.properties
+----------------
+driverClassName=oracle.jdbc.driver.OracleDriver
+url=jdbc:oracle:thin:@1512:xe
+username=scott
+password=welcome1
+
+build.xml
+----------
+<?xml version="1.0" encoding="utf-8"?>
+<project name="filterset" basedir="." default="copyFiles">
+	<property file="build.properties"/>
+	
+  <target name="copyFiles">
+		<copy file="src/db.properties" todir="build/classes/">
+			<filterset begintoken="#{" endtoken="}">
+				<filter token="driverClassName" value="${driverClassName}"/>
+				<filter token="url" value="${url}"/>
+				<filter token="username" value="${username}"/>
+				<filter token="password" value="${password}"/>
+			</filterset>
+		</copy>
+	</target>
+	
+	<!-- instead of the above task, we can dynamically identify all the tokens and replace with values through an properties file as below -->
+	<target name="copyFiles">
+		<copy file="src/db.properties" todir="build/classes">
+			<filterset begintoken="#{" endtoken="}">
+				<filtersfile file="build.properties"/>
+			</filterset>
+		</copy>
+	</target>
+</project>
+
+
+1. building an java application with external libraries
+2. building an executable jar
+3. building an war and deploying
+
+
+
+sunday:
+
+devops: 7:00 am - 8:00 am
+spring: 8:00 am - 9:00 am
+----------------------------
+spring: 5 pm -6 pm 
+tools: 6:10 pm - 7:10 pm
+aws: 7:20 pm - 8:20 pm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

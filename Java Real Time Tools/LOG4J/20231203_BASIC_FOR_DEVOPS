@@ -1,0 +1,81 @@
+logging
+--------
+What is logging, what is the purpose of logging?
+Logging is all about tracing the flow of execution of the application.
+There are many reasons why we need to implement logging in an application.
+	1. The developers inorder to debug the program they need embedded intermediate logging statements within the program, so that he can easily trace back which parts of the code is not working to fix it.
+	2. any errors that are creeped up during the execution of the application in the production env, can be traced or identified only through logging.
+	
+So from the above we can understand developers greatly rely on logging for identifying the errors/problems reported by the programs during their execution.
+	
+
+There are several third-party libraries are there for logging inter-mediate program output like
+1. log4j
+2. sl4j
+4. common-logging
+5. java logging api
+etc
+among the above the one most popular logging api is "log4j"
+
+	
+we are taking array of inputs and sort the array and return the sorted array
+
+
+class ArrayHelper {
+	public int[] sort(int[] inArray) {
+		int swap = 0;
+		
+		for(int i=0;i<inArray.length;i++) {
+			for(int j=0;j<inArray.length-i;j++) {
+				if(inArray[j] < inArray[j+1]) {
+					swap = inArray[j];
+					inArray[j] = inArray[j+1];
+					inArray[j+1] = swap;
+				}
+			}
+		}
+		
+		return inArray;
+	}
+}
+
+class Test {
+	public static void main(args[]) {
+		ArrayHelper arrayHelper = new ArrayHelper();
+		int[] sortedArray = arrayHelper.sort(new int[]{12,34, 28, 8, 45, 12});
+		sop(sortedArray);
+	}
+}
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

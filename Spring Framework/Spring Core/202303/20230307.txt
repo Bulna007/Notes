@@ -1,0 +1,59 @@
+what is the difference between collection tags and util namespace collection tags?
+There are 3 difference are there
+1. we cannot tell the implementation class type of the collection we want ioc container to instantiate, where as in util: collection tags we can specify the implementation type 
+2. util: collection tags we can specify the generic type of the collection
+3. we cannot define the collection object as a bean definition and cannot reuse across
+
+What is bean alias, how to work with it?
+Bean alias is giving more than 1 name to an bean definition is called "bean alias". There are 2 ways we can provide alias names to a bean definition
+1. using "name" attribute
+2. using <alias> tag
+
+#1. how to use the name attribute?
+
+class Person {
+	int uniqueNo;
+	String fullname;
+	
+	public void setUniqueNo(int uniqueNo) {}
+	public void setFullname(String fullname) {}
+}
+
+application-context.xml
+-----------------------
+<bean id="person" name="person1,person2,person3" class="Person">
+	<property name="uniqueNo" value="3874"/>
+	<property name="fullname" value="Jordon"/>
+</bean>
+
+
+Test.java
+----------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("application-context.xml"));
+Person person = beanFactory.getBean("person1", Person.class);
+sop(person);
+
+by using the name attribute we can define an alias name for an bean definition. incase if we wanted to define multiple names we need use "," separator
+
+what is the difference between an "id" and "name" of a bean definition?
+both id and name of a bean definition should be unique across the other beans within the ioc container. In case of id the naming convention and rules should be followed as typical java variable naming conventions which means
+1. written in camelCase letters
+2. must and should start with alphabet followed by any numbers or characters
+3. only allowed special characters in id "_" and "$"
+	
+where as an alias name can have anything, there is no restriction.
+	
+There are drawbacks or limitation using "name" attribute in defining the alias name, within the alias name we cannot have "," because "," is treated as separator and consider as 2 names.
+	
+for e.g..
+
+<bean id="person" name="john,p" class="Person"/> = here john is one name and p is another name, we cannot have an alias name defined containing "," withit
+so to overcome this dis-advantage, the <alias/> tag has been introduced.
+	
+<alias name="sourcebean" alias="aliasName"/>
+<alias name="person" alias="john,p"/>
+<alias name="person1" alias="person7"/>
+
+
+How to get all the alias names for a bean?
+String[] aliases = beanFactory.getAliases("person1");
