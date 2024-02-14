@@ -7,7 +7,6 @@ Configuration configuration = new Configuration().configure();
 StandardServiceRegistry registry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
 SessionFactory sessionFactory = configuration.buildSessionFactory(registry);
 
-
 if we want to make SessionFactory object as a bean definition within ioc container, we cannot configure it directly as below.
 <bean id="sessionFactory" class="org.hibernate.SessionFactory"/>
 because by default ioc container tries to create the object of SessionFactory using new operator and would fail
@@ -33,7 +32,6 @@ interface FactoryBean {
 
 wap to query all the users from users table and display user_id, user_nm, password
 note:- per each operation we are performing on the database we need to create a new connection object
-
 
 class UserAccessor implements BeanFactoryAware {
 	private BeanFactory beanFactory;

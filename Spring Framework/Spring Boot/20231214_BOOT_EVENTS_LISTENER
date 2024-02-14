@@ -1,0 +1,122 @@
+Spring boot event handling
+--------------------------
+There are several activities that are taken place during the time of booting up the spring boot application by the SpringApplication.run(BootApplication.class, args), these activities that are carried by the SpringApplication can be treated as stages of bringing up the spring boot application.
+	
+upon completing all the activities/stages, the SpringApplication will returns the ApplicationContext (ioc) to us, so that using the ioc container we can perform operations within the our application.
+	
+How about performing additional activities during the time of bringingup the spring boot application?
+To allow us to perform additional activities between the stages of bringing up the spring boot application, SpringApplication class provides boot events and supports invoking listeners.
+	
+At each stage within the bootup of the application, the SpringApplication class representing the stage, it creates an appropriate event object and publishes the event.
+#hence the SpringApplication class plays the role of source
+	
+Representing each stage of the bootup of the application, the spring boot developers has provided pre-defined set of events.
+	
+There are 6 different types of events are published by the SpringApplication class during the startup of the spring boot application as below
+	1. ApplicationStartingEvent
+	2. ApplicationEnvironmentPreparedEvent
+	3. ApplicationStartedEvent
+	4. ApplicationPreparedEvent
+	5. ApplicationReadyEvent
+	6. ApplicationFailedEvent
+	
+These event objects holds the information about the source and data required for performing the operation. The data part varies based on the context at which the event has been published.
+	
+1. ApplicationStartingEvent
+after calling SpringApplication.run(Config.class, arg), before performing any activities in bringing up the application. Indicating the startup of the application, the SpringApplication class published ApplicationStartingEvent
+	
+2. ApplicationEnvironmentPreparedEvent
+after creating the environment object, after detecting and loading the external configuration into the env object, then SpringApplication class publishes ApplicationEnvironmentPreparedEvent by wrapping environment object inside it
+	
+3. ApplicationStartedEvent
+after ioc container has been created, after loading the bean definitions, before instantiating objects for the bean definitions, the SpringApplication class publishes ApplicationStartedEvent
+	
+4. ApplicationPreparedEvent
+after the ioc container has instantiated the objects for the bean definitions, before invoking the CommandLineRunners or ApplicationRunners it publishes ApplicationPreparedEvent
+
+5. ApplicationReadyEvent
+after executing the CommandLineRunners and ApplicationRunners successfully before returning the ioc container to the application, the SpringApplication class published ApplicationReadyEvent
+	
+6. ApplicationFailedEvent
+during any of these stages in bringing up spring boot application, it there is a failure encoutered, representing the failure the SpringApplication class published ApplicationFailedEvent and terminates the application
+	
+Now during the time of bringing up the boot application, if we want to perform additional activities, then we need to write our own ApplicationListener class listening for appropriate event of the above type.
+	
+Then register the Listener class with SpringApplication class itself, since the ioc container is not being created initially itself. So SpringApplication by itself published and invokes the appropriate listener if it has been registered with him.
+	
+To register the ApplicationListener class with SpringApplication, we need to use FluentBuilder api
+
+1. Write a Listener, that listens for appropriate event
+
+class BootApplicationListener implements ApplicationListener<ApplicationStartingEvent> {
+	public void onApplicationEvent(ApplicationStartingEvent event) {
+		sop("application is starting...");
+	}
+}
+
+or
+
+class BootApplicationListener {
+	@EventListener
+	public void onApplicationStarting(ApplicationStartingEvent event) {
+		sop("application is starting...");
+	}
+}
+	
+2. register with SpringApplication class using fluent builder api
+	
+@SpringBootApplication	
+public class BootApplication {
+	public static void main(String[] args) {
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(BootApplication.class).listener(new BootApplicationListener());
+		SpringApplication springApplication = builder.build();
+	
+		ApplicationContext context = springApplication.run(args);
+		
+		#after all the events are published and listeners are invoked, then ApplicationContext object will be returned to us
+	}
+}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	

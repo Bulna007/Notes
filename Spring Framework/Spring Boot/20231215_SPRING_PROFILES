@@ -1,0 +1,221 @@
+1.
+There are 6 boot events published by the SpringApplication class, representing different stages of bootstrapping the application:
+1. ApplicationStartingEvent            = right before the start of the application, even before performing any of the activities in bringingup the application
+2. ApplicationEnvironmentPreparedEvent = environment object has been created and the external configuration has been loaded
+3. ApplicationPreparedEvent = ioc container has been created, but objects for the bean definitions are not instantiated
+4. ApplicationStartedEvent = bean definitions are instantiated, but CommandLineRunners and ApplicationRunners are not executed
+5. ApplicationReadyEvent = after the CommandLineRunners and ApplicationRunners finished execution, right before returning the ioc container to the the application
+6. ApplicationFailedEvent = during any of these stages, if it runs into any exception, representing that failure it published ApplicationFailedEvent and terminates the application
+
+2.
+Write the Listener class implementing from ApplicationListener that handles appropriate event
+
+class BootApplicationListener implements ApplicationListener<ApplicationReadyEvent> {
+	public void onApplicationEvent(ApplicationReadyEvent event) {}
+}
+
+3. register it with SpringApplication class
+SpringApplication springApplication = new SpringApplicationBuilder(BootApplication.class).listeners(new BootApplicationListener()).build();
+ApplicationContext context = springApplication.run(args);
+--------------------------------------------------------------------------------------------------------------------------------------
+Spring boot profiles
+---------------------
+spring profile: profiles are the way through which we can have the application components configured or aligned to different environments easily. We can have different configuration profiles being created aspart of the application per each environment on which our application is going to be deployed like dev, test, stage, prod etc. 
+Activate the relevant profile in switching the application configuration to the env in which it is being deployed. In addition we can enable or disable or load the bean components @Component or @Bean based on the profile we are using
+
+In Spring Framework, it has provided an annotation @Profile using which we can tag a configuration or a bean definition to a specific profile or env
+
+@Component
+class Laboratory {
+	@Value("${temparature}")
+	int temparature;
+	@Value("${humidity}")
+	int humidity;
+	@Value("${pressure}")
+	int pressure;
+	
+	// accessors
+}
+
+alpha-values.properties
+------------------------
+temparature=29
+humidity=3
+pressure=50
+	
+beta-values.properties
+------------------------
+temparature=34
+humidity=32
+pressure=70
+	
+@Configuration	
+@PropertySource("classpath:alpha-values.properties")
+@Profile("alpha")
+class AlphaConfig {
+	
+}	
+
+@Configuration
+@PropertySource("classpath:beta-values.properties")
+@Profile("beta")
+class BetaConfig {
+	
+}
+
+@Configuration
+@Import(AlphaConfig.class, BetaConfig.class)
+@ComponentScan(basePackages = {})
+class RootConfig {
+	
+}	
+	
+ApplicationContext context = new AnnotationConfigApplicationContext();
+context.register(RootConfig.class);
+((ConfigurationApplicationContext)context).getEnvironment().setActiveProfiles("alpha");
+context.refresh();
+
+
+	
+	
+SpringApplication
+	1. empty env
+	2. detects and loads the external application configuration into the environment object 
+		application.properties or application.yml
+		
+properties (alpha)		
+properties (beta)
+	
+alpha-values.properties
+beta-values.properties
+
+	
+@SpringBootApplication	
+class BootApplication {
+	
+	@Bean
+	@Profile("dev")
+	public DataSource devDataSource() {
+		return new DriverManagerDataSource();
+	}
+	
+	@Bean
+	@Profile("prod")
+	public DataSource pooledDataSource() {
+		return new XXXDataSource();
+	}
+	
+}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

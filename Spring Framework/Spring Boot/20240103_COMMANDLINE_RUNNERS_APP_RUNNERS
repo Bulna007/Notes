@@ -1,0 +1,344 @@
+CommandLineRunners and ApplicationRunners
+-----------------------------------------
+The CommandLineRunners and ApplicationRunners are used for performing one-time startup activity during the time of booting up the spring boot application.
+	
+
+	
+spring webmvc application
+We want to perform one-time operation within the application after the ioc container has been created, after the bean definitions are instantiated, before the DispatcherServlet starts accepts the requests towards the application. Where do I need to write the code to perform one-time activity.
+	
+web.xml
+--------
+<listener>
+	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
+<servlet>
+	<servlet-name>dispatcher</servlet-name>
+	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+<servlet-mapping>
+	<servlet-name>dispatcher</servlet-name>
+	<url-pattern>*.htm</url-pattern>
+</servlet-mapping>
+
+#1. 
+after ServletContext object has been created = by passing the it, it calls ContextLoaderListener
+The ContextLoaderListener creates the parent ioc container and places it in ServletContext object
+
+#2.
+The ServletContainer instantiates the object of DispatcherServlet and invokes the init() method of it.
+The init() method creates an child ioc container wrapping/nesting the parent ioc container in the ServletContext object and holds it in the local reference for further reuse.
+		
+Then the servletcontainer mark the deployment has been finished and make the application ready for accepting the requests
+
+from the configuration approach point of view, there is no way we can perform one-time activity during the bootup of the application after the ioc container has been created.
+	
+	
+#2 bootstrapping spring mvc using programmatic approach
+The ServletContainer will look for ServletContextInitializer implementation class, which is SpringServletContextInitializer during the deployment of the application.
+The SpringServletContextInitializer class invokes the implementations of WebApplicationInitializer::onStartup(ServletContext);
+
+
+class MyWebApplicationInitializer implements WebApplicationInitializer {
+	public void onStartup(ServletContext servletContext) {
+		AnnotationConfigWebApplicationContext rootApplicationContext = null;
+		AnnotationConfigWebApplicationContext servletApplicationContext = null;
+		ContextLoaderListener listener = null;
+		DispatcherServlet dispatcherServlet = null;
+		
+		rootApplicationContext = new AnnotationConfigWebApplicationContext();
+		rootApplicationContext.register(RootConfig.class);
+		
+		listener = new ContextLoaderListener(rootApplicationContext);
+		servletContext.addListener(listener);
+		
+		servletApplicationContext = new AnnotationConfigWebApplicationContext();
+		servletApplicationContext.register(WebMvcConfig.class);
+		
+		
+		dispatcherServlet  = new DispatcherServlet(servletApplicationContext);
+		ServletRegistration.Dynamic dynamic = servletContext.addServlet("dispatcher", dispatcherServlet);
+		dynamic.setLoadOnStartup(1);
+		dynamic.addMappings("*.htm");				
+	}
+}
+
+here the ioc containers are created by the developers, but those are not refreshed, the DispatcherServlet within its init() method refresh and instantiates the bean definitions. so we cannot write one-time startup activity in WebApplicationInitializer class
+	
+from the above we can understand either in configuration approach or programmatic approach there is no place where we can write one-time startup activity logic while working with spring mvc.
+	
+--------------------------------------------------------------------------------------------------------------------------------------	
+
+In configuration approach
+1. ContextLoaderListener = created parent ioc container and places in the ServletContext
+2. DispatcherServlet = upon the ServletContainer instantiates the object of the DispatcherServlet during the startup and invokes init() method on it. The DispatcherServlet creates the child ioc container nesting the parent container in the ServletContext.
+	
+upon completing the execution of the init() method of the DispatcherServlet, The ServletContainer marks the application has been initialized and ready for accepting the requests. 
+so there is no place in performing one-time startup activity after the ioc container has been created, after the bean definitions are instantiated before the application begins accepting the requests
+
+In programmatic approach
+Within the WebApplicationInitializer class, we create ioc containers registering the configuration classes, but the objects for the bean definitions will not be created by the ioc containers until refresh(). 
+	
+The call to the refresh() method on the ioc container is delayed until the DispatcherServlet init() method has been invoked by the ServletContainer. Again we dont have control over performing the one-time startup activity since upon completing the execution of init() method, the application will marked as ready for accepting the requests by the ServletContainer
+
+
+In a spring core application, since we only create the ioc container, before using the ioc container we can perform one-time activity in our application, but this would not be possible incase of spring mvc application
+
+class CoreApplication {
+	public static void main(String[] args) {
+		ApplicationContext context = new AnnotationConfigApplicationContext(RootConfig.class);
+		// one-time startup activity
+		
+		// then apply the application logic
+	}
+}
+
+To overcome the above problems, and to provide a unified way of bootstrapping the spring applications, the spring boot has provided SpringApplication class.
+	
+irrespective of the application is core or web or reactive and is it being started from main() method or deployed on servlet/reactive container, always the application execution will being from SpringApplication class only. So the whole echosystem of performing the #10 activities in booting up the spring boot application is applied to all the types of applications.
+	
+1. create an empty env object
+2. detect and load the external application configuration into the env object
+3. print banner
+4. detect the WebApplicationType and instantiate appropriate ioc container
+	4.1 AnnotationConfigServletWebServerApplicationContext
+	4.2 AnnotationConfigReactiveWebServerApplicationContext
+	4.3 AnnotationConfigApplicationContext
+5. instantiate and register spring factories
+6. invoke ApplicationContextInitializer
+7. prepareContext
+8. refreshContext = all the bean definitions are instantiated
+9. invoke CommandLineRunners and ApplicationRunners, before returning the control to the application 
+so here we can perform one-time startup activity 
+10. publish events and invoke listeners
+
+
+
+The spring boot has provided 2 interfaces for each
+1. 
+	
+interface CommandLineRunner {
+	public void run(String.. args);
+}
+
+2. 
+interface ApplicationRunner {
+	void run(ApplicationArguments args);
+}
+
+We can implement respective interfaces in writing CommandLineRunner or ApplicationRunner. Both of them serves the same purpose, which means "used for performing one-time activity during the bootup of the application after the ioc container has been created, after bean definitions are instantiated"
+	
+The only difference is the way the arguments are received in these classes
+1. CommandLineRunner = The run(String.. args) takes var args of all the arguments we passed while running the spring boot application
+
+java -jar bootapp.jar arg1 arg2 arg3
+
+2. ApplicationRunner = The run(ApplicationArguments) takes ApplicationArguments through which we can access Options Arguments and Source Args
+
+The options arguments are passed using --
+	
+java -jar bootapp.jar 10 20 30
+	
+java -jar bootapp.jar --a=10 --b=20 --c=30 39 498
+	
+applicationArguments.getOptionNames(); = a, b, c
+applicationArguments.getOptionValues(); = 10, 20, 30
+	
+applicationArguments.getNonOptionArgs() = 39, 498
+	
+upon writing our own implementation class for CommandLineRunner or ApplicationRunner, we need to configure it as an bean definition within the ioc container, so that SpringApplication class automatically detects CommandLineRunner and ApplicationRunner bean definitions and invokes the to perform one-time startup activity.
+	
+java -jar boot.jar --enableCache=false	
+	
+@Component	
+class CacheLoadCommandLineRunner implements CommandLineRunner {
+	public void run(String.. args) {
+		sop("performing one time activity using the args passed: " + args)
+	}
+}	
+
+@SpringBootApplication
+class BootApplication {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(BootApplication.class, args);
+	}
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

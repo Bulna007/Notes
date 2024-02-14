@@ -1,0 +1,102 @@
+Supported ParameterTypes:
+1. ServletRequest/ServletResponse 
+2. WebRequest / NativeWebRequest
+3. HttpSession
+4. Principal            #spring security
+5. InputStream / Reader #restful
+6. Locale
+7. HttpMethod
+
+8. @PathVariable   #restful
+9. @RequestParam
+10.@MatrixVariable #restful
+11.@CookieValue    #restful
+12.@HeaderParam    #restful
+13.@RequestBody    #restful
+14. Error/BindingResult
+15. Model/Map/ModelMap
+16. @SessionAttributes/@SessionAttribute/SessionStatus
+17. @ModelAttribute
+
+Supported ReturnTypes:
+1. String
+2. ModelAndView
+3. Model/Map/ModelMap
+4. View
+5. void
+--------------------------------------------------------------------------------------------------------------------------------------
+
+1. @SessionAttributes({"attr1","attr2"})
+This annotation should be written on Controller class-level, specifying the list of attributes that must be placed in session scope. when we bind the data to the Model, The DispatcherServlet/RequestMappingHandlerAdapter look for these attributes specified in @SessionAttributes annotation in model and bind them into Session scope rather than request scope
+
+2. @SessionAttribute("attributeName")
+we can specify this annotation to the parameter of the handlerMethod for injecting the value from the session attribute
+
+3. SessionStatus
+used for removing the attributes that are binded to the Session within the controller.
+sessionStatus.setComplete() = when we call setComplete() method it identifies all the session attributes that are binded within the current request ("URL")	and removes all those attributes from the HttpSession
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

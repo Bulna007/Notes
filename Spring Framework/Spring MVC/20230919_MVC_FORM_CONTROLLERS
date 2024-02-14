@@ -1,0 +1,309 @@
+#1. to redisplay the source form page with pre-populated data incase of validation errors, we shouldnot write the jsp form controls with normal html tags. we should use spring form tag libraries
+
+For each html control we have like
+1. textbox
+2. textarea
+3. radio
+4. checkbox
+5. select / dropdown
+
+the spring framework aspart of spring mvc has provided form tag library with one tag per each control inside it. 
+These form tags looks for model (form) object in the request/session/application scope and reads the values from appropriate attributes of the object and populates the data while rendering the html controls
+
+Now we should write the jsp pages with spring form tag library tags only if we are implementing validations and wanted to re-display the source page retaining the form data.
+	
+open-account.jsp
+----------------
+<body>
+	<form:form modelAttribute="openAccountForm">
+		<form:errors path="*"/>
+		
+		firstname: <form:input path="firstName"/> <br/>
+		lastName: <form:input path="lastName"/><br/>
+		dob: <form:input path="dob"/><br/>
+		gender: Male: <form:radio path="gender" value="Male"/> (or) Female: <form:radio path="gender" value="Female"/><br/>
+		Mobile: <form:input path="mobileNo"/> <br/>
+		Email Address: <form:input path="emailAddress"/> <br/>
+		Identity Type:
+			<form:select name="identityType">
+				<form:option value="aadhar">Aadhar</form:option>
+				<form:option value="pan">Pancard</form:option>
+				<form:option value="voterid">Voter Id</form:option>
+			</form:select>
+		Identity Number: <form:input path="identityNo"/><br/>	
+		<input type="submit" value="open account"/>
+	</form:form>
+</body>
+
+form:form tag:
+1. incase of normal <form/> tag the default method used for submitting the form is "GET", where as incase of <form:form/> the form will be submitted with "POST" method as default
+	
+2. if we dont specify action attribute, by default the form will be submitted with the current request url itself
+
+
+#2. always to render the open-account.jsp, we need to have an form object in request scope, otherwise the spring form tags reports exception.
+So to render the initial/blank form page to the user, we need to create an empty form object, bind to request scope and then return lnv rendering the jsp
+for this we cannot use parameterizable view controller, we need write our own controller class
+	
+when we send the request by
+	1. entering the url in browser address bar
+	2. by clicking on an hyperlink
+always browser will send "GET" request only to the server
+
+The only way to send the "POST" request to the server is through form submission with method="POST" only
+
+so let us have an controller class with handlerMethod to recieve the request and return lvn with form object binding in request scope
+
+@Controller
+@RequestMapping("/open-account.htm")
+class AccountController {
+	@Autowired
+	private OpenAccountFormValidator validator;
+
+	@RequestMapping(method=RequestMethod.GET)
+  public String showOpenAccountForm(ModelMap model) {
+		OpenAccountForm form = new OpenAccountForm();
+		model.addAttribute("openAccountForm", form);
+		return "open-account";		
+	}
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public String openAccount(@ModelAttribute("openAccountForm") OpenAccountForm form, Errors errors, ModelMap model) {
+		if(validator.supports(form.getClass()){
+			validator.validate(form, errors);			
+		}
+		if(errors.hasErrors()) {
+			return "open-account";
+		}
+			 
+		// perform business operation	 
+		return "account-details";
+	}
+}
+
+How does the request data will be binded to the Form object when we specify @ModelAttribute?
+	
+RequestMappingHandlerAdapter
+ 1. identify the parameterTypes of the handlerMethod
+ 2. prepare parameters
+
+@ModelAttribute
+2.1 look for query parameters aspart of URI of the request
+2.2 request body (www-form-url-encoded) (key/value) pair
+and bind those to the appropriate attributes of the form object
+
+while binding the request parameters/request body attributes into form object attribute, it has to convert the string values of the HttpRequest into form attribute type
+To convert them into corresponding FieldTypes of the Form object, RequestMappingHandlerAdapter internally uses FieldFormatters
+
+incase while binding the request data into form object attribtues, if there are any type conversion errors creeps up, the RequestMappingHandlerAdapter will catch the typeconversion exception and adds it as an validation error into Errors object
+
+
+So before binding the request data into ModelAttribute object, first it will create empty Errors object then while binding the data if there are any type conversion errors it will catch exception and add it as an validation error into Errors object with fieldName, key
+
+key = typeMismatch.modelAttributeName.attributeName
+typeMismatch.openAccountForm.age
+
+and before calling the controller class handlerMethod, it will bind both
+1. Form object into request scope with name specified in @ModelAttribute("formName")
+2. errors object also into request scope with name as "formName.errors"
+
+
+#3.
+How to do data validation?
+
+@Component
+class OpenAccountFormValidator implements Validator {
+	public boolean supports(Class<?> classType) {
+		return classType.isAssignableForm(OpenAccountForm.class);
+	}
+	
+	public void validate(Object form, Errors errors) {
+		OpenAccountForm openAccountForm = null;
+		
+		openAccountForm = (OpenAccountForm) form;
+		
+		if(openAccountForm.getFirstName() == null || openAccountForm.getFirstName().trim().length == 0) {
+			errors.rejectValue("firstName", "firstName.blank");
+		}
+		if(openAccountForm.getLastName() == null || openAccountForm.getLastName().trim().length == 0) {
+			errors.rejectValue("lastName", "lastName.blank");
+		}
+		// add validation logic for all the fields in the form object
+	}
+}	
+	
+
+errors.properties
+-----------------
+firstName.blank=FirstName is blank
+lastName.blank=LastName is blank
+
+	
+MessageSource
+ |-ResourceBundleMessageSource
+			 
+	
+@Bean			 
+public MessageSource messageSource() {
+	ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+	messageSource.setBaseName("errors");
+	return messageSource;
+}
+	
+Errors:
+There are 2 types of errors can be reported in an Validator
+1. Field-level Error
+An Field level error is an error that is associated to an specific field in the form object
+			 
+2. Global Error
+global errors represents an business/rule failure while performing operations. These are not specific to any field. which are reported as global errors.
+			 			 
+Let us explore the hierarchy Error api class in Spring.
+Errors interface has been declared with methods to support capturing field level errors and global errors as well.
+			 
+interface Errors	{
+	void rejectValue(String fieldName, String errorCode);
+	void rejectValue(String fieldName, String errorCode, Object[]{});
+	void rejectValue(String fieldName, String errorCode, Object[]{}, String defaultMessage);
+	
+	void reject(String errorCode);
+	void reject(String errorCode, Object[]{});
+	void reject(String errorCode, Object[]{}, String defaultMessage);
+	
+	boolean hasErrors();
+	
+	boolean hasGlobalErrors();
+	boolean hasFieldErrors();
+	boolean hasFieldError(String fieldName);
+	int getErrorCount();	
+}
+	
+
+interface BindingResult extends Errors {
+	void recordFieldValue(String field, Class<?> type, @Nullable Object value);
+	String getRawFieldValue(String field);
+}			 
+			 
+class BindException implements BindingResult {
+	it holds #2 things
+		1. all the field values that are submitted aspart of the request
+		2. all the errors for the form object (global/field-level)
+}			 
+			 
+RequestMappingHandlerAdapter -> fieldValue (FieldFormatter)
+			                          |-form 
+			                          |-Errors
+			 														|-all the fields that are submitted aspart of the request
+			 														|-errors
+			 
+			 
+			 
+1. Field Formatters
+2. Interceptors
+3. ExceptionHandler
+4. JavaBean Validator api integration
+			 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

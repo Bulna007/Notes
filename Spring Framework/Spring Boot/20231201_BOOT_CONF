@@ -1,0 +1,15 @@
+What are the various different sources from where the SpringApplication class would detect and loads the external configuration of our application into the environment object?
+1. if we enable devtools module in our project then it looks for spring-boot-devtools.properties file under $USER_HOME directory and loads into the environment object
+2. it looks for an environment variable with name "SPRING_APPLICATION_JSON" populated with json object as value. it parses the objects key/value pair and loads into the environment object
+3. if WebApplicationType is WEB then loads init-params and context-params into the env object
+4. all the env variables 
+5. all the java system properties
+6. RandomeValueSourceProperty that we specified in application.properties
+7. the application.properties|yaml file under any of these locations
+	7.1 under project root
+	7.2 under project/config directory
+	7.3 under classpath
+	7.4 under classpath/config directory
+	
+	
+	

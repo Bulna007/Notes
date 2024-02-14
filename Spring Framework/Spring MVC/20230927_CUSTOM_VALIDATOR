@@ -1,0 +1,190 @@
+How to create custom java bean validator or ConstraintValidator?
+There are lot of pre-defined ConstraintValidators are provided by java bean validation api, that should be good enough for fullfilling most of the validation requirements in an application. But in few cases we might need to enforce our own validation logic in validating the bean attributes across several bean objects.
+	
+In such case we can create our own ConstraintValidator with the validation logic in validating the attributes and can be reused across all the class attributes on whom we want to apply/enforce the validation.
+	
+There are 2 things we need to do inorder to create our own Constraint Validator:
+1. create an Constraint Annotation through which we can enforce the validation on an property/attribute
+2. create an Constraint Validator class that holds the validation logic that should be applied on the attribute to validate its data.
+
+We want to design our own ConstraintValidator for validating PhoneNumber Let us design an ConstraintAnnotation and ConstraintValidator to apply/enforce PhoneNumber validation.	
+	
+#1. ConstraintAnnotation
+define our own annotation interface representing an ConstraintAnnotation we want to create, with 3 attributes inside it
+1.1 message=message refers to the default message that should be returned incase of Constraint Violation
+1.2 groups
+1.3 payload
+
+@Documented
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy=PhoneNumberConstraintValidator.class)
+interface @PhoneNumber {
+	String message() default "phonenumber is not valid";
+	Class<?>[] groups() default {};
+	Class<? extends Payload>[] payload() {};
+}
+
+class Customer {
+	@PhoneNumber(message="PhoneNumber is not valid")
+	String phoneNumber;
+}
+
+Set<ConstraintViolation<Customer>> violations = validator.validate(customer);
+
+#2. For the above Constraint Annotation we need to write an ConstraintValidator that holds the logic for applying the validation on the field/attribute on which we wrote the annotation.
+	
+upon invoking validate method on the object, The validator class goes to each attribute of the class and identifies which ConstraintAnnotation we have written and picks the value of the attribute passes it as an input to the ConstraintValidator asking to validate the data.
+	
+From the above we can understand for the above ConstraintAnnotation @PhoneNumber we need to write one ConstraintValidator class
+	
+public class PhoneNumberConstraintValidator implements ConstraintValidator<PhoneNumber, String> {
+	private PhoneNumber phoneNumber;
+	
+	public void initialize(PhoneNumber phoneNumber) {
+		this.phoneNumber = phoneNumber;	
+	}
+	
+	public boolean isValid(String value, ConstraintValidatorContext ctx) {
+		if(value == null || value.trim().length < 10 || value.trim().length > 12) {
+			return false;
+		}
+		for(int i=0;i<value.length;i++) {
+			char c = value.indexOf(i);
+			if(Character.isDigit(c) == false) {
+				return false;
+			}			
+		}	
+		return true;
+	}
+}	
+	
+	
+Payload is used for filtering or categorizing the ConstraintViolations into categories like
+1. Critical
+2. Warn
+3. Minor
+etc
+
+public class Severity {
+	public static interface CRITICAL extends Payload {}
+	public static interface WARN extends Payload {}
+	public static interface MINOR extends Payload {}
+}
+
+class Customer {
+	@NotBlank(message="firstName cannot be blank", payload={Severity.MINOR})
+	private String firstName;
+	private String lastName;
+	@Range(min=1, max=100, message="Age must be between 1 to 100", payload={Severity.CRITICAL})
+	private int age;
+	private String mobileNo;
+	private String emailAddress;
+}
+
+Set<ConstraintViolation<Customer>> violations = validator.validate(customer);
+violations.forEach(violation -> {
+	Set<Class<? extends Payload>> payloads = violation.getConstraintDescriptor().getPayload();
+	for(Payload payload:payloads) {
+		if(payload == Severity.CRITICAL.class) {
+			sout(violation.getMessage());
+		}
+	}
+});
+--------------------------------------------------------------------------------------------------------------------------------------
+	
+Groups:
+Groups are used for classifying the validations into related groups, so that we can tell the validator to validate a specific group of attributes only.
+	
+interface DemographicGroup {}
+interface LoanInfoGroup {}
+
+class LoanApplicationForm {
+	@NotBlank(message="firstname cannot be blank", groups = {DemographicGroup.class})
+	String firstName;
+	String lastName;
+	LocalDate dob;
+	String gender;
+	@NotBlank(message="loanType cannot be blank", groups={LoanInfoGroup.class})
+	String loanType;
+	double loanAmount;
+	int tenure;
+	
+}
+	
+	
+LoanApplicationForm form = new LoanApplicationForm();
+// populate data
+Validator validator = validatorFactory.getValidator();
+Set<ConstraintViolation<LoanApplicationForm>> violations = validator.validate(form, DemographicGroup.class);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	

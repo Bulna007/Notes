@@ -1,0 +1,125 @@
+How to load our own custom yml file into the env object of the ioc container?
+There are 2 ways we can load our own custom yml file into env object of the ioc container
+1. YamlPropertySourceLoader
+2. YamlFactoryBean
+
+#1. YamlPropertySourceLoader
+YamlPropertySourceloader is an helper/convert class that helps in converting the YAML file contents into PropertySource object, but it will not load into the env object of the ioc container. Its the developers responsibility in writing the code for loading the PropertySource object into the env object of the ioc container.
+	
+When do we need to load the PropertySource object that is converted using YamlPropertySourceLoader into env object of the ioc container?
+After the ioc container has been created, after the bean definitions are loaded into the ioc container, before the ioc container begins instantiating the objects for those bean definitions we need to perform post-processing logic ontop of the ioc container by loading the PropertySource into env object of it.
+	
+The SpringApplication class is responsible for creating the ioc container and refreshing it, so to help us in performing post processing logic ontop of the ioc container after the ioc container has been created, before it prepares/refreshes (loads & instantiates) the ioc container in invokes ApplicationContextInitializer interface implementation class if we have registered with SpringApplication class
+	
+So if we want to apply any post processing we can write our own implementation of ApplicationContextInitializer and register with SpringApplication class using Fluent Builder Api. So that SpringApplication class upon instantiating and loading/registering the factories, it checks for any ApplicationContextInitializer implementations are registered with him, if found invokes the Initializer by passing ioc container to it. so that we can perform post processing.
+	
+@Component
+@ConfigurationProperties(prefix="tournament")
+class Tournament {
+	int tournamentNo;
+	String tournamentName;
+	String host;
+	int participatingTeams;
+	int days;
+	//accessors
+}	
+
+app-config.yml
+--------------
+---
+tournament:
+  tournamentNo: 93
+	tournamentName: India vs Australia
+	host: India
+	participatingTeams: 2
+	days: 5
+...
+
+		
+class YamlConfigApplicationContextInitializer	implements ApplicationContextInitializer {
+	public void initialize(ConfigurableApplicationContext context) {
+		YamlPropertySourceLoader propertySourceLoader = new YamlPropertySourceLoader();
+		
+		List<PropertySource> propertySources = propertySourceLoader.
+			                     load(context.getResource("classpath:app-config.yml"));
+		
+		ConfigurableEnvironment env = context.getEnvironment();
+		propertySources.stream().forEach(propertySource -> {
+			env.getPropertySources().addLast(propertySource);
+		});
+	}
+}
+
+
+@SpringBootApplication
+class YamlBootApplication {
+	public static void main(String[] args) {
+		YamlConfigApplicationContextInitializer initializer = new YamlConfigApplicationContextInitializer();
+		SpringApplication springApplication = new SpringApplicationBuilder(YamlBootApplication.class).initializers(initializer).build();
+		ApplicationContext context = springApplication.run(args);
+		Tournament tournament  = context.getBean(Tournament.class);
+		sop(tournament);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

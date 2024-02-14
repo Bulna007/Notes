@@ -1,0 +1,347 @@
+What are spring profiles, what is the purpose of it?
+spring profiles are the way through which we can configure the application components with different configurations pertaining to each environment on which our application is being deployed. Even spring profiles supports configuring bean components and load them based on the profile or environment on which we are running the application
+
+per each environment 
+1. we define configuration properties specific to that environment
+2. or define beans that must be loaded for that environment
+using @Profile annotation
+
+1. we define configuration properties specific to each environment
+for each environment create an separate properties file and tag that properties file to an Configuration class representing that environment and load into the ioc container based on the env in which we are deploying
+	
+alpha-values.properties (alpha environment)	
+beta-values.properties (beta environment)
+	
+@Profile("alpha")	
+@PropertySource("classpath:alpha-values.properties")	
+class AlphaConfig {}	
+
+@Profile("beta")	
+@PropertySource("classpath:beta-values.properties")	
+class AlphaConfig {}	
+
+now create the ioc container by setting an appropriate profile, so that only the relevant configuration class and properties would be loaded
+	
+2. define beans that must be loaded for that environment
+
+@Configuration
+class JavaConfig {
+
+  @Bean("dataSource")
+	@Profile("dev")
+	DataSource devDataSource() {
+		// DriverManagerDataSource
+		return dataSource;
+	}
+	
+	@Bean("dataSource")
+	@Profile("prod")
+	DataSource poolDataSource() {
+		// ProxoolDataSource
+		return dataSource;
+	}
+}
+	
+based on the profile being active, the ioc container loads an appropriate bean definition and instantiates and places in the ioc container.
+--------------------------------------------------------------------------------------------------------------------------------------
+Spring boot profiles
+While working with spring boot
+
+2. define bean definitions that must be loaded specific to the environment by using @Profile
+We can configure bean definitions in BootApplication class or any Java Configuration class tagging them per each environment and have them loaded into the ioc container specific to the profile we have activated.
+	
+1. configuration properties specific to that environment 
+If we have configuration values specific to each environment, and we wanted the bean definitions to be configured with those values of that environment, we need to write per each environment on properties file
+
+alpha.properties
+beta.properties
+
+but when it comes to spring boot, we are not creating the ioc container, The SpringApplication class takes care of creating the ioc container by loading the properties file into the environment object
+1. create empty environment object
+2. detect and load the external application configuration into the environment object
+	projectdir/config/application.yml|properties
+	classpath:/config/application.yml|properties
+	classpath:application.yml|properties
+	projectdir:application.yml|properties
+
+but we wanted to load different properties files pertaining to the env or profile we set active. looks like we dont have control over having different configurations being loaded into the ioc container based on environment
+
+To support having configuration values being loaded into the ioc container based on profiles, spring boot profiles has been introduced.
+The SpringApplication class, has been designed to support the profiles. Based on the profile that is active it supports loading an appropriate properties file pertaining to that environment, given if we follow standard naming conventions in writing those properties/yml files.
+	
+always name your properties file as 
+application-profile.properties
+
+for eg.. we are deploying our application in #2 environments as dev and test, now representing each of these environments we need to write #2 properties files as below
+
+application-dev.properties
+#configuration values specific to development
+
+application-test.properties
+#configuration values specific to test
+
+write default application.properties 
+in this default application.properties, we can activate profile which we wanted along with common properties that should be loaded into ioc container irrespective of profile being active.
+	
+application.properties
+-----------------------
+spring.profiles.active=dev
+#common properties
+
+the other way to activate a profile while lauching the application is by passing system property
+java -Dspring.profiles.active=test -jar boot.jar
+
+always the system property we passed overrides the profile that we set in the configuration file.
+	
+@Component	
+class DataSource {
+	@Value("${db.url}")
+	private String url;
+	@Value("${db.driverClassName}")
+	private String driverClassName;
+	@Value("${db.username}")
+	private String username;
+	@Value("${db.password}")
+	private String password;
+	
+	// accessors
+}
+
+application.properties
+spring.profiles.active=dev
+
+application-dev.properties
+db.url=jdbc:mysql://localhost:3306/db
+db.username=root
+db.password=welcome1
+db.driverClassName=com.mysql.cj.jdbc.Driver
+
+application-prod.properties
+db.url=jdbc:thin:@localhost:1521/xe
+db.username=xe
+db.password=welcome1
+db.driverClassName=com.oracle.jdbc.driver.OracleDriver
+
+
+@SpringBootApplication
+class BootApplication  {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(BootApplication.class, args);
+		DataSource ds = context.getBean("dataSource", DataSource.class);
+		sop(ds);
+	}
+}
+
+how to work with spring boot profiles in case of YML file?
+YML supports writing multiple documents in one single file by using "---" indicates start of the document and "..."	indicates end of the document. so while working with spring boot profiles by using YAML files we can avoid writing multiple files per each environment rather we have multiple environment/profile configurations written in one single YAML file seperating them aspart of different documents.
+	
+application.yml
+---
+spring:
+  profiles:
+    active:
+			- dev
+...
+---
+spring:
+  config:
+   activate:
+    on-profile: dev
+db:
+  url: jdbc:mysql://localhost:3306/db
+  driverClassName: com.mysql.cj.jdbc.Driver
+  username: root
+  password: welcome1
+...
+---
+spring:
+  config:
+    activate:
+     on-profile: prod
+db:
+  url: jdbc:thin:@localhost:1521/xe
+  driverClassName: com.oracle.jdbc.driver.OracleDriver
+  username: xe
+  password: welcome1
+--------------------------------------------------------------------------------------------------------------------------------------
+ConfigurationProperties
+How to manage application properties/configurations while working with spring boot?
+BeanPostProcessor = after creating the object of the bean definition by the ioc container, before performing lifecycle operations on the bean definition it calls the postProcessBeforeInitialization by passing the bean definition object to the BeanPostProcessor and upon completing the lifecycle operation, again it calls postProcessAfterInitialization in applying the post processing logic ontop of each bean definition that is created by the ioc container.
+		
+
+ConfigurationPropertiesBeanPostProcessor 	= Will be registered with the ioc container when we enable configuration properties using @EnableConfigurationProperties
+
+@Configuration
+@ComponentScan(basePackage="com.cp.beans")
+@EnableConfigurationProperties	
+class JavaConfig {
+	
+}	
+	
+@Component	
+@ConfigurationProperties(prefix="project")
+class Project {
+	int id;
+	String title;
+	int duration;
+	String client;
+	int teamSize;
+	LocalDate startDate;
+	
+}	
+
+application.properties
+project.id=10
+project.title=HMS
+project.duration=19
+project.client=uhg
+project.teamSize=32
+project.startDate=2023-01-01
+	
+
+
+
+spring-boot-starter-configuration-properties
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

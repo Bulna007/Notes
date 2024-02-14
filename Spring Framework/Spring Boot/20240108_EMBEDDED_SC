@@ -1,0 +1,50 @@
+What are embedded servlet containers?
+While using spring boot in building webmvc applications, our application is packaged as an boot executable Jar and is deployed on an embedded servlet container internally and runs. 
+	
+What is embedded servlet container means, are there are any advantages of these?
+Instead of downloading, installing and configuring the standalone servlet containers, the container vendors shipped the containers as jar libraries or dependencies out of their codebase itself. These embedded servlet container libraries can be added to the classpath/buildpath of our application, so that the containers are part of the code and can be run through our application code itself that doesnt require any explicit installing/configurations.
+	
+There are lot of advantages of using embedded servlet containers in running the application:
+advantages:
+1. 
+The embedded servlet containers are shipped as jar/library dependencies by the container vendors or providers. So these containers can be declared as dependencies within our sourcecode. upon cloning the repository of our project and build the sourcecode using the build tool, aspart of our application library the container would also be downloaded and added to the classpath of our project.
+	
+since the container is part of our code, when we run our code, it kick-off the container in which our application will gets executed. due to which we have several benefits
+1.1 can have our application quickly get running
+1.2 no need to explicitly download the container and install it
+1.3 everyone across has the same container software/version being used in running the application
+
+2. 
+In a traditional application deployment we need to download the servlet containers, install and configure them. ontop of them we need to manually configure required configurations like datasource connection pool, jms resources , security relation configurations etc to have our application deployed and running on them.
+The job of applying these configurations on the containers should be done manually and is taken care by the deployer. These configurations needs to be applied across the envs in which our application is promoted and released. since it is manually, it takes lot of time in having these configurations applied accross the envs and might lead to human errors, which will delay the delivery of the application
+
+Instead if we use embedded servlet containers, since these are shipped aspart of the code and runs through it, any configuration changes required onto of these containers are being done through the code itself. So the efforts of adding the configurations into the containers and rolling them across the envs is zero and there is no chance of human errors.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	

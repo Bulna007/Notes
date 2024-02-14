@@ -1,0 +1,56 @@
+How to work with different View technologies in Spring Mvc?
+View is an abstract component in spring mvc, we can write our own implementations of View interface we can plugin into our application asking to render it as an view to the user.
+Let us explore how to render an pdf or excel sheet as an view to the user
+
+1. excel view
+The apache has provided an library "poi" - apache poi, it is an popular third-party library using which we can create excel workbooks or can read an existing workbook as well
+
+spring has provided integration with apache poi library in quickly creating excel views aspart of spring mvc applications
+
+2. pdf view
+itext is an third-party library using which we can create pdf pages from an java application. spring has provided integration with itext api in creating pdfs as views
+
+
+account:
+per past : x months
+
+
+order#  order placed dt   qty   status  amount
+
+
+/order-history.htm
+
+order-history.jsp
+account: 938494048
+time period: drop [in months]
+             [show]
+------------------------------
+table = orders
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

@@ -1,0 +1,160 @@
+How does the spring boot application will be bootstrapped?
+ApplicationContext applicationContext = SpringApplication.run(BootApplication.class, args), the below activities would be performed in bringup the spring boot application
+1. creates an empty environment object
+2. detects and loads the external configuration of our application into the environment object it has created above
+3. print springboot banner
+4. detects the WebApplicationType based on the dependencies in the classpath and creates an appropriate ioc container
+	4.1 if WebMvc Jars are found within the classpath, it treats the WebApplicationType as WEB and creates
+		AnnotationConfigServletWebServerApplicationContext
+	4.2 if WebFlux jars are found within the classpath, it treats the WebApplicationType as REACTIVE and creates
+		AnnotationConfigReactiveWebServerApplicationContext
+	4.3 else WebApplicationType as NONE and creates
+		AnnotationConfigApplicationContext
+5. instantiates and registers the spring factories (autoconfiguration) to the ioc container		
+6. invokes the ApplicationContextInitializer
+7. prepareContext
+8. refreshContext
+9. invokes the CommandLineRunners and ApplicationRunners to perform startup activities before running the application. upon completing the Runners it will returns the reference of the ioc container to us
+10. during the above stages, the SpringApplication.run(..) publishes different types of events indicating the stage at which the application is in while bootstrapping and invokes the appropriate listener if available.
+
+The SpringApplication class detects and loads the external configuration of our application into the environment object, What are the possible places from where it looks for in identifying and loading the configuration into Environment object?
+1. if we enable devtools module, it looks for a file under $USER_HOME directory with name "spring-boot-devtools.properties"	and loads the properties into the environment object
+2. it looks for an environment variable with name "SPRING_APPLICATION_JSON" containing json object of key/value pair. if found it parses the key/value pair and loads into the environment object above
+3. if WebApplicationType = "WEB", the SpringApplication.run(...) method loads all the init-params and context-params in web.xml or ServletContext and loads into the environment object
+4. all the environment variables are loaded into environment object
+5. JVM System properties are loaded into environment object
+6. RandomValueSourceProperty we declared in application.properties
+7. detects and loads application.properties or application.yml|yaml from any of the below locations
+	7.1 directly under project directory
+	7.2 under config sub-directory of the project
+	7.3 directly under the classpath of our application (incase of maven project: it looks under resources/ directory)
+	7.4 config sub-directory of the classpath of our application (maven project: resources/config directory)
+	
+
+@Component	
+@PropertySource
+class Project {
+	@Value("${projectNo}")
+	int projectNo;
+	@Value("${projectName}")
+	String projectName;
+	@Value("${duration}")
+	int duration;
+	@Value("${teamSize}")
+	int teamSize;
+	@Value("${clientName}")
+	String clientName;
+	
+	// accessors
+}	
+
+@SpringBootApplication
+class ExtConfigBootApplication {
+	public static void main(String args[]) {
+		ApplicationContext context = SpringApplication.run(ExtConfigBootApplication.class, args);
+		Project project = context.getBean("project", Project.class);
+		sout(project);
+	}
+}
+	
+	
+1. 
+[project directory] [projectdir/config] [classpath] [classpath/config]
+looks for properties or yaml file with name "application", reads those keys/values and loads into environment object of the ioc container
+application.properties
+----------------------
+projectNo=29
+projectName=VSAnalyzer
+duration=3
+teamSize=50
+clientName=NDTV
+
+(or)
+	
+2. 
+set SPRING_APPLICATION_JSON={"projectNo": 29, "projectName": "VSAnalyzer", "duration": 3, "teamSize"=50, "clientName": "NDTV"}
+java -jar bootexecutable.jar
+
+(or)
+	
+3. 
+we can set environment variables with key=value pointing to the properties above
+set projectNo=29
+set projectName=VSAnalyzer
+set duration=3
+set teamSize=50
+set clientName=NDTV
+
+java -jar bootexec.jar
+
+
+4. 
+java -DprojectNo=29 -DprojectName=VSAnalyzer -Dduration=3 -DteamSize=50 -DclientName=NDTV bootexec.jar
+
+5. 
+application.properties
+----------------------
+projectNo=${random.long}
+projectName=${random.string}
+duration=${random.int}
+teamSize=${random.int}
+clientName=${random.string}
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

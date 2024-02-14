@@ -1,0 +1,192 @@
+Customizing the Spring Boot Application using Fluent Builder Api
+----------------------------------------------------------------
+
+There are 2 most popular creational design patterns are there within the GOF patterns.
+1. factory design pattern
+2. builder design pattern
+
+1. Factory design pattern
+Factories are used for creating the object of another class. There are 2 reasons why we use Factory class for creating the object of another class.
+use of factories:
+1.1 To abstract the complexity in creating the object of another class
+1.2 To hide the implementation classname in creating the object of a class
+
+Factories always creates the objects of another class as empty objects only without populating the data. But sometimes we wanted to not only just create the object, want to populate the data into those objects at the time of creating, this can be done through Builder design pattern.
+	
+2. Builder design pattern
+Builder is also another creational design pattern like Factory, but incase of builder along with creating the object, it pre-populates the data into the object aswell.
+So the client has to creating the object of builder by populating the data, then ask the builder to create the object of Target with that data, so that builder can create the object of the target class with that data given.
+	
+
+class Task {
+	int id;
+	String taskName;	
+	String description;
+	int duration;
+	String taskType;
+	
+	// accessors
+}	
+
+class TaskBuilder {
+	int id;
+	String taskName;
+	String description;
+	int duration;
+	String taskType;
+	
+	TaskBuilder(int id) {
+		this.id  = id;
+	}
+	
+	// accessor methods
+	
+	Task build() {
+		Task task = new Task();
+		
+		task.setId(this.id);
+		task.setTaskName(taskName);
+		task.setDescription(description);
+		task.setDuration(duration);
+		task.setTaskType(taskType);
+		
+		return task;
+	}
+}
+	
+TaskBuilder builder = new TaskBuilder(10);
+builder.setTaskName("T1");
+builder.setDescription("D");
+builder.setDuration(10);
+builder.setTaskType("feature");
+Task task = builder.build();
+
+If we look into the above code, we endup in writing lot of code for creating object of another class using Builder. Because based on number of attributes we need to populate the data we need to write that many number of lines of code in calling setters in settingup the data to the builder inorder to create the object of Target class.
+	
+To overcome the above problem, the Fluent Builder Api has been introduced.
+	
+class TaskBuilder {
+	int id;
+	String taskName;
+	String description;
+	int duration;
+	String taskType;
+	
+	TaskBuilder(int id) {
+		this.id  = id;
+	}
+	public TaskBuilder taskName(String taskName) {
+		this.taskName = taskName;
+		return this;
+	}
+	public String taskName() {
+		return taskName;
+	}
+	public TaskBuilder duration(int duration) {
+		this.duration = duration;
+		return this;
+	}
+	public int duration() {
+		return duration;
+	}
+	public TaskBuilder taskType(String taskType) {
+		this.taskType = taskType;
+		return this;
+	}
+	public String taskType() {
+		return taskType;
+	}
+	// description
+	Task build() {
+		Task task = new Task();
+		
+		task.setId(this.id);
+		task.setTaskName(taskName);
+		task.setDescription(description);
+		task.setDuration(duration);
+		task.setTaskType(taskType);
+		
+		return task;
+	}
+}	
+
+Task task = new TaskBuilder(10).taskName("T1").duration(10).taskType("feature").description("d").build();
+
+How to customize the spring boot application with Fluent Builder api?
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	

@@ -1,0 +1,100 @@
+For each technology, the spring data has provided an sub-interface from CRUDRepository interface addition technology specific functionality. To work with jpa api, the spring datajpa has provided an sub-interface from CRUDRepository called "JPARepository"
+	
+The datajpa has defined one more special sub-interface called "PaginationAndSortingRepository". This interface supports methods for pagination and sorting functionality while accessing the data
+There are 2 interfaces are there
+1. Sort
+2. Pageable
+
+interface PaginationAndSortingRepository extends CRUDRepository {
+	Iterable findAll(Sort sort);
+	Iterable findAll(Pageable pageable);
+}
+
+Sort = is an object into which we can populate the sort column of the table based on which we want to retrieve the data
+
+Pageable = is an object into which we can populate pageSize and pageNo. So that upon passing Pageable object with appropriate values being populated, the jpa proxy queries and returns only the subset of records from the table
+
+
+JPARepository is an interface that extends from PaginationAndSortingRepository, that means when we write our interface from JPARepository interface, we have both Sort and Pagniation functionality applied
+
+interface JPARepository extends PaginationAndSortingRepository {}
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to query the data from database using different filter conditions while working with datajpa?	
+Inorder to query the data using jpql query while working the jpa api we need to write below code:
+
+
+EntityManager em = entityManagerFactory.createEntityManager();
+TypedQuery<Plan> planQuery = em.createQuery("from Plan p where p.planType = :planType", Plan.class);
+planQuery.setParameter("planType", "Risk Coverage");
+
+List<Plan> plans = planQuery.getResultList();
+
+
+For executing any jpql query the code we need to write is same, only the change is the jpql query itself and the namedparameters we need to substitute would be different. So again inorder to execute the jpql queries also across all the dao classes and dao methods we endup in writing the same boiler-plate logic. 	So the datajpa eliminates writing the same code in executing the queries as well
+
+datajpa supports 2 types of queries
+1. derived queries
+2. declared queries
+
+
+1. derived queries
+Incase of derived queries, we dont need to define an jpql query in querying the data from database, instead the datajpa itself constructs the query based on the names of the methods we defined aspart of the repository interface. substitutes the parameters with which it executes queries and returns the result to us.
+While writing these methods in the repository interface we need to use pre-defined keywords that are provided by datajpa so that it can execute the queries.
+	
+interface PlanRepository extends JpaRepository {
+	List<Plan> findByPlanType(String planType);
+}	
+	
+There are lot of keywords supported by datajpa as below
+1. In, NotIn
+2. And
+3. Or
+4. Null, NotNull
+5. Between
+6. GreaterThan
+7. GreaterThanEqual
+8. LessThan
+9. LessThanEqual
+10. Like
+11. After
+12. Before
+13. StartingWith
+14. EndingWith
+15. Distinct
+16. Containing
+17. OrderBy
+18. True
+19. False
+20 IgnoreCase
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

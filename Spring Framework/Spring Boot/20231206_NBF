@@ -1,0 +1,81 @@
+How to work with Nested BeanFactories in spring boot application?
+If there are 2 bean definitions that are part of 2 different ioc containers, to manage the dependencies across these ioc containers we need to use nested bean factories. When we nest one ioc container inside the another one, one will act as an parent and another ioc container will acts as an child ioc container.
+	
+The child ioc container can access the bean definitions that are within the parent ioc container, but parent cannot access the child beans.
+	
+BeanFactory pf = new XmlBeanFactory(new ClassPathResource("p-b.xml"));
+BeanFactory cf = new XmlBeanFactory(new ClassPathResource("c-b.xml"), pf);
+
+While working with spring boot, we dont create ioc containers, rather SpringApplication class itself takes care of creating the ioc containers. So we need to pass both the references of Parent Configuration and Child Configuration classes asking to create and nest them as below.
+	
+
+class Chip {
+	private String chipType;
+	
+	// accessors
+}	
+
+public Robot {
+	private int id;
+	private Chip chip;
+	
+	// accessors
+}
+
+@Configuration
+class ParentConfig {
+	
+	@Bean
+	public Chip chip(@Value("${chipType}") String chipType) {
+		Chip chip = new Chip();
+		chip.setChipType(chipType);
+		return chip;
+	}	
+}
+
+@SpringBootApplication
+class BootApplication {
+	
+	@Bean
+	public Robot robot(Chip chip, @Value("${id}") int id) {
+		Robot robot = new Robot();
+		robot.setId(id);
+		robot.setChip(chip);
+		return robot;
+	}
+	
+	public static void main(String[] args) {
+		SpringApplicationBuilder builder = new SpringApplicationBuilder();
+		SpringApplication springApplication = builder.parent(ParentConfig.class).sources(BootApplication.class).build();
+		ApplicationContext context = springApplication.run(args);
+		Robot robot = context.getBean("robot", Robot.class);
+		sout(robot);
+	}	
+}
+
+application.properties
+id=29
+chipType=quadra core
+
+note:- while creating the parent and child ioc containers it uses the same environment object, so the configuration values that are loaded in both the ioc containers would be same.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -21,12 +21,11 @@ d. high-accurate and fail-ove safe
 e. high utilization of resources
 	If we want to increase the utilization of a resource, then distribute the resource across multiple people using distributed technology so that effective utilization of resource is guaranteed.
 
-
-How does the application/program looks like when we are building them using distributed technology?
+Q. How does the application/program looks like when we are building them using distributed technology?
 These programs are having ability of communicating over the network, so that 2 different programs can run on different computers(thus multiplying the computing capacity allocated for the job) inter-connected over the network so that they can mutual co-ordinate with each other by communicating over the network to accomplish the job/output desired.
 
 
-What is the support of java programming language in building distributed technology application?
+Q. What is the support of java programming language in building distributed technology application?
 To support building applications based on distributed technology, java programming languages has provided several apis in support of building distributed technology applications:
 a. Corba
 b. rmi

@@ -1,0 +1,177 @@
+it is recommended to use SpringApplication.exit(ApplicationContext) in customizing and returning an exitcode aspart of the Spring boot application.
+
+@SpringBootApplication	
+class BootApplication {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(BootApplication.class, args);
+		try {
+			// logic
+		}finally {
+			int exitCode = SpringApplication.exit(context);
+			System.exit(exitCode);
+		}
+	}
+}
+
+The SpringApplication.exit() performs several activities in gracefully terminating the spring boot application as below
+1. it looks for ExitCodeGenerator bean definitions within the ioc container, if found it collects and creates an collection of them.
+2. it tries to close the ioc container by calling ApplicationContext.close()
+	2.1 while closing the ioc container if there is failure in closing, SpringApplication class generates an randon number as exitcode and returns to us
+	2.2 if it has successfully closes the ioc container, then invokes the ExitCodeGenerator bean and returns the exitcode it has returned 
+3. indicating the terminate of the application it publishes an ExitCodeEvent and looks for listener to be called.
+	
+#1. 	
+How can we customize the exitcode of the boot application?
+	(or)
+Working with ExitCodeGenerator
+
+based on the above we can understand, if we want to customize the exitcode of an spring boot application, we can write our own class implementing from ExitCodeGenerator and configure it as bean definition, so that while terminating the application, SpringApplication class, exit() method invokes our generator and returns the exitcode we returned in it.
+	
+@SpringBootApplication	
+class BootExitCodesApplication {
+	
+	@Bean
+	public ExitCodeGenerator exitCodeGenerator() {
+		return ()->{ 
+			return 3;
+		};
+	}
+	
+	public static void main(String[] args) {
+		ApplicationContext applicationContext = SpringApplication.run(BootExitCodesApplication.class, args);
+		try {
+			// application logic
+		}finally {
+			int exitCode = SpringApplication.exit(applicationContext);
+			System.exit(exitCode);
+		}
+	}	
+}	
+
+@Component
+class CustomExitCodeGenerator implements ExitCodeGenerator {
+	public int getExitCode() {
+		return 3;
+	}
+}
+
+#2. How to know what is the exitcode with which the springboot application has been terminated?
+We can capture the exitcode with which the application is being terminated by using ExitCodeEvent. The SpringApplication class, the exit(context) method while terminating will publish ExitCodeEvent wrapping the exitcode with which the application is being terminated.
+	
+if we want to know what is the exitcode of the application being terminated, we can write our own ApplicationListener listening for ExitCodeEvent and grab the exitcode from it.
+	
+@Component	
+class ExitCodeApplicationListener implements ApplicationListener<ExitCodeEvent> {
+	public onApplicationEvent(ExitCodeEvent event) {
+		sop(event.getExitCode());
+	}
+}
+
+#3. ExitCodeExceptionMapper
+an application during its execution might run into different types of exceptions and leads to termination, by default the jvm takes care of generating an random exitcode with which it terminates and returns to the operating system.
+Incase if we want to customize the exitcode based on the Exception we can write try/catch block, handle the Exception and return the exitcode manually by calling System.exit(exitCode);	
+
+@SpringBootApplication	
+class BootExitCodesApplication {
+	public static void main(String[] args) {
+		ApplicationContext applicationContext = SpringApplication.run(BootExitCodesApplication.class, args);
+		try {
+			FileInputStream fis = new FileInputStream(new File("d:\\abc.txt"));
+			int c = fis.read();
+		}catch(IOException e) {
+			e.printStackTrace();
+			SpringApplication.exit(applicationContext);
+			System.exit(100);		
+		}finally {
+			int exitCode = SpringApplication.exit(applicationContext);
+			System.exit(exitCode);
+		}
+	}	
+}	
+	
+From the above we can understand ExitCodeExceptionMapper is not meant for mapping application logic exceptions into exitcodes, then what is the purpose of ExitCodeExceptionMapper?
+	
+SpringApplication.run(BootApplication.class, args), it performs lot of bootstrapping activities in bringing up the spring boot application as below.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

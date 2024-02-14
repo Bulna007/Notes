@@ -1,0 +1,141 @@
+How many ways are there in loading the custom yaml files into the env object of the ioc container?
+There are 2 ways in which we can load
+1. YamlPropertySourceLoader
+2. YamlFactoryBean
+
+#1. YamlPropertySourceLoader
+YamlPropertySourceLoader takes the Yaml as a Resource and converts into List<PropertySource> objects. Now we need to load these PropertySource objects into the env object of the ioc container, after the ioc container has been created, before it begin instantiating the objects for the bean definitions
+
+The SpringApplication class, upon creating the ioc container before performing prepareContext and refreshContext, it invokes ApplicationContextInitializer implementation classes, so we can write the post processing logic within the implementation class of ApplicationContextInitializer and register with SpringApplication class.
+	
+class YamlConfigApplicationContextInitializer implements ApplicationContextInitializer {
+	public void initialize(ConfigurationApplicationContext context) {
+		YamlPropertySourceLoader loader = new YamlPropertySourceLoader();
+		List<PropertySource<?>> propertySources = loader.load("app-config", context.getResource("classpath:app-config.yml"));
+		
+		ConfigurableEnvironment env = context.getEnvironment();
+		propertySources.forEach(ps -> {
+			env.addLast(ps);
+		});
+	}
+}	
+
+Now register the ApplicationContextInitializer implementation class with SpringApplication class using fluent builder api
+	SpringApplication springApplication = new SpringApplicationBuilder(BootApplication.class).initializers(new YamlConfigApplicationContextInitializer()).build();
+
+#2. YamlFactoryBean
+YamlFactoryBean is another helper class, that helps in reading an YAML file and creates properties collection by populating YAML document data and returns to us
+
+@PropertySource = @PropertySource takes the properties file as an input, reads the properties file into a Properties collection object and places the Properties collection object as PropertySource into the env object of the ioc container.
+	
+From this we can understand @PropertySource annotation cannot read YAML file into Properties collection, but it can load Properties collection into env object. So if we can somehow read the YAML file and convert into Properties collection, then we can pass it as an input to the @PropertySource annotation asking to load the Properties collection into env object
+
+@PropertySource(name="app-config", value="classpath:app-config.yml") = this will not work, because it dont know how to read yaml file contents into Properties collection.
+	
+Now we have YamlFactoryBean, that helps us in converting yaml into Properties collection, so let us write the logic for converting yaml into Properties collection object. Now our logic should be used by @PropertySource annotation in getting the Properties collection.
+	
+So @PropertySource annotation has provided an standard interface called "PropertySourceFactory", here we can write our own implementation class of PropertySourceFactory in which we can write the logic for converting yaml into Properties collection and wrap into PropertySource object and return to @PropertySource annotation, so that it load the PropertySource into env object
+
+@PropertySource(name="app-config", value="classpath:app-config.yml", factory = YamlPropertySourceFactory.class)
+@SpringBootApplication
+class BootApplication {
+	
+}
+
+class YamlPropertySourceFactory implements PropertySourceFactory {
+	public PropertySource createPropertySource(String name, EncodedResource resource){
+		YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
+		yamlPropertiesFactoryBean.setResources(resource.getResource());
+		
+		Properties props = yamlPropertiesFactoryBean.getObject();
+		PropertiesPropertySource propertySource = new PropertiesPropertySource(props);
+		return propertySource;
+	}
+}
+
+The PropertySourceFactory is introduced in spring boot 2.5.4 only, prior to this version, this approach is not available
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

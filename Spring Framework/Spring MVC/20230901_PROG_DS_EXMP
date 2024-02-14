@@ -1,0 +1,463 @@
+1. prog dispatcherservlet and contextloaderlistener registration
+2. mvc namespace
+
+
+
+
+#spring webmvc
+abstract class AbstractDispatcherServletInitializer implements WebApplicationInitializer {
+	public void onStartup(ServletContext context) {
+		XmlWebApplicationContext rootApplicationContext = null;
+		XmlWebApplicationContext servletApplicationContext = null;
+		ContextLoaderListener listener = null;
+		DispatcherServlet dispatcher = null;
+		
+		rootApplicationContext = createRootApplicationContext();
+		listener = new ContextLoaderListener(rootApplicationContext);
+		context.addListener(listener);
+		
+		servletApplicationContext = createServletApplicationContext();
+		dispatcher = new DispatcherServlet(servletApplicationContext);
+		ServletRegistration.Dynamic dynamic = context.addServlet("dispatcher", dispatcherServlet);
+		dynamic.addMapping(getMappings());		
+	}
+	
+	abstract WebApplicationContext createRootApplicationContext();
+	abstract WebApplicationContext createServletApplicationContext();
+	abstract String[] getMappings();
+}
+
+class MyDispatcherServletInitializer extends AbstractDispatcherServletInitializer {
+	public WebApplicationContext createRootApplicationContext() {
+		XmlWebApplicationContext rootApplicationContext = new XmlWebApplicationContext();
+		rootApplicationContext.setConfigLocation("/WEB-INF/application-context.xml");
+		return rootApplicationContext;
+	}
+	
+	public WebApplicationContext createServletApplicationContext() {
+		XmlWebApplicationContext servletApplicationContext = new XmlWebApplicationContext();
+		servletApplicationContext.setConfigLocation("/WEB-INF/dispatcher-servlet.xml");
+		return servletApplicationContext;
+	}
+	
+	public String[] getMappings() {
+		return new String[] {"*.htm"};
+	}
+}
+
+dispatcher-servlet.xml
+-----------------------
+
+<bean name="/news.htm" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
+	<property name="viewName" value="news"/>
+</bean>
+
+<bean class="InternalResourceViewResolver">
+	<property name="prefix" value="/WEB-INF/jsp/"/>
+	<property name="suffix" value=".jsp"/>
+</bean>
+
+
+we want to use spring webmvc components in building mvc application, so we need to configure spring mvc components as bean definitions within our ioc container.	
+HandlerMappings
+ViewResolvers
+Controllers
+
+so inorder to configure these components as beans the developer has to spend lot of time in defining the spring mvc components as bean definitions withour ioc container
+There are lot of challenges in configuring the mvc components as beans as below:
+1. spent lot of time in configuring spring framework/mvc components as bean definitions within our application
+2. the developers has to memorize the classnames of these components in configuring them as bean definitions even though these classes are not being used within our application, the framework internally uses these components, thus making the developer feel complex in working with spring mvc application
+
+To overcome this problem in configuring the spring mvc components as bean definitions the spring mvc has provided mvc namespace. Aspart of the mvc namespace the spring has provided pre-defined tags using which we can quickly configure mvc components as bean definitions without memorizing the names of the classes.
+	
+dispatcher-servlet.xml
+-----------------------
+
+<bean name="/news.htm" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
+	<property name="viewName" value="news"/>
+</bean>
+
+(or)
+<mvc:view-controller path="/news.htm" view-name="news"/>
+
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<property name="prefix" value="/WEB-INF/jsp/"/>
+	<property name="suffix" value=".jsp"/>
+</bean>
+
+(or)
+	
+<mvc:view-resolvers>
+	<mvc:jsp prefix="/WEB-INF/jsp/" suffix=".jsp"/>
+</mvc:view-resolvers>
+-------------------------------------------------------------------------------------------------------------------------------------
+no web.xml and no spring bean configuration file, how to work with spring mvc application?
+progannonweb
+|-src
+	|-main
+		|-java
+		|-resources
+		|-webapp
+			|-WEB-INF
+				|-jsp
+					|-about-us.jsp
+|-pom.xml
+
+
+none of the spring mvc components, we dont have sourcecode, so the only way to configure the spring mvc components as bean definitions is using java configuration approach only
+
+@Configuration
+class RootConfig {
+
+}
+
+@Configuration
+class WebMvcConfig {
+
+	@Bean
+	public HandlerMapping handlerMapping() {
+		SimpleUrlHandlerMapping hm = new SimpleUrlHandlerMapping();
+		Properties mappings = new Properties();
+		mappings.put("/about-us.htm", "aboutUsController");
+		hm.setMappings(mappings);
+		return hm;
+	}
+
+	@Bean
+	public Controller aboutUsController() {
+		ParameterizableViewController controller = new ParameterizableViewController();
+		controller.setViewName("about-us");
+		return controller;
+	}
+	
+	@Bean
+	public ViewResolver jspViewResolver() {
+		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+		viewResolver.setPrefix("/WEB-INF/jsp/");
+		viewResolver.setSuffix(".jsp");
+		return viewResolver;
+	}
+	
+}
+	
+
+class ProgAnnonWebApplicationInitializer implements WebApplicationInitializer {
+	public void onStartup(ServletContext context) {
+		AnnotationConfigWebApplicationContext rootApplicationContext = null;
+		AnnotationConfigWebApplicationContext servletApplicationContext = null;
+		
+		ContextLoaderListener listener = null;
+		DispatcherServlet dispatcher = null;
+		
+		rootApplicationContext = new AnnotationConfigWebApplicationContext();
+		rootApplicationContext.register(RootConfig.class);
+		
+		listener = new ContextLoaderListener(rootApplicationContext);
+		context.addListener(listener);
+		
+		servletApplicationContext = new AnnotationConfigWebApplicationContext();
+		servletApplicationContext.register(WebMvcConfig.class);
+		
+		dispatcher = new DispatcherServlet(servletApplicationContext);
+		ServletRegistration.Dynamic dynamic = context.addServlet("dispatcher", dispatcher);
+		dynamic.addMappings("*.htm");
+	}
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+AbstractAnnotationConfigDispatcherServletInitializer Approach
+
+in the above example we are registering DispatcherServlet and ContextLoaderListener programmatically by writing an class implementing from WebApplicationInitializer, which becomes boiler-plate logic since we have to write the same code across all the projects
+so instead spring mvc has provided an abstract implementation class called "AbstractAnnotationConfigDispatcherServletInitializer"
+	
+
+abstract class AbstractAnnotationConfigDispatcherServletInitializer implements WebApplicationInitializer {
+	public void onStartup(ServletContext servletContext) {
+		
+		AnnotationConfigWebApplicationContext rootApplicationContext = new AnnotationConfigWebApplicationContext();
+		rootApplicationContext.register(getRootConfigClasses());
+		ContextLoaderListener listener = new ContextLoaderListener(rootApplicationContext);
+		servletContext.addListener(listener);
+		
+		AnnotationConfigWebApplicationContext servletApplicationContext = new AnnotationConfigWebApplicationContext();
+		servletApplicationContext.register(getServletConfigClasses());
+		DispatcherServlet dispatcherServlet = new DispatcherServlet(servletApplicationContext);
+		ServletRegistration.Dynamic dynamic = servletContext.addServlet("dispatcher", dispatcherServlet);
+		dynamic.addMappings(getServletMappings());		
+	}
+	
+	abstract Class<?>[] getRootConfigClasses();
+	abstract Class<?>[] getServletConfigClasses();
+	abstract String[] getServletMappings();
+}
+
+class MyDispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+	Class<?>[] getRootConfigClasses() {
+		return new Class<?>[] {RootConfig.class};
+	}
+	Class<?>[] getServletConfigClasses() {
+		return new Class<?>[] {WebMvcConfig.class};
+	}
+	String[] getServletMappings() {
+		return new String[]{"*.htm"};
+	}
+}
+
+drawbacks:
+1. we endup in writing loads and loads of configuration logic in configuration classes in configuring the spring mvc components as beans in our application, thus killing the developers time
+
+2. the developer has to memorize the mvc component classnames and their attributes in configuring them as bean definitions even though we dont use those components directly 
+
+from above the developers find it very complex to work with spring mvc
+
+AnnotationConfigWebApplicationContext servletApplicationContext = new AnnotationConfigWebApplicationContext(WebMvcConfig.class);
+
+
+
+@Configuration
+class WebMvcConfig implements WebMvcConfigurer {
+
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+		registry.jsp("/WEB-INF/jsp/", ".jsp");
+	}
+	
+	public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addViewController("/about-us.htm").setViewName("about-us");
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,99 @@
+How to customize the spring boot application?
+SpringApplication.run(BootApplication.class, args):
+1. creates an empty environment object
+2. detects and loads the external configuration of the application into the environment object
+3. print spring boot banner
+4. identify the WebApplicationType based on the jars under the classpath:
+	4.1 if WebApplicationType = WEB then creates AnnotationConfigServletWebServerApplicationContext
+	4.2 if WebApplicationType = REACTIVE then creates AnnotationConfigReactiveWebServerApplicationContext
+	4.3 else creates AnnotationConfigApplicationContext
+5. Instantiates and Registers the spring factories
+6. invokes ApplicationContextInitializer
+7. prepareContext
+8. refreshContext
+9. invoke CommandLineRunners and ApplicationRunners
+10. during the above stages, it publishes events and invokes the listeners 
+
+There are several activities that are taken place while brining up the spring boot application by SpringApplication, we can modify or add additional activities in bringingup the spring boot application which is called "customizing" spring boot application
+
+There are 2 ways we can customize the spring boot application
+1. configuration approach
+2. programmatic approach
+
+1. Customizing the spring boot application through configuration approach
+There are pre-defined configuration options that are provided by SpringApplication class, which can be used in customizing the application.
+	
+1.1 We can change the Spring Boot Banner
+	a) We can write banner.txt or banner.(img) under the classpath of our application, the SpringApplication class automatically pickups the banner file and renders it as an banner during the startup of the application
+	b) We can turnoff the banner by writing an property in application.properties
+		spring.main.banner-mode=off/console
+  c) we can change the location of banner file by using
+		spring.banner.location=locationFile
+		
+1.2 by default ApplicationContext loads and initializes all the bean definitions eagerly. We can change the behavior of lazy initializing by configuring a property in application.properties
+spring.main.lazyInitialization=true
+	
+This property will be pickedup by SpringApplication class and configures the ApplicationContext or ioc container appropriately to make it lazyInitialize the bean definitions.	
+--------------------------------------------------------------------------------------------------------------------------------------------#2. programmatic customization
+The programmatic customization approach has a better control over customizing the application than through configuration approach.
+	
+We are calling SpringApplication.run(BootApplication.class, args); 	= here we are invoking static run(..) method on the SpringApplication class, which will bringup the application with default configuration options. Instead we can create the object of SpringApplication class, populate configuration using which we want to startup the application, and then use the object to invoke the run(..) method so that the application will be started up with our own customizations
+
+To help us in creating the object of SpringApplication class with populated data into it Spring boot team has provided SpringApplicationBuilder class, it is an FluentBuilder. We can create the object of SpringApplicationBuilder, populate the configuration into it and using the builder create the object of SpringApplication class. Then invoke the run(..)	method on that object to bringup the spring boot application.
+	
+2.1 Let	us understand how to customize the spring boot banner using this approach
+
+@SpringBootApplication
+class BootApplication {
+	public static void main(String[] args) {
+	
+		ApplicationContext context = SpringApplication.run(BootApplication.class, args); #dont do this to customize
+		
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(BootApplication.class);
+		builder.bannerMode(Banner.Mode.OFF);
+		SpringApplication springApplication = builder.build();
+		
+		ApplicationContext context = springApplication.run(args);
+	}
+}
+	
+
+ApplicationContext context = new SpringApplicationBuilder(BootApplication.class).bannerMode(Banner.Mode.OFF).build().run(args);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

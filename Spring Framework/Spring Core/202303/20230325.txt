@@ -1,6 +1,6 @@
 Aware Interfaces
 -----------------
-Aware interfaces are also called as "Aware Injection" and it is even called as "interface injection". The struts 2.0 supports supports dependency injection through interface injection only
+Aware interfaces are also called as "Aware Injection" and it is even called as "interface injection". The struts 2.0 supports dependency injection through interface injection only
 
 due to few reasons: we want to avoid injecting Rocket into LaunchPad, (let us understand the reasons later)
 if we dont want to inject Rocket into LaunchPad means, there are only #2 options left

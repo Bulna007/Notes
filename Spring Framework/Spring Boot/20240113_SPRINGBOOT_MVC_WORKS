@@ -1,0 +1,124 @@
+Let us explore what does spring boot brings onto the table, while building spring mvc application using it?
+(or)
+How does the spring boot mvc application works, what are the bootstrapping steps that takes place internally while bringing up the spring boot mvc application?
+	
+When it comes to spring boot mvc application, we didnt packaged our application as "war" and we didnt deployed it onto the servlet container, we just ran our application out of the main method by invoking SpringApplication.run(BootApplication.class, args); the 
+1. how does our application is running?	
+2. who has deployed our application onto the embedded servlet container?
+3. where is DispatcherServlet being configured?
+4. Who has created the ioc container?
+	
+Let us understand how does these above aspects comes into picture in running the application by looking at the internal flow
+When we run SpringApplication.run(BootApplication.class, args):
+1. creates an empty env object
+2. detects and loads the external application configuration into the environment object
+3. print the banner
+4. detects the WebApplicationType based on the dependencies added to the classpath of our application
+	4.1 if webmvc jar dependencies are found under the classpath, it treats the WebApplicationType as WEB and instantiates 
+			AnnotationConfigServletWebServerApplicationContext
+	4.2 if webflux jar dependencies are found under the classpath, it treats the WebApplicationType as REACTIVE and instantiates
+		  AnnotationConfigReactiveWebServerApplicationContext
+	4.3 otherwise it treats the WebApplicationType as NONE and instantiates
+			AnnotationConfigApplicationContext
+	here while working with springboot webmvc we added spring-boot-starter-web as a dependencies in our project, so as webmvc jars are found under the classpath, the SpringApplication.run(..) will instantiates AnnotationConfigServletWebServerApplicationContext
+5. identifies the spring factories, instantiates them and registers with the ioc container (spring factories: auto-configuration classes) 	
+6. Invokes the ApplicationContextInitializer
+7. prepareContext()
+8. refreshContext()
+
+
+
+within the refreshContext() method, it internally invokes applicationContext.refresh(). upon refreshing the ioc container, it internally invokes onRefresh() on the ServletWebServerApplicationContext.
+		
+onRefresh() = upon completing the refresh() on the ioc container, which means all the bean definitions are fully instantiated, all the CommandLineRunners and ApplicationRunners are executed, and initialized, which means our application is ready for exposing to the public.
+
+its time to deploy our application on ServletContainer.
+		
+The job of deploying the application on the ServletContainer will not be done by SpringApplication class, because not every spring boot application should be deployed onto the ServletContainer.
+Only if the WebApplicationType is "WEB" or "REACTIVE" then only the application should be deployed on the respective embedded servlet containers. Since it is not common for all types of spring boot applications, the job of deploying the application on the containers has been handed-over to the respective ApplicationContext (ioc containers)	
+	
+So for each type of application, the spring boot developers has provided one implementation of ApplicationContext
+Web: ServletWebServerApplicationContext
+Reactive: ReactiveWebServerApplicationContext
+
+so that the logic for starting, stopping, deploying or registering the application on to the respective EmbeddedServlet containers is wrapped or abstracted into those ApplicationContext implementations.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

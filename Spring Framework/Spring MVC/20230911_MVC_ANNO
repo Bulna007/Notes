@@ -1,0 +1,47 @@
+By using the annotation-driven programming, we got the flexibility of writing the controller classes defined with our own handler methods taking any parameterTypes or returnTypes
+But we cannot take any parameterTypes or returnTypes in writing the methods of the controller, even though we have freedom of choosing what should be taken aspart of the parameterTypes and returnTypes those must be within the list of supported parameterTypes and returnTypes by the spring mvc or dispatcherServlet.
+	
+supported parameterTypes:
+1. ServletRequest/ServletResponse 
+2. WebRequest/NativeWebRequest = generic api to access request parameters and session attributes without using direct servlet apis
+3. HttpSession
+4. java.security.Principal 
+5. HttpMethod
+6. java.util.Locale
+7. Inputstream/Reader = request body in raw representation format
+
+8. @PathVariable = Template parameters URI
+9. @MatrixVariable 
+10. @RequestParam = query parameters
+11. @RequestHeader
+12. @CookieValue
+13. @RequestBody = in restful services
+14. @ModelAttribute 
+15. Errors, BindingResult
+16. SessionStatus + @SessionAttributes (Class-level)
+
+supported ReturnTypes:
+1. String
+2. View
+3. Map
+4. Model/ModelMap
+5. ModelAndView
+6. void
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,58 @@
+There are 2 ways we can customize the spring boot application
+1. configuration approach
+2. programmatic approach
+
+1. configuration approach
+1.1 changing spring boot banner
+	1.1.1 banner.txt or banner.(img) and place it in the classpath of our application
+	1.1.2 spring.main.banner-mode=off/console
+	1.1.3 spring.banner.location=location
+	
+1.2 change the initialization of the ioc container to lazy
+spring.main.lazyInitialization=true
+	
+2. programmatic approach
+Instead of using SpringApplication.run(BootApplication.class, arg) static method, create the object of SpringApplication class through the help of SpringApplicationBuilder by populating the configuration with which we want to bootup the spring boot application and call the run() method on the object
+---------------------------------------------------------------------------------------------------------------------------------------------
+Working with Nested BeanFactories in Spring Boot Application
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

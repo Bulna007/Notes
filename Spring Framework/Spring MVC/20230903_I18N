@@ -1,0 +1,467 @@
+Internationalization (I18N)
+---------------------------
+Localizing the application to the language of the user who is accessing the application is called "Internationalization".
+
+In order to localize the application to the language of the user who is accessing the application, first we should know the language of the user and the country of the user who is accessing the application.
+Representing an Country & Language together is called "Locale", so we need to know the Locale of the user who is accessing the application.
+	
+How does the Locale information is available?
+There are many ways the Locale can be extracted or identified
+1. during the time of installing the operating system, the user chooses the Locale which means selects the country and language to which he belongs to, so that the operating system captures this information and stores it as Locale within the operating system
+2. when we install the web browsers, the webbrowsers are configured with the default locale of the operating system on which those are installed.
+	
+we can always can extract the Locale of our machine on which the program is running using 
+Locale locale = Locale.getDefault(); // this returns the system locale on which the program is running
+
+In addition, in an web application environment, the clients uses the web browser in accessing the web application. The WebBrowser always aspart of the sending the request to the server will appends an http request header Locale pointing to the Locale of the user who is accessing the application as an input to the server application
+
+The server program can always extracts the Locale of the user by using
+httpRequest.getLocale();
+--------------------------------------------------------------------------------------------------------------------------------------
+Short Summary:
+Internationalization (i18n) : localizing the application to the lang of the user
+For the application to localize to the lang of the user, the application should know the users/clients lang/country (Locale), how does it get?
+	
+The Web Browsers while sending the request to the server would attach an standard http request header "Locale" pointing to the locale of the system using which the user is accessing the application. The server program upon receiving the request can extract the Locale of the user by using req.getLocale();
+
+
+home.jsp
+--------
+<html>
+	<head>
+	</head>
+	<%
+		Locale locale = request.getLocale();
+	%>
+	<body>
+		<h2>
+		<%
+			if(locale.getCountryCode().equals("US") && locale.getLang().equals("en")) {
+				out.println("Welcome to Foodies");
+			}else if(locale.getCountryCode().equals("CH") && locale.getLang().equals("CN")) {
+				out.println("[China] Welcome to foodies");
+			}
+		%>
+		</h2>			
+		<p>
+			Todays Chef specials!			
+		</p>
+	</body>
+</html>
+
+
+messages.properties
+welcomeMessage=Welcome to Foodies
+
+messages_china.properties
+welcomeMessage=欢迎各位吃货
+
+message_japan.properties
+welcomeMessage=美食家へようこそ
+
+
+home.jsp
+--------
+<html>
+	<head>
+	</head>
+	<%
+		Locale locale = request.getLocale();
+		if(locale.equals("en_US")) {
+			propFile = "messages.properties";
+		}else if(locale.equals("cn_CH")) {
+			propFile = "messages_china.properties";
+		}else if(locale.equals("jn_JP")) {
+			propFile = "messages_japan.properties";
+		}
+		Properties props = new Properties();
+		props.load(propFile);
+	%>
+	<body>
+		<h2>
+			<%=props.getProperty("welcomeMessage");%>
+		</h2>			
+		<p>
+			Todays Chef specials!			
+		</p>
+	</body>
+</html>
+
+messages_en_US.properties
+welcomeMessage=Welcome to Foodies
+
+messages_cn_CH.properties
+welcomeMessage=欢迎各位吃货
+
+message_ja_JP.properties
+welcomeMessage=美食家へようこそ
+
+home.jsp
+--------
+<html>
+	<head>
+	</head>
+	<%
+		Locale locale = request.getLocale();
+		propFile = "messages_"+locale.toString()+".properties";
+		Properties props = new Properties();
+		props.load(propFile);
+	%>
+	<body>
+		<h2>
+			<%=props.getProperty("welcomeMessage");%>
+		</h2>			
+		<p>
+			Todays Chef specials!			
+		</p>
+	</body>
+</html>
+
+
+instead of we reading the properties files in rendering the text content aspart of the jsp pages of our application, the java language has provided support for internationalization through ResourceBundle class
+	
+1. externalize the text content we want to render aspart of our application inside the properties files as key=value which are called message/resource bundles
+
+while writing the resource bundles we need to follow standard naming covention
+basename_langCode_countryCode.properties
+while writing these resourcebundles we need to write one default bundle without langCode and countryCode so that if the locale of the user who is accessing the application doesnt exists then the messages are read from default bundle
+
+messages.properties
+welcomeMessage=Welcome to Foodies
+
+messages_cn_CH.properties
+welcomeMessage=欢迎各位吃货
+
+messages_hi_IN.properties
+welcomeMessage=खाने के शौकीनों का स्वागत है
+
+so to support multiple languages, we need to write 1 resource bundle for one language/country
+
+Locale locale = Locale.getDefault(); // system locale on which the program is running (core java application)
+Locale locale = request.getLocale(); // incase of web application
+
+ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", locale);
+
+
+String message = resourceBundle.getMessage("welcomeMessage");
+System.out.println(message);
+
+There are problems in using ResourceBundle class as below:
+1. we need to create multiple objects of ResourceBundle class inorder to read the messages from multiple message bundles/properties, and keeping track of these objects and using them would be difficult
+
+2. incase if we want to read the messages in different locale in our application, we need to create multiple objects of the ResourceBundle
+
+instead of it the Spring has provided an convienient class called ResourceBundleMessageSource.
+	
+ResourceBundleMessageSource is a class derived from MessageSource interface
+	
+interface MessageSource {
+	String getMessage(String key, Object[] parms, Locale locale);
+	String getMessage(String key, Object[] params, Locale locale, String defaultMessage);
+}
+
+from the above interface spring has provided multiple implementation classes 
+	1. ResourceBundleMessageSource
+	2. ReloadableResourceBundleMessageSource
+	
+	
+now we can configure ResourceBundleMessageSource as an bean definition by populating the basenames of all the message bundles we have inour application.
+	
+<bean id="messageSource" class="ResourceBundleMessageSource">
+	<property name="baseNames">
+		<list>
+			<value>messages</value>
+			<value>errors</value>
+		</list>
+	</property>
+</bean>
+
+Test.java
+--------
+ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+MessageSource messageSource = context.getBean("messageSource", MessageSource.class);
+
+String message1 = messageSource.getMessage("welcomeMessage", null, Locale.getDefault());
+String message2 = messageSource.getMessage("welcomeMessage", null, Locale.cn_CH);
+String message3 = messageSource.getMessage("welcomeMessage", null, Locale.hi_IN);																					
+
+
+ApplicationContext has direct support of internationalization, which means
+
+interface ApplicationContext extends MessageSource {
+	String getMessage(String key, Object[] parms, Locale locale);
+	String getMessage(String key, Object[] params, Locale locale, String defaultMessage);
+}
+
+to read the messages from MessageSource, we dont need to get the object of MessageBundle bean definition from ioc container. 
+	
+	
+ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+String message = context.getMessage("welcomeMessage", null, Locale.getDefault());
+
+ApplicationContext internally goes to implementation object of MessageSource interface which is configured as bean definition. The ApplicationContext always looks for MessageSource bean definition with name/id "messageSource" only, if not found it throws exception.
+	
+	
+ResourceBundle resourceBundle = ResourceBundle.getBundle("messageSource", Locale.getDefault());
+resourceBundle.getMessage("key", null);
+
+1. per each message bundle we want to read messages, we need to create one object of ResourceBundle class
+2. for reading the messages from different locales at the same time, we need to create multiple objects of the ResourceBundle class
+	
+MessageSource
+|-ResourceBundleMessageSource
+|-ReloadableResourceBundleMessageSource
+
+getMessage(String key, Object[] args, Locale locale);
+getMessage(String key, Object[] args, Locale locale, String defaultMessage);
+
+errors.properties
+-----------------
+firstName.blank=First Name is blank
+lastName.blank=Last Name is blank
+dob.blank=DOB is blank
+
+field.blank={0} is blank
+
+
+messageSource.getMessage("field1.blank", new Object[]{"first name"}, Locale.getDefault(), "field not found");
+--------------------------------------------------------------------------------------------------------------------------------------
+Spring mvc annotation-driven Controllers
+
+interface-based programming
+1. 
+	
+	
+class ViewAboutUsController implements Controller {
+	public ModelAndView handleRequest(HttpServletRequest httpReq, HttpServletResponse httpResp) {
+		return new ModelAndView("about-us");
+	}
+}	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	

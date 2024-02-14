@@ -1,0 +1,336 @@
+View Resolvers
+---------------
+ViewResolver is an another spring mvc component that is used for resolving an logical viewname to an View implementation class. The ViewResolver is responsible for identifying the View implementation class and even instantiate the object of it and returns to the DispatcherServlet. So we can say it acts as an Factory/Builder in creating the object of View implementation classes of our application.
+	
+There are 2 main reasons why spring mvc has introduced ViewResolver component
+1. Inorder to decouple the Controller class from the View to be rendered
+2. Within our application we have centralized the view/navigation management
+
+spring mvc has provided an standard interface for writing our own ViewResolver as 
+
+interface ViewResolver {
+	View resolveViewName(String viewName, Locale locale);
+}
+
+spring mvc itself has provided multiple concrete implementations of ViewResolver interface that can be directly used within our application, instead of we writing our own implementations of ViewResolver interface.
+	
+Core ViewResolvers that works with any View technology
+--------------------------------
+1. InternalResourceViewResolver
+2. BeanNameViewResolver
+3. UrlFilenameViewResolver
+4. ResourceBundleViewResolver
+5. XmlViewResolver
+-------------------------------
+Technology specific ViewResolver implementations that should be used while working with those View technologies
+5. TilesViewResolver
+6. ThymeleafViewResolver
+7. VelocityViewResolver
+
+1. InternalResourceViewResolver
+The InternalResourceViewResolver resolves the logical viewname to the internal resources (views) of our application. It is the implementation that is provided by spring mvc people to resolve always an logical viewname to jsp views only
+
+1.1 it always instantiates only JSTLView class object to render jsp pages of our application
+1.2 it takes logical viewname as an input and prefix/suffix to build the viewLocation where our jsp pages resides in our application and populates this jspLocation into the JSTLView class object, while creating it.
+	
+if we observe, in our application if there are #100 logical viewnames returned by the controllers, usually we need to configure for each logical viewname, what is the jsp to be rendered using which View implementation class
+	
+for eg.. for an logical viewName "home" = developer has to configure in the ViewResolver stating, 
+	1. instantiate this View implementation class
+	2. jsp to be rendered
+but InternalResourceViewResolver is designed to work based on "CoC" (Convention over Configuration) principle, which means we dont need to configure for each logical viewName view implementation class/jsp page to be instantiated, instead it takes logical viewname prefixes/suffixes to build viewLocation and instantiates the JSTLView implementation class object by populating the view location and returns the object, hence the amount of configuration we need to write in ViewResolver to render jsp pages is avoided.
+		
+<bean class="InternalResourceViewResolver">
+	<property name="prefix" value="/WEB-INF/jsp/"/>
+	<property name="suffix" value=".jsp"/>
+</bean>
+
+--------------------------------------------------------------------------------------------------------------------------------------
+2. BeanNameViewResolver
+BeanNameViewResolver takes logical viewname as an input and identifies the bean definition of the View class whose id is matching with logical viewname and returns it as an input to the DispatcherServlet
+	
+class ViewHomeController extends AbstractController {
+	public ModelAndView handleRequestInternal(httpReq, httpResp) {
+		return new ModelAndView("home");
+	}
+}	
+
+class ViewIndexController extends AbstractController {
+	public ModelAndView handleRequestInternal(httpReq, httpResp) {
+		return new ModelAndView("index");
+	}
+}	
+
+jsp page: /WEB-INF/jsp/myhome.jsp should be rendered for the above logical viewname
+
+<bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
+
+
+<bean id="home" class="org.springframework.web.servlet.view.JSTLView">
+	<property name="location" "/WEB-INF/jsp/myhome.jsp"/>
+</bean>
+
+<bean id="index" class="org.springframework.web.servlet.view.JSTLView">
+	<property name="location" "/WEB-INF/jsp/index.jsp"/>
+</bean>
+--------------------------------------------------------------------------------------------------------------------------------------
+3. XmlViewResolver
+XmlViewResolver is same as BeanNameViewResolver, the only difference is instead of looking into the current spring bean configuration file for the View bean definition, it looks into the specificied spring bean configuration file for lookingup for an view
+
+
+dispatcher-servlet.xml
+<!-- Controllers, HandlerMappings, ViewResolvers -->
+	
+<bean class="XmlViewResolver">
+	<property name="location" value="/WEB-INF/views-beans.xml"/>
+</bean>
+	
+views-beans.xml
+----------------
+<bean id="home" class="org.springframework.web.servlet.view.JSTLView">
+	<property name="location" value="/WEB-INF/jsp/myhome.jsp"/>
+</bean>
+--------------------------------------------------------------------------------------------------------------------------------------
+4. ResourceBundleViewResolver
+ResourceBundleViewResolver supports internationalization in resolving the logical viewname to the actual views. it takes the basename of the resourcebundle (properties file) and looksup for that logical viewname the corresponding View implementation class and instantiates the object of the View class and returns.
+	
+for eg.. per each locale we have different view pages in our application as below
+home_usa.jsp
+home.in.jsp
+home.cn.jsp
+
+these views should be resolved based on locale of the user who is accessing the application, for this supporting each locale we need to write resourcebundle files as below
+
+views_en_US.properties                views_en_IN.properties               views.zh_CN.properties
+home=JSTLView                         home=JSTLView                        home=JSTLView\
+home.(url)=/WEB-INF/jsp/home_usa.jsp  home.(url)=/WEB-INF/jsp/home_in.jsp  home.(url)=/WEB-INF/jsp/home_cn.jsp
+
+now to the ResourceBundleViewResolver configure base bundle name into which it has to lookup for resolving the logical viewname to an View class as below
+	
+<bean class="ResourceBundleViewResolver">
+	<property name="basename" value="views"/>
+</bean>
+
+--------------------------------------------------------------------------------------------------------------------------------------
+View Resolvers
+1. InternalResourceViewResolver
+2. BeanNameViewResolver
+3. XmlViewResolver
+4. UrlFilenameViewResolver
+5. ResourceBundleViewResolver
+
+1. InternalResourceViewResolver
+it an convinient ViewResolver implementation provided by spring mvc developers in helping us resolving an logical viewname to an jsp view only.
+	points:
+	1. it works based on convention over configuration (CoC), we dont have to configure for each logical viewname, what is the corresponding page (jsp/html) to be rendered, it computes it automatically based on prefix/suffix being configured to build url to the page (location)
+	2. it instantiates the JSTLView implementation object by populating the url of page to be rendered
+and returns to the object to the dispatcher servlet
+
+2. BeanNameViewResolver
+For each logical viewname, we should configure an View implementation class to be used for rendering the view as an bean definition by giving the beanId as logical viewName
+
+inorder for dispatcherServlet to identify the View object which is configured as Bean Definition in ioc container, we need to use BeanNameViewResolver
+The BeanNameViewResolver takes the logical viewName from DispatcherServlet, goes to the ioc container search for the View class as an bean definition configured with id matching with logical ViewName if found returns the object of the bean definition to DispatcherServlet asking to use it for rendering the View.
+
+<bean id="home" class="org.springframework.web.servlet.view.JSTLView">
+	<property name="url" value="/WEB-INF/jsp/home.jsp"/>
+</bean>
+	
+3. XmlViewResolver
+it is same as BeanNameViewResolver expect it looks for the View class bean definition in an another specified xml file (spring bean configuration file)
+	
+<bean class="XmlViewResolver">
+	<property name="location" value="/WEB-INF/views-beans.xml"/>
+</bean>
+
+4. ResourceBundleViewResolver
+it supports resolving an logical viewname to an View implementation class based on Locale (internationalization). 
+for each locale to be supported, we need to create an resource bundle file with naming convention as basename_lang_COUNTRY.properties. Inside this properties file we need to configure for each logical viewName what is View implementation class to be used for rendering the view
+
+views.properties
+-----------------
+home=org.springframework.web.servlet.view.JSTLView
+home.(url)=/WEB-INF/jsp/home_us.jsp
+
+views_en_IN.properties
+-----------------------
+home=org.springframework.web.servlet.view.JSTLView
+home.(url)=/WEB-INF/jsp/home_in.jsp
+
+lvn (home), locale (user accessing the application) (cn_ZH) (en_IN)
+|
+<bean class="ResourceBundleViewResolver">
+	<property name="basename" value="views"/>
+</bean>
+
+5. UrlFileNameViewResolver
+UrlFileNameViewResolver is the super class of InternalResourceViewResolver, that means both has the same functionality. it takes the logical viewname as an input and maps to the UrlFileName location of the view file in project based on prefix/suffix and populates into View implementation class object and returns.
+	
+but the only difference is incase of
+ InternalResourceViewResolver = it instantiates the view implementation class as "JSTLView" by default
+ UrlFileNameViewResolver = we need to mandatorily tell the View class to be instantiated.
+	
+class InternalResourceViewResolver extends UrlFileNameViewResolver {}	
+
+<bean class="UrlFileNameViewResolver">
+	<property name="prefix" value="/WEB-INF/jsp/"/>
+	<property name="suffix" value=".jsp"/>
+	<property name="viewClass" value="org.springframework.web.servlet.view.JSTLView" />
+</bean>
+
+In an spring mvc application we can configure multiple ViewResolver components as bean definitions. The DispatcherServlet tries to resolve an logical viewname to the View implementation class by talking to each ViewResolver based on their order of configuration.
+	
+possible logical viewnames from controllers: home, aboutus
+home=/WEB-INF/jsp/home.jsp
+aboutus=/WEB-INF/jsp/about-us.jsp
+
+home = The DispatcherServlet goes to BeanNameViewResolver asking to resolve to an View component. Now BeanNameViewResolver searches for bean definition matching beanId with logical Viewname, since there is no bean found, it returns NULL to DispatcherServlet, so that DispatcherServlet goes to ResourceBundleViewResolver.
+	
+ResourceBundleViewResolver = goes to the resource bundle file looks for key as logical viewName, as found instantiates the View implementation object specified in the bundle and returns to DispatcherServlet.
+
+<bean class="InternalResourceViewResolver"> #should not be configured first
+	<property name="prefix" value="/WEB-INF/jsp/"/>
+	<property name="suffix" value=".jsp"/>
+</bean>
+
+<bean class="BeanNameViewResolver"/>
+<bean class="ResourceBundleViewResolver">
+	<property name="basename" value="views"/>
+</bean>
+
+<bean id="aboutus" class="org.springframework.web.servlet.view.JSTLView">
+	<property name="url" value="/WEB-INF/jsp/about-us.jsp"/>
+</bean>
+
+/WEB-INF/views.properties
+home=org.springframework.web.servlet.view.JSTLView
+home.(url)=/WEB-INF/jsp/home.jsp
+
+
+Note (important): always we should configure InternalResourceViewResolver as an last view resolver in the order of ViewResolvers, because it resolves every logical viewname with JSTLView implementation object irrespective of whether view exists or not. So DispatcherServlet never reaches to other ViewResolvers.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,7 +4,7 @@ To understand instance factory method instantiation, let us study the builder de
 
 Builder is an design pattern, that is used for creating the object of another class, unlike the factory class that creates the object of another class as empty when it comes to builder pattern it takes care of instantiating the object of another class with populated data.
 	
-abstract Truck {
+abstract class Truck {
 	int truckNo;
 	String model;
 	String manufacturer;

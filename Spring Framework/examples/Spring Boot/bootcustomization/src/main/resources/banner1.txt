@@ -1,0 +1,7 @@
+______  _____   ____  ____    __  ____    ____   _
+ |   ___||     | |    ||    \  /  ||    \  |    \ | |
+  `-.`-. |     \ |    ||     \/   ||     \ |     \| |
+ |______||__|\__\|____||__/\__/|__||__|\__\|__/\____|
+
+${application.title} ${application.version}
+Powered by Spring Boot ${spring-boot.version}

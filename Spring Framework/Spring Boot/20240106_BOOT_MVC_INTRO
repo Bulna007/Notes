@@ -1,0 +1,48 @@
+Spring Boot WebMvc
+-------------------
+When we are working on traditional spring webmvc applications, we package our application as a war file and deploy it on the standalone servlet container or on an application server. But while working with spring boot in building webmvc application we dont package our application as a war file, rather we package our application as an boot executable jar and run the application straight out of the main() method itself as an standalone application without deploying on the servlet container.
+	
+	
+When we run our spring boot mvc application out of a jar file, using the main() method, internally spring boot takes care of deploying our application on the embedded servlet container and run our application inside it.
+	
+What is embedded servlet containers, what is the purpose of them?
+	
+Before exploring embedded servlet containers, let build an webmvc application using spring boot and package it as executable bootjar and run it to see how does it works!
+Let us build an simple signup page	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

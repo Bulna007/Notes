@@ -1,0 +1,138 @@
+A Framework or an library provides boiler-plate logic, we can build the application by using the framework or library quickly. There are 2 ways we can reuse the capabilities provided by the framework or an library within our application.
+	
+1. In our application we use the framework/library provided api classes, either extend our classes from framework/library provided classes or instantiate the objects of the framework/library clasess in reusing the functionality provided by them
+
+2. Sometimes the Frameworks / libraries has to perform mandatory pre-processing logic and there after delegates the control to our application components to perform further operation
+In the second case, the framework/libraries will call our application classes
+
+In the Approach#2 as the framework components are performing pre-processing logic and invokes our application classes/components we need to provide the information about our application components as an input to the framework.
+	
+How can we provide info about our application components to the framework/library or runtime engine?
+There are 2 ways to provide info about our application components
+1. Configuration/Metadata approach
+2. interface-driven programming
+
+
+1. Configuration/Metadata approach
+In this approach we provide information about our application components to the framework by configuring in an xml-based configuration file. here we need to describe
+	1.1 The class that should be invoked by the framework
+	1.2 the names of the methods within our class
+	1.3 each and every parmeter and the dataTypes and returnTyps of the methods
+	
+should be declared interms of xml-based configuration, so that the frameworks reads the configuration identifies classes/methods of our application	and invokes them
+
+advantages:-
+the components of our application are completely pojo
+
+dis-advantages:-
+1. it would be very hard and difficult to describe every component and methods explicitly in an configuration file
+2. writing the configuration information in a configuration file takes lot of time and kills the developers productivity
+3. it is very difficult to debug the application during the development, because the developer has to gothrough the configuration file in tracing and identify the components/methods that are invoked by framework to identify the errors
+4. configuration files are not compilable, so if there are any mis-configurations are there would result in runtime errors and makes it hard/difficult to debug
+
+so to overcome the above problems with configuration approach, the interface-driven programming has been developed
+
+#2. interface-driven programming
+The frameworks/libraries are going to define bunch of interfaces with predefined set of methods with parameters and returnTypes. Now the developers has to write the components of the applications by implementing or extending the framework provided classes.
+	
+since the framework knows which methods are there and what parameters and returnTypes are available aspart of our class as our classes are implementing/extending from framework classes we dont need to configure this information to the frameworks
+here the interfaces already defined 2 things:
+1. which methods should be invoked
+2. what are the parameters and returntypes of these methods
+
+so we have lot of advantages with this approach:
+advantages:-
+1. since we are writing our classes by implementing or extending from framework components we dont need describe configuration information about our components to be invoked by the framework at method level, we just only need to provide information about which classes are available in our application
+2. application debugging becomes easy, since we have minimal configuration, we can quickly identify where is the error in our application just by looking at class, without bothering about methods of those classes
+3. as we are writing minimal configuraiton, there is a very less chance of mis-configuration issues
+
+along with advantages, there are lot of dis-advantages also there with interface-based programming:
+dis-advantages:-
+1. The developer will endup in identifying and memorizing the api classes and the methods of the framework inorder to make the application components work with the framework, thus making developer find very complex in building the application
+2. our application components becomes tightly coupled with framework since we are implementing/extending from framework provided classes.
+3. we lost the flexibility of writing our application components and methods depciting the business functionality we are implementing, since we are forced to write our classes/methods implementing the framework classes and overriding their methods.
+4. since our classes are written by implementing from framework provided interfaces, we lost the flexibility of choosing our own parmaeters and returnTypes in designing the methods.
+	
+To overcome the above problems with interface-driven programming, the annotation-driven programming model has been introduced. Spring Framework from 3.2 introduced annotation-driven programming model deprecating the interface-driven controller api.
+	
+In annotation-driven programming, we bind bunch of annotations on our application components letting the framework identify the classes, methods along with their parameters and returnTypes. so that we dont need to write our classes implementing from interfaces of the framework.
+	
+so that framework reads through these annotations in identifying application components and invoking them, so that we have flexibility of programming our application
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

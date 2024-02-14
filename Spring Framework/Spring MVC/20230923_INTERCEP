@@ -1,0 +1,97 @@
+Interceptors
+-------------
+What are interceptors, what is the purpose of them?
+Interceptors are used for applying common pre/post processing logic on a group of requests in our application.
+	
+We have ServletFilters in place for accomplishing this, since spring mvc application is also built on Servlet technology and deployed on Servlet container, can we use Filters itself in applying pre/post processing logic instead of Interceptors?
+Even though we can use, there are lot of drawbacks in using Filters than Interceptors
+
+Filters are executed by the ServletContainer right after the request has been mapped to an Servlet of our application. But incase of Spring MVC application, the request would be considered as valid only when the request has been mapped to an Controller. So if we use Filters for applying pre/post processing logic in our application, irrespective of the request has been identifyed to an Controller or not always the ServletContainer will applies the Filters for the request because every request url that is coming to our application will be identified to DispatcherServlet if the request url is matching with DispatcherServlet url pattern. Thus causing the pre-processing logic to be applied to all the requests even those are not valid.
+	
+So to avoid this problem the spring mvc has introduced Interceptors.
+	
+	
+Interceptors:
+The Interceptors are being identified upon resolving an incoming request to an appropriate Controller class of the application. The RequestMappingHandlerMapping upon identifying an appropriate controller to whom the request has to be dispatched to, it even looks for all the interceptors that are matched to the current requests and returns HandlerExecutionChain
+
+An HandlerExecutionChain is an object wrapped with Controller class along with List of interceptors that needs to be executed for applying pre/post processing logic around the request/Controller.
+	
+So that the DispatcherServlet or RequestMappingHandlerAdapter would able to execute these List of Interceptors around the Controller in applying pre/post processing logic
+
+To write an interceptor class that has to be called by the DispatcherServlet/RequestMappingHandlerAdapter the spring mvc has provided an standard interface called
+	
+interface HandlerInterceptor {
+	boolean preHandle(HttpReq, HttpResp, Object handler);
+	void postHandle(HttpReq, HttpResp, Object handler, ModelAndView);
+	void afterCompletion(HttpReq, HttpResp, Object handler, Exception);
+}
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

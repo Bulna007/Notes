@@ -1,0 +1,148 @@
+Spring Boot & Microservices
+Duration: Spring Boot: 30/40 days, Microservices: 30 days
+Timings: Monday - Friday [7:05 am ist - 8:05 am ist]
+         Saturday [7:05 am ist - 8:05 am ist, 7:00 pm ist - 8:30 pm ist]
+				 Sunday [6:30 am ist - 8:00 am ist, 5:30 pm ist - 7:00 pm ist]
+Fee: 6k
+Notes: live classroom notes will be provided on weekly basis
+No recordings, no youtube and no subscription and bell icons
+**** students are not permitted to record the sessions, if found your admission will be cancelled without fee refund
+
+Microservices: 3k
+Spring boot: 4k
+-----------------------------------------------------------------------------------------------------------------------
+Pre-requisite:-
+Spring Boot
+------------
+	1. core java
+	2. servlet/jsp
+	3. Spring Framework
+		- core
+			1. di (setter/construction)
+			2. bean lifecycle
+			3. bean scopes
+			4. bean factory post processor/bean post processors
+			5. internationalization
+			6. autowiring
+			7. factory beans
+			8. BeanFactory / ApplicationContext
+			9. Annotations (@Autowired, @Scope, @StreotyeAnnotations, @PropertySource, @ComponentScan)
+		- aop
+		- tx
+		- mvc
+	4. Hibernate & Jpa api
+		- Hibernate Core Objects
+		- Hibernate Mapping File
+		- Hibernate Configuration File
+		- Get Vs Load
+		- HQL
+		- DML operations
+		- ID Generators
+		- Inheritance/Association Mappings
+		- NamedQueries
+		- Criteria api (optional)
+
+Prerequisite:-
+Microservices:
+1. Spring Boot (should be very strong)
+2. Restful services (Jaxrs api, Spring Framework restful services)
+------------------------------------------------------------------------------------------------------------------------
+Restful Services [new batch]
+Date: 18/Aug/2022
+Timings: 8:15 am - 9:15 am
+Fee: 5k
+Duration: 45 days
+
+Spring Boot + MicroServices + Restful Services: 10k
+------------------------------------------------------------------------------------------------------------------------
+Course Content
+---------------
+Spring Boot
+-------------
+#1. Spring DataJpa [7/10]
+1.1 Why DataJpa
+1.2 Working with Jpa Repositories
+1.3 Understanding DSL Query Language in writing the queries
+1.4 Custom Queries and Parameters
+1.5 Pagination & Sort
+1.6 Modifiable queries
+1.7 Projections
+		- Interface-based
+		- Class-based projections
+		- Dynamic Projections
+[MySql Data + Hibernate]
+
+[Mongodb + Spring DataJpa]: not part of the syllabus (bonus)
+------------------------------------------------------------------------------------------------------------------------
+#2. Spring Boot
+1. Introduction to Spring Boot
+2. First Spring boot application
+3. *** Creating Spring Boot Executable Jar and Inspecting the directory structure
+4. How many ways we can create Spring Boot Application
+	1. Inheritance Spring Boot Parent Project
+	2. Spring Boot Parent (import)
+	3. without using parent/import
+5. Using @SpringBootApplication annotation
+6. SpringApplication.run(), internals of Spring Boot = where does it loads the external configuration of the application.
+
+7. Customizing the Spring Boot Application with Fluent Builder Api
+	1. Changing Banner
+	2. Turnoff the Banner
+7.1 Nested BeanFactories in spring boot
+
+8. Application Events and Application Listeners
+9. Command-Line Runners and ApplicationRunners
+10. Spring Boot Application Exit
+	1. ExitCodeGenerator
+	2. ExitCodeExceptionResolver
+	3. SpringApplication.exit()
+11. Accessing Application Arguments
+12. Application properties
+	1. properties file
+	2. Custom Yaml
+13. Configuration Properties
+14. Spring Boot Profiles
+
+15. Spring Web MVC Application Flow in Spring Boot
+	1. How to deploy as an standalone war application
+	2. How to run Spring Mvc Boot application in an embedded servlet container
+	3. Registering Servlets and Filters in spring boot
+	4. Customizing Embedded Servlet Container
+		1. configuration
+		2. programmatic
+
+16. Creating our own
+	1. autoconfigurations
+	2. starter dependencies
+17. Spring Boot Actuator endpoints
+	1. custom actuator endpoints
+18. DevTools
+
+#3. Spring Security
+1. Spring WebMvc Security Architecture and Components
+2. Compare Spring Security with JEE Security
+3. Implement Security for Spring mvc application
+	- basic authentication
+	- form-based authentication
+	- database authentication
+4. oauth security
+------------------------------------------------------------------------------------------------------------------------
+Java Microservices (using spring framework & spring cloud)
+1. Concept of Monolithic application architecture & Microservices based application architecture
+2. Patterns of Microservices
+	1. Distributed/Global Transactions using (Saga Distributed)
+		Choreography-based saga
+		Orchestration-based saga
+	2. API Composer
+	3. Command Query Responsibility Segregation (CQRS)
+	4. Database Per Service
+3. Implementing Microservices using Spring Cloud and Netflix Tools
+	1. Eureka (Discovery Service)
+	2. Ribbon (Loadbalancer)
+	3. Feign
+	4. Spring Circuit Breaker (Resilience4j/Retry)
+	5. Spring Cloud Gateway
+4. Spring Cloud
+	1. Spring Cloud ConfigServer
+	2. Spring Cloud ConfigClient
+5. Example on Kafka

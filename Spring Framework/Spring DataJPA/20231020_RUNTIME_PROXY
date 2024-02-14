@@ -1,0 +1,326 @@
+Proxy design pattern
+--------------------
+Proxy acts as an surrogate or substitute of the original class. Both Proxy and original class looks same and the outcome of talking to an proxy or original would be resulted as same.
+	
+We wanted to add additional functionality enhancing or enriching the original class, so can we add this additional functionality directly ontop of the original class?
+Yes, we can add this additional functionality given if it has to be always applied irrespective of how is it being used.
+	
+but sometimes we wanted the additional functionality to be applied only for a specific group of clients and for other clients we dont wanted to apply the additional functionality. So if we add additional functionality directly into original class, it will be applied to all the clients.
+	
+How to apply the additional functionality only to an subset of clients we wanted?
+There are many ways in accomplishing it
+1. through conditional statements written in original class
+we can add additional functionality directly inside the original class by wrapping it around the conditional logic, so that if the condition is evaluated to true then only apply the additional functionality otherwise ignore
+
+drawbacks:
+in general we write conditional statements around the dynamics input being passed by the user while running the application to determine which functionality needs to be applied to that user
+
+but here we dont have dynamic inputs being passed to determine whether additional logic needs to be applied or not, rather for a group of clients we never wanted to apply additional logic and for someother group of users we always wanted to apply additional logic. So for inclusive/exclusive of this additional logic if we wrap around the conditional statements always the conditional statement would be evaluated even though for 1 group users we dont want and for other users we always want which leads to unnecessary conditional check and impacts the runtime performance of the component.
+	
+We wanted to remove the additional logic completely from the original component for those clients who dont want and wants to include the additional logic for the clients who wanted, this can be achieved through proxy design pattern
+
+How to implement the proxy pattern?
+
+interface ImageService {
+	byte[] getImage(String imageName);
+	long uploadImage(String imageName, byte[] bytes, String mimeType);
+}	
+
+[original class]
+class CloudImageServiceImpl implements ImageService {
+	byte[] getImage(String imageName) {
+		// locating the image from sourcesystem
+		return contents;
+	}
+	
+	long uploadImage(String imageName, byte[] contents, String mimeType) {
+		// stores the image into the sourcesystem
+	}	
+}
+
+class ReducerCloudImageServiceProxy implements ImageService {
+	ImageService imageService;
+	
+	ReducerCloudImageServiceProxy(ImageService imageService) {
+		this.imageService = imageService;
+	}
+	
+	byte[] getImage(String imageName) {
+		byte[] originalContents = imageService.getImage(imageName);
+		// apply bytes and quality reduction logic
+		return finalContents;
+	}
+	
+	long uploadImage(String imageName, byte[] contents, String mimeType) {
+		imageService.uploadImage(imageName, contents, mimeType);
+	}
+}
+
+
+ImageService imageService = new CloudImageServiceImpl(); //new ReducedCloudImageServiceProxy(new CloudImageServiceImpl());
+byte[] imageContents = imageService.getImage("logo.png");
+
+There are proxy classes in core jdk as well
+
+InputStream (interface)
+|-FileInputStream (implementation)
+|-BufferedInputStream (proxy)
+	
+BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(new File("c:\\readme.txt")));
+--------------------------------------------------------------------------------------------------------------------------------------
+Runtime Proxies
+----------------
+The proxies till now we discussed are design-time or static proxies which are being created over a fixed interfaces of our application. Instead we can create these proxies over the runtime within the jvm memory based ontop of the interface we specified while running the application.
+	
+There are few runtime proxy generation libraries using which we can create runtime proxy classes within the jvm memory like
+1. cglib
+2. java assist (java built-in library)
+	
+	
+How to create runtime proxies?
+#1 interface with original implementation class
+	
+interface NetbankingService {
+	double getBalance(String accountNo);
+	String getAccountHolderName(String accountNo);
+}
+
+class NetbankingServiceImpl implements NetbankingService {
+	double getBalance(String accountNo) {
+		return 100;
+	}
+	String getAccountHolderName(String accountNo) {
+		return "Joseph";
+	}
+}
+
+#2. to add additional functionality through runtime proxies, write the additional functionality inside the Handler class
+class Cache {}	
+
+class ApplyCacheInvocationHandler implements InvocationHandler {
+	Object original;
+	
+	ApplyCacheInvocationHandler(Object original) {
+		this.original = original;
+	}
+	
+	public Object invoke(Object proxy, Method method, Object[] args) {
+		Cache cache = null;
+		String key = null;
+		
+		cache = Cache.getInstance();
+		key = method.getName() + "(";
+		for(Object arg: args) {
+			key+=","+ arg;
+		}
+		key+=")";
+		
+		if(cache.containsKey(key)) {
+			return cache.get(key);
+		}else {
+			Object ret = method.invoke(original, args);
+			cache.put(key, ret);
+			return ret;
+		}
+	}
+}
+
+
+ApplyCacheInvocationHandler handler = new ApplyCacheInvocationHandler(new NetbankingServiceImpl());
+
+NetbankingService proxy = Proxy.newProxyInstance(NetbankingService.class.getClassLoader(), 
+																								 new Class<?>[] {NetbankingService.class}, handler)	;
+	
+	
+double balance = proxy.getBalance("ac001");	
+---------------------------------------------------------------------------------------------------------------------------------------------
+Spring DataJpa
+--------------
+Spring DataJpa works based on runtime proxy generation capabilities in applying the persistence logic that is common across all the dao classes of our application. The datajpa uses cglib and asm runtime proxy generation libraries in creating the runtime proxy classes ontop of the repository interfaces in applying the common persistence logic
+
+If we see the dao classes we write in our application, across all of them, the logic we write in performing save(), update(), delete() or find() operations would be same, the only difference is the entity object on whom we are applying the logic is different. So rather than writing the same piece of code repeatedly across all the daos, the spring datajpa has wrapped this common persistence logic inside the InvocationHandler and applied across all the daos by creating runtime proxies. 
+
+So we dont need to create dao classes, rather we need to define dao interfaces which are called repository interfaces in Spring DataJpa. Across all the repository interfaces we need to define the same set of methods so that the InvocationHandler can apply appropriate persistence logic based on the method we invoked on repository proxy.
+
+The Spring DataJpa has provided an base interface called "Repository" interface, it is an marker interface so it doesnt have any methods defined inside it. It is provided just for the purpose of TypeSafety. 
+OnTop of the Repository interface the datajpa has provided an sub-interface called "CRUDRepository". In CRUDRepository they declared standard methods representing the common persistence operations we perform on entity classes
+This interface has been declared using generic types as 
+	T = represents the entity object on whom we want to perform persistence operation
+	ID= represents the id or primary key attribute type of the entity class
+		
+interface CRUDRepository extends Repository<T, ID> {
+		T save(T t);
+		T findById(ID id);
+		Iterable findAll();
+		long count();
+		void delete(T t);
+		boolean existsById(ID id);
+}		
+
+
+Now we dont need to write an DAO class for each Entity class, instead we need to write an Repository interface extends from CRUDRepository so that datajpa creates an runtime proxy ontop our interface in applying the common persistence logic that is wrapped inside InvocationHandler
+	
+	
+In addition to the CRUDRepository interface the spring datajpa has provided sub repository interfaces specific to different persistence technologies 
+DataJpa not only works for jpa api, it supports different persistence technologies like
+1. Jpa
+2. Mongo
+3. Casendra
+etc
+
+There are different spring data modules are available as below
+1. SpringDataJpa
+2. SpringDataMongo
+3. SpringDataCasendra
+
+To work with jpa api in performing persistence operations the spring datajpa has provided an module called "SpringDataJpa" which is part of SpringData initiative.
+	
+In SpringDataJpa it has provided an sub interface called JPARepository extends from CRUDRepository. Similarly in SpringDataMongo they have provided an subinterface called MongoRepository
+
+Now instead of creating our interface from CRUDRepository it is advised to create our interface from appropriate data repository interfaces of that specific technology.
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

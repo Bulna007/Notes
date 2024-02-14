@@ -1,0 +1,130 @@
+What is front controller, what is the purpose of it?
+Problem: We wanted to apply some common processing logic across all the requests that are coming to our application.
+
+Solutions:
+#1. write the common processing logic in each servlet class of our application	
+We can write the common processing logic in each servlet class of our application, but we endup in duplicating the code across all the servlets of our application due to which we run into severe maintainability problems.
+	
+#2. write the common processing logic in a class, and let all the servlets invoke the common processing logic, so that it would be applied for all the requests
+We can write the common processing logic in one single class, and let all the servlets of the application reuse the common processing logic by invoking them upon receiving the request. But it has many problems:
+	2.1 the code to invoke the common processing logic is being duplicated
+	2.2 since the common processing logic is mandatory to be applied for every request, we were not able to enfore it
+	
+To overcome the above problems we need to use front controller design pattern.
+Front controller can be implemented either as an servlet/filter within an application, upon receiving the request the servlet container will always dispatch the request to the Front Controller. So that Front Controller applies the common processing logic and to further process the request, it dispatches/forwards the request to the corresponding components of our application.
+		
+		
+Front Controller is used for applying the common system services or mandatory services that should be applied for all the requests that are coming into the application. It acts as an gateway in receiving the requests. Since every request to our application is always received by the front controller, we can excersise the control over receiving the requests; we can easily control on which requests to be allowed or denied centrally by using front controller.
+	
+We can apply the mandatory system services that should be applied for each request of our application through the help of front controller. Additionally we can easily apply any ancillary or auxillary services or plumbing services through the help of front controller design pattern.
+	
+auxillary or ancillary = additional / helper services 
+http logging = plumbing service 
+======================================================================================================================================
+Spring Web Mvc Flow = is about how the components of the spring web mvc interacts with each other in serving/processing the request 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

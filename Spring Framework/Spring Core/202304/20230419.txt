@@ -46,7 +46,7 @@ class Cache {
 		dataMap = new ConcurrentHashMap<>();	
 	}
 	
-	public static synchronized getInstance() {
+	public static synchronized Cache getInstance() {
 		if(instance == null) {
 			instance = new Cache();
 		}
@@ -219,7 +219,7 @@ class Cache {
 		this.dataMap.putAll(dataMap);
 	}
 	
-	public static synchronized getInstance() {
+	public static synchronized Cache getInstance() {
 		if(instance == null) {
 			instance = new Cache();
 		}

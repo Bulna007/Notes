@@ -1,0 +1,141 @@
+How to manage application properties/configuration while working with spring boot?
+The SpringApplication class takes care of reading application.properties | yml and loads into the environment object of the ioc container. The application.properties | yml is being considered as standard spring boot configuration file, here we define configuration values pertaining to spring boot autoconfigurations, which are called standard spring boot properties
+
+in addtion to the standard spring boot properties, we can write even our own application components configuration properties as well into the application.properties|yml, so that these properties are available in environment object and can be injected into our classes.
+	
+But it is recommended to separate writing boot properties from our component configurations in application.properties|yml. Let the boot properties are begin written only in application.properties|yml and write our own application components configuration values in separate configuration file, so that we can easily distinghuish between them
+
+We can write our own components configuration values in a separate properties file and have it loaded into env object of ioc container using @PropertySource annotation and inject them into our components as below.
+	
+@Component
+@ConfigurationProperties(prefix="tournament")	
+class Tournament {
+	int tournamentNo;
+	String tournamentName;
+	String host;
+	int participatingTeams;
+	int days;
+	// accessors
+}
+
+app-config.properties
+----------------------
+tournament.tournamentNo=219
+tournament.tournamentName=India Australia T20
+tournament.host=India
+tournament.participatingTeams=2
+tournament.days=5
+	
+The SpringApplication class will only look for application.properties|yml, but it doesnt load app-config.properties into the environment object of the ioc container. So to do this we need to explicitly write @PropertySource annotation on the Boot Application class as shown below.
+	
+@SpringBootApplication
+@PropertySource("classpath:app-config.properties")
+class ACBootApplication {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(ACBootApplication.class, args);
+		Tournament tournament = context.getBean("tournament", Tournament.class);
+		sop(tournament);
+	}
+}	
+	
+	
+Instead of using custom properties, can we use custom yml file and load into the env object of the ioc container?
+@PropertySource annotation / ioc container doesnt support loading yml files into the env object, @PropertySource annotation works only for properties files only. Inorder to have our own yml files to be loaded into env object there are 2 ways are there
+1. YamlPropertySourceLoader
+2. YamlFactoryBean
+
+#1. YamlPropertySourceLoader
+YamlPropertySourceLoader is a helper or a converter class, that takes care of loading the yml file into PropertySource object, but it will not load the PropertySource object into the ioc container. Its the developers responsibility in loading the PropertySource object into the environment object of the ioc container.
+
+When should we load the PropertySource object into the environment object of the ioc container?
+After the ioc container has been created with the env object, after the bean definitions are loaded into the ioc container, before the ioc container instantiates the objects for the bean definitions, we want to load the PropertySource object into the env of the ioc container
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

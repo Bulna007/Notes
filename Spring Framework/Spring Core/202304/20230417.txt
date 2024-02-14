@@ -13,6 +13,7 @@ class Worker {
 }
 
 class Container implements BeanFactoryAware {
+	private BeanFactory beanFactory;
 	void receiveRequest(String data) {
 		Worker worker = null;
 		

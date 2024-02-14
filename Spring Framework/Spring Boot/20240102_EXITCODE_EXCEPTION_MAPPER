@@ -1,0 +1,107 @@
+SpringApplication.exit(ApplicationContext); = there is an lot of echo system built into exit(..) method, in gracefully terminating the spring boot application
+1. ExitCodeGenerator = using this we can customize the exitcode of the springboot application
+2. ExitCodeEvent and ApplicationListener = using ExitCodeEvent we can know what is the exitcode with which our application is being terminated.
+	
+3. ExitCodeExceptionMapper
+How can we customize and return different exitcodes based on the type of the exceptions we encounter during the execution of spring boot application?
+
+ExitCodeExceptionMapper = is not meant for mapping application excpetions into exitcodes. within our application logic , we can write try/catch block and inside the catch block we can write the code for terminating the spring boot application by returning our own exitcode specific to the type of exception by using System.exit(exitcode);
+There where is ExitCodeExceptionMapper is being used?
+	
+To understand let us list down what actions/activities will be performed while executing SpringApplication.run(BootApplication.class, args);
+1. create an empty environment object
+2. detects and loads the external application configuration into the env object
+3. prints the banner
+4. detects the WebApplicationType and creates an appropriate ioc container
+		4.1 AnnotationConfigServletWebServerApplicationContext
+		4.2 AnnotationConfigReactiveWebServerApplicationContext
+		4.3 AnnotationConfigApplicationContext
+5. instantiates and registers spring factories
+6. invokes ApplicationContextInitializers
+7. prepareContext
+8. refreshContext
+9. invokes the CommandLineRunners or ApplicationRunners in performing one-time startup activities in bringing up the application
+10. during the above stages publishes the events and invokes the listeners
+
+
+during the above stages of bootstrapping the Spring boot application, if there are any exceptions being encountered these exceptions can be mapped into our own exitcodes using ExitCodeExceptionMapper.
+	
+	
+@Component	
+class AppCommandLineRunner implements CommandLineRunner {
+	public void run(String[] args) {
+		throw new IllegalAccessException("unable to bringup the application");
+	}
+}
+
+@Component
+class AppExitCodeExceptionMapper implements ExitCodeExceptionMapper {
+	public int getExitCode(Exception e) {
+		if(e instanceof IllegalAccessException) {
+			return 100;
+		}
+		return 1;
+	}
+}
+	
+
+@SpringBootApplication	
+class ExitCodeBootApplication {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(ExitCodeBootApplication.class, args);		// bootup failure arise while running CommandLineRunners
+		try {
+			Robot robot = context.getBean(Robot.class);
+			robot.walk();			
+		}finally {
+			int exitCode = SpringApplication.exit(context);
+			System.exit(exitCode);
+		}
+	}
+}	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
