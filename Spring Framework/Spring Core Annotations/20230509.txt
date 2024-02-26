@@ -110,8 +110,6 @@ similarly for a bunch of annotations like
 @PreDestroy
 etc, the spring framework has written CommonAnnotationBeanPostProcessor
 
-
-
 when we are using an annotation, we need to identify the relevant BeanPostProcessor or BeanFactoryPostProcessor and configure and register with the ioc container manually
 
 application-context.xml
@@ -122,14 +120,12 @@ application-context.xml
 we can replace the above beanpostprocessor with
 <context:annotation-config/>
 
-
 Test.java
 ---------
 ApplicationContext context = new ClassPathXmlApplicationContext("a-c.xml");
 EMail email = context.getBean("email", EMail.class);
 
 here the @Required annotation works, because when we declare an BPP or BFPP as a bean definition within the ioc container, incase of ApplicationContext those will gets registered automatically with the ioc container
-
 
 From the above we learnt for each annotation, we need to identify relevant postprocessor and configure it as bean in ioc container, so working with annotations becomes complex in spring framework
 1. to use Annotations in spring we need to know what are BeanPostProcessors and BeanFactoryPostProcessors

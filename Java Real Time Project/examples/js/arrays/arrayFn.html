@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array Functions</title>
+</head>
+<body>
+    <script type="text/javascript">
+        var marks = [82, 88, 76, 65, 89];
+        marks.sort();
+        document.writeln(marks);
+
+        var rmarks = marks.reverse();
+        document.writeln("reverse  : " + rmarks);
+
+        var e1 = rmarks.shift();
+        document.writeln("shifted element : " + e1 + " and resulted array : " + rmarks);
+
+        rmarks.unshift(100);
+        document.writeln("unshifted array with 100 : "+ rmarks);
+
+        var e2 = rmarks.pop();
+        document.writeln("popped element : " + e2 + " resulted : "+ rmarks);
+
+        delete rmarks[2];
+        document.writeln("delete rmarks[2] : " + rmarks);
+
+        var pets = ["dog", "cat", "rabbit"];
+        pets.splice(1, 1, "cow", "peacock", "pegion");
+        document.writeln("pets : " + pets);
+
+        var n1 = [10, 20, 30];
+        var n2 = [40, 30];
+        var n3 = n1.concat(n2);
+        document.writeln("n3 : "+ n3);
+    </script>
+</body>
+</html>

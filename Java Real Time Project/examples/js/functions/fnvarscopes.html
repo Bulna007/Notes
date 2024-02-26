@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>variable scopes in functions</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+        function fn() {
+            var a = 10; // local variable
+            b = 20; // global variable
+            document.writeln("a in fn() :" + a);
+            document.writeln("b in fn() : " + b);
+        }
+        fn();
+        alert("b out of fn() : "+ b);
+        alert("a out of fn() : "+ a);// results in error
+    </script>
+</body>
+
+</html>

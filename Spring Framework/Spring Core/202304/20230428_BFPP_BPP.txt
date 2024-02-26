@@ -45,8 +45,8 @@ application-context.xml
 		<arg-type>int</arg-type>
 		<arg-type>java.lang.String</arg-type>
 		<arg-type>int</arg-type>
-		<arg-type>Boolean</arg-type>
-		<arg-type>Boolean</arg-type>
+		<arg-type>boolean</arg-type>
+		<arg-type>boolean</arg-type>
 	</replaced-method>
 </bean>
 

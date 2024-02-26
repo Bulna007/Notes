@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>object through function constructor</title>
+</head>
+<body>
+    <h2>object through function constructor</h2>
+    <script type="text/javascript">
+        var IRobot = function(suctionPower, batteryCapacity, modes) {
+            this.suctionPower = suctionPower;
+            this.batteryCapacity = batteryCapacity;
+            this.modes = modes;
+            this.sweep = function(mode) {
+                document.write("suctionPower : " + this.suctionPower + " batterCapacity : " + this.batterCapacity + " modes : " + this.modes);
+                document.writeln("<br>sweeping with mode : " + mode);
+            }
+        }
+        var irobot = new IRobot(3000, "1500 MAH", ["dry", "wet", "spot cleaning"]);
+        irobot.sweep("spot cleaning");
+    </script>
+</body>
+</html>

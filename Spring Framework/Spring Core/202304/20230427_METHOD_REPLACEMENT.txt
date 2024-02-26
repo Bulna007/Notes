@@ -22,7 +22,7 @@ How to replace an existing method within a class using Method replacment of Spri
 
 1. for each method we want to replace, write an Replacer class
 	
-class FindPlansMethodReplacer	implements MethodReplacer {
+class FindPlansMethodReplacer implements MethodReplacer {
 	public Object reimplement(Method method, Object[] args, Object target) {
 		int zipCode = 0;
 		int age = 0;

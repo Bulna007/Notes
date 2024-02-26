@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query by CSS Style</title>
+    <style>
+        .important {
+            font-size: 14px;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            color: red;
+        }
+        .info {
+            font-size: 14px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <h2>Query by CSS Selector</h2>
+    <p class="important">Read the terms and conditions before signing up for the Course!</p>
+    <p class="info">Java Realtime project training sessions begins on Feb, 2024</p>
+    <div class="important">No videos, no recordings are provided.</div>
+    <script type="text/javascript">
+        var importantParas = document.getElementsByClassName("important");
+
+        for(var i=0;i<importantParas.length;i++) {
+            var para = importantParas.item(i);
+            //if(para instanceof HTMLParagraphElement) {
+                para.style.fontSize = "15px";
+                para.style.color = "orange";
+            //}
+        }
+    </script>
+</body>
+</html>

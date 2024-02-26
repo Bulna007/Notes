@@ -103,11 +103,11 @@ BeanPostProcessor is used for applying the post processing logic ontop of the be
 by looking at the above definition we can think of Bean Lifecycle is available for applying the post processing logic ontop of the beandefinition object upon creating the object, after performing dependency injection
 then what is the difference between beanpostProcessor and bean lifecycle management (init-method)
 	
-class A implements InitializingBean {  |  class B implements InitializingBean {
-	public void afterPropertiesSet() {   |    public void afterPropertiesSet() {
-		// common post processing logic    |      // common postprocessing logic
-	}                                    |    }
-}	                                     |  }
+class A implements InitializingBean {  			|  class B implements InitializingBean {
+	public void afterPropertiesSet() {   		|    public void afterPropertiesSet() {
+		// common post processing logic    	|      // common postprocessing logic
+	}                                    		|    }
+}	                                     		|  }
 
 <bean id="a" class="A" />                 <bean id="b" class="B" />
 if we want to apply common postprocessing logic across all the bean definitions that are instantiated by the ioc container we should not write that common post processing logic using bean lifecycle, because it would be duplicated across all the beandefinition classes, instead use BeanPostProcessor

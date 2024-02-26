@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array find()</title>
+</head>
+<body>
+    <h2>Array find()</h2>
+    <script>
+        var n = [10, 20, 38, 45, 7, 52];
+        var big = 30;
+        var bigThan30 = n.find(function(elem) {
+            if(elem>big) {
+                return true;
+            }
+            return false;
+        });
+        document.writeln("big number : " + bigThan30);
+    </script>
+</body>
+</html>

@@ -40,7 +40,7 @@ These SOURCE retention policy annotations are only documentation assistors or so
 2. COMPILE
 the annotations with RetentionPolicy as COMPILE are visible to the java compiler , but these will not be included aspart of the bytecode during execution. The JVM will not be able to read these annotations at runtime
 
-While working with lombok library we annotation the classes using @setter, @getter, @data etc, these annotations are COMPILE retention policy annotations. during the compilation, these vendors ships tools that works along with the java compiler
+While working with lombok library we annotate the classes using @setter, @getter, @data etc, these annotations are COMPILE retention policy annotations. during the compilation, these vendors ships tools that works along with the java compiler
 These tools are called java annotation processors
 
 @setter
@@ -53,7 +53,6 @@ during the compilation of the above class, the annotation processors of the lomb
 
 here the above class is pojo class only, because without the lombok annotations we can run our class
 	
-
 3. RUNTIME
 these annotations with RetentionPolicy as RUNTIME are included and shipped within the bytecode of the java class and the presence of them can be read during runtime within the java program.
 so if we annotate our classes with RUNTIME retention policy annotations, our classes loose pojo-nature
@@ -61,7 +60,7 @@ so if we annotate our classes with RUNTIME retention policy annotations, our cla
 Now its the job of the library/framework vendor to produce annotations with relevant retention policy, but not always the annotations make the application classes loose pojo-nature
 --------------------------------------------------------------------------------------------------------------------------------------
 2. there is an conflicting roles arises between jee developers and jee deployers because of using annotations
-jee developer = is the who develops the application based on the requirement, and he has minimal or no knowledge about how the application has been deployed on the production env
+jee developer = is the one who develops the application based on the requirement, and he has minimal or no knowledge about how the application has been deployed on the production env
 
 jee deployer = the jee deployer is the bigger role than an architect of an application, he knows all the components and their architecture of the application and how it has to be tunned to be deployed in the production server env
 

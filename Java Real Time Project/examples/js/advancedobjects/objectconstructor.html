@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>object constructor</title>
+</head>
+<body>
+    <h2>object constructor</h2>
+    <script type="text/javascript">
+        var irobot = new Object();
+        irobot.suctionPower = 7000;
+        irobot.batterCapacity = "5000 mah";
+        irobot.modes = ["dry", "wet"];
+        irobot.sweep = function(mode) {
+            document.write("suctionPower : " + this.suctionPower + " batterCapacity : " + this.batterCapacity + " modes : " + this.modes);
+            document.writeln("<br>sweeping with mode : " + mode);                
+        };
+        irobot.sweep("wet");
+
+    </script>
+</body>
+</html>

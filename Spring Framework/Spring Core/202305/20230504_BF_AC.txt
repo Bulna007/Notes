@@ -29,7 +29,7 @@ the ioc container, it only loads the bean configuration and     |creating the io
 places it as an in-memory metadata within the ioc container,    |configuration into the in-memory metadata, it instantiates the 
 but it will not instantiates the objects of the bean definitions|objects for the bean definition which are scoped to be "singleton".
 unless requested.                                               |
-	                                                              |
+	                                                        |
 Truck truck = beanFactory.getBean("truck", Truck.class);        | 
 then only the object for that bean definition will created      |
 
@@ -46,8 +46,8 @@ In case if we have any Bean Definitions whose chances of using them in the appli
 <bean id="tank" class="Tank" lazy="true"/>
 The above bean definition will be crated by the ApplicationContext only when requested
 
-2. BeanFactory doesnt support internationalization       | ApplicationContext supports internationalization
-3. BeanFactory doesnt support event processing/publishing| ApplicationContext supports event-handling/processing/publishing
+2. BeanFactory doesnt support internationalization         | ApplicationContext supports internationalization
+3. BeanFactory doesnt support event processing/publishing  | ApplicationContext supports event-handling/processing/publishing
 
 4. Incase of BeanFactory we need to manually register      | Incase of ApplicationContext, we just need to declare BeanPostProcessor 
 BeanFactoryPostProcessor and BeanPostProcessors to the ioc | and BeanFactoryPostProcessors as bean definitions, the ApplicationContext

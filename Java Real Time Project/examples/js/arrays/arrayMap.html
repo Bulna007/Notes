@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array Map function</title>
+</head>
+<body>
+    <h2>Array Map function</h2>
+    <script type="text/javascript">
+        var marks = [65, 57, 38, 55, 32];
+        var grades = marks.map(function(element){
+            if(element >= 60) {
+                return "A";
+            }else if(element >= 50) {
+                return "B";
+            }else if(element >= 35) {
+                return "C";
+            }else {
+                return "F";
+            }
+        });
+        document.writeln(grades);
+    </script>
+</body>
+</html>

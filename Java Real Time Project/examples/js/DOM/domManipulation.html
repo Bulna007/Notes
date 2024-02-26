@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Page Manipulation</title>
+</head>
+<body>
+    <h2>Dynamic HTML Elements</h2>
+    <div id="dynamic">        
+    </div>
+    <button onclick="addTextBox();">Add Textbox</button>
+    <button onclick="removeTextBox();">Remove Textbox</button>
+
+    <script type="text/javascript">
+        function addTextBox() {
+            var inputElement = document.createElement("input");
+            inputElement.type = "text";
+            inputElement.value = "added dynamically through DOM API";
+            inputElement.name="dynamic";
+            var dynamicDiv = document.getElementById("dynamic");
+            dynamicDiv.appendChild(inputElement);
+            var brElement = document.createElement("br");
+            dynamicDiv.appendChild(brElement);
+        }
+        function removeTextBox() {
+            var dynamicDiv = document.getElementById("dynamic");
+            var childNodes = dynamicDiv.childNodes;
+            if(childNodes.length > 0) {
+                for(var i=childNodes.length-1; i >0;i--){ 
+                    var child = childNodes.item(i);
+                    if(child instanceof HTMLInputElement && child.type == "text") {
+                        dynamicDiv.removeChild(child);
+                        break;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>function syntax1</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var even = isEven(10);
+        document.write("10 is even? : " + even);
+        
+        function isEven(n) {
+            let flag = false;
+            let remainder = n % 2;
+            if (remainder == 0) {
+                flag = true;
+            } else {
+                flag = false;
+            }
+            return flag;
+        }
+        
+    </script>
+</body>
+
+</html>

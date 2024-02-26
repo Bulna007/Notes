@@ -7,7 +7,7 @@ For eg.. while building an web application, if we are not using any jee / servle
 3. and logic for writing the data back to the client in-response over the network
 The above code is not specific to one component of our application, rather we need to write across all the classes within our application in dealing with request/response handling over the network, thus increasing the complexity, cost and time required for building the application
 
-To eliminate the above challenges and help us in quickly building the applications aspart of java platform the sun microsystems introduced jee api/servlet api and many third-party vendors provided frameworks as well. Now the infrastructure/boiler-plate logic is wrapper	in the underlying containers or runtime engines
+To eliminate the above challenges and help us in quickly building the applications aspart of java platform the sun microsystems introduced jee api/servlet api and many third-party vendors provided frameworks as well. Now the infrastructure/boiler-plate logic is wrapped in the underlying containers or runtime engines
 
 Now the network aspects of receiving the request, extracting the data and passing it to our classes, taking the response data and writing it back to the client from our classes will be done by the underlying containers/runtime engines. In such case the underlying containers/runtime engines should take the responsibility of instantiating, invoking and managing our application classes.
 	

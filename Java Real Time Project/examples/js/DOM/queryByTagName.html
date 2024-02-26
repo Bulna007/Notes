@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query by TagName</title>
+</head>
+<body>
+    <h2>TagName selector</h2>
+    <p>para1</p>
+    <p>para2</p>
+    <p>para3</p>
+    <div>main section</div>
+    <p>para4</p>
+    <p>para5</p>
+    <script type="text/javascript">
+        var paras = document.getElementsByTagName("p");
+        for(var i=0;i<paras.length;i++) {
+            var para = paras.item(i);
+            para.style.border = "1px dotted blue";
+        }
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@ depends-on
 @WebServlet("/loanEnquiry")
 class LoanEnquiryServlet extends HttpServlet {
 	public void service(httpReq, httpResp) {
-    Properties props = new Properties();
+    		Properties props = new Properties();
 		double ri = 0.0;
 		String applicantName = httpReq.getParameter("applicantName");
 		String mobileNo = httpReq.getParameter("mobileNo");
@@ -11,7 +11,7 @@ class LoanEnquiryServlet extends HttpServlet {
 		double principleAmount = Double.parseDouble(httpReq.getParameter("principleAmount"));
 		int tenure = Integer.parseInt(httpReq.getParameter("tenure"));
 		String city = httpReq.getParameter("city");
-    String loanType = httpReq.getParameter("loanType");
+    		String loanType = httpReq.getParameter("loanType");
 		...
 
 		props.load(this.getClass().getClassLoader().getResourceAsStream(“cityri.properties”);      
@@ -36,7 +36,7 @@ chennai=11
 new delhi=10.15
 gurgoan=10.56
 pune=11.12							 
-In the above program we endup in repeatedly reading the cityri.properties file for each request even thought the rate of interest for a given city will not change, thus leading to performance problem. To overcome this problem we need to use Cache
+In the above program we endup in repeatedly reading the cityri.properties file for each request even though the rate of interest for a given city will not change, thus leading to performance problem. To overcome this problem we need to use Cache
 							
 class Cache {
 	private static Cache instance;
@@ -69,7 +69,7 @@ class Cache {
 @WebServlet("/loanEnquiry")
 class LoanEnquiryServlet extends HttpServlet {
 	public void service(httpReq, httpResp) {
-    Properties props = new Properties();
+   		Properties props = new Properties();
 		Cache cache = Cache.getInstance();
 		
 		double ri = 0.0;
@@ -79,7 +79,7 @@ class LoanEnquiryServlet extends HttpServlet {
 		double principleAmount = Double.parseDouble(httpReq.getParameter("principleAmount"));
 		int tenure = Integer.parseInt(httpReq.getParameter("tenure"));
 		String city = httpReq.getParameter("city");
-    String loanType = httpReq.getParameter("loanType");
+    		String loanType = httpReq.getParameter("loanType");
 		...
 			
 		if(cache.containsKey("cityri") == true) {
@@ -119,7 +119,7 @@ class LoanApprovalServlet extends HttpServlet {
 	}
 }								 	 
 The characterisitics of the data we wanted to cache are
-1. well-know data								 
+1. well-known data								 
 2. static data will not grow
 3. and is limited in size
 						
@@ -168,7 +168,7 @@ With this change, we dont need to write the code in loading the data into Cache 
 @WebServlet("/loanEnquiry")
 class LoanEnquiryServlet extends HttpServlet {
 	public void service(httpReq, httpResp) {
-    Properties props = new Properties();
+    		Properties props = new Properties();
 		
 		Cache cache = Cache.getInstance(); // the data will be loaded while instantiating the cache
 		
@@ -179,7 +179,7 @@ class LoanEnquiryServlet extends HttpServlet {
 		double principleAmount = Double.parseDouble(httpReq.getParameter("principleAmount"));
 		int tenure = Integer.parseInt(httpReq.getParameter("tenure"));
 		String city = httpReq.getParameter("city");
-    String loanType = httpReq.getParameter("loanType");
+    		String loanType = httpReq.getParameter("loanType");
 		...
 			
 		
@@ -193,7 +193,7 @@ class LoanEnquiryServlet extends HttpServlet {
 		double processingFee = principleAmount * 10 / 100;
 
 		// bind all these values into request scope
-    // forward to loan-estimate.jsp
+    		// forward to loan-estimate.jsp
 	}
 }													 
 In the above implementation of Cache we have problems:

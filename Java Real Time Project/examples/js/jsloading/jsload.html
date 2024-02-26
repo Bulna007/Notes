@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>javascript loading...</title>
+        
+    </head>
+    <body>
+        <h2>javascript loading..</h2>
+        <p id="para1">
+            paragraph1
+        </p>
+        <script>
+            for(i=0;i<1000000;i++) {
+                console.log(i);                
+            }
+            var para1 = document.getElementById("para1");
+            para1.innerHTML="Javascript loading demonstration...";
+        </script>
+        
+    </body>
+</html>

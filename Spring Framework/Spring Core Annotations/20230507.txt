@@ -24,21 +24,21 @@ drawbacks with annotations:
 advantages of xml:
 1. easy to change without modifying the sourcecode. and the changes would gets effected easily
 2. we can apply xml on the classes for both who has sourcecode and nosourcecode
-3. the complete configuration information of the entire application can be derived at one-shot by looking at once single central xml configuration file
+3. the complete configuration information of the entire application can be derived at one-shot by looking at one single central xml configuration file
 --------------------------------------------------------------------------------------------------------------------------------------
 From the above we can understand each of them has their own advantages and dis-advantages, which one should be preferred and used when?
 There are few considerations can be taken into account while developing an application to think about using xml / annotations:
 1. if the application is very big and the business complexity in building the application is very high, then it is recommended to use xml-based configuration rather than annotations, since annotations adds more complexity interms of understanding the components and their relationship of usage within the application. it makes quite harder to debug them as well
 
-2. if the team size is very large and are sperated over the geographical locations, then manage the application with annation based configuration is hard because to identify a specific component is under usage or not is difficult to dervie, so developers might endup in creating duplicate configurations/components within the application.
+2. if the team size is very large and are sperated over the geographical locations, then manage the application with annotation based configuration is hard because to identify a specific component is under usage or not is difficult to dervie, so developers might endup in creating duplicate configurations/components within the application.
 instead it is better manage configuration using xml itself
 
 but the above considerations may not be impacting the decision of using annotations in the application, if we follow few standards / guideliness across the developers in the team, we can make use of annotations as well for enterprise large complex application
 1. ensure proper naming conventions are enforced across all the developers within the team, so that we can quickly identify the stereotype of the classes, by looking at their name. for eg.. an persistence class should be named with an name ending DAO, similarly an business logic class should be named ending with Service etc
 	
-2. if we can have proper package hierarch being used across the projects then we can easily derive the relationship between the classes.
+2. if we can have proper package hierarchy being used across the projects then we can easily derive the relationship between the classes.
 for eg.. all the servlets under servlet package, all daos under dao package and all services under service package and establish strict rules around which hierarchy of classes can talk to whom like
-	servlet -> service -> dao, then identifing the classes and their configurations becomes quite easy
+	servlet -> service -> dao, then identifying the classes and their configurations becomes quite easy
 	
 but one thing to be memorized: annotations cannot replace completely the xml-based configuration
 --------------------------------------------------------------------------------------------------------------------------------------
