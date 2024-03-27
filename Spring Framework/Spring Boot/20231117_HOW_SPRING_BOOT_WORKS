@@ -2,7 +2,7 @@ How does the spring boot application works?
 (or)
 What will happen when we call SpringApplication.run(BootApplication.class, args)?
 
-The entire Spring Boot echo system has been wrapped inside the SpringApplication class, which is the core or engine of the Spring Boot. Upon calling the static method run(...) on the SpringApplication class, there are bunch of activities would be performed by it in creating ioc container or running the application as below.
+The entire Spring Boot echo system has been wrapped inside the SpringApplication class, which is the core or engine of the Spring Boot. Upon calling the static method run(...)	on the SpringApplication class, there are bunch of activities would be performed by it in creating ioc container or running the application as below.
 	
 ApplicationContext context = SpringApplication.run(BootApplication.class, args);
 1. creates an empty environment object
@@ -56,3 +56,57 @@ version=versionNo
 
 1.2 configure spring-boot-maven-plugin in our project
 spring boot has provided an maven plugin called "spring-boot-maven-plugin". it is an build plugin we need to add into the pom.xml of our project. This boot plugin builds our project as spring boot jar/war artifact
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

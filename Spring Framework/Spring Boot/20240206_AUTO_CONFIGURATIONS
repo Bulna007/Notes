@@ -1,0 +1,279 @@
+Auto Configurations
+--------------------
+Auto Configurations are the java configuration classes, that are pre-written and provided by the spring boot developers, that contains logic for configuring the spring framework components as bean definitions within our application.
+	
+How does auto-configurations works?
+#1. Auto-Configurations works closely with starter dependencies:
+
+What is starter dependency?
+The spring boot team has introduced starter dependencies, to provide jumpstart experience in settingup the spring framework project. The spring starter dependencies are nothing but empty maven artifacts declared with transitive dependencies as
+1. spring framework modules
+2. dependent modules
+3. third-party libraries
+
+for each technology that we use in building the project, the spring boot team has identified the spring modules, dependent modules and third-party libraries and pushed it as boot starters.
+	
+The developers can quickly add these starters as dependencies into their projects, to jump start working with that specific technology.
+	
+For each Framework class, the spring boot team has to write an Auto-Configuration class to configure it as bean definition in our project.
+How does the spring boot team ships these auto-configurations to us?
+Not all the auto-configurations are required while working with spring boot, depends on which modules of the spring framework we are using, only those relevant auto-configurations are required to be available in our classpath of our application.
+	
+since we are using starter dependencies to work with spring framework modules in spring boot, the spring boot team has packaged auto-configuration class along with starter dependencies.
+	
+For eg.. 
+in spring-boot-starter-jdbc it contains relevant auto-configuration class for configuring spring jdbc, spring tx and spring aop module classes as bean definitions.
+	
+
+#2. Auto Configurations works based on opinionated view
+By adding an spring framework module or a starter dependency to our project, there is no guarantee that we are using that spring modules in our project.
+	
+For eg.. 
+If we add spring-jdbc module or spring-boot-starter-jdbc in our project as dependency, there is no guarantee that we are using spring jdbc aspart of our application
+
+So since we add spring-boot-starter-jdbc in our project, the relevant auto-configuration classes also being included into our project so that they will configure the module specific classes as bean definitions like
+1. DataSource
+2. TransactionManager
+3. JdbcTemplate
+etc
+
+this means even though we are not using any of the spring jdbc classes in our project still those components are configured as bean definitions with default values and are part of the ioc container wasting the jvm memory.
+	
+That is where Auto Configuration classes will not work just by adding them into the classpath of our application, they work based on opinionated view
+
+What does opinionated view means?
+Based on few conditions the spring boot auto-configuration classes derives whether we are using the components are not, and configures them as bean definitions.
+	
+For eg.. DriverManagerDataSourceAutoConfiguration configures DriverManagerDataSource as a bean definition only when it sees h2db database as a dependency in our project
+
+JdbcTemplateAutoConfiguration class configures JdbcTemplate as an bean definition only when it sees DataSource bean is available.
+	
+How to create our own auto-configurations?
+Inorder to create our own auto-configuration classes that works based on opinionated view, the spring boot has provided conditional annotations that should be written aspart of the AutoConfiguration class
+
+There are 5 types of conditional annotations are there	
+1. @ConditionalOnClass (or) @ConditionalOnMissingClass
+if the given class is available or not-available aspart of the classpath of the project, based on that execute the auto-configuration.
+	
+For eg..
+if org.h2.Driver class is available under the classpath, then only configure DriverManagerDataSource as bean definition
+
+@AutoConfiguration
+@ConditionalOnClass(org.h2.Driver.class)
+class DriverManagerDataSourceAutoConfiguration {
+	@Bean
+  public DriverManagerDataSource dataSource() {
+		// logic for creating DriverManagerDataSource object populated with default h2 database configuration
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClass("org.h2.Driver");
+		dataSource.setUserName("sa");
+		dataSource.setPassword("password");
+		dataSource.setUrl("jdbc:h2:mem:testdb");
+		return dataSource;
+	}
+}
+
+2. @ConditionalOnBean (or) @ConditionalOnMissingBean
+if a given bean definition is available or not available in ioc container based on that execute.
+	
+@AutoConfiguration(after=DriverManagerDataSourceAutoConfiguration.class)	
+@ConditionalOnBean(DataSource.class)
+class JdbcTemplateAutoConfiguration {
+	
+	@Bean
+	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+		return new JdbcTemplate(dataSource);
+	}
+}
+
+3. @ConditionalOnProperty
+if a given property is found in the env object of the ioc container, then only execute the auto-configuration
+
+4. @ConditionalOnResource
+if a given file is present under the classpath of the project then only execute
+
+5. @ConditionalOnWebApplication or @ConditionalOnNoWebApplication or @ConditionalOnJava
+based on the type of the application or version of the java , execute the auto-configuration
+
+In addition the auto-configurations has dependencies between them, that can be expressed using @AutoConfiguration(before={}, after={})
+	
+	
+	
+spring-boot-starter-jdbc
+|-spring framework modules
+|-dependent modules
+|-third-party libraries
+|-auto-configurations
+
+#1 approach: spring-boot-starter-jdbc = include relevant auto-configurations inside it
+#2 approach: spring-boot-starter-jdbc [framework modules, dependent modules and third-party libraries]
+              |-spring-boot-starter-jdbc-auto-configurations (transitive)							
+             spring-boot-starter-jdbc-auto-configurations 
+						   |-[framework modules, dependent modules] scope: provided
+							 
+
+
+javaboot
+|-pom.xml
+  |-spring-boot-starter-jdbc (dependency)
+		|-libraries [classpath]
+			|-spring-jdbc
+			|-spring-aop
+			|-spring-tx
+			|-commons-bean-utils
+			|-logback
+			|-cglib
+			|-asm
+			|-auto-configurations
+				|-META-INF
+					|-spring.factories
+						|-org.springframework.boot.autoconfigure.EnableAutoConfiguration=fqnAutoConfiguration (separated by ",")
+	
+SpringApplication.run(BootApplication.class, args);
+1. creates an empty env object
+2. detects and loads the external configuration of our application into the env object above
+3. print banner
+4. detects the WebApplicationType based on the classpath of the project
+	WebApplicationType = WEB
+	AnnotationConfigServletWebServerApplicationContext
+	WebApplicationType = REACTIVE
+	AnnotationConfigReactiveWebServerApplicationContext
+	WebApplicationType = NONE
+	AnnotationConfigApplicationContext
+5. instantiates the spring factories and registers with the ioc container
+....
+The SpringApplication class, run() method goes to each library under the classpath of our application and looks for META-INF/spring.factories file, if it finds reads the property org.springframework.boot.autoconfigure.EnableAutoConfiguration value and picks the list of AutoConfiguration classes separated by "," and instantiates them and registers with ioc container.
+--------------------------------------------------------------------------------------------------------------------------------
+
+product development company (architecture team) 
+libraries and distribute to the other projects/products built in the company
+
+
+
+	
+	
+	
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,111 @@
+ActuatorEndpoints
+-----------------
+upon developing the application, post completion of the testing, we cannot deliver the application into the production env, because to manage and monitor the application we need bunch of utilities or endpoints like
+1. health
+2. metrics
+3. threadumps
+4. logs
+5. info
+etc
+
+unless these endpoints are built and exposed in our application, we cannot collect realtime status of the application by which we cannot manage and monitor the application in production environment.
+So post completion of the developing/testing, the developers has to sent lot of time on building these additional endpoints or utilities and need to integrate into the application to make the application production ready. Building these additional endpoints has lot of drawbacks:
+1. the developers has to spend additional time and efforts in building these endpoints that delays the delivery of the application into the production
+2. the cost of building the application increases
+3. again after integration of these endpoints, the application needs to be re-certified by testing.
+	
+This means the application that is being built cannot be delivered into the production env to overcome this problem the spring boot has provided actuator endpoints.
+	
+Actuator Endpoints are nothing but pre-built or pre-packaged endpoints that can be added and configured directly within our spring boot application, that makes the application development to production ready.
+	
+How to work with actuator endpoints in spring boot application?
+To use the actuator endpoints, the spring boot has provided an starter dependency spring-boot-starter-actuator that should be added as dependency in our pom.xml as shown below.
+	
+<dependencies>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-actuator</artifactId>
+	</dependency>
+</dependencies>
+
+by adding the spring-boot-starter-actuator as dependency the endpoints will not be available for accessing, we need to configure/enable these endpoints and expose them by writing additional configuration. 
+There are lot of endpoints are provided by spring boot actuator module:
+1. /info
+2. /heath
+3. /env
+4. /beans
+5. /configprops
+6. /threaddump
+7. /metrics
+8. /loggers
+9. /logfile
+10./shutdown
+11./conditions
+12./caches
+13./httptrace
+14./mappings
+15./quartz
+16./startup
+note: all these endpoints must be prefixed with /actuator to access them.
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -14,7 +14,7 @@
                 <th>balance</th>
             </tr>
             <c:forEach items="${accounts}" var="account">
-                <tr>
+                <tr style="color: red;">
                     <td>${account.accountNo}</td>
                     <td>${account.accountHolderName}</td>
                     <td>${account.balance}</td>

@@ -66,6 +66,9 @@ spring framework 7
 For each release of the spring framework version, spring boot team provides a new release of spring boot aligned with spring framework version.
 now we need to goto the project and update the versions of all the starter dependencies to migrate to the newer version of the spring framework
 
+
+
+
 spring-boot-parent
 |-pom.xml
 
@@ -179,3 +182,42 @@ pom.xml
 		</plugins>
 	</build>
 </project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -91,7 +91,7 @@ The spring mvc application bootstraps under the standlone servlet container as b
 1.1 DispatcherServlet
 1.2 ContextLoaderListener
 
-2. through programmatic approach we write WebApplicationInitializer or AnnotationConfigDispatcherServletInitializer through which we register DispatcherServlet and ContextLoaderListener with the underlying Servlet container.
+2. through programmatic approach we write WebApplicationInitializer or AbstractAnnotationConfigDispatcherServletInitializer through which we register DispatcherServlet and ContextLoaderListener with the underlying Servlet container.
 	
 so when we build/package our webmvc application as an war and deploy on standlaone servlet container, the servlet container during the startup will instantiate/invoke ContextLoaderListener and DispatcherServlet::init(). These #2 takes care of instantiating the parent/child ioc containers through which the spring mvc components will be available for our application
 
@@ -107,6 +107,27 @@ The application execution will triggers from main() method in which we invoke Sp
 	2.3 through variables AutoConfigurations, the mvc components are instantiated and available as bean definitions
 	
 The whole magic of bringing up the spring boot mvc application lies in SpringApplication.run(...)	
+	
+so when we package our springboot webmvc application as an ".war" and deploy on the standlone servlet container:
+1. since we havent configured DispatcherServlet or ContextLoaderListener with the underlying Servlet Container, the ioc container and mvc components will not be instantiated
+2. The servlet container will not call SpringApplication.run(..) since it dont know anything apart from web application components.
+
+so upon deploying our springboot application as a war and start the container, the mvc echo system will not be loaded and it just acts as an normal java web application only.
+	
+At this moment we have #2 options to make springboot mvc work with standalone servlet container:
+#1
+add or configure DispatcherServlet (optionally: ContextLoaderListener) in the application using either web.xml or Programmatic Registration so that the servlet container will invoke init(){} on the DispatcherServlet that instantiates the ioc container with which our mvc components are available to serve.
+	
+dis-advantage: 
+1. But we loose all the springboot capabilities that are provided aspart of SpringApplication class.
+2. application behaves in 2 ways one as bootjar and another one as standalone war
+
+#2.
+instead of adding DispatcherServlet into the application, if we can invoke SpringApplication.run(...); this brings up the ioc container (AnnotationConfigServletWebServerApplicationContext), that takes care of registering DispatcherServlet and brings up the mvc echo system.
+since the way the application is bootstrapped in boot jar or war is same, we dont have distinct behaviours and we can take the advantage of springboot features that comes aspart of SpringApplication class.
+	
+Then how to make Servlet Container invoke SpringApplication.run(...)	during the bootup of the container?
+	
 	
 	
 

@@ -25,3 +25,32 @@ The development team upon completing the development and qa of the application, 
 This shoots up the cost of development and delays significantly the delivery of the application. since this seems to be a common requirement of having the additional endpoints to make the application deployable, the spring boot team has provided actuator endpoints.
 	
 The actuator endpoints are nothing but pre-built components that can be embedded or packaged into our application quickly, so that we can have the application deployed into production and manage/monitor it easily without any delay.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

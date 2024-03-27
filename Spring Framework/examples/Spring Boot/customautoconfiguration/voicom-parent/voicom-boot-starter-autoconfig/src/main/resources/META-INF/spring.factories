@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.voicom.autoconfig.common.VoiComCommonAutoConfiguration,com.voicom.autoconfig.core.VoiComAgentAutoConfiguration

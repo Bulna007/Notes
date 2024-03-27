@@ -1,0 +1,629 @@
+What is acuator endpoints, what is the purpose of it?
+upon developing the application, post completion of the testing, we cannot deliver the application into production environment, because inorder to monitor and manage the application in the production we need few/additional endpoints through using which we can gather the statistics of the application like
+1. health
+2. metrics
+3. threaddumps
+4. info
+etc
+
+instead of developers building these additional endpoints, that inccurs more time, efforts, cost and delay in delivery of the application the spring boot has provided actuator endpoints.
+	
+The actuator endpoints are pre-built and packaged endpoints that can be quickly configured and integrated aspart of the applications to get the application ready for production deployment.
+development to production-grade application can be built using spring boot actuator.
+	
+There are around 16 endpoints are provided by spring boot actuator.
+1. /info = provides information about the spring boot application like, author, version, description, changelog etc
+2. /health = to check the health of the application
+3. /env = to see all the environment variables of the environment/machine on which our application is running.
+4. /beans = list down all the bean definitions that are part of the ioc container of the application
+5. /configprops = all the configuration properties that are loaded into the env object of the ioc container are being listed using this endpoint
+6. /threaddump = shows the jvm threaddumps
+7. /metrics = memory, cpu usage statistics
+8. /loggers = to see the loggers enabled and their logging levels
+9. /logfile = to browse the logfile of the application
+10. /shutdown = to shutdown the application remotely. by default shutdown endpoint is disabled for security reasons.
+11. /conditions = shows the auto-configuration conditions
+12. /caches = displays all the caches available in the application
+13. /httptrace = display all the httpTrace
+15. /mappings = display all the requestURLS that are exposed aspart of our application
+16. /quartz = displays all the quartz beans
+17. /startup = shows the startup steps data
+
+all these endpoints are accessible by using the prefix as "/actuator/endpoint". By default these endpoints are not enabled/exposed even we add the spring-boot-starter-actuator dependency.
+	
+These endpoints are exposed in 2 ways:
+1. jmx endpoints (java management extension)
+The JMX technology is native to java programming language, due to this it offers efficient and light-weight management extensions to java-based applications. Since the actuator endpoints are designed for monitoring, managing and administering an boot application the boot team has exposed these endpoints by using jmx technology.
+	
+2. http endpoints (web)
+The boot actuator endpoints are even built and exposed on http protocol, to support inter-operability and integration.
+	
+To make use of these endpoints we need to enable them and expose them. by default all the endpoints are enabled expect shutdown endpoint, here enabled means the endpoint is shipped or included aspart of your application but it is not exposed or accessible. We need to explicitly expose them to make them accessible.
+	
+How to enable/disable and expose an endpoint?
+We need to write properties in application.yml|properties to make these endpoints enable and expose as below.
+	
+by default all the endpoints are enabled except shutdown, lets us say we want to disable all the endpoints and want to enable specific endpoints only for our application, this can be done as below.
+management.endpoints.enabled-by-default=false // all the endpoints will be disabled
+
+now we can enable individual endpoints using:
+management.endpoints.info.enabled=true
+management.endpoints.health.enabled=true
+management.endpoints.shutdown.enabled=true
+	
+with this we enabled the endpoints but those are not exposed, unless those are exposed those will not become accessible. We can expose these endpoints using 2 protocols either using jmx or http/web endpoints
+
+By default all the endpoints are exposed through jmx technology, but when it comes to http/web endpoints only 2 of them are exposed by default.
+	1. healthcheck
+	2. info
+so if we want to expose webendpoints we need to manually expose them by writing the below configuration
+management.endpoints.jmx.exposure.include=endpointNames (separated by comma)
+management.endpoints.jmx.exposure.exclude=
+	
+management.endpoints.web.exposure.include=
+management.endpoints.web.exposure.exclude=
+	
+For eg.. if we want to enable and expose metrics/threaddumps endpoint through web, then we need to write the below configuration
+
+management.endpoints.enabled-by-default=false
+management.endpoints.metrics.enabled=true
+management.endpoints.threaddumps.enabled=true
+	
+mangament.endpoints.web.exposure.include=metrics,threaddumps
+
+if we want to expose all the endpoints we can write the property with value as "*"
+management.endpoints.web.exposure.include=*
+
+How to change the port on which the management endpoints are exposed?
+we can change the port on which the management endpoints are exposed by using
+management.server.port=8889
+then we can access the management endpoints using http://localhost:8889/actuator
+
+when we change the management endpoint port to a different port other than the application server port, then the application will be started on 2 tomcat servers.
+	
+How to change the default base-path over which the actuator endpoints are accessible?
+by default the management endpoints are exposed using a prefix : /actuator and we can change this using
+management.endpoints.web.base-path=/management
+--------------------------------------------------------------------------------------------------------------------------
+when we add spring-boot-starter-actuator dependency to our project, all the HealthIndicator endpoints are auto-configured and exposed by spring boot actuator based on the starter dependencies we added and configurations we wrote in application.yml|properties
+
+For eg.. if we add spring-boot-starter-jdbc or spring-boot-starter-datajpa into our project as starter dependency and configured database configuration in application.yml or properties it indicates we are using database in our application. The spring boot starter actuator understands we are using database and an HealthAutoConfiguration class configures DataSourceHealthIndicator endpoint automatically.
+	
+For each type of external resource of our application we might integrate with, spring boot has provided predefined HealthIndicator endpoint, For all the Health check endpoints the base interface from which those are implemented from are HealthIndicator
+	
+The spring boot has provided several concreate implementations for HealthIndicator interface for each type of external resource :
+1. Cassendra  CassandraDriverHealthIndicator
+2. Database   DataSourceHealthIndicator
+3. diskSpace  DiskSpaceHealthIndicator
+4. Mail       MailHealthIndicator
+5. Ping       PingHealthIndicator
+6. Mongo      MongoHealthIndicator
+7. Jms        JmsHealthIndicator
+
+all the above HealthIndicators are auto-configured based on starter dependencies we added and the configurations we have written aspart of application.yml|properties.
+	
+/actuator/health = checks for only webserver health 
+for all the rest of the health checks the sub-component url should be appended as below
+/actuator/health/db
+/actuator/health/mail
+/actuator/health/diskspace
+
+to make the sub-components exposed we need to enable each of them individually as below
+management.endpoint.health.db.enabled=true
+management.endpoint.health.show-components=always
+management.endpoint.health.show-details=always
+
+Instead of verifying each HealthEndpoint for each of the components, we can group them and create an health-group and check the overall health using the group
+
+management.endpoint.health.group.ibankinghealth.include=db,diskSpace,ping
+now we can check the overall health of our application using 
+http://localhost:8080/actuator/health/ibankinghealth
+--------------------------------------------------------------------------------------------------------------------------------
+
+The spring boot actuator has provided HealthIndicator Endpoints for most of the external resource like database, mongo, cassendra, diskSpace etc we use aspart an typical application, these endpoints are auto-configured based on the starter-dependencies that we add to our project and configurations referencing these external resources.
+	
+So when we are working with these standard external resources, we just only need to enable these endpoints apart from that we dont have to write any code in enabling the healthchecks for these external resources.
+	
+But many of the times our application might be dependent on external systems or resources that are not supported by spring-boot-actuator. For eg.. we might be using an payment gateway service of a third-party like
+1. razorpay
+2. billdesk
+3. upi
+etc
+
+unless these payment gateway external systems are up/available we cannot have our application fully functional. Now how to check for the Health of these external systems that we are integrating with.
+
+The spring boot actuator doesnt provide any pre-defined HealthIndicator endpoints in verifying these external partner services or systems, in this case the developers has to build their own custom HealthIndicator endpoints to verify the health/monitor these external systems.
+	
+For eg.. the BillDesk partner might have provided an healthcheck endpoint to verify it is working or not, that could be http://www.billdesk.com/health/check
+
+Now we need to create ourown endpoint to verify the billdesk endpoint is working are not as below.
+	
+@Component("billdesk")
+@AllArgsConstructor
+public class BilldeskHealthIndicator implements HealthIndicator {
+    final private String BILL_DESK_HEALTH_CHECK_URL = "http://www.google.com";
+
+    private final RestTemplate restTemplate;
+
+    @Override
+    public Health health() {
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(BILL_DESK_HEALTH_CHECK_URL, String.class);
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            Health.Builder healthBuilder = Health.up();
+            healthBuilder.withDetail("service", "billdesk").withDetail("responseTime", "100ms").up();
+            return healthBuilder.build();
+        }
+        return Health.down().build();
+    }
+}
+
+enable the above endpoint in application.yml|properties
+management.endpoint.health.billdesk.enabled=true
+http://localhost:8080/actuator/health/billdesk
+--------------------------------------------------------------------------------------------------------------------------------Info Endpoint:
+by default info endpoint is enabled/exposed when we add actuator dependency for our project. The purpose of Info endpoint is to provide information about our application to the external world like
+1. applicationName
+2. author
+3. version
+4. licensing
+5. environment
+etc
+
+by default the Info endpoint displays empty information, since it doesnt know the information about our application. The spring boot has provided an base interface "InfoContributor" for which it has defined various InfoContributor implementations as below.
+	1. BuildInfoContributor = exposes build information
+	2. EnvironmentInfoContributor = exposes any property from the Environment whose name starts with info.
+	3. GitInfoContributor = Exposes Git related information
+	4. JavaInfoContributor = Exposes the Java runtime information
+	
+By default the env and java contributes are disabled. First we need to enable these respective InfoContributors to publish the information
+management.info.java.enabled=true
+	
+similarly we can enable env endpoint and populate information about our application by writing the properties that starts with info. in application.yml as shown below.
+management.info.env.enabled=true	
+info.author=sriman
+info.application=netbanking
+info.version=1.0
+	
+along with this we can enable build InfoContributor endpoint that captures the maven build information and publishes it when we access as below
+
+management.info.build.enabled=true
+pom.xml
+--------
+<plugins>
+	<plugin>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-maven-plugin</artifactId>
+		<executions>
+			<execution>
+				<goals>
+					<goal>build-info</goal>
+				</goals>
+			</execution>
+		</executions>
+	</plugin>
+</plugins>
+	
+The above plugin goal will generates an build-info.properties and places under target/classes/META-INF so that it would be packaged aspart of our application.
+	
+In this way we can enable the pre-defined InfoContributor endpoints through configurations written aspart of application.yml.
+
+If we want we can write our own custom Info endpoint in which we can write the code for populating the information that should be displayed to the users upon accessing programmatically
+
+@Component("info")
+class InfoEndpoint implements InfoContributor {
+	public void contribute(Builder builder) {
+		builder.withDetails("application", "netbanking").withDetails("version", "1.0").withDetails("author", "sriman").build();
+	}
+}
+-------------------------------------------------------------------------------------------------------------------------------
+Custom Actuator Endpoints
+In an application we might want to build our own actuator endpoints for addressing specific requirements like
+1. we might have our own Cache system that is implemented, and want to expose an endpoint to perform operations on the Cache like evict or reload
+2. we want to monotor a jms queue of our application to know the statistics of the messages and their consumption
+
+For such requirements we can write out own actuator endpoints by using spring boot actuator api provided by boot team and can expose them.
+advantages:
+1. we can enable/disable these endpoints using actuator echo system easily
+2. these endpoints becomes agnostic to the technology, the same endpoints can be exposed as jmx or http endpoints
+3. we can easily enforce security along with rest of the actuator endpoints by implementing spring security
+
+Spring boot 2.0 has provided support for building our own custom actuator endpoints which are agnostic to the technology.
+1. @Endpoint(id="endpointName") = The actuator Endpoint class we wrote should be annotated with @Endpoint annotation binded with id. the endpoint becomes accessible with the id we have given.
+	
+Through the endpoints we can perform the operations like
+1. reading
+2. writing/modifying
+3. deleting
+
+so for performing each operation we need to write one method in the Endpoint class.
+For eg.. we need to write an CacheManagementEndpoint that may contain 2 operations like evict and reload where one deletes the entries of the cache and other modifies the data in the cache.
+	
+so these methods should be annotated with relevant annotations based on the nature of the operation there are performing like	
+1. @ReadOperation
+2. @WriteOperation
+3. @DeleteOperation
+
+These operational annotations are generic in nature where those can be mapped to any underlying protocol like jmx or http.
+	
+@Endpoint(id="cache")	
+class CacheManagementEndpoint {
+	
+	@DeleteOperation
+	public void evict() {
+		// perform eviction logic
+	}
+}	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

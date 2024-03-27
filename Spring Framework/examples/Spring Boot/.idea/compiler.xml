@@ -10,17 +10,22 @@
         <module name="travelgo" />
         <module name="eventhandlingcore" />
         <module name="bootjdbc" />
+        <module name="voicom-boot-starter-autoconfig" />
         <module name="booteventhandling" />
         <module name="bootparentimport" />
         <module name="bootextconfig" />
+        <module name="voicom-boot-starter" />
         <module name="bootwebwithwebcomp" />
         <module name="commandandapplicationrunners" />
+        <module name="bootJarToWar" />
         <module name="bootcore" />
+        <module name="call-assist" />
         <module name="bootcp" />
         <module name="bootparent" />
         <module name="bootwebdatajpa" />
         <module name="nestedbeanfactories" />
         <module name="bootexitcode" />
+        <module name="voicom" />
         <module name="bootprofiles" />
         <module name="bootweb" />
         <module name="bootcustomization" />
@@ -40,6 +45,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="bootJarToWar" options="-parameters" />
       <module name="bootcp" options="-parameters" />
       <module name="bootcustomization" options="-parameters" />
       <module name="booteventhandling" options="-parameters" />
@@ -51,7 +57,11 @@
       <module name="bootweb" options="-parameters" />
       <module name="bootwebdatajpa" options="-parameters" />
       <module name="bootwebwithwebcomp" options="-parameters" />
+      <module name="call-assist" options="-parameters" />
       <module name="commandandapplicationrunners" options="-parameters" />
+      <module name="voicom" options="" />
+      <module name="voicom-boot-starter" options="" />
+      <module name="voicom-boot-starter-autoconfig" options="" />
     </option>
   </component>
 </project>

@@ -1,0 +1,102 @@
+Auto-configurations
+--------------------
+What are Auto-Configurations, Why do we need them?
+Auto-Configurations are nothing but Java Configuration classes with bean definition methods declared within them. While working with Spring Framework, the developers has to write lot of configuration (either interms or xml or java configuration classes) in configuring the framework components as bean definitions inorder to use the framework. Due to this the developers spends most of their time in writing configurations in tunning up the framework components this leads to huge amount of time in writing the fuss (non-functional) logic.
+	
+So to rescue us from the above problem, the spring boot team has provided Auto-Configuration classes, these are java configuration classes only pre-written with bean definition methods in configuring the framework components as bean definitions with default values.
+	
+Now the application developers dont have to spend lot of time in configuring the framework for their application, all that they need to do is pass the configuration values as input to Auto-Configuration classes (in-case if they wish to customize) that takes care of configuring framework components as beans.
+	
+	
+How does Auto-Configurations works?
+There are lot of spring framework components are there per each module
+
+1. Based on which modules of the spring framework we are using, we need only those related auto-configuration classes to be made available to our project
+
+based on: what modules we are using, those module specific framework classes only, we need auto-configurations
+
+2. Framework
+   |-setting up the project is very complex
+	 |-for each framework module
+	 	|-other module dependencies
+		|-third-party libraries with appropriate versions
+boot-starter (dependencies) = per each technology we use in building the application, the spring boot has provided starter dependency
+The most popularly used technologies in building spring applications, they identified and created several starter dependencies
+A starter comprises of several module defined as dependencies
+
+how do we use spring framework while working with spring boot?
+adding starters
+       |-modules
+		   |-auto-configurations
+
+spring-boot-starter-datajpa = each starter contains, auto-configuration classes specific to the modules of the framework that are shipped
+
+starter (dependency)
+	|-spring framework modules
+  |-dependent modules
+	|-third-party libraries
+	|-auto-configurations
+	
+	
+	
+
+
+
+spring jdbc
+DataSource
+PlatformTransactionManager
+JdbcTemplate
+
+DataJpa
+LocalContainerEntityManagerFactory
+DataSource
+PlatformTransactionManager
+JpaTemplate
+
+Spring Mvc
+DispatcherServlet
+HandlerMappings
+ViewResolvers
+Forwarding Controllers
+
+@1000 AutoConfiguration
+spring framework classes as bean definitions = provide to us
+
+
+
+	
+if we add: spring-boot-starter-datajpa as dependency = we are using datajpa in our project?
+Now the auto-configuration classes takes care of configuring all the datajpa, tx, aop module framework components as bean definitions in our project
+
+[assumption] auto-configurations: by adding starters, we thought we are using those modules, so auto-configuration classes should configure all those module classes as bean definitions	
+
+but in-practical, by addition starters as dependencies, it doesnt mean we are using those modules/components, there should be some proof
+
+auto-configuration are available to the project: when we add starters
+those will be executed only based on opinionated view : proofs (dependency classpath: mysql-connector-java)
+	                                                                         configuration: pertaining to the framework class)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
