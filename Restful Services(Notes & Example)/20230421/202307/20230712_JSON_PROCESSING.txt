@@ -1,0 +1,103 @@
+How to process the JSON data aspart of an Java Application?
+Even though we can process the JSON data by placing in a String object and apply string manipulation functions on it, it would become hard/complex while dealing with complex structures
+
+Since processing a JSON data is an common requirement for every/most of java application people build, instead of we writing the complex logic the java platform should provide an standard api.
+Initially Oracle or Java Platform has not provided an Standard api to work with JSON, so several third-party libraries are introduced by vendors in the market like:
+1. jackson (popular)
+2. gson
+3. simple-json
+4. flexjson
+
+later on oracle has provided standard api called "javax json api" to process the JSON data within java application.
+	
+There are 3 ways we can process JSON data using javax json api
+1. Parsing
+2. Streaming
+3. Binding
+
+To support all these #3 different mechanisms of processing the JSON data, api has provided classes to us.
+	
+1. Parsing
+Using the Parsing technic we can read/write the JSON data in java program. While reading the data from JSON doc the json parsing api reads the entire JSON text and constructs objects representation in-memory representing the relevant JSON structure.
+	
+There are #2 types of objects are available in json parsing api
+1. JSONObject
+2. JSONArray
+
+representing an json object it creates an JSONObject type, similary for an json array it creates JSONArray object type and holds in memory.
+	
+To write/produce the JSON data, we need to manually construct JSON Parsing api objects representing the json structure, so that we can write it as an json data output.
+	
+In Parsing api, the json data is represented in in-memory object model during reading/writing the data, hence it is considered as memory intensive approach.	
+	
+How to read a json document/data?
+person.json
+-----------
+{
+	"uniqueNo": 3,
+	"fullname": "Julie",
+	"age": 34,
+	"gender": "Female",
+	"address": {
+		"addressLine1": "",
+		"addressLine2": "",
+		"city": "",
+		"state": "",
+		"zip": 393,
+		"country": "India"
+	}
+}
+
+products.json
+-------------
+[
+	{
+		"productCode": "p383",
+		"productName": "Product1",
+		"quantity": 10,
+		"price": 93
+	},
+	{
+		"productCode": "p3843",
+		"productName": "Product2",
+		"quantity": 10,
+		"price": 93
+	},
+	{
+		"productCode": "p3835",
+		"productName": "Product3",
+		"quantity": 10,
+		"price": 93
+	}
+]
+
+To read the JSON document/data and construct relevant objectTypes representing its structure, json parsing api has provided a class called JSONReader
+
+The javax json api has provided "Json" as an factory class, that identifies the vendor implementation of the json api classes and instantiate them and return their object. So using Json factory class we can create the object of JSONReader and JSONWriter implementation classes.
+
+InputStream is = new FileInputStream(new File("d:\\products.json"));
+JsonReader jsonReader = Json.createReader(is);
+
+JsonArray jsonArray = jsonReader.readArray();
+jsonArray.forEach(o -> {
+	
+});
+
+InputStream is = new FileInputStream(new File("d:\\person.json"));
+JsonReader jsonReader = Json.createReader(is);
+JsonObject jsonObject = jsonReader.readObject();
+int age = jsonObject.getInt("age");
+JSONObject addressObject = jsonObject.getJsonObject("address");
+
+
+How to write the JSON data as an output?
+JsonWriter jsonWriter = Json.createWriter(System.out);
+JsonObjectBuilder productJsonObjectBuilder = Json.createObjectBuilder();
+productJsonObjectBuilder.add("productCode", 9383);
+productJsonObjectBuilder.add("productName", "LG 75 Class QLED Tv");
+productJsonObjectBuilder.add("quantity", 30);
+productJsonObjectBuilder.add("price", "456000");
+JsonObject productObject = productJsonObjectBuilder.build();
+
+jsonWriter.writeObject(productObject);
+jsonWriter.close();

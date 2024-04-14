@@ -1,0 +1,15 @@
+business operations on the database:
+we should not perform business operations on the underlying database directly:
+1. BSE/NSE Stock Exchange agents should be knowing the IT Technology, and should be good sql queries and database technology to perform operations on the underlying database which is not true
+2. If the agents has to perform the operations on the underlying database, they should construct complex sql queries in managing to query/store the data. but there is no guarantee the queries they have written are correct and produces acurate/desired output due to which the organization might run into huge losses
+3. since these queries are not validated, performing any data manipulation operations directly on the database could be harmful, because incorrect query might corrupt all the data on the underlying database
+4. since the data is not validated, invalid data might inserted/added into the database
+5. it takes lot of time to carry-out business operations in constructing the queries manually in carrying the operations and might be errorneous as well.
+So always it is adviced not to perform operations on the underlying data of the database directly, always use an software applications 
+for perform business operations and managing the data on the underlying database
+
+advantages of software applications:
+1. any one can carry the business operations with no knowledge on IT, they should only posses business knowledge
+2. no need to construct queries in retrieving/storing the data, the developer aspart of the application itself has pre-coded these queries through which the operations are performed on the database. Since these are pre-coded, pre-tested/validated there is no chance something goes wrong while performing the operations on the underlying database. Always carrying business operations through software application is Safe aswell.
+3. The application always validates the data that is provided, so there is no chance that bad data enters into the system
+4. saves huge time!

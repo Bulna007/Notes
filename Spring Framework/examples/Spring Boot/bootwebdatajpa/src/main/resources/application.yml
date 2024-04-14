@@ -1,0 +1,111 @@
+server:
+  port: 8081
+  error:
+    whitelabel:
+      enabled: true
+spring:
+  application:
+    name: boot datajpa application
+    #version: 1.0
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/hibdb
+    username: root
+    password: welcome1
+  jpa:
+    show-sql: true
+    generate-ddl: false
+#  devtools:
+#    restart:
+#      trigger-file: .restartfile
+    #restart:
+      #enabled: false
+      
+
+
+management:
+  endpoint:
+    cachemanager:
+      enabled: true
+    shutdown:
+      enabled: true
+    health:
+      show-components: always
+      show-details: always
+      db:
+        enabled: true
+      billdesk:
+        enabled: true
+      group:
+        ibankinghealth:
+          include:
+            - db
+            - diskSpace
+            - ping
+#    info:
+#      enabled: true
+#    metrics:
+#      enabled: true
+#    health:
+#      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - metrics
+          - beans
+          - configProps
+          - shutdown
+          - threaddump
+          - loggers
+          - conditions
+          - startup
+          - logfile
+          - httptrace
+          - mappings
+          - quartz
+          - env
+          - caches
+          - cachemanager
+      #base-path: /management
+    #enabled-by-default: false
+  #server:
+    #port: 8889
+  info:
+    java:
+      enabled: true
+    env:
+      enabled: true
+    build:
+      enabled: true
+info:
+  application: netbanking
+  version: 1.0
+  author: sriman
+  license: GPL Public user license
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

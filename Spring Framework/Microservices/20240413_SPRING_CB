@@ -1,0 +1,217 @@
+What is Circuit Breaker?
+Circuit breaker is one of the integration-tier design pattern, it is used for protecting the client applications against the slow/un-responsive remote services.
+	
+The Circuit breaker is not something that belongs to Spring Framework or something that is only applied in microservices technology. It is an independent design pattern of its own and can be applied anywhere when an client application is trying to access an remote service (the remote service can be rmi, ejb, soap, rest)
+	
+Whenever an client application is trying to access an remote service, due to various different reasons the remote service could be un-responsive or might be slow in serving the requests. The remote service could be
+1. serving heavy requests due to high traffic
+2. running into low system resources
+3. it might be accessing another remote system which seems to be slow 
+
+At this point of time if the client application is allowed to access the remote slow-running service, it creates lot of problems at the client application:
+1. The client application would be sending the requests to the un-responsive remote service waiting for response from the remote application for longer amount of time which would block lot of threads at the client application and results in consume huge system resources at the client-side
+
+2. due to longer waiting time, the requests at the client application would result in timeout exceptions after holding the system resources for longer amount time
+
+3. during this time while the requests at the client application are waiting for the response from the remote application, if the requests to the client application increases, then more number of threads would be spawned by the client application which are consuming heavy system resources and leads to thread starvation and crash of the application
+
+4. The post effect of accessing the un-responsive remote application not only affects the client application, it shows an cascading affect on the other clients who are access the client application aswell
+
+5. if more and more number of client applications are sending the request to the un-responsive remote application, this could result in huge load on the remote application as well, that will not let the remote application give a chance of recovery and eventually leads to the crash of the remote application as well.
+	
+How to solve this problem?
+We need to implement Circuit breaker design pattern as below:
+
+Whenever the client application has detected an remote service is un-responsive and taking more amount of time in returning the response than stipulated interval of time (response timeout), the client application immediately has to cut the chord of the current request and increment the failure count.
+	
+If the failureCount at the client application has reached to a Threshold, then all the subsequent requests from the client application to the remote service should be terminated locally without spawing a thread or connection to the remote service. After certain interval of time again the client application can allow the requests to the remote service conditionally. This whole process of monitoring and allowing the requests in controlled way to the remote application is called "Circuit Breaker".
+	
+How to implement Circuit breaker?	
+	
+class DistributorNetworkServiceInvoker {
+	private RestTemplate restTemplate;
+	
+	public DistributorDto getDistributor(String distributorCode) {
+		DistributorDto dto = null;
+		String resourceUri = "http://localhost:8080/distributor/{distributorCode}";
+		Map<String, Object> uriVariables = new HashMap();
+		uriVariables.put("distributorCode", distributorCode);
+		String url = UriComponentBuilder.fromUriString(resourceUri).uriVariables(uriVariables).build().toString();
+		int failureCount = 0;
+		boolean open = false;
+		int failureThreshold = 3;
+		int openSeconds = 1;
+		
+		try { #1, #2, #3f, #4, #5, #30
+			if(open==true) {
+				long ct = Calendar.getInstance().getTimeInMilliSeconds();
+				if((ct - openTimeInMs)/1000 > openSeconds) {
+					open = false;
+					failureCount =0;
+				}
+			}	
+		
+			if(failureCount < failureThreshold) {
+				dto = restTemplate.getForObject(url, DistributorDto.class);	
+			}else {
+				if(open==false) {
+					open = true;
+					openTimeInMs = Calendar.getInstance().getTimeInMilliSeconds();
+				}
+			}
+			
+			if(open) {
+				throw new CircuitBreakerException();
+			}
+			
+		}catch(Throwable t) {
+			failureCount++;
+		}
+		
+		return dto;		
+	}
+}	
+
+In the above code while invoking the remote endpoint, we sourrounded it around the circuit breaker logic, in this way within our client application we might access several remote endpoints, across all those places whereever we are accessing the remote endpoint we need sourround the code within the circuit breaker logic that leads to
+1. duplicate code written across all the places
+2. the invocation logic becomes complex to understand
+How to avoid these problems?
+	
+
+interface Invocation {
+	Object invoke();
+}	
+
+class CircuitBreaker {
+	int failureCount;
+	int failureThreshold;
+	int openIntervalSeconds;
+	int openStateTime;
+	boolean open = false;
+	
+	public Object invoke(Invocation invocation) {
+		Object response = null;
+		
+		try {
+			if(open == true) {
+				long ct = Calendar.getInstance().getTimeInMilliseconds();
+				if(ct - openStateTime > openIntervalSeconds) {
+					open = false;
+					failureCount = 0;
+				}
+			}
+			if(failureCount < failureThreshold) {
+				return invocation.invoke();
+			}else {
+				if(open == false) {
+					open = true;
+					openStateTime = Calendar.getInstance().getTimeInMilliSeconds();
+				}
+			}
+			if(open) {
+				throw new CircuitBreakerException();
+			}
+		}catch(Throwable t) {
+			failureCount++;
+			throw t;
+		}
+	}
+	
+}
+
+class DistributorNetworkServiceInvoker {
+	private CircuitBreaker cb;
+	
+	public DistributorDto getDistributor(String distributorCode) {
+		DistributorDto dto = null;
+		
+		return cb.invoke(() -> {
+				String resourceUri = "http://localhost:8080/distributor/{distributorCode}";
+				Map<String, Object> uriVariables = new HashMap();
+				uriVariables.put("distributorCode", distributorCode);
+				String url = UriComponentBuilder.fromUriString(resourceUri).uriVariables(uriVariables).build().toString();
+		
+				dto = restTemplate.getForObject(url, DistributorDto.class);	
+		    return dto;		
+			}
+		});
+		
+		
+		return dto;		
+	}
+	
+	public List<DistributorDto> getAllDistributors() {
+		List<DistributorDto> dtos = null;
+		
+		return cb.invoke(() -> {
+				String resourceUri = "http://localhost:8080/distributors";
+				String url = UriComponentBuilder.fromUriString(resourceUri).build().toString();
+		
+				dto = restTemplate.getForObject(url, List.class);	
+		    return dto;		
+			}
+		});
+	}
+}		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

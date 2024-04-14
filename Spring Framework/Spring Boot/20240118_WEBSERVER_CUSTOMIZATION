@@ -1,0 +1,90 @@
+How to customize the WebServers in spring boot application?
+Incase of spring boot webmvc application, the ServletWebServerApplicationContext (ioc container) takes the job of creating the WebServer and registering/deploying our application on	the Embedded ServletContainer.
+	
+The job of creating the Embedded Servlet containers and deploying the application on the underlying container is taken care by AnnotationConfigServletWebServerApplicationContext itself, then it is going to be tightly coupled with spring embedded container only and will not support deploying the application on other embedded containers
+
+The spring boot supports 4 types of embedded servlet containers
+1. Tomcat
+2. Jetty
+3. Netty (reactive)
+4. Undertow
+
+To allow extensibility and support deploying the applications on other/any embedded servlet containers, The spring boot has introduced WebServer interface.
+	
+interface WebServer {
+	void start();
+	void stop();
+	void shutDownGracefully(GracefulShutdownCallback);
+	int getPort();
+}	
+	
+For this interface, there are 4 implementations are there
+1. TomcatWebServer
+2. JettyWebServer
+3. NettyWebServer
+4. UndertowWebServer
+
+These implementation classes abstracts the underlying details of the how to manage the respective servlet containers like starting, stopping etc. So the AnnotationConfigServletWebServerApplicationContext always treats an Emebedded ServletContainer as one of these implementations of WebServer interface, so that it support deploying the application on any of WebServers
+
+The AnnotationConfigServletWebServerApplicationContext requires the implementation object of WebServer interface inorder to manage the WebServer. If AnnotationConfigServletWebServerApplicationContext itself is creating the object of WebServer interface implementation it will be tightly coupled with that specific WebServer it is instantiating. To help in decoupling the AnnotationConfigServletWebServerApplicationContext from specific WebServer implementation, the WebServerFactory has been introduced.
+	
+WebServerFactory is an interface and it has 2 child interfaces are derived
+1. ServletWebServerFactory
+2. ReactiveWebServerFactory
+
+The process of instantiating the WebServers and configuring them differs from one WebServer to another one. so the spring boot has provided ServletWebServerFactory interface for which multiple implementations are provided for each WebServer type
+For eg..
+To instantiate and configure TomcatWebServer, the spring boot has provided ConfigurableTomcatWebServerFactory
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

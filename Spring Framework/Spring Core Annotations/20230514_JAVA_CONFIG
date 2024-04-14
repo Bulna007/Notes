@@ -1,0 +1,33 @@
+Java Configuration Approach
+while working with stereotype annotations there are few limitations are there
+1. we cannot annotate the stereotype annotations on the classes which donot have sourcecode. In an application we typically use api/framework or third-party library provided classes which doesnt have sourcecode. These classes has to be configured as beans in the ioc container to be used as dependencies within our class. So since they dont have sourcecode we cannot annotate them using stereotype annotations
+
+2. For a class we may want to configure multiple bean definitions to instantiate different objects of it with different values/dependencies. but incase of stereotype annotations, we cannot configure a class as multiple bean definitions attached with different values and dependencies
+	
+to make the above work, we need to fallback to xml based configuration only. but there are lot of problems with xml-based configurations, so what is the alternate in configuring these classes in spring framework avoiding xml
+
+That is where spring has introduced java configuration approach.
+	
+
+// no sourcecode
+class Satelite {
+	public void initialize() {
+		sop("initializing..");
+	}
+}	
+
+@Configuration
+class JavaConfig {
+	
+	@Bean
+	public Satelite newSatelite() {
+		Satelite satelite = new Satelite();
+		return satelite;
+	}
+}
+
+Test.java
+----------
+ApplicationContext context = new AnnotationConfigApplicationContext(JavaConfig.class);
+Satelite satelite = context.getBean("newSatelite", Satelite.class);
+satelite.initialize();

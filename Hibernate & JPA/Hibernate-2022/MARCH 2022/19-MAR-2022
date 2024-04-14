@@ -1,0 +1,22 @@
+Configuration
+Configuration class acts as an builder for creating the object of the SessionFactory. The SessionFactory object has to be created by pre-populating hibernate configuration and mapping information. The Configuration class object takes that configuration and mapping information with which it instantiates the object of SessionFactory, so it acts as an builder in creating the SessionFactory
+
+#1. Create the object of Configuration class
+Configuration configuration = new Configuration();
+#2. invoke the configure() method, it reads the hibernate.cfg.xml from the classpath of the application and loads into Configuration object and returns
+configuration = configuration.configure();
+
+after loading the hibernate configuration into Configuration object we can add or modify the configuration into the Configuration object
+
+Builder Pattern:-
+Instantiate the object of the builder, pass the data to the builder, asking him to build the object of original class with the given data
+
+There after finally we can ask Configuration class object to build the object of SessionFactory.
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+------------------------------------------------------------------------------------------
+#2. SessionFactory
+SessionFactory acts as an repository for holding hibernate configuration and mapping information within an application. There are lot of responsibilities being carried by the SessionFactory
+2.1 It acts as an repository in holding the configuration and mapping information for the hibernate application
+2.2 It acts as an factory for creating the object of Session, The SessionFactory always creates the Session object by passing Connection object as an input along with that it populates configuration and mapping information that is required for Session to perform the operation
+2.3 SessionFactory during the instantiation, it creates an ConnectionPool by grabbing Connections from the database so that it can optimize the performance in creating the objects of the Session
+SessionFactory is immutable, once after creation we cannot modify the metadata that is loaded as part of the SessionFactory

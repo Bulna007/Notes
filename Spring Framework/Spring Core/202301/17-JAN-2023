@@ -1,0 +1,44 @@
+strategy design pattern
+1. favor composition over inheritance
+2. always design to interfaces, never design to concrete classes
+3. code should be open for extension and closed for modification
+
+1. favor composition over inheritance
+A class can reuse the functionality of another class in 2 ways
+1. inheritance
+2. composition
+
+1. Inheritance
+Inheritance is a mechanism through which one class can reuse the functionality of another class. When a class extends from another class, all the traits of another class will become part of the class that is inheriting. The Inheritance establishes IS-A relationship between the classes
+
+class A extends B {
+	void m1(int i) {
+		// we can directly call m2 of B class, as if m2() method is part of A itself
+		int j = m2(i);
+		// logic
+	}
+}
+
+class B {
+	int m2(int i) {
+		// logic
+		return random;
+	}
+}
+In order to call the method m2() of B class, we dont need the object of B, since A is extending from B class.
+	
+#2. composition
+composition is the another way through which we can achieve reusability. In case of composition, an object has been created by assembling or putting together several objects inside it.
+For eg.. an bicycle has been created by assembling several parts like handle, chain, frame, tires etc
+similarly an object became functional by putting several objects inside it.
+
+In case of composition we declare another class as an attribute inside our class, instantiate the object of the other class and invoke the methods of another class using the attribute. Composition establishes HAS-A relationship between the classes.
+	
+There are 2 ways one class can reuse the functionality of another class, so when we should use inheritance and when we should use composition?
+Inheritance
+There are #2 rules under which we need to go for inheritance
+1. If a class wants to reuse all the functionalities/traits of another class 
+2. if our class can be represented or expressed onbehalf of another class (IS-A)
+	
+Composition
+If a class wants to use few of the traits or functionalities of another class then go for composition

@@ -1,0 +1,51 @@
+jaxrs api 
+|-jersey (popular) (oracle: reference implementation)
+|-resteasy (jboss)	
+	
+Resteasy (jboss)
+irrespective of the implementation we are working with, the process of writing the resource/api class would be same, because we are writing the code using jaxrs api annotations/interfaces, not with implementation vendor classes
+
+But the jaxrs runtime that is provided by implementation vendor differents from one to the another. So, as the configuration options and the bootstrapping mechanism in bringing up the jaxrs application depends on implementation we are using.
+	
+So now working with an implementation vendor means: we need to understand the runtime and their configuration options available in bootstrapping.
+-------------------------------------------------------------------------------------------------------------------------------------
+resteasy is an implementation provided by jboss. so while working with wildfly server we dont need to add resteasy implementation jar in our project, since the resteasy implementation libraries are shipped aspart of wildfly server itself.
+	
+but we can work with resteasy implementation without wildfly server as well, but we need to manually add api/implementation jars to our project insuch case.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

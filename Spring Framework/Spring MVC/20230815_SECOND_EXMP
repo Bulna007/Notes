@@ -1,0 +1,369 @@
+1. Dispatcher Servlet
+web.xml
+-------
+
+<servlet>
+	<servlet-name>dispatcher</servlet-name>
+	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+<servlet-mapping>
+	<servlet-name>dispatcher</servlet-name>
+	<url-pattern>*.htm</url-pattern>
+</servlet-mapping>
+
+In spring mvc application along with mvc components we will have business/persistence tier components as well, we wanted to separate mvc components from business/persistence-tier components. So that these would exists within an ioc container independent of the spring mvc or dispatcherServlet created ioc container.
+		
+since Service/Dao classes needs to be injected into Controller components, we need to place them aspart of parent ioc container, so that the controller that is part of child ioc container can see the bean definitions that are in parent ioc container.
+		
+We need to instantiate the parent ioc container before dispatcher servlet creates its ioc container, for this we need to write the code for instantiating the parent ioc container in ServletContextListener implementation class and configure with servlet container.
+	
+Since every mvc application we need to create the parent ioc container to separate from spring mvc, it is an common requirement and the implementation class of ServletContextListener is provided by spring mvc itself.
+	
+ContextLoaderListener = it is an concreate implementation of ServletContextListener which can be directly configured in web.xml as an listener.
+during the time of deployment of the application, the servlet container upon creating the object of ServletContext, it publishes in ServletContextEvent and looks for the implentation class of ServletContextListener configured as an Listener in the application.
+	
+Since we configured ContextLoaderListenter the Servlet container calls contextInitialized(ServletContextEvent) method on that class. The ContextLoaderListener by default looks for an spring bean configuration file under /WEB-INF/applicationContext.xml if the file is not found, throws an exception and stops the deployment of the application.
+	
+if the spring bean configuration file has been found, it uses the configuration file in creating the ioc container. 
+ApplicationContext (interface)
+	|-ClassPathXmlApplicationContext
+	|-FileSystemXmlApplicationContext
+	|-AnnotationConfigApplicationContext
+	|-WebApplicationContext
+	|-XmlWebApplicationContext = specific to web application
+	
+The ContextLoaderListener by default instantiates the XmlWebApplicationContext implementation of the ApplicationContext in creating the ioc container.
+	
+	
+upon creating the ioc container, the ContextLoaderListener places the ioc container inside the ServletContext object with an Key WEB_APPLICATION_CONTEXT
+
+while DispatcherServlet is creating the ioc container inside the init() method, it first checks for the parent ioc container exists in ServletContext or not. if not available, then it directly instantiates the XmlWebApplicationContext without nesting. if availble pulls the parent ioc container and nests with child ioc container and instatiates it.
+	
+From the above we can understand, in spring mvc application we have 2 ioc containers
+1. ContextLoaderListener created ioc container that acts as parent
+2. DispatcherServlet created ioc container, that acts as child container nesting the parent.
+	
+	
+web.xml
+--------
+<listener>
+	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
+
+<servlet>
+	<servlet-name>dispatcher</servlet-name>
+	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+<servlet-mapping>
+	<servlet-name>dispatcher</servlet-name>
+	<url-pattern>*.htm</url-pattern>
+</servlet-mapping>	
+	
+we need 2 spring bean configuration files
+1. /WEB-INF/applicationContext.xml
+2. /WEB-INF/dispatcher-servlet.xml
+
+
+[provided by spring mvc]
+class DispatcherServlet extends HttpServlet {
+	private ApplicationContext applicationContext;
+	
+	public void init(ServletConfig config) {
+		String servletName = null;
+		WebApplicationContext parentContext = null;
+		
+		parentContext = config.getServletContext().get("WEB_APPLICATION_CONTEXT");
+		servletName = config.getServletName();
+		
+		if(parentContext != null) {
+			applicationContext = new XmlWebApplicationContext("/WEB-INF/"+servletName + "-servlet.xml", parentContext);
+		}else {
+			applicationContext = new XmlWebApplicationContext("/WEB-INF/"+servletName + "-servlet.xml");
+		}				
+	}
+	
+	public void service(HttpServletRequest req, HttpServletResponse resp) {		
+		HandlerMapping handlerMapping = null;
+		ViewResolver viewResolver = null;
+		Controller controller = null;
+		// apply common processing
+		
+		
+		handlerMapping = applicationContext.getBean(HandlerMapping.class);
+		HandlerExecutionChain chain = handlerMapping.getHandler(req);
+		String controllerBeanId = chain.getHandlerName();
+		
+		controller = applicationContext.getBean(controllerBeanId, Controller.class);
+		ModelAndView mav = controller.handleRequest(req, resp);
+		
+		viewResolver = applicationContext.getBean(ViewResolver.class);
+		View view = viewResolver.resolve(req, resp, mav.getViewName());
+		
+		view.render(req, resp, mav.getModel());		
+	}
+}
+	
+	
+interface Controller {
+	ModelAndView handleRequest(HttpServletRequest httpReq, HttpServletResponse httpResp);
+}	
+
+abstract class AbstractController implements Controller {
+	public ModelAndView handleRequest(HttpServletRequest httpReq, HttpServletResponse httpResp) {
+		// basic validation on the request
+		req method get/post = allow other give error
+		session validation	
+		return handleRequestInternal(httpReq, httpResp);	
+	}
+	
+	abstract ModelAndView handleRequestInternal(HttpServletRequest httpReq, HttpServletResponse httpResp);
+}
+	
+id="vcuc"
+class ViewContactUsController extends AbstractController {
+	ModelAndView handleRequestInternal(HttpServletRequest httpReq, HttpServletResponse httpResp) {
+		
+	}
+}
+
+spring mvc 3
+	-configuration approach
+
+spring bean configuration (xml-approach) 
+annotation-driven programming only
+
+Controller
+AbstractController (annotation-driven controller programming)
+	
+spring mvc components:	
+Phase-I (3/4/5 days)
+HandlerMapping (few 2 xml/few annotations)
+ViewResolver (must and should learn)
+View (jsp, excel, pdf)
+HandlerInterceptor (pre/post logic)
+	
+Annotation-driven programming (3/4 days)
+1. no web.xml with spring bean configuration
+2. no web.xml, no spring bean configuration
+3. no web.xml, no java configuration
+
+Annotation-driven Controller programming (7 days)
+Java bean validator api integration with spring mvc
+--------------------------------------------------------------------------------------------------------------------------------------
+1. Handler Mapping
+HandlerMapping helps the DispatcherServlet in identifying an Controller to be used for processing the request.
+	
+Java Realtime Tools [Fee: 3k] [mandatory] [2 months]
+1. Ant
+2. Maven
+3. Gradle
+4. JUnit
+5. Mockito
+6. Log4j/Sl4J
+7. SVN
+8. Git
+9. Sonarqube
+8. Jacacco
+
+timings: 
+Tuesday/Thursday : 8:00 PM - 10:00 PM [office calls]
+
+Monday, Wednesday, Friday:
+8:30 PM IST - 9:30 PM IST
+
+Saturday/Sunday:
+6:00 PM - 7:30 PM
+
+Tuesday: 7:00 PM - 8:00 PM
+Thursday: Holiday
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

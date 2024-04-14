@@ -1,0 +1,14 @@
+#5 Semi-Structured or No-sql database
+What is semi-structured data means?
+For a given data each record has different fields of information within it, which is called semi-structured data.
+	
+The RDBMS is not suitable for storing semi-structured data as we run into quite a number of problems in terms of desigining the schema model, performing persistence operations and even performance interms of queriying and accessing the data. In addition the cost of storing the data in RDBMS is quite high even though we dont use the capabilities of the database.
+	
+Having these problems in dealing with Semi-Structured data, the people has introduced No-Sql or Semi-Structured Databases
+1. Mongo db
+2. Casendra
+3. Couch db
+4. Neo4J
+5. Oracle Bigdata
+6. AWS Aurora db
+All of these databases that are designed to work on Hadoop FileSystem.

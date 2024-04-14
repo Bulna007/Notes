@@ -1,0 +1,8 @@
+one-to-many / many-to-one association
+There are 3 types of collections are supported by hibernate in representing an one-to-many association between entity classes.
+1. Set   = Set is an unordered collection of unique objects  
+2. List  = Indexed based collection of objects, here insertion order is preserved while retrieving the data. Duplicate objects are allowed
+3. Map   = key/value pair based collection
+
+How do we map an List one-to-may association into the database model?
+List is an indexed based collection, that can be used for preserving the insertion order of the objects

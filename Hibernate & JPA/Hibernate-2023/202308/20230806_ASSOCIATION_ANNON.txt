@@ -1,0 +1,22 @@
+one-to-many as one-to-one
+-------------------------
+
+class SettopBox {
+	int serialNo;
+	String manufacturer;
+	String description;
+	String boxType;
+	LocalDate manufacturedDate;
+	double price;
+	Subscription subscription;
+}
+
+class Subscription {
+	int subscriptionNo;
+	String customerName;
+	String provider;
+	String circle;
+	String plan;
+	double monthlyCharges;
+	SettopBox setTopBox;
+}

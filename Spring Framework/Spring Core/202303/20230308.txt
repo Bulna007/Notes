@@ -1,0 +1,17 @@
+working with p & c namespace
+instead of writing the lengthy <property> and <constructor-arg> tags for injecting the dependencies, the p and c namespace are provided as an shortened form of them
+
+class A {
+	int i;
+	int j;
+	int k;
+	String s;
+	float f;
+	int c;
+	B b;
+	A(int c) {}
+	// setter
+}
+
+<bean id="a" class="A" p:i="10" p:j="20" p:k="30" p:s="Robert" p:f="10.3" c:c="10" p:b-ref="b"/>
+<bean id="b" class="B"/>

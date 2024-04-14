@@ -1,0 +1,66 @@
+usability perspective:
+#1 
+query parameters = complex to work with, toughed to be passed aspart of the URI
+path parameters = easy to work with
+
+#2 
+query parameters = unless we know the names of the parameters we cannot access the resource
+path parameters = easy to be used since they dont any param name in passing the values
+
+#3
+query parameters = understanding and interpret the URI is very difficult because of complex syntax of query parameters
+path parameters = easy to interpret and understand the URI since those are directly written aspart of the URI
+
+runtime perspective:
+1. 
+query parameter = always appears at the end of the URI, we cannot build meaningful URI
+path parameter = can be appeared at any place within the URI, so we can build more meaningful URI
+
+2. 
+query parameter = multi-valued parameters
+path parameter = single-valued
+
+3. 
+query parameter = optional, those will not participate in resolving a request to the resource
+path parameter = mandatory, it is being used in resolving a request to resource
+---------------------------------------------------------------------------------------------------------------------------------------------
+Binding Regex to the Path parameters
+------------------------------------
+We can validate the Path parameter value that is supplied by the user at the time of binding the parameter value from the request by associating an regular expression.
+	
+by looking the regular expression we attached to the pathparameter, the jaxrs runtime	will understand, that the developer wants to validate the path parameter value send aspart of the request before binding it to the parameter of the method and passing the control to the resource method.
+	
+if the regex validation has been failed, the jaxrs runtime automatically returns an httpStatus: 404 indicating there is no resource found with the URI the user is trying access.
+	
+How to attach reqex to the path parameter?
+while declaring the templatePath aspart of the URI, we need to use the below expression
+"{templateParameterName: regex}"
+if regex has not been supplied then the default value is taken as .* = which means anything is acceptable
+
+
+@Path("/profile")
+class ProfileApiService {
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{mobileNumber: \\d{10}}")
+	public String getProfile(@PathParam("mobileNumber") String mobileNumber) {
+		// write the logic for fetching the profile information
+		return profile;
+	}
+}
+
+GET
+/profile/837
+---------------------------------------------------------------------------------------------------------------------------------------------
+Matrix Parameters
+
+The matrix parameters are defined aspart of the HTTP 1.0 specification, but many of the implementors of the HTTP protocol has ignored them and not implemented.
+	
+Matrix parameters are used for attaching additional information to a specific path segment/parameter of the URI of the request
+
+Filtering
+
+/healthcare/hyderabad;facility=SNBlock/projects?minBudget=200000
+   bu       location
+     (pathparam)

@@ -1,0 +1,264 @@
+What is maven?
+Maven is an declarative build management tool, that is used for building/deploying the java applications and it is purely written in java language. There are 6 major/main features are there in maven, that makes it popular among the other build tools that are there in the market
+1. Standardized directory structure
+2. Dependency Management
+3. Plugins
+4. Build Abstraction
+5. Archetypes
+6. Tools Support
+
+1. Standardized directory structure
+There is no standard directory structure being defined either by java language or sun microsystems or oracle in creating an java project, it is left to the discretion of the developer in choosing the directory structure of the project in organizing the sourcecode of the project. If there is no standard directory structure in developing an project, there are lot of dis-advantages are there
+dis-advantages:-
+	1. The developers find often difficult in switching between the projects when every project has its own directory structure. It takes huge amount of time in understanding the project structure to contribute developing the application that makes the developer find it complex job
+	
+	2. each IDE has its own directory structure defined in creating the java project, so once a project has been created using an IDE we cannot switch to other IDEs, incase if we want, we need to migrate the whole project to another IDE which is complex job
+	
+	3. since different projects has different directory structures, we need to write the buildscript file indicating how and from which directories the resources of the application should be build
+	for eg.. for clean/createdirs target we need to specify the directories that should be deleted or created like build, classes, dist etc based on the project
+	similarly for javac task we should pass where the sourcefiles of the project are in which directory and the class files should be places in which directory
+	so because of different projects has different directory structures, we need to endup in writing repeatively the buildscript for each project in passing the directories of the project to be build
+	
+To overcome the above problems maven has defined standard directory structure across the java projects for each type of the project
+Java project the directory structure would be as below
+project (directory)
+|-src
+  |-main
+	  |-java   (java sourcecode)
+		|-resources (non-java sourcecode) (application configuration files like: properties, xml, json, yml required for running the application)
+	  |-config (holds configuration files, but will not be packaged) 
+		|-scripts (holds scripts that are required for administrators or developers)	
+	  |-db (database scripts)
+		|-webapp			
+	|-it (integration-tests)
+	|-site (holds the site documentation files)
+	
+	|-test
+		|-java
+		|-resources
+There are plenty of advantages of having an standard directory structure in creating the projects
+advantages:
+1. any developer can work on any project easily, with no efforts he can switch between the projects and can be quickly productive
+2. most of the popular java ides supports maven standardized directory structure, so that effortless we can switch between any of the IDEs of our choice in developing the software applications. 
+3. since every project has the same standardized directory structure in organizing the sourcecode, we dont have to write the buildscript explicitly for each project in building the application.
+
+
+How to install the maven?
+Maven is an build tool that is purely written in java language and requires java to be installed on the machine to use it.	
+The latest version of the maven: apache-maven-3.9.5 and the minimal jdk requires is: jdk 8+
+	
+1. Windows operating system:
+In Windows maven is distributed as an binary distribution, so we can dowload the binary distribution and add to the SYSTEM PATH to use it directly.
+1. download https://dlcdn.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.zip
+2. extract and place the extracted directory under c:\ drive (for eg.. when we extracted the above downloaded file, it will be extracted into apache-maven-3.9.5 directory)
+3. goto windows environment variables and create #2 ENV variables
+	3.1 M2_HOME=c:\apache-maven-3.9.5 (optional)
+	3.2 MAVEN_HOME=apache-maven-3.9.5 (optional)
+append the MAVEN to the SYSTEM PATH variable as PATH=%PATH%\%MAVEN_HOME%\bin
+
+4. test the maven installation by running the below command from the command-prompt
+mvn --version
+
+2. Ubuntu or Mac operating system:
+2.1 install the minimal jdk version required to run the maven using the below commands:
+ubuntu: apt update -y
+        apt install -y openjdk-17-jdk
+				
+mac: homebrew update -y
+     homebrew install -y openjdk-17-jdk
+
+incase of ubuntu or mac, the maven is an packaged software distribution that is distributed through platform repositories like ubuntu repo etc. So we dont need to download and extract to use, rather we can use the relevant package manager of the platform as below:
+
+ubuntu: sudo apt install -y maven
+mac: homebrew install -y maven
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to build the java project using maven?
+From the previous discussions we had above, we can understand we dont have to write any buildscript file for building the maven applications all that we need to do is 
+1. create the project using maven standardized directory structure
+2. provide the information about the project like name, type etc to the maven, so that it can takecare of applying the standard build activities that should applied for the java project for building/packaging the application
+
+1. create the java project with standardized directory structure
+
+project (root directory)
+|-src
+  |-main
+	  |-java  (sourcecode)
+		|-resources (non-java sourcecode)
+	|-test (unittest code)
+	  |-java (java sourcecode)
+		|-resources (non-javasourcecode)
+	
+In the above project directory structure we see #2 source directories 
+1. main
+2. test
+
+In the project we write sourcecode and unittest sourcecode also for testing the actual code of the project. when we are packaging and deliverying the application to the customer, we want to exclude the unittest code aspart of the application package (jar/war/ear). Since the maven builds the project and packages it, to let the maven identify and include only the sourcecode of the application we need to place the source and testcode into separate project directories as above.
+	
+Why there are #2 directories under the sourcecode java and resources?
+The java sourcecode should be compiled and shipped to the customer, whereas in a project apart from java sourcecode we have non-java source code also like properties, configurations etc unless these files are available/shipped to the customer the application will not work (like database configuration files etc), 
+For these non-java sourcecode maven dont have to compile, but should ship or package into final distribution 
+so to let the maven differentiate which is the javasourcecode and non-javasource code, it has provided #2 directories
+
+2. provide the information about the project to the maven
+upon creating the project with standardized directory structure, all that we need to do to build the project by using maven is provide the information about the project to the maven build system by writing pom.xml under the root directory of the project (we dont need to write buildscript file like build.xml)
+	
+pom = stands for project object model. object model refers to structured data, since this file contains project structured data, it is called pom file. here we need describe the information about the project only, we dont need to write atlest one build instruction also to build the project.
+	
+The pom.xml is an xml file in which we just only need to write 4 elements to build an project mandatorily
+1. modelVersion
+2. groupId
+3. artifactId
+4. version
+
+
+modelVersion = refers to the version of the pom file we are using in writing the pom.xml
+groupId = organization name, for whom we are developing the project. It usually will be written as domain name of the organization since domains are unique
+artifactId= projectName 
+version = version of the project we are developing
+
+
+
+sunday morning = spring boot/devops (if required i may cancel)
+sunday evening = no classes
+monday morning = no classes
+monday evening = regular classes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+		
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+	
+	

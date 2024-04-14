@@ -1,0 +1,56 @@
+Performing the build activities in deploying and running the application manually has lot of problems/challenges:
+From an qa/deployer perspective:
+1. The qa/deployment engineers are not java developers, there are not aware of the technology, so they often find it very complex in deploying and running the application
+2. since there are several activities that needs to be conducted in deploying and running an application memorizing them is very difficult
+3. if there are any errors while performing the build activities the qa/deployment engineers may not understand what went wrong and they will start right from the begining that leds to huge amount of time in delivering the application
+4. there are several activities needs to be performed inorder to build and deploy the application, so there is always a chance where the qa/deployment engineer might miss one of the activity while conducting the build process due to distraction or lose of track which will leads to improper build and results in failure of the deployment of the application
+5. if there is a change in build activities, having them incorporated and adopted by the deployment engineers is very difficult.
+6. aspart of the build activities the deployment engineers might have to modify bunch of configuration files before packaging and deploying the application, this would leads to a bunch of challenges:
+	6.1 locating and identifying these configurations files by navigating through the project directories is very difficult
+	6.2 the deployment engineers are not aware of the technology in which these configuration files are written, they can be in xml, json or yaml etc, so they often find it difficult to understand these configuration files
+	6.3 as they dont know the technology of these file formats, they cannot guarantee the changes they incorporated are syntactically correct or wrong and would broke the execution of the code.
+
+To overcome these problems in deploying and running the application, the build tools are introduced.
+--------------------------------------------------------------------------------------------------------------------------------------
+ANT
+ANT stands for Another Neat Tool, prior to ANT there used to be another build tool called "Make" that is used for building java applications. The Make build tool uses operating system routines for carrying the build activities due to which the build scripts that are written using Make tool doesnt works across the operating systems. 
+	
+So to overcome the above problem, Ant tool has been introduced by Apache. Ant is an build tool that is purely written in java language only, so that it becomes portable across the operating system platforms. Now the buildscripts that are written using ANT does uses operating system routines so that those are portable across all the operating systems.
+	
+How to work with ANT?
+	
+
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

@@ -1,0 +1,134 @@
+docker, kubernetes and jenkins (with elk) : 29th Jan, 2024 [6:00 am ist]
+java realtime project training [today: 8:00 pm ist]	
+
+
+Java Microservices with SpringBoot
+----------------------------------
+Duration: 30 days (+/- 5/10 days)
+Timings: 7:10 am ist - 8:05/:10 am ist	[Monday - Friday]
+         8:00 am ist - 9:00 am [Saturday/Sunday]
+Fee: 4k
+Notes: Live classroom notes will be shared with students on weekly basis
+No recordings, no youtube, no videos will be provided. if we found any of the students recording the session, we will suspend/cancel the admission immediately without any fee refund.
+
+pre-requisite
+-------------
+1. core java
+2. servlet/jsp programming
+3. spring framework
+   1. core
+	 2. aop
+	 3. jdbc (optional)
+	 4. transactions
+	 5. datajpa
+	 6. mvc
+4. spring boot
+5. restful services (one of them: jersey, resteasy or springrest, basic knowledge on Rest)
+6. hibernate/jpa (optional)	
+	
+Course Content/Syllabus
+------------------------
+1. Concepts of Monolithic application architecture
+2. Concepts of Microservices application architecture
+3. Microservices Patterns
+   1. API Composer (theoritical)
+	 2. Command-Query Responsibility Segregation (CQRS) (theoritically)
+	 3. Domain-Driven design
+	 4. Database-per service
+	 5. Saga (practical)
+	 		1. Choreography-based saga
+			2. Orchestrator-based saga
+4. Implementation of microservices using tools
+	1. Architecture in developing/deploying/delivering the microservices
+		1.1 on Java stack
+		1.2 on Devops
+	2. Eureka Server (Discovery Server)
+	3. Ribbon (Client-Side Loadbalancer)
+	4. Spring Cloud loadbalancer
+	5. Fegin
+	6. Spring Circuit breaker (Resielience4J)
+	7. Spring Cloud Gateway
+
+5. Spring Cloud
+	1. Spring Cloud ConfigServer
+	2. Spring Cloud ConfigClient
+
+6. Spring Security
+	1. implementing WebApplication security using spring security module
+	2. oauth2 security using spring security
+	
+7. Kafka (5 more days)
+--------------------------------------------------------------------------------------------------------------------------------------
+spring boot is going on right now:
+7:00 am ist - 8:00 am ist
+
+demo link: 
+approach/orientation, depth, internals:
+
+4/5 days 
+1. autoconfigurations and starter dependencies
+2. actuator endpoints
+3. devtools
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

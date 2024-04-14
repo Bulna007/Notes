@@ -1,0 +1,17 @@
+Spring Boot
+------------
+spring boot is an another module, provided by the spring development team aspart of the spring framework. every spring module provided by the spring team will help us in building an functional aspect of an application
+1. core = dependency management
+2. spring jdbc = persistence aspects of an application
+3. spring webmvc = webapplication layer of an application
+
+whereas when it comes to spring boot, the spring team has provided it to address the non-functional requirements in building an application using spring framework
+
+
+spring jdbc application
+JdbcTemplate
+
+8 hours
+|-"0" = i have identified framework components and configured them to be used in our application (#300 lines code)
+	
+

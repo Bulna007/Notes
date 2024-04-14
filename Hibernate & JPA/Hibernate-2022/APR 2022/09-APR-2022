@@ -1,0 +1,51 @@
+Hibernate 4.x bootstrapping
+----------------------------
+Service is an component that provides/serves functionality, For all the services there is a base interface called "Service". For each type of functionality to be served, Hibernate Framework has defined child/sub interfaces from Service interface. For eg there is an ConnectionProvider (interface) that takes care of providing Connection functionality
+
+For each Service sub interface there are multiple implementations of the services. Pluggability comes by swapping between multiple Service Implementations
+These sub interfaces defined by the hibernate are called "Service Role". The base Service interface defined by the Hibernate is an marker interface, it is only provided by the Hibernate Framework for typesafety only
+
+
+interface ConnectionProvider {
+	Connection getConnection();
+	void closeConnection();
+}
+There are multiple implementations of the ConnectionProvider interface supporting different ways of acquiring Connections as an input
+1. JdbcConnectionProviderImpl
+2. C3p0ConnectionProviderImpl
+3. ProxoolConnectionProviderImpl
+4. DataSourceConnectionProviderImpl (jee connection pool)
+
+What is an ServiceRegistry?
+These services has special characteristics 
+1. A Service implementation has to be instantiated, initialized with relevant configuration for usage, similar during the termination of the program the Service has to destroyed, this is called Lifecycle Management
+2. These services has dependencies with other services and should be taken care
+
+ServiceRegistry is similar to an ioc container who takes of hosting these services, managing their lifecycle and dependency between them
+
+ServiceRegistry is an interface for which multiple implementations of ServiceRegistry are there. Hibernate 4.x there are 3 types of ServiceRegistries are there
+1. BootStrapServiceRegistry
+2. StandardServiceRegistry
+3. SessionFactoryServiceRegistry
+
+These ServiceRegistries are related with each other hierarchially. One acts an parent and other one as child. Among all the parent ServiceRegistry is "BootStrapServiceRegistry" and StandardServiceRegistry child of BootstrapServiceRegistry and SessionFactoryServiceRegistry is a child of StandardServiceRegistry
+
+What are the Services managed by individual ServiceRegistries?
+1. BootStrapServiceRegistry 
+It is the parent of all the Service registries in Hibernate and all the essential and mandatory services are hosted and managed by the BootStrapServiceRegistry
+1.1 ClassLoaderService
+1.2 IntegratorService
+1.3 StrategySelector
+
+2. StandardServiceRegistry
+Most of the Services are managed by the StandardServiceRegistry
+2.1 ConnectionProvider
+2.2 JdbcServices
+2.3 TransactionFactory
+2.4 JtaPlatform
+2.5 RegionFactory
+
+3. SessionFactoryServiceRegistry
+These are the services used by the SessionFactory, there are 2 services hosted by this ServiceRegistry
+3.1 EventListenerRegistry
+3.2 StatisticsImplementor

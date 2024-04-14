@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="inverseannon" />
+        <module name="hql" />
+        <module name="tablepersubclass" />
+        <module name="bootstrapping3" />
+        <module name="onetomanyasonetooneannon" />
+        <module name="hibernatetx" />
+        <module name="jpacompositeid" />
+        <module name="moreorm" />
+        <module name="onetomanyassocannon" />
+        <module name="jpaorm" />
+        <module name="jpainheritancemapping" />
+        <module name="flc" />
+        <module name="compositeid" />
+        <module name="getandload" />
+        <module name="onetomanylist" />
+        <module name="manageSF" />
+        <module name="tableperclasshierarchy" />
+        <module name="onetomanymap" />
+        <module name="inverse" />
+        <module name="dmloperations" />
+        <module name="onetomanyassoc" />
+        <module name="onetoone" />
+        <module name="beginorm" />
+        <module name="manytooneassocannon" />
+        <module name="secondlevelcache" />
+        <module name="idgenerators" />
+        <module name="hibannon" />
+        <module name="tableperconcreteclass" />
+        <module name="onetomanyasonetoone" />
+        <module name="onetooneannon" />
+        <module name="manytomanyannon" />
+        <module name="manytomany" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="onetoone (1)" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="hql" options="-processor org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor" />
+    </option>
+  </component>
+</project>

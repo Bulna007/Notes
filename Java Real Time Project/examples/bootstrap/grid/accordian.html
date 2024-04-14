@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buttons</title>
+    <link rel="stylesheet" href="css/bootstrap-grid.rtl.min.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="css/bootstrap-utilities.min.css">
+    <link rel="stylesheet" href="css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+
+<body>
+    <h2>Categories</h2>
+    <div class="container mt-2">
+    <div class="accordion accordion-flush" id="categories">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="electronics-headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#electronics" aria-expanded="true" aria-controls="electronics">
+                    Electronics
+                </button>
+            </h2>
+            <div id="electronics" class="accordion-collapse collapse" aria-labelledby="electronics-headingOne"
+                data-bs-parent="#categories">
+                <div class="accordion-body">
+                    <p>Mobile Phones</p>
+                    <p>Fridge</p>
+                    <p>Microwave Oven</p>
+                    <p>Air Conditioner</p>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="fashion-headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#fashion" aria-expanded="true" aria-controls="fashion">
+                    Fashion
+                </button>
+            </h2>
+            <div id="fashion" class="accordion-collapse collapse" aria-labelledby="fashion-headingOne"
+                data-bs-parent="#categories">
+                <div class="accordion-body">
+                    <p>Shoes</p>
+                    <p>Handbags</p>
+                    <p>Jewllery</p>
+                    <p>Belts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+</body>
+
+</html>

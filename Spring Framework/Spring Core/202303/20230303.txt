@@ -1,0 +1,87 @@
+There are 2 types of dependency injection are there
+1. setter injection
+2. constructor injection
+
+1. 
+the dependent object is optional to be injected into target class, without injecting dependent object also we can create the object of target class
+constructor injection: the dependent object is mandatory to be injected into target class, without dependent object we cannot create the object of the target class
+	
+2. 
+setter injection: the dependent object will be injected into the target class, after instantiating the object of target class 	
+constructor injection: the dependent object will be injected into the target class, while creating the object of the target class itself
+	
+3. 
+circular dependencies between the classes cannot be managed using constructor injection, whereas using setter injection we can manage circular dependencies
+-----------------------------------------------------------------------------------------------------------------------------------
+primitive dependency injection
+instead of injecting object types, we can inject primitive values as dependents into the target class attributes, this is supported by ioc container and is called "primitive dependency injection"
+-----------------------------------------------------------------------------------------------------------------------------------
+collection dependency injection
+ioc container supports injecting collection class objects populated with values as dependents into the target class, which is called "collection dependency injection"
+	
+There are lot of collection type classes are there in java like
+1. List
+2. Set
+3. Array
+4. Queue
+5. Stack
+6. Map
+7. Properties
+
+out of the above ioc container supports only 4 collection class types to be injected as dependents into target class
+1. List
+2. Set
+3. Map
+4. Properties
+
+class Game {
+	List<String> players;
+	
+	void setPlayers(List<String> players) {
+		this.players = players;
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="game" class="Game">
+	<property name="players" ref="players"/>
+</bean>
+
+<bean id="players" class="java.util.ArrayList"/> // empty
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/cdi/common/application-context.xml"));
+Game game = beanFactory.getBean("game", Game.class);
+
+
+even though ioc container can instantiate the object of the collection class when given the name of them, it cannot populate values into these objects, since the collection classes doesnt have setter or constructor to populate the data.
+	
+But we dont want to inject empty collection class objects as dependencies into target classes, rather we want ioc container to support instantiating collection classes with values and inject them as dependencies into target class.
+To support this ioc container has provided special tags
+1. <set>
+2. <list>
+3. <map>
+4. <props>
+for each type of collection to be instantiated with values
+
+How to inject List of values as dependents?
+	
+class Game {
+	List<String> players;
+	
+	void setPlayers(List<String> players) {
+		this.players = players;
+	}
+}
+
+<bean id="game" class="Game">
+	<property name="players">
+		<list>
+			<value>Rohit Sharma</value>
+			<value>Dhoni</value>
+			<value>Virat Kohli</value>
+		</list>
+	</property>
+</bean>

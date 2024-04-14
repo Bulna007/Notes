@@ -1,0 +1,65 @@
+How to work with mapping composite primary key of a database table in jpa api?
+
+The below class is not an entity class, rather it is embedded as part of another class	
+@Embeddable	
+class LoanApplicationNo implements Serializable {
+	@Column(name="application_no")	
+	protected int applicationNo;
+	@Column(name="branch_code")
+	protected String branchCode;	
+	// accessors
+}	
+
+@Entity
+@Table(name="loan_application")
+class LoanApplication {
+	@EmbeddedId
+	protected LoanApplicationNo loanApplicationNo;	
+	@Column(name="applied_dt")
+	protected Date appliedDate;
+	@Column(name="applicant_nm")
+	protected String applicationName;
+	protected Date dob;
+	protected String gender;
+	@Column(name="loan_type")
+	protected String loanType;
+	@Column(name="loan_amount")
+	protected float loanAmount;	
+	// accessors
+}	
+-------------------------------------------------------------------------------------------
+jpa composite primarykey table
+-------------------------------
+edu_scholarship	
+eduscno (pk)
+college_code (pk)
+aadhar_no (pk)
+fullname
+dob
+gender
+medium
+grade
+academic_year
+grant_amount
+--------------------------------------------------------------------------------------------
+Hibernate Tools
+While working with hibernate framework, we need to write entity classes representing the database tables and mapping files mapping the entity classes to the corresponding tables. Looks like hibernate framework eliminates the boiler-plate logic in performing the persistence operation, but we need to endup in writing lot of configuration information related to database tables to hibernate framework unless otherwise it will not be able to manage in performing persistence operation.
+So programmer has to spend lot of time in pouring the details of the database tables to hibernate framework which will take too much amount of time in building an application with hibernate framework
+To help the programmers in quickstart in building the application using hibernate framework, the hibernate framework team has provided quite a lot of development tools that helps in building the hibernate application quickly
+
+There are 2 types of tools are there 
+1. gui based tools
+The gui based tools are provided as plugins as part of eclipse ide
+	1.1 Hibernate Configuration Wizard
+	1.2 Hibernate Mapping Editor
+	1.3 Hibernate Console Configuration
+	1.4 Reverse Engineering Console
+	1.5 HQL Editor
+	1.6 Criteria Editor
+	1.7 Database Explorer
+	
+2. command-line tools
+There are 3 command-line tools are provided by hibernate framework
+2.1 SchemaExport
+2.2 SchemaUpdate
+2.3 SchemaValidate

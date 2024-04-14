@@ -1,0 +1,37 @@
+What is criteria api?
+We can write HQL queries in querying the data from the database while working with hibernate framework. Instead of using HQL queries we can construct the same HQL queries using Criteria api classes to query the data against the database tables.
+	
+There are advantages of using criteria api over hql
+1. The queries we construct using Criteria api are Type-safe queries, we refer references of entity Class in constructing the query, so that any error will result in compile-time error.
+2. The programmer dont need know the sql query language to query the data from the database while working with Hibernate Framework. He can construct the queries using Criteria api classes in querying the data
+3. The criteria api will generate an optimized HQL query based on the join conditions we specified using criteria api.
+	
+From Hibernate 5.x onwards the Criteria Api in the hibernate framework has been deprecated/removed in support jpa 2.1 Criteria api.
+In Jpa 2.x Criteria api, to support building Type-safe criteria queries, they introduced Metamodel based criteria api, using the Metamodel api we can build completely the Type-Safe criteria queries, so in favour of jpa criteria, hibernate has removed Hibernate criteria api.
+	
+While constructing an sql query we need to build 3 parts into it.
+	1. from clause = indicates the table from where we want to query the data from
+	2. criteria clause = tells the filter conditions based on which we want to fetch the data
+	3. projection clause = refers to what data to be fetched from the database tables
+	
+so we can build all the 3 parts in constructing an query. But the simplest form of a query is just from clause
+
+from Journey
+How to construct the simplest from of a query?
+1. The jpa api has provided an class called CriteriaQuery, which represents an query we wanted to construct and execute. upon creating the object of CriteriaQuery, it doesnt have any of the 3 parts. Now we need to add the 3 parts into the CriteriaQuery object 
+	
+2. To construct/add the clause to the CriteriaQuery object the jpa has provided an class called CriteriaBuilder, using which we can construct all the 3 parts of the query in querying the data from database
+
+
+EntityManagerFactory emf = Persistence.createEntityManagerFactory("pu1");
+EntityManager em = emf.createEntityManager();
+CriteriaBuilder cb = em.getCriteriaBuilder();
+
+CriteriaQuery<Journey> cq = cb.createQuery(Journey.class);
+Here we didnt specified the from clause, we only told the generic type of the query result upon executing.To elaborate, upon executing the above CriteriaQuery object, it produces the Journey class objects as an outcome. Still the above CriteriaQuery object is empty.
+	
+Root<Journey> root = cq.from(Journey.class);	 // from which table
+cq.select(root); //what columns (select clause)
+
+TypedQuery<Journey> typedQuery = em.createQuery(cq);
+List<Journey> journeys = typedQuery.getResultList();

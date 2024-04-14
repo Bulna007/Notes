@@ -1,0 +1,43 @@
+Jpa Fetch:
+In jpa as well we can specify for the associated objects, the fetch option. jpa supports 2 types of fetch options
+1. LAZY = equal to select of hibernate
+2. EAGER = equal to join of hibernate
+--------------------------------------------------------------------------------------------
+Cascade
+Cascade indicates when we perform an operation on an entity object, how does the operation should be propagated onto the child objects is indicated by "Cascade"
+	
+There are 5 cascade options are supported by hibernate
+1. none
+2. all
+3. save-update
+4. delete
+5. orphan-delete
+
+
+1. none
+no cascade which is the default cascade option for an associated entity objects
+
+2. all
+any operations on the entity object should be cascaded to their associated child entity objects as well.
+
+3. save-update
+when we perform a save/update on an entity object, hibernate will apply the operation on the child associated objects as well if required.
+	
+if we create an DeliveryAssociate as an transient object as shown below.
+	
+DeliveryAssociate deliveryAssociate = new DeliveryAssociate(); // inverse="true"
+// populate the data into the deliveryAssociate
+	
+Parcel parcel = new Parcel();
+// populated parcel data
+parcel.setDeliveryAssociate(deliveryAssociate); #transient object
+session.save(parcel);
+
+without a cascade option the above code will result in an error, indicating the child associate object is transient to persist the relationship column.
+here we need to persist manually the deliveryAssociate before calling save on parcel.
+	
+Instead of it we can specify cascade option on the associated object	
+
+<many-to-one name="deliveryAssociate" column="delivery_associate_no" cascade="save-update"/>
+
+with the above cascade option on associate, when we call save on parcel hibernate automatically issues save on the associated object as well.

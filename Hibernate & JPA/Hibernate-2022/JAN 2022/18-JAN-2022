@@ -1,0 +1,56 @@
+There are 2 formats in which we can store the data on a File
+1. human understandable format
+2. machine/programmable format
+
+There are several data representation standards available in storing the data in programmable/machine understandable format.
+1. Fixed-Width Field size format
+2. Comma separated value (csv) format
+3. XML (eXtensible markup language)
+	
+
+3. XML [eXtensible markup language]
+-----------------------------------
+XML is not an programming language, rather it is used for storing/representing the data. xml allows us to store the data using tags. tags helps us in deriving the semantics and boundary of the data. so that there is no chance of mis-interpreting the data 
+
+the fixed-width field size format or csv format are linear data representation models, which doesnt support representing relationship between the data, but business data often contains relationships which can be represented using xml
+
+xml stores the data in hierarchial model permiting us to establish relationship between the data as parent/child. The xml is a text based data representation standard which made it inter-operable, which means any language or any operating system we can read/process xml
+
+advantages:-
+	1. both human readable and programmable format
+	2. the data is stored in structured format with semantics and boundaries, so there is no chance of mis-interpreting the data
+	3. it is highly inter-operable
+	4. finally we have an data representation standard that supports relationship between the data
+	5. we can read the data sequential and random as well 
+	6. there are many programming methodologies available for reading/writing the data into xml format like (dom, sax, stax, xquery, xpath etc)
+dis-advantages:-
+	1. xml is too verbosed, most of the time we endup in writing more data than the actual data we want to store, interms of tags. so that it waste huge amount of storage memory for storing the data
+	2. unlike csv, fixed-with field size format, writing the data in xml is not easy, a common-man or an computer iliterate cannot find it easy to understand the rules/syntax over writing the data in xml format. a prior knowledge or understanding the xml rules/syntax are required.
+	3. since these are hierarchial data representation model, they consume huge cpu/memory while processing xml, so not ideally suited for processing large volumes of data
+	4. There are too many programming methodologies are available around processing xml like stax, dom, sax, xpath, xquery etc which are tool complicated to understand and work with
+	5. The learning curve involved in learning xml technologies and related methodologies is very high
+	
+From the above we can understand xml is not suitable for storing business data since it is verbosed and takes more cpu/memory for processing xml when the data volumes are high. xml is an ideal choice for storing the configuration data.
+
+In addition to the above problems with various data representation standards we discussed till now, there is an another common problem is there as below.
+All of the data we stored in any format, we want to read and perform operations using the programs.
+The java programs usually holds the data interms of objects inorder to perform the processing, but any of the formats like fixed-with-field size format, csv, or xml doesnt allows support storing object representation of data, so we need to write the program for reading the data from native format and convert into objects to perform operation which requires huge amount of development time and complexity in writing the programs in coverting the data.
+	
+Instead if we can store the data directly interms of objects into file, we can read them quickly and perform operation that is where Serialization is introduced.	
+	
+4. Serialization
+-----------------
+Serialization is a java technology using which we can convert the state of an object into bits and bytes so that we can store the data on a file or write to any output stream whereever we want. along with that we can deserialize the data and build them back into objects as well.
+	
+any how java programs requires data interms of objects to perform operation, so if we can directly convert object of data into bits and bytes and store it on a file, we can quickly de-serialize them and perform operation whenever we want so that we can avoid writing code for converting the data into object format.
+	
+advantages:-
+	1. the data we stored in serialized format cannot be read by anyone only programs can read/write the data, so it is highly secured.
+	2. no need to write data conversion logic in coverting the data into object format or while storing the from object into native format which removes lot of programming efforts in reading/writing the data and complexity in handling the data becomes zero
+	3. quite faster in processing the data since there is a native support by language itself in reading and writing
+dis-advantages:-
+	1. not human readable only machines/programs can read the data which is an biggest dis-advantage
+	2. not inter-operable, only java programs only can read the data other languages doesnt understand serialization format
+	3. to work with multiple/bunch of data we need to collection classes in serializing and de-serializing, which requires whole data to be read/written for any change which is a huge performance impact
+	
+since it is java technology specific and doesnt support human readable not a choice for storing business data.

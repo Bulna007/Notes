@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javascript Arrays</title>
+</head>
+<body>
+    <h2>Javascript Arrays</h2>
+    <script type="text/javascript">
+        var subjects = ["Maths", "Science", "Social"];
+        if(Array.isArray(subjects)) {
+            document.writeln("subjects is an array");
+        }
+        var constructor = subjects.constructor.toString();
+        if(constructor.indexOf("Array") != -1) {
+            document.writeln("found it as an Array");
+        }
+        if(subjects instanceof Array) {
+            document.writeln("its an Array!!!");
+        }
+        subjects[6] = "English";
+        document.writeln(subjects);
+    </script>
+</body>
+</html>

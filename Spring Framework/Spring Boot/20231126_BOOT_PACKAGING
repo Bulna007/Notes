@@ -1,0 +1,209 @@
+How to package and distribute a Spring Boot Application?
+ (or)
+Spring Boot executable Jar?
+----------------------------------------------------------
+How to distribute a java application to the enduser?
+The java application is shipped or distributed to the enduser by packaging it into an Jar packaging format. There are 2 types of Jars are there
+1. Library/Distributable Jar
+2. Executable/Application Jar
+
+1. Library/Distributable Jar
+These jars contains bunch of class files packaged/compressed and distributed, so that those can be reused in building other java applications quickly.
+	
+2. Executable/Application Jar
+To ship an java application to the enduser or customer directly, we need to package the java application as an executable Jar. An executable jar contains all the necessary information pertaining to how to execute the application is written aspart of the manifest.mf and packaged inside the Jar itself. So that the enduser/customer dont need to know this information in running the application. He can simply launch the application by using
+
+java -jar jarName.jar
+
+so that the jvm quickly goes to the manifest.mf of the jar we passed and reads all the necessary information in running the application.
+To create an jar as an executable jar
+1. the application should have an Main class defined with main() method inside it
+2. The main class should be defined or declared inside the manifest.mf with attribute as "Main-Class": fqnMainClass 
+
+When we are building real-world java applications, we use lot of third-party libraries as dependencies in reusing their functionality in building the application. For eg.. to build an database application we use jdbc api and implementation library (jdbc driver) jars. Unless we have these libraries in classpath, we cannot compile the project and we cannot run the application	
+
+Let us consider a project with libraries as dependencies and understand how to compile and run the application:
+d:\workspace:/>
+  |-tourplanner
+		|-src
+			|-com
+				|-tourplanner
+					|-main
+						|-Application.java
+		|-lib
+			|-mysql-connector-java-8.12.jar
+		|-bin
+			|-com
+				|-tourplanner
+					|-main
+						|-Application.class
+							
+we need to set the classpath pointing to the application dependent jars and to the bin directory where the .class files of the application are there to run the application
+	
+set CLASSPATH=d:\workspace\lib\mysql-connector-java-8.12.jar;d:\workspace\bin
+java com.tourplanner.main.Application
+
+Now how to deliver the above application to the enduser?
+To deliver it to the enduser we need to package the application as an executable jar
+	
+tourplanner.jar
+|-META-INF
+	|-manifest.mf
+		|-Main-Class: com.tourplanner.main.Application
+|-com
+	|-tourplanner
+		|-main
+			|-Application.class
+				
+But we cannot execute this jar file directly, because our application components are dependent on the third-party library (in the above example mysql-connector-java-8.12.jar)
+
+How do we distribute our application as an executable jar along with third-party libraries as dependencies?
+Inside jar file we cannot place another jar, which is not supported by the java platform. The java standard classloaders doesnt support loading the classfiles/bytecode of the classes that are packaged in a jar and embedded inside another Jar.
+	
+The only way we can distribute an executable jar along with dependent libraries is by placing our application executable jar and dependent libraries into one directory and set the classpath inside the manifest file pointing to all the dependent jars as below
+
+TourPlanner (directory)
+|-tourplanner.jar
+	|-META-INF
+		|-manifest.mf
+|-mysql-connector-java-8.12.jar
+|-commons-logging-1.12.jar
+
+manifest.mf
+Main-Class: com.tourplanner.main.Application
+Class-Path: mysql-connector-java-8.12.jar;commons-logging-1.12.jar
+
+Now we can run the application directly using java -jar tourplanner.jar. but we should be in application jar directory while launching it. There is not single packaged distribution, and we need to zip the application directory with application executable and dependent libraries to ship to the customer which is the biggest drawback.
+	
+So how to package and distribute an executable application as an single distributable file?
+This is an classic problem and people mitigates it with one alternate solution, since java language has not provided any mechanism to package and distribute executable jar along with dependent libraries.
+Fat Jar or Uber Jar:
+The Java application along with the dependent libraries can be packaged and distributed as an executable jar using Fat/Uber jar technic. In this we unpackage all the dependent jars into directories and package into our application jar file directly
+	
+tourplanner
+|-lib
+	|-mysql-connector-java-8.12.jar (unjar)
+	|-commons-logging-1.12.jar (unjar)
+|-bin
+  |-*.class (application classfiles)
+	|-along with this unjar all the dependent jar classfiles also here
+then package into one single application executable jar file.
+		
+There are problems with FAT/Uber jar approach:
+1. we dont know what are the dependent libraries we are using inour project and what versions of them
+2. Packaging the application takes lot of time, because we need to unjar all the dependent jars and package them into one single dependent jar.
+3. upgrading an dependent library or adding or removing an dependent library requires repackaging the whole application
+
+To overcome these problems in packaging and distributing our application, the spring boot has introduced spring boot executable jar.
+	
+The Spring Boot has introduced an special jar packaging structure as defined below.
+project.jar
+|-META-INF
+	|-manifest.mf
+|-*.class
+	
+bootproject.jar
+|-META-INF
+	|-manifest.mf
+		|-Main-Class: org.springframework.boot.loader.JarLauncher
+		|-Start-Class: com.tourplanner.main.Application
+|-org
+	|-springframework
+		|-boot
+			|-loader
+				|-Launcher.class
+				|-JarLauncher.class (specialized boot classloader: Main)
+				|-WarLauncher.class	
+|-BOOT-INF
+	|-classes
+		|-*.class (our application .class files)
+	|-lib
+		|-mysql-connector-java-8.12.jar
+		|-commons-logging-1.12.jar
+		
+java -jar project.jar (java standard classloader)
+java -jar bootproject.jar
+
+
+	
+
+	
+	
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+
+				
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

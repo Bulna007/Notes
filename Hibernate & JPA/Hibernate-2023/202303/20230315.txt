@@ -1,0 +1,55 @@
+From all the discussions we made, it is clear that there are 3 databases that are primarily used for developing software applications.
+1. Relational database management system
+2. No-Sql or Semi-Structured Databases
+3. Object storage Databases
+
+The relational database management systems allows us to store the data interms of tables and records in nature which is called "relational format", but always java programs wants to hold the data and process the data interms of objects only.
+	
+Why does the java programs want to read the data interms of objects to perform operations, why not the java programs can directly read the data from relational database to perform operations on the data?	
+
+wap to calculate total sales in a store?
+
+class DBSalesManager {
+	public double getTotalSalesAmount() {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		double TotalSalesAmount = 0;
+		double saleAmount = 0;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd);
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("select * from sales");
+			while(rs.next()) {
+				totalSalesAmount = totalSales + rs.getDouble("paid_amount");
+			}
+			
+		}catch(SqlException | ClassNotFoundException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			// close all the resources
+		}
+		return totalSalesAmount;
+	}
+}	
+
+
+File(XML) (JSON)
+
+class FileSalesManager {
+	public double getSalesAmount() {
+		// reading the data from XML File
+		double saleAmount = Integer.parseInt(node.getNodeValue());
+		totalSalesAmount = totalSalesAmount + saleAmount;
+	}
+}
+
+business operation -> reading the data from database
+                   -> files
+	
+1. business logic is exposed to the source system from where the data is coming as an input
+2. if the underlying format in which the data has been stored on the sourcesystem has been changed, it affects the business logic that we written around that data
+3. if we wanted the business logic to work for multiple source systems of data, then we endup in writing one class per sourcessytem to read and perform operation, so that the business logic gets duplicated across the various different source systems.

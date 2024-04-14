@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag/Element selector</title>
+</head>
+<body>
+    <h2>Tag/Element Selector</h2>
+    <p>Paragraph1</p>
+    <p>Paragraph2</p>
+    <p>Paragraph3</p>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $("p").html(function(idx, text){
+                $(this).html(text + " changed");
+            });
+        });
+    </script>
+</body>
+</html>

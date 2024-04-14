@@ -1,0 +1,88 @@
+update()
+void update(entityObject)
+used for updating an existing entity object within the database table. if the id with which we passed the object to the update() doesnt exists in the database it throws an exception.
+	
+There are 2 ways in updating an object
+1. partial update
+if we want to update only few attributes of the entity class, then fetch the existing object from database, modify the attribute values which we want, and pass the modified object to update()
+	
+Customer customer = session.get(Customer.class, 19);
+// update those attributes we wanted to change
+customer.setMobileNo("938378894");
+customer.setEmailAddress("jane@gmail.com");
+session.update(customer);
+	
+2. full update of the object
+if we want to change all of the attributes apart from primary key of an entity object, then we dont need to fetch existing object rather populate the values of the attributes with existing id in a new object and pass to the update()
+	
+Customer customer = new Customer();
+customer.setCustomerNo(19); //existing id
+customer.setFullname("jane k");
+customer.setAge(23);
+customer.setGender("Female");
+customer.setMobileNo("0383983");
+customer.setEmailAddress("jane@gmail.com");
+session.update(customer);
+
+2. merge(entityObject)
+if there already exists an entity object in the Session cache and if we create a new object with the existing id of the session object and pass it to the update method, it results in an exception saying NonUniqueObject found in the Session.
+	
+In case if we want to allow new object to be merged with the existing object (means existing object will be replaced) in the Session then we need to use merge(entityObject)
+	
+Customer customer = session.get(Customer.class, 19); // object is associated with session
+Customer customer1 = new Customer();
+customer1.setCustomerNo(19);// same id of an existing object
+// populate the data
+session.update(customer1); // throws exception as already object with same id exists in session
+
+#instead we need to use merge()
+session.merge(customer1);
+--------------------------------------------------------------------------------------------
+delete()
+delete(entityObject)
+delete is used for deleting an existing entity object from database table
+There are 2 ways of deleting an object from database table
+#1.
+fetch the existing object from database with the given id and delete it
+
+Customer customer = session.get(Customer.class, 19);
+if(customer != null) {
+	session.delete(customer);
+}
+
+#2.
+create an new entity object with existing id and pass to the delete()
+Customer customer = new Customer();
+customer.setCustomerNo(19);
+session.delete(customer);
+--------------------------------------------------------------------------------------------
+dynamic-insert and dynamic-update in hibernate
+
+#1. dynamic-update
+Customer customer = session.get(Customer.class, 10); #12 attributes
+customer.setMobileNo("938790083");
+customer.setEmailAddress("jane@gmail.com");
+session.update(customer);
+
+The hibernate will update all the 11 attributes of the record against the primary key
+update customer set fullname=?, age=?, gender=?, mobile_no=?, email_address=? where customer_no = ?
+
+session.update(customer);
+// grab the connection from sessionfactory
+// goto dialect and ask to create an update sql query for the entity object by passing mapping info
+// create preparedStatement
+// substitute parameters from object
+// pstmt.executeUpdate();
+
+session.update(customer1);
+session.update(customer2);
+
+While creating the SessionFactory object itself, the SessionFactory upon reading the mapping information of the entity classes, per each entity class it creates selectById, insert, update and delete sql queries and caches within it
+So that when we ask Session object to perform save(), update(), delete() or get(entityClass,id), the Session gets the pre-generated sql query from SessionFactory there by optimizing the performance in generating the query
+	
+SessionFactory sessionFactory = configurtion.buildSessionFactory();
+
+	
+Even though we modified 2 attributes in an update(), still hibernate updates all the attributes of the object into database which might show unwanted side-effects incase of auditing the database tables.
+	
+so in such cases we dont want to update all the attributes even though there are no changes,we want to update only those attributes whose values are changed, this can be done using dynamic-update

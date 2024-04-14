@@ -1,0 +1,13 @@
+#1 select the hours for journey based on journey_no
+
+CriteriaBuilder cb = em.getCriteriaBuilder();
+CriteriaQuery<Integer> cq = cb.createQuery(Integer.class);
+Root<Journey> root = cq.from(Journey.class);
+
+cq.select(root.get("hours"));
+cq.where(cb.greaterThanOrEqual(cq.get("journeyNo"), 1));
+
+TypedQuery<Integer> typedQuery = em.createQuery(cq);
+typedQuery.getResultList();
+
+The CriteriaBuilder acts as a builder for creating the object of CriteriaQuery and Criterion objects.

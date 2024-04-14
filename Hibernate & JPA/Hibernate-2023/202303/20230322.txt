@@ -1,0 +1,12 @@
+How to establish relationship between the tables in relational database management system?
+In RDBMS we establish relationship between the data/records across the tables by using primary key and foreign keys. A primarykey acts as an logical address of the record through which we establish relationship with other records of another table by writing it as an foreign key in another table	
+
+There are 3 types of relationships we can establish between the tables
+1. one-to-one
+2. one-to-many / many-to-one
+3. many-to-many
+
+
+1. one-to-many
+Two tables are said to be in one-to-many relationship means a record in my table is in relationship with multiple records in another table.
+one project can have many associates working in it. the otherside of the relationship always has one-to-one which means one member works in one project only

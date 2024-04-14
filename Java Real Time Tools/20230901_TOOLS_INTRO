@@ -1,0 +1,145 @@
+Tools
+-----
+What are Tools, what is the purpose of tools?
+Tools provides sophisticated environment/utilities that helps the developers, testers and support engineers to develop, test, deliver and monitor the applications at various different stages of development and delivery of the application. Right from the development of the application until it is delivered and put in maintainance there are serveral tools are being used like
+
+1. development tools
+	1.1 IDE  (Eclipse, IntelliJ)
+	1.2 Build Tools (Gradle, Maven, Ant)
+	1.3 SourceCode Management Repository Tools (Svn, Git)
+	1.4 Code Review Tools  (PMD, FindBugs, Sonarcube, Jacoco, eMma)
+	1.5 Documentation Tools (Confluence, XWiki, Draw.io)
+	1.6 Project Management Tools (Jira)
+2. testing tools
+	2.1 Junit/TestNG for unittest automation
+	2.2 Cypress = user interface testing
+	2.3 Cucumber = declarative test cases
+	2.4 Cactus = In-container testing
+	2.5 Selenium / WebDriver = UI Testing
+	2.6 Mocking Libraries = Mockito/JMock/EasyMock
+	2.7 Performance Testing tools = load runner / test runner
+	2.8 Security Testing tools = Fortify scanner
+	2.9 Test Management Tools  = Test director, ALM
+3. Release management tools
+	3.1 Aritfactory tools = libraries distribution (JFrog, Nexus Repository)
+	3.2 Continous Integration and Continous delivery tools = Jenkins, Bamboo, Hudson, Concourse, TeamCity etc	
+4. Database Management Tools
+	4.1 Database Editors = SqlDeveloper, PGAdmin, MySqlWorkbench, Toad, DBVisualizer etc
+	4.2 Liquibase = schema creation through code in a project
+5. Monitoring tools
+	1. Nagios
+	2. Datadog
+	3. Splunk
+	4. Grafana
+	5. Dynatrace (heavily) (java developers)
+6. Restful Services / Web Services integration/testing tools
+	1. SoapUI
+	2. Postman
+	3. Advanced RestClient
+	4. Swagger
+	5. RestAssured
+7. Cache Tools
+	1. Redis Cluster
+	2. MemCache
+	3. EHCache
+	4. JCache
+	5. Coherence
+	6. SwarnCache
+	7. HazelCast Cache
+8. Messaging Tools
+	1. MQ Server
+	2. Rabbit MQ
+	3. Kafka
+	4. SQS/SNS
+	
+9. Application logging Tools
+	1. Log4J
+	2. Sl4J
+	3. Logback
+	4. JLogging
+	
+10. Log Monitoring Tools
+	1. Splunk
+	2. Kibana
+	3. Grafana
+11. Java Profiling Tools
+	1. VisualVM
+	2. JProfiler
+	3. JConsole
+	4. JFR = Java Flight Recorder
+	5. Java Mission Control
+	6. YourKit
+	
+	
+
+git
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

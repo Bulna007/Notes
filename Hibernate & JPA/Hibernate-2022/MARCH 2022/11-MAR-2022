@@ -1,0 +1,96 @@
+How to work with hibernate framework in fetching the data from database table?
+#1 we need an entity class representing the structure of the database table, the entity class has to be written by following certain rules:
+	1.1 optionally, it should be serializable
+	1.2 the attributes should have corresponding setter/getter methods
+	1.3 mandatory to have public modifier default constructor
+	1.4 optionally, recommended to override equals and hashCode
+	
+class Account implements Serializable {
+	private int accountNo;
+	private String accountHolderName;
+	private String accountType;
+	private String mobileNo;
+	private String emailAddress;
+	private String branchCode;
+	private double balance;
+	// accessors
+}	
+	
+#2.
+we dont have to write the boiler-plate logic in retrieving the data and binding it to the entity class object, rather hibernate framework has provided api classes using which we can directly access the data from database table interms of objects
+
+Hibernate has provided an intelligent class called "Session", which holds an Connection to the database along with that it knows how to query the data from table and convert the data into entity class object using Mappers internally
+	
+Session class dont know the mapping information regarding Entity class and database table like for which entity class to fetch data from which table, what columns of data should be binded to which attributes of the class. This information has to be provided by the developer as an input to Session class by writing mapping file
+	
+The mapping file is an XML file that should be written based on the schema/dtd provided by the hibernate framework	
+	
+There are certain conventions we need to follow in writing the mapping file:
+1. write/save the mapping xml file with the same name as entity class name so that we can easily identify for an given entity class, in which xml file we wrote the mapping information
+2. it is recommended to save the mapping xml file with an extension ".hbm.xml" so that we can quickly differentiate between an general xml and mapping xml file. but even we can use the mapping file without ".hbm" by directly saving it as ".xml" and will work without any problem
+3. always place these hibernate mapping files along with the entity class under the same package directory, so that we can quickly identify for an entity class the corresponding mapping file
+	
+netsecure
+|-src
+	|-main
+		|-java
+			|-com.netsafe.entities
+				|-Account.java
+				|-Account.hbm.xml
+				
+Account.hbm.xml
+----------------
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC ...> (link the xml with definition document)(mandatory)
+<hibernate-mapping>
+	<class name="com.netsecure.entities.Account" table="account">
+		<id name="accountNo" column="account_no"/>
+		<property name="accountHolderName" column="account_holder_nm"/>
+		<property name="accountType" column="account_type"/>
+		<property name="mobileNo" column="mobile_no"/>
+		<property name="emailAddress" column="email_address"/>
+		<property name="branchCode" column="branch_code"/>
+		<property name="balance" column="balance"/>
+	</class>
+</hibernate-mapping>
+	
+In addition to the mapping information we need to provide database information to the Session object, so that it can query the data from the database.
+		
+So we need to write hibernate configuration file in which we define lot of hibernate framework related configuration properties along with database information as well
+
+There are certain rules we need to follow while writing the hibernate configuration file:
+1. we cannot write any xml and claim it as hibernate configuration file, the hibernate framework has provided schema/dtd using which we need to write the hibernate configuration file, and it is an xml file
+2. by default (mandatory) the filename should be written as "hibernate.cfg.xml" only
+3. by default the file must and should be kept directly under the classpath of our application only
+
+netsecure
+|-src
+  |-main
+		|-java
+			|-com.netsafe.entities
+				|-Account.java				
+		|-resources (classpath)
+			|-com.netsafe.entities
+				|-Account.hbm.xml
+			|-hibernate.cfg.xml
+|-pom.xml
+
+hibernate.cfg.xml
+------------------
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC ..."">
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/db</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+		
+		<mapping resource="com/netsafe/entities/Account.hbm.xml"/>		
+	</session-factory>
+</hibernate-configuration>
+
+
+Now we need to goto Session object asking him to fetch a record of data interms of object by using a method called get()
+			
+Account account = (Account) session.get(1, Account.class);

@@ -1,0 +1,29 @@
+Why does the BeanFactory created in-memory logical memory partition with in the jvm memory is called "ioc container" or "core container", what do you mean by ioc container?
+	
+ioc is an principle, as per ioc principle states "collaborating the objects and managing the lifecycle of objects"
+collaborating =  means bringing objects together so that they can talk to each other in reusing the functionality
+managing lifecycle = taking care of creating the objects and destroying the objects
+
+If we look at the above principle we can understand the BeanFactory is taking care of collaborating the objects and managing the lifecycle of the application objects by keeping them within the logical memory partition, so that it is ultimately called "ioc container"
+	
+How many ways are there in collaborating the objects?
+There are 2 ways are there in collaborating the objects
+1. dependency pull
+	1.1 dependency lookup
+	1.2 contextual dependency lookup
+	
+2. dependency injection
+	2.1 setter injection
+	2.2 constructor injection
+	
+The dependency pull is an pretty old methodology of managing the dependencies and is well supported by all the programming language platforms. 
+while we use dependency pulling, we need to refer pass the logical classname of the another class we want to pull from other class, by which our classes within our application becomes tightly coupled
+To avoid coupling between the classes we need to use dependency injection only
+
+
+#1. dependency pulling
+dependency pulling is the process of acquire the dependent objects by going and getting them from another class, there are 2 types of dependency pulling are there
+1.1 dependency lookup
+1.2 contextual dependency lookup
+
+1.1 dependency lookup

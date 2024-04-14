@@ -1,0 +1,159 @@
+Client-Side Loadbalancer
+Why do we need client-side loadbalancer for distributing the traffic across the instances/nodes of the microservice?
+We cannot use server-side loadbalancer for distributing the traffic across the instances of the microservices, because the loadbalancer dont know which microservice is running on which nodes of the cluster automatically, it always assumes all nodes are symmetric and distributes the traffic across the nodes of the cluster, irrespective of whether the node has been deployed with that microservice or not.
+	
+We can use HTTP based loadbalancers instead of Network loadbalancers, but here we need to manually create nodegroups or targetgroups registering the nodes on which the instances of the microservice are running. Per each microservice we need to create one nodegroup and then configure routing rules (path-based)	in routing the incoming traffic across the nodegroups.
+	
+In real-world there will be bunch of microservices that are distributed across network cluster of machines, keeping track of which microservices are deployed on which nodes and manually creating the nodegroups and configuring them with loadbalancer is an quite difficult job, and it is not an one-time activity it is an repeatitive process of re-configuring the nodegroups based on the state of the instances.
+From the above we can understand it is impractical in managing the nodegroups in distributing the traffic, so to overcome this side-effect the discovery servers are introduced.
+	
+The job of Discover Servers are only discovering the services, these doesnt act as proxies in relaying the request to the actual services. So end of the day the client application will have list of nodes on which microservice application is running, so it the responsibility of the client-application to distribute the traffic across the nodes of the service where it is running and hence the need of client-side loadbalancers comes into picture.
+	
+
+By using the (spring-cloud-starter-netflix-eureka-client) discovery client api we can find the list of ServiceInstances where the microservices is running, once we get the list of ServiceInstances, the developer has to write the loadbalancing logic at the client application to distribute the requests among those instances based on some algorithm.
+	
+Since distributing or loadbalancing the traffic across the instances	is a common requirement for every client application, instead of we writing the code there are several third-party vendors provided client-side loadbalancer libraries.
+	
+1. Netflix Ribbon = The Netflix ribbon is an client-side loadbalancer library, using this the	client applications can discover the service and loadbalance the requests among the instances of the microservices. The spring has deprecated the support of Ribbon and replaced with spring cloud loadbalancer
+
+How does spring cloud loadbalancer works?
+For each microservice, before sending the request to the endpoint, we need to discover the nodes on which the service is running and apply loadbalancing logic in dispatching the request. This has to be done for each invocation of the service
+
+The spring cloud loadbalancer library has provided an MethodBeforeAdvice, that is applied on RestTemplate, so when we invoke any of the methods of RestTemplate before executing the target class method, the MethodBeforeAdvice will be executed.
+	
+The advice takes care of applying discovery and loadbalancing logic and replaces the endpointURL pointing the node and passes it as an input to RestTemplate, so that RestTemplate has final endpointURL to be invoked.
+	
+	
+URL: http://distributor-network/distributor/D001
+
+class LoadbalancerAdvice implements MethodBeforeAdvice {
+	@Autowired
+	DiscoveryClient discoveryClient;
+	
+	public void before(Method method, Object[] args, Object proxy) {
+		String endpointURL = args[0];
+		String serviceName = endpointURL.split(":")[1].subString(2).split("/")[0];
+		
+		List<ServiceInstances> serviceInstances = discoveryClient.getInstances(serviceName);
+		//  loadbalancing logic
+	}
+}
+Apply the above method before advice class on RestTemplate, so that every method invocation on the RestTemplate will execute the advice class before executing the actual method.
+	
+From the above we can understand
+1. we dont need to write discovery logic
+2. build the endpointURL with MicroserviceName instead of host:port
+3. apply LoadbalancerAdvice on RestTemplate class
+4. invoke the RestTemplate with serviceURL 
+
+
+@SpringBootApplication
+class RetailStoreApplication  {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(RetailStoreApplication.class, args);
+		DistributorService ds = context.getBean(DistributorService.class);
+		DistributorDto dto = ds.getDistributor("D001");
+		sout(dto);
+	}
+	
+	@Bean
+	@LoadBalanced
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
+}
+
+@Service
+class DistributorService {
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	public DistributorDto getDistributor(String distributorCode) {
+		DistributorDto dto = restTemplate.getForObject("http://distributor-network/distributor/"+distributorCode, DistributorDto.class);
+		return dto;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,71 @@
+How to work with performing dml operations while working with Hibernate Application?
+
+class Store implements Serializable {
+	protected int storeNo;
+	protected String storeName; 
+	protected String registeredBusinessName; 
+	protected Date registeredDate;
+	protected String proprietorName;
+	protected String location;
+	// accessors
+}
+
+Store.hbm.xml
+--------------
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "">
+<hibernate-mapping package="com.dml.entities">
+	<class name="Store" table="store">
+		<id name="storeNo" column="store_no"/>
+		<property name="storeName" column="store_nm"/>
+		<property name="registeredBusinessName" column="registered_business_nm"/>
+		<property name="registeredDate" column="registered_dt"/>
+		<property name="proprietorName" column="proprietor_nm"/>
+		<property name="location"/>
+	</class>
+</hibernate-mapping>
+
+hibernate.cfg.xml
+------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/hibdb</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+		<property name="show_sql">true</property>
+		<mapping resource="com/dml/entities/Store.hbm.xml"/>
+	</session-factory>
+</hibernate-configuration>
+------------------------------------------------------------------------------------------
+class Test {
+	public static void main(String[] args) {
+		SessionFactory sessionFactory = null;
+		Session session = null;
+		Store store = null;
+		
+		try {
+			Configuration configuration = new Configuration().configure();
+			sessionFactory = configuration.buildSessionFactory();
+			session = sessionFactory.openSession();
+			store = new Store();
+			//populate data into store
+			
+			session.save(store);			
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+			if(sessionFactory != null) {
+				sessionFactory.close();				
+			}
+		}
+	}
+}
+
+What is transactionality?
+Transaction is a unit of work, where all the actions carried as part of the operation should be either completely comitted or completely rollback is called transaction.
+	
+How to work with transactions as part of the jdbc application?

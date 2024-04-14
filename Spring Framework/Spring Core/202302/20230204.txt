@@ -1,0 +1,61 @@
+class MessageWriter {
+	IMessageConverter messageConverter;
+	void writeMessage(String message) {
+		String cMessage = null;
+		
+		messageConverter = new HTMLMessageConverterImpl();
+		cMessage = messageConverter.convert(message);
+		System.out.println(cMessage);
+	}
+}
+
+interface IMessageConverter {
+	String convert(String message);
+}
+class HTMLMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<html><body>"+message+"</body></html>";
+	}
+}
+class PDFMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<pdf>"+message+"</pdf>";
+	}
+}
+class Test {
+	public static void main(String[] args) {
+		MessageWriter messageWriter = new MessageWriter();
+		messageWriter.writeMessage("welcome to strategy design pattern");
+	}
+}
+
+In the above example, the MessageWriter wants to reuse the functionality of HTML|PDF Message Converter classes, to use the functionality, it requires the object of the other classes. So to have the object, it has to create.
+To create the object it needs to use new operator and should use concrete classname of another class.
+So if my class is creating the object of another class we run into 2 problems
+
+1. To create the object of another class, my class has to use the concrete classname of another class, so that it will be tightly coupled with other class. So that in future if we want to switch to another class, again we need change the code inside the MessageWriter class
+2. if our class is creating the object of another class, then our class needs to know the complete instantiation process in creating the object of other class.
+Every class cannot be created using new operator , few classes requires complex instantiation logic in creating the object of other classes.
+For eg..
+class A {
+	A(B b) {}
+}
+class B {
+	B(C c) {}
+}
+class C {
+}
+	
+Here if A wants to use the functionality of B then A has to know how to create the object of B and should write logic for instantiating the C and pass it as an input to B
+C c = new C();
+B b = new B(c);
+
+In future if the B has been modifed again we need change the code inside A to modify the process of creating the object of B. The same change needs to be performed by all the classes in our application who are creating the object of B class.
+	
+How to solve the above problems?
+To overcome the above problems, the Factory design pattern comes into picture
+Factories are the components or the classes that takes care of creating the object of another class, so that we can avoid creating the objects of other classes and can take the help of Factory for getting the objects
+
+There are 2 advantages we get out of using a Factory
+1. without knowing the classname of another class our class can get the object of another class
+2. factories abstracts the complexity in creating the objects of other classes

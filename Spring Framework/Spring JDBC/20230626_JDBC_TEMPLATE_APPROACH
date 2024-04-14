@@ -1,0 +1,102 @@
+problems with java jdbc api:
+1. jdbc is an api, and api will not provider boiler-plate logic. The programmers has to write lot of code in developing the application while working with jdbc api that results into huge time, cost and maintainability problems in building the application
+
+2. managing the resources while working with jdbc api is very difficult/complex job, no matter how better we wrote the code always we run into resource leakage issues 
+
+3. all the exceptions in jdbc api are defined as checked-exceptions due to which we need to mandatorily sourround the code within try/catch block, it is called an annoying try/catch block problem. Because upon catching the exception we dont have any alternate path of code to be executed many of the times for jdbc exceptions and in addition it results in poor readability of the code.
+	
+4. jdbc api doesnt support global transactions it supports only local transactions. So programmer has use different apis based on the type of the transaction. If local use jdbc transactionality api otherwise for global use jta api
+switching between the transaction management mechanisms is very complex while using jdbc api
+
+To over the problems spring has introduced spring jdbc module, there are plenty of advantages of using spring jdbc over java jdbc
+
+advantages of using spring jdbc:
+1. spring jdbc module eliminates writing the boiler-plate logic in building database application. 
+for eg.. to execute an sql query using java jdbc we need to write the below logic:
+	1.1 load the jdbc driver
+	1.2 open the connection
+	1.3 create the preparedStatement by supplying the sql query and substitute the parameters 
+	1.4 execute the query and get the ResultSet
+	1.5 iterate over the ResultSet of records
+	1.6 Gather the data
+	1.7 close the resources
+whereas while working with spring jdbc api most of this logic can be eliminated as specified below:
+	1.1 we dont need to load the driver
+	1.2 we dont need to create the connection
+	1.3 supply the sql query and the parameters to be substituted
+	1.4 we dont need to create the preparedStatement or substitute the parameters
+	1.5 we dont need to execute the query or grab the ResultSet
+	1.6 iterate over the ResultSet 
+	1.7 write the code for gathering the data
+	1.8 no need to close the resources
+From the above we can understand most of the boiler-plate logic we write while working with java jdbc has been taken away while working with spring jdbc
+
+2. spring jdbc takes care of opening the resources and even closing the resources as well, so there is no chance of running into resource leakage issues while working with spring jdbc 
+
+3. All the exceptions in spring jdbc are un-checked exceptions. So unless necessary, we dont need souround our code around uncessary try/catch block while working with spring jdbc 
+
+For all the exceptions in the Spring jdbc, the base exception class is: DataAccessException which is an un-checked exception. Every other exception that is defined in spring jdbc module is a sub-class of DataAccessException
+	
+From DataAccessException there are several other sub-exception classes also derived representing different types of failures like
+1. UniqueConstraintViolationException
+2. IntegrityConstraintViolationException
+
+4. Spring Jdbc module integrates closely with Spring Transactions, using Spring Transaction module we can easily manage working with both global, local transactions easily
+--------------------------------------------------------------------------------------------------------------------------------------
+Spring Jdbc supports multiple ways of performing database operations like java jdbc. There are 5 approaches are there in working with spring jdbc api
+1. JdbcTemplate Approach
+2. NamedParameterJdbcTemplate Approach
+3. SimpleJdbcTemplate Approach (deprecated and removed in spring 5.0+)
+4. SimpleJdbcInsert & SpringJdbcCall
+5. Mapping Sql Operations as Subclasses
+
+out of the above #2 of them are popularly used in the market in building jdbc application using spring
+1. JdbcTemplate Approach
+2. NamedParameterJdbcTemplate Approach
+
+using these 2 approaches we are going to learn how to perform below database operations on the underlying database tables
+1. DQL
+select queries
+	1.1 one row one column
+	1.2 aggregate queries (sum, avg, count etc)
+	1.3 one record of data
+	1.4 multiple records of data
+	1.5 join queries
+2. DML
+	2.1 insert
+	2.2 update
+	2.3 delete	
+the DDL, DCL are not performed usually during the runtime of the application because the schema would be designed and created before running the application itself most of the time
+
+
+1. JdbcTemplate Approach
+JdbcTemplate is the core component/class of spring jdbc module, that has been wrapped with necessary logic in performing database operations on the underlying database tables. We dont need to using java jdbc api classes like Connection, Statement etc in performing database operations, we just need to use JdbcTemplate itself
+
+Again in JdbcTemplate there are #2 approaches are there in performing database operations
+1. Classic Approach = Classic approach exactly resembels building application while working with java jdbc api
+2. Query-based Approach = the modern way of building database application using JdbcTemplate where it eliminates most of the boiler-plate logic
+
+Irrespective of working with JdbcTemplate Classic or query-based approach we need to write fundamental or common infrastructure code inorder to build application, let us try to understand.
+	
+student
+student_no   student_nm  gender  age  qualification
+
+course
+course_no  course_nm   duration  fee
+
+student_course
+student_no  course_no   
+
+	
+
+class StudentDao {
+	private JdbcTemplate jdbcTemplate;
+	
+}
+	
+JdbcTemplate inorder to perform database operations requires an Connection, to grab the Connection we need to setup DataSource object configured with database information and Connection Pool settings and inject as an input into JdbcTemplate
+
+java.sql.DataSource = DataSource is a class that hosts or holds pool of Connections aspart of it.
+
+application-context.xml
+-----------------------

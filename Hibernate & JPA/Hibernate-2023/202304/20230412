@@ -1,0 +1,56 @@
+how to fetch a record of data interms of object within our application?
+#1. Entity class
+We need to create an class representing the structure of the database table, so that the records of data from that table can be stored into the corresponding class object, this class that we have created representing the structure of the database table is called "entity class".
+For a given database table we need to create only one entity class representing the structure of the table, having multiple classes representing the structure of the same table will results in duplicate classes
+
+There are few rules we need to follow while writing an entity class
+1. An entity class must and should have default constructor
+2. all the attributes of the entity class must and should have accessor methods, hibernate would access the fields of the entity class only through accessor methods only (get*/set* only)
+3. it is recommended to write the entity class implementing Serializable interface
+4. for each entity class it is recommended to override the equals() and hashCode() methods so that they can effectively participate in associations
+
+account (table)
+account_no
+account_holder_nm
+account_type
+ifsc_code
+mobile_nbr
+email_address
+balance
+
+package com.fhe.entities;
+class Account implements Serializable {
+	private int accountNo;
+	private String accountHolderName;
+	private String accountType;
+	private String ifscCode;
+	private String mobileNo;
+	private String emailAddress;
+	private double balance;
+	
+	// accessors
+	// equals() and hashCode()
+}
+
+#2. Hibernate Mapping File
+to help the hibernate framework identify which table of data should be stored in which entity class, and what columns of data should be populated into which attributes of the class, we need to write mapping file mapping table/columns to class and their attributes. since this file is being used by hibernate framework helping us in mapping the data, is called "hibernate mapping file" and should be written based on the format hibernate has specified
+
+There are few notable things about writing these mapping files
+1. The mapping files are written in XML format and alternatively we can represent the same mapping information interms of annotations
+2. it is recommended to place the mapping file within the same package of the entity class, so that we can easily locate the mapping information besides the class itself
+3. The name of the mapping file is recommended to written with ClassName.hbm.xml. here hbm indicates its an hibernate mapping file which helps us in differentiating the other xml files in our project from hibernate mapping files. it is not mandatory to name the mapping file with .hbm.xml we can directly as Classname.xml also, but it is best practise to use .hbm.xml
+
+com/fhe/entities
+|-Account.hbm.xml
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping SYSTEM
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.fhe.entities.Account" table="account">
+		<id name="accountNo" column="account_no"/>
+		<property name="accountHolderName" column="account_holder_nm"/>
+		<property name="accountType" column="account_type"/>
+		<property name="ifscCode" column="ifsc_code"/>
+		<property name="balance" column="balance"/>
+	</class>	
+</hibernate-mapping>

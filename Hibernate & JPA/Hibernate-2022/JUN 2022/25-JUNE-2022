@@ -1,0 +1,76 @@
+while working with one-to-many or many-to-many assocation relationship we need to use collections for representing the association
+hibernate framework supports 3 types of collections to be used for modelling the association relationship
+1. set
+2. list
+3. map
+
+#2. list
+we can declare an one-to-many or many-to-many associated objects as List<Object> objects rather than using a set
+List is an indexed based collection and we can preserve the insertion order while accessing the values from the list
+
+ServiceCenter
+- serviceCenterNo
+- serviceCenterName
+- brand
+- contactNo
+- emailAddress
+- manager
+- location
+- List<Token> tokens;
+
+
+Token
+|-tokeNo
+|-serviceType
+|-customerName
+|-mobileNo
+|-description
+|-tokenIssuedDate
+ServiceCenter serviceCenter
+
+
+service_center
+service_center_no(pk)
+service_center_nm
+brand
+manager
+contact_no
+email_address
+location
+
+token
+token_no (pk)
+service_type
+customer_nm
+mobile_no
+description
+token_issued_dt
+token_generated_seq_no (list index column)
+service_center_no (fk)
+	
+service_center
+sc_no   sc_nm
+1       ameerpet center
+2       marthali center
+
+token
+token_no   service_type   customer_nm  sc_no   token_generated_seq_no
+1          warranty       alex         1       1
+2          warranty       james        1       2
+3          no warranty    john         2       1
+	
+
+<hibernate-mapping package="com.otml.entities">
+	<class name="ServiceCenter" table="service_center">
+		<id name="serviceCenterNo" column="service_center_no">
+			<generator class="increment"/>
+		</id>
+		<property name="serviceCenterName" column="service_center_nm"/>
+		....
+		<list name="tokens">
+			<key column="service_center_no"/>
+			<list-index column="token_generated_seq_no"/>
+			<one-to-many class="Token"/>
+		</list>
+	</class>
+</hibernate-mapping>

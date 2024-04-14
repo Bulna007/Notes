@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Handlers</title>
+    <style>
+        .classic {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 13px;
+            color: brown;
+        }
+        .modern {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            font-size: 16px;
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <h2>Dynamic Handlers</h2>
+    <div id="main">
+        Talent she for lively eat led sister. Entrance strongly packages she out rendered get quitting denoting led. Dwelling confined improved it he no doubtful raptures. Several carried through an of up attempt gravity. Situation to be at offending elsewhere distrusts if. Particular use for considered projection cultivated. Worth of do doubt shall it their. Extensive existence up me contained he pronounce do. Excellence inquietude assistance precaution any impression man sufficient.
+        Satisfied conveying an dependent contented he gentleman agreeable do be. Warrant private blushes removed an in equally totally if. Delivered dejection necessary objection do mr prevailed. Mr feeling do chiefly cordial in do. Water timed folly right aware if oh truth. Imprudence attachment him his for sympathize. Large above be to means. Dashwood do provided stronger is. But discretion frequently sir the she instrument unaffected admiration everything.
+    </div>
+    <br>
+    Choose: Classic: <input type="radio" value="classic" name="style"/> (or) Modern: <input type="radio" value="modern" name="style"/>
+    <br>
+    <input type="button" id="btn1" value="changeStyle"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        function classic() {
+            $("#main").removeClass();
+            $("#main").addClass("classic");
+        }
+        function modern() {
+            $("#main").removeClass();
+            $("#main").addClass("modern");
+        }
+
+        $(function() {
+            $("input[type=radio][value=classic]").click(function(){
+
+                $("#btn1").click(function(){
+                    classic();
+                });
+            });
+            $("input[type=radio][value=modern]").click(function(){
+                $("#btn1").click(function(){
+                    modern();
+                });
+            });
+        });
+
+    </script>
+</body>
+</html>

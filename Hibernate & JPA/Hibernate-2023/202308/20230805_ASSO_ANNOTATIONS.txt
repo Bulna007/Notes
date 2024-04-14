@@ -1,0 +1,90 @@
+
+#1. one-to-many association relationship in annotations based programming
+1..*
+@Entity
+@Table(name="coach")
+class Coach {
+	@Id
+	@Column(name="coach_no")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	int coachNo;
+	@Column(name="coach_nm")
+	String coachName;
+	int experience;
+	String gender;
+	int age;
+	String mobileNo;
+	
+	@OneToMany /*I have the primary and the other size table has foreign key (where) */
+	@JoinColumn(name="coach_no")
+	Set<Player> players;
+	
+	// accessors
+}
+
+<set name="players">
+	<key column="coach_no"/>
+	<one-to-many class="Player"/>
+</set>
+
+1..1
+@Entity
+@Table(name="player")
+class Player {
+	@Id
+	@Column(name="player_no")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	int playerNo;
+	String playerName;
+	String gender;
+	int age;
+	String sportType;
+	
+	// accessors
+}
+
+coach             player
+coach_no (pk)     player_no (pk)
+coach_nm          player_nm
+experience        gender
+gender            age
+age               sportType
+mobile_no         coach_no (fk)
+	
+how do i persist/retrieve the associated objects?
+take my primary key and update in their foreign key column for all the child associate objects in association with
+--------------------------------------------------------------------------------------------------------------------------------------
+#2. many to one
+
+@Entity
+@Table(name="project")
+class Project {
+	@Id
+	@Column(name="project_no")
+	int projectNo;
+	String projectName;
+	int duration;
+	double cost;
+	
+	// accessors
+}
+
+@Entity
+@Table(name="task")
+class Task {
+	@Id
+	@Column(name="task_no")
+	int taskNo;
+	String taskName;
+	int points;
+	String assignedTo;
+	
+	@ManyToOne
+	@JoinColumn(name="project_no")
+	Project project;
+	
+	// accessors
+}
+
+how to persist or retrieve the associate project object for a Task?
+take the associated objects primary key and store it as foreign key in my table

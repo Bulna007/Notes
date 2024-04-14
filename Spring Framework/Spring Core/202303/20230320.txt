@@ -1,0 +1,99 @@
+A class posess attributes and member methods and always attributes of the class represents the state of the object.
+There are 3 circumstances under which we go for creating an class as singleton class
+1. I have a class,it doesnt have any member variables and the object of the class doesnt holds any state (zero state). the class has member methods, but the methods are not using the state of the object (since the object posess zero state) and the methods takes the data as an input through parameters performs operation, in such case we dont need multiple objects, to avoid creating multiple objects make the class as singleton
+	
+	
+class Math {	
+	int add(int a, int b) {
+		sum = a + b;
+		return sum;
+	}
+}	
+	
+Math math1 = new Math();
+int sum1 = math1.add(10, 20);
+
+Math math2 = new Math();
+int sum2 = math2.add(10,20);
+
+2. I have a class, it has member variables and member methods. The objects of this class holds state and methods of the class is using the state of the object. but the state of the object is completely read-only. in such case if we create one object or 10 objects all the objects are going to hold same state, so avoid creating multiple objects of the class by making the class as singleton
+	
+
+class Circle {
+	private final double PI = 3.14;
+	
+	public double area(int radius) {
+		double area =  PI * (radius * radius);
+		return area;
+	}
+}	
+
+Circle c1 = new Circle();
+Circle c2 = new Circle();
+
+double area1 = c2.area(4);
+
+3. I have a class, it has member variables and member methods, the object of the class holds the state and the member methods of the class are using the state of the object, but the state that is contained in the object is completely sharable, in such case avoid creating multiple objects of the class, rather have only one object for it by making the class as singleton
+	
+signup.jsp
+------------
+<!DOCTYPE html>
+<html>
+  <head>
+		<title>signup</title>
+	</head>
+	<body>
+		<h2>Signup</h2>
+		<form method="post" action="signup">
+			email address: <input type="text" name="emailAddress"/><br/>
+			age: <input type="text" name="age"/><br/>
+			gender: M <input type="radio" name="gender" value="M"/> (or) F <input type="radio" name="gender" value="F"/> <br/>
+			...
+			city: 
+			<select name="city">
+				<option value="Hyderabad">Hyderabad</option>
+				<option value="Chennai">Chennai</option>
+				<option value="Banglore">Banglore</option>
+				<option value="Delhi">Delhi</option>
+				<option value="Noida">Noida</option>
+			</select>
+			State:
+			<select name="state">
+				<option value="Odisha">Odisha</option>
+				<option value="Jharkhand">Jharkhand</option>
+				<option value="Bihar">Bihar</option>
+				<option value="Telangana">Telangana</option>
+			</select>
+			Country:
+			<select name="country">
+				<option value="India">India</option>
+			</select>
+		</form>
+	</body>	
+</html>
+
+class SignupServlet extends HttpServlet {
+  public void service(HttpServletRequest req, HttpServletResponse resp) {
+    String emailAddress = req.getParameter("emailAddress");
+    String dob = req.getParameter("dob");
+    String gender = req.getParameter("gender");
+    ...
+    // read all the req parameters user has send from the jsp page
+    Class.forName("com.mysql.jdbc.cj.Driver");
+    Connection con = DriverManager.getConnection(url, un, pwd);
+    PreparedStatement pstmt = con.preparedStatement("insert into user(email_address, dob, gender, password, firstName, lastName, mobile, address, city, state, country) values(?,?,?,?,?,?,?,?,?);
+    // substitute the parameters
+    pstmt.executeUpdate();
+    req.getRequestDispatcher("/signup-success.jsp").forward(req, resp);
+  }
+}	
+	
+web.xml
+<servlet>
+  <servlet-name>signupservlet</servlet-name>
+  <servlet-class>SignupServlet</servlet-class>			
+</servlet>
+<servlet-mapping>
+  <servlet-name>signupservlet</servlet-name>
+  <url-pattern>/signup</url-pattern>				
+</servlet-mapping>	

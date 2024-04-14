@@ -1,0 +1,37 @@
+Hibernate Id generators
+------------------------
+Primary key column within a database table is unique and not null among the other records of that table, it is used for uniquely identifying a record of the table, so that we can establish the relationship with other records of the other table.
+
+customer
+---------
+customer_no (pk) 
+aadhar_no (unqiue)
+fullname
+dob
+gender
+mobile_no (unique)
+email_address (unique)
+password
+
+address
+--------
+address_no (pk)
+address_line1
+address_line2
+city
+state
+zip
+country
+unique_identification_no (fk)
+
+while designing the database schema always it is adviced to consider the surrogate columns as a key column (additional column not related to business data). if we consider one of the column out of the natural data as primary key column (nautral key column) by making an business assumption. 
+In future the dimensions of the data or usage of the natural data might change due to which the business assumptions we made in considering the natural column as key column might fail, because of it we will endup in redesigning the entire database schema and migrating the existing data and rewriting the application logic in persisting the data in the database which is a huge amount of rework/cost involved
+
+To avoid the above problems always consider surrogate columns as key columns, which are no way related to the data of your business.
+	
+In addition to the surrogate key as key column we can consider any other natural column as a candidate key (unique key)	to identify the record of the table.
+	
+While designing the applications to capture the data and store in the database tables, we should not prompt the enduser asking to enter the data for these surrogate key column as he cannot determine what can be unique to entered to perform the operation. So the application by themself should be able to generate the surrogate key columns uniquely with which the data should be insereted into the tables
+
+From the above we can understand the system should generate the primary key column values with which the data should be inserted into the tables. There are few databases who can help us in generating the primary key column values while inserting the data into the tables automatically
+but different tables has different strategies of generating the key column values and those may not suite for our application requirements or may be we will be dependent on the database in generating the values and may not move to the different database

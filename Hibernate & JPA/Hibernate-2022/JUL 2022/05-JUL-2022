@@ -1,0 +1,79 @@
+Fetch 
+The Fetch type indicates how does the child entities has to be loaded while accessing parent objects.
+There are 3 fetch options are there
+1. select
+2. join
+3. subselect
+
+#1. select
+The fetchType as select is nothing but LAZY in jpa. it is the default fetch option if we dont specify any on an associated object. when we query a parent entity object, by default dont load the child associated objects from the database until we access the associated objects using accessor methods of the parent.
+	
+To support lazy initialization of child collection associations, hibernate instantiates its own implementations of the Collection interfaces by wrapping Session object and populates into the associate attributes like PersistentSet, PersistentList and PersistentMap
+
+while iterating over these Collections, the data will be queried from the database.
+	
+#2. join
+In case of fetchType = "join", we can treat it as "EAGER" loading. while queries the data for the parent object, hibernate makes an join query with the child association table and queries the data together from the database at oneshot which is called "join"
+	
+For eg.. while querying the DeliveryAssociates, it even fetches the Parcels as well.
+DeliveryAssociate da = session.get(DeliveryAssociate.class, 1);	
+	
+select * from delivery_associate da left outer join parcels p on da.delivery_associate_no = p.delivery_associate_no where da.delivery_associate_no = 1
+	
+#3. subselect
+
+<set name="parcels" fetch="subselect">
+	<key column="delivery_associate_no"/>
+	<one-to-many class="Parcel"/>
+</set>
+
+Query query = session.createQuery("from DeliveryAssociate where experience >= ?"); #10
+query.setParameter(1, 5);
+List<DeliveryAssociate> deliveryAssociates = query.list();
+
+for(DeliveryAssociate da : deliveryAssociates) { #10 times [8, 76, 42, 15, 65, 23, 12]
+	Set<Parcel> parcels = da.getParcels();
+}
+
+select * from parcels where parcels.delivery_associate_no in (from DeliveryAssociate where experience >= ?)
+	
+to fetch the child association parcels for all the delivery associates matching with the outer query results, hibernate will execute one query by passing outerquery result as an input.
+--------------------------------------------------------------------------------------------
+N+1 problem
+------------
+In the below code when we iterate over the parent associate list and access the child associated objects parcels, the hibernate will trigger 1 query for parent objects and per each parent to fetch the corresponding child associated object parcels it executes one query
+
+1 (parent) = N parents
+per each parent = 1 query for fetching child associations
+results:- N + 1 problem
+
+Query query = session.createQuery("select * from DeliveryAssociate");
+List<DeliveryAssociate> deliveryAssociates = query.getResultList();
+
+for(DeliveryAssociate deliveryAssociate: deliveryAssociates) {
+	Set<Parcel> parcels = deliveryAssociate.getParcels();
+	//
+}
+	
+How to overcome the above problem?
+#1. 
+one way to solve the above problem is by using subselect, but the problem with subselect is it loads all the child association objects of all the parents.
+For eg.. if the outer query results in #100 delivery associates, at oneshot it fetches the #100 delivery associate parcels and loads into memory
+with the above we can understand we run into performance and memory problems in managing the child associations.
+	
+To overcome the above problem hibernate has provided select + batchSize
+
+<set name="parcels" fetch="select" batch-size="5">
+	<key column="delivery_associate_no"/>
+	<one-to-many class="Parcel"/>
+</set>
+
+Query query = session.createQuery("select * from DeliveryAssociate"); #1 query
+List<DeliveryAssociate> deliveryAssociates = query.getResultList();
+
+for(DeliveryAssociate deliveryAssociate: deliveryAssociates) {
+	Set<Parcel> parcels = deliveryAssociate.getParcels(); #5 delivery associate parcels it will fetch with one query
+	//
+}
+
+now when we fetch the parcels for a deliveryAssociate, hibernate instead of query the parcels of the deliveryAssociate, it fetch parcels for all the next 5 deliveryAssociates at oneshot.

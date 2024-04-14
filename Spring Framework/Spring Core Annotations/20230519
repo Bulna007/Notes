@@ -1,0 +1,96 @@
+1. @PostConstruct
+2. @PreDestroy
+3. @Lookup
+4. @Primary
+---------------------------------------
+Bean Lifecycle
+There are 3 ways of working with bean lifecycle
+1. configuration approach
+2. programmatic approach
+3. annotation-driven approach
+
+@Component
+class Calculator {
+	int a;
+	int b;
+	int sum;
+	
+	public Calculator(@Value("10") int a) {}
+	public void setB(@Value("20") B b) {}
+	
+	@PostConstruct
+	public void init() {
+		this.sum = this.a + this.b;
+	}	
+	@PreDestroy
+	public void destroy() {
+		this.a = 0;
+		this.b = 0;
+		this.sum = 0;
+	}
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+Lookup Method Injection
+-----------------------
+@Component
+@Scope("prototype")
+class Worker {
+	String data;
+	public void setData(String data) {}
+	public void process() {
+		sop("processing the request with data : " +data);
+	}
+}
+
+@Component
+class Container implements ApplicationContextAware {
+	private ApplicationContext applicationContext;
+	
+	public void receive(String data) {
+		Worker worker = lookupWorker();
+		worker.setData(data);
+		worker.process();
+	}
+	
+	@Lookup(bean="worker")
+	public Worker lookupWorker() {return null;}
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+@Primary
+
+@Component	
+class Bicycle {
+	@Autowired
+	private Wheel wheel;
+	
+	// toString()
+}	
+
+// multiple bean definitions
+class Wheel {
+	int radius;
+	String wheelType;
+	
+}
+
+@Configuration
+@ComponentScan(basePackages={"pkg1"})
+class JavaConfig {
+	
+	@Bean
+	@Primary
+	public Wheel wheel1() {
+		Wheel wheel = new Wheel();
+		wheel.setRadius(10);
+		wheel.setWheelType("regular");
+		return wheel;
+	}
+	
+	@Bean 
+	public Wheel wheel2() {
+		Wheel wheel = new Wheel();
+		wheel.setRadius(12);
+		wheel.setWheelType("metalic");
+		return wheel;
+	}	
+}

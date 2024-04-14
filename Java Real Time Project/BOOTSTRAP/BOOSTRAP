@@ -1,0 +1,242 @@
+Bootstrap
+---------
+1. It is an another javascript library or frontend framework that is used for building webpages very quickly.
+2. Bootstrap is an framework that is built-on HTML, CSS and javascript at its core. It has provided lot of pre-built ui components like forms, buttons, navigations, model, carousel etc that can be directly used aspart of the webpages
+3. bootstrap helps us in creating responsive web pages, the page layouts will be adjusted automatically based on the aspect ratio of the device on which we are browsing the pages, so that it gives pleasant experience for the endusers
+
+What are the advantages of Bootstrap?
+1. Easy to use = with a basic knowledge of HTML, css and javascript any one can quickly build webpages using bootstrap
+2. Responsive = We can build responsive UI that works on various devices of different aspect ratios using bootstrap
+3. Mobile First Approach = All the components of the bootstrap are designed to work on Mobile, so that without worrying we can use the components and they get scaled to any aspect ratio automatically
+4. browser compatibility = bootstrap works across all the browsers
+
+How to use bootstrap?
+Bootstrap has been distributed in 2 ways
+1. downloadable javascript files
+2. cdn urls
+
+Bootstrap has been provided in 2 forms
+1. minified (production usage)
+2. uncompressed form (development)
+	
+When we download the bootstrap zip distribution and extract it we can see the folders containing below files.
+bootstrap-5.3.3
+|-css
+	|-bootstrap-grid.css
+	|-bootstrap-grid.min.css
+	|-bootstrap.css
+	|-bootstrap.min.css
+	|-bootstrap-reboot.css
+	|-bootstrap-reboot.min.css	
+|-js
+	|-bootstrap.js
+	|-bootstrap.min.js
+	|-bootstrap.bundle.js
+	|-bootstrap.bundle.min.js
+	
+js files
+---------
+bootstrap depends on other javascript libraries which are jquery and popper.js library. so inorder to use bootstrap we need to download and import these 2 javascript libraries first before importing bootstrap js files
+
+                            jquery         popper
+bootstrap.js                not included   not included
+bootstrap.min.js
+
+
+bootstrap.bundle.js         not included   included
+bootstrap.bundle.min.js
+
+css files
+----------
+There are lot of css files provided by bootstrap, where different css files provides different features/components of bootstrap to the applications
+                                layout               content             components              utilities
+																
+
+ootstrap.css
+bootstrap.min.css
+bootstrap.rtl.css
+bootstrap.rtl.min.css	         Included	              Included	           Included	             Included
+
+bootstrap-grid.css
+bootstrap-grid.rtl.css
+bootstrap-grid.min.css
+bootstrap-grid.rtl.min.css	   Only grid system	         —	                  —	                 Only flex utilities
+
+bootstrap-utilities.css
+bootstrap-utilities.rtl.css
+bootstrap-utilities.min.css
+bootstrap-utilities.rtl.min.css	   —	                   —	                  —	                 Included
+
+bootstrap-reboot.css
+bootstrap-reboot.rtl.css
+bootstrap-reboot.min.css
+bootstrap-reboot.rtl.min.css	     —	                 Only Reboot	          —	                    —
+
+
+reboot = is a library used by bootstrap in resolving cross-browser compatibility issues while rendering the components
+--------------------------------------------------------------------------------------------------------------------------------
+How to use bootstrap aspart of webpages?
+Always we need to use HTML5 page templates only while using bootstrap because HTML5 has provided meta tags and media queries in rendering the web pages based on the layout or viewport of the page
+
+We need to import css in the head section only and javascript at the end of the body or before closing the HTML tag. The order in which we need to include these javascript libraries are:
+1. popper.js
+2. jquery
+3. bootstrap.min.js
+--------------------------------------------------------------------------------------------------------------------------------
+Bootstrap Grid System
+Bootstrap Grid System is used for building responsive page layouts of a webpage and it is pre-dominantly used in the market for building webpages
+
+Bootstrap grid system has provided pre-defined css classes through which we can breakdown the entire webpage into rows and columns and can organize/place elements into these rows and columns in tabular fashion without using HTML Tables.
+
+Grid css classes
+-----------------
+The bootstrap grid has provided six css classes:
+1. xs = (for mobile phones - screen size <576px)
+2. sm = (for tablets - ≥576px)	
+3. md = (for laptops screens = ≥768px)	
+4. lg = (for laptops of big screens = ≥992px)	
+5. xl = (for desktop screens ≥1200px)
+6. xxl = (larger screens of ≥1400px)
+	
+depends on the screen resolution the columns on the page would be arranged automatically while using the grid layout. To start with using the grid layout we need to do the below:
+
+1. define a root div and apply the css class as "container" or "container-fluid" (it occupies the entire screen width). Then place the rows inside the container
+2. use rows to create horizontal group of columns with css as "row". Write a div tag inside the container with css class as "row"
+3. we can place contents only within the columns.	columns are the immediate children of the rows. To create columns in each row we need to define a div tag inside the row with css as ".col-xs-span" or "col-sm-span" or "col-md-span" or "col-lg-span"
+	
+<div class="container">
+	<div class="row">
+		<div class="col-sm-4">
+		</div>
+		<div class="col-sm-4">
+		</div>
+		<div class="col-sm-4">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-6">
+		</div>
+		<div class="col-sm-6">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+		</div>
+	</div>
+</div>
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

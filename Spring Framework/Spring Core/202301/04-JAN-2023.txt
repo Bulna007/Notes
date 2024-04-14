@@ -1,0 +1,37 @@
+Spring is a very big framework, despite of being huge still it is considered as light weight application development framework. Let us try to understand how spring framework is being called as light weight application development framework
+
+Spring Framework has not been distributed as an single piece, rather it has been broken down into several modules
+1. core
+2. aop
+3. jdbc
+4. tx
+5. orm
+6. oxm
+7. datajpa
+8. security
+9. web
+10. aspects
+11. instrumentation
+12. beans
+13. context
+14. context-support
+15. spring boot
+16. spring cloud
+17. spring microservices
+18. spring webflux
+etc
+
+when we look at the architecture of the Spring Framework the fundamental or the base module that spans across the breath of the Framework is Spring Core
+The Spring Framework developers while dividing the Framework into modules, ensured that no 2 modules has overlap or inter-dependency with each other, where all the modules are dependent on the core module only.
+
+Now the developer based on the type of the application he wish to develop can choose the modules relevant for his project
+1. learn only those specific areas of spring framework 
+2. use those modules in building the application
+thus making the spring framework light weight. From this we can understand we dont need to care how big the Framework is we only need to care of what we wanted out of it for usage
+------------------------------------------------------------------------------------------------------------------------
+
+Spring Framework has #2 unique features that made spring as outstanding and unique in the market
+1. Spring is an versatile application development framework
+2. Spring is an non-invasive application development framework
+
+#1. versatile application development framework

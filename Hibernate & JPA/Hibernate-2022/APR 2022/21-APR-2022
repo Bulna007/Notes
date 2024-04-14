@@ -1,0 +1,30 @@
+How many ways we can query an object of data from the database?
+There are 2 ways we can query and fetch an object of database from database against the primary key column value.
+	
+1. get(ClassType, id)
+2. load(ClassType, id)
+	
+both of these methods are part of Session class and are meant for querying or accessing an object from database
+
+
+#1. session.get(ClassType, id)
+get(ClassType, id) immediately goes to the database and queries the data and populates into entity class object and returns the object of data, which means get supports eager loading
+
+load(ClassType, id) it doesnt goes to the database and queries the data rather it returns an proxy of the original object to us.
+up on calling the accessor methods on the proxy the data will be fetched from database and returns to us, this indicates load(classType, id) supports lazy loading
+
+
+What is proxy design pattern, what is the purpose of it?
+Proxies acts as substitutes or surrogate of the original class, they look exactly same as the original. The proxies are always created by holding the reference of the original. upon talking to the proxy it talks to the underlying original object in providing the actual functionality.
+The outcome of talking to the original or talking through the proxy is always the same.	
+
+If we want to add some additional functionality that seems to be not common for all of the other classes of our application, then adding that additional functionality to the original class makes the component not compatible
+	
+instead of that we can create an proxy which takes care of applying additional functionality and delegates to the original class in providing the actual functionality of the component
+	
+In-Short:- 
+Proxies are meant for adding additional functionality ontop of the original class without modifying the outcome of the original class. 
+	
+Why cant we add the additional functionality into the original class itself, why do we need to take the help of proxy?
+few classes in our application wants additional functionality and few classes dont want additional functionality,by adding the additional functionality onto the original class makes it in-compatible. So, instead of it add the additional functionality within the proxy and let the proxy delegates the request to the original class.
+The classes who wants additional functionality, give the reference of proxy and to others give the reference of original class

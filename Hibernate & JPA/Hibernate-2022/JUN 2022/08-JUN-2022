@@ -1,0 +1,34 @@
+Association Mapping Models
+--------------------------
+Types of relationships in database tables
+1. one-to-one 
+	1.1 direct one-to-one relationship
+		- primary key of one table is written as primary key and foreign key in another table then those 2 tables are said to be in direct one-to-one relationship
+		
+	1.2 one-to-many as one-to-one
+		- primary key of a table is written as foreign key in another table and the foreign key has been imposed with unique constraint then it is said to be in one-to-one relationship
+	
+2. one-to-many / many-to-one
+- primary key of our table should be written as foreign key in another table. The table which contains foreign key column represents the many-side of the relationship
+
+3. many-to-many
+- 	both the tables primary keys should be written as foreign keys in third-table and these foreign keys should be made as composite primary keys
+-------------------------------------------------------------------------------------------
+How many ways the classes can be related with each other?
+There are 2 ways we can establish relationship between the classes
+1. Inheritance
+2. Association
+	2.1 Composition
+	2.2 Aggregation
+	2.3 Association
+Lifetime and ownership
+
+Characteristics:-
+Cardinality = 1-1, 1-*, *-*
+Directionality = uni-directional & bi-directional
+
+What is association mapping model?
+The entity classes may have association relationship between them to hold the business data of our application, how to map the association relationship between these entity classes into the relational model is called "Association Mapping Models"
+	
+Now to understand we need consider several combination of association relationship with different cardinality and directionality of the association and should explore how can we map these classes into table relationships 
+Then we need to explore how to perform persistence operation based on these mappings.

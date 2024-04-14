@@ -1,0 +1,44 @@
+Hibernate 4.x bootstrapping
+---------------------------
+Hibernate 4.x boostrapping has been introduced in favour to Service and ServiceRegistry api inbuilt as apart of the Framework.
+
+Hibernate Framework to perform persistence operation requires some external resources as an input. For eg.. a database Connection or TransactionManager etc
+
+The Framework itself has been written with the code in acquiring these external resources, we dont have to write the code we just need to provided relevant configuration inputs that are required for hibernate to acquire these resources
+
+It is not that the Hibernate Framework supports one way of acquiring these external resources rather it support multiple possibilities, for eg consider an Connection as an external resource, to acquire Connection object hibernate has provided support in 3 ways
+
+1. In-built Connection Pooling support 
+2. Integration with Third-party Standalone Connection pool libraries like
+	2.1 C3P0
+	2.2 dbcp
+	2.3 Proxool
+	2.4 Hikari
+3. Jee server connection pool support
+
+hibernate.cfg.xml
+<hibernate-configuration>
+  <session-factory>
+	/*
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/hibdb</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+	*/
+	/*
+		<property name="connection.c3p0.driver.classname">com.mysql.cj.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/hibdb</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+	*/
+		<property name="jndi.dataSource">jndi://hibDataSource</property>
+	</session-factory>
+</hibernate-configuration>
+
+The programmer has to configure the Hibernate Framework to use one of these mechanisms in acquiring the Connection.
+
+For eg we have our own custom connection pool library which takes care of maintaining Connections. Can we plugin our own Connection Pool library asking hibernate framework to grab and use the Connections.
+In otherway
+can we enhance of customize the framework in integrating with our own third-party libraries in acquiring these external resources?
+		
+Till Hibernate 3.x it is not supported, we cannot enhance or customize the framework in intergrating with third-party libraries (apart from standard, or pre-integrated) in managing the external resources. but from Hibernate 4.x to enhance the capabilities of the Hibernate Framework the team has provided Service and ServiceRegistry api

@@ -1,0 +1,11 @@
+#find the total no of journeys between the given source and destination
+
+select count(j) from Journey j where j.source=:source and j.destination=:dest
+
+CriteriaBuilder cb = em.getCriteriaBuilder();
+CriteriaQuery<Integer> cq = cb.createQuery(Integer.class);
+Root<Journey> root = cq.from(Journey.class);
+cq.multiselect(cb.count(root.get("journeyNo")));
+cq.where(cb.and(cb.equal(root.get("source"), source) ,cb.equal(root.get("destination")) ), destination);
+TypedQuery<Integer> typedQuery = em.createQuery(cq);
+typedQuery.getResultList().stream().forEach(System.out::println);

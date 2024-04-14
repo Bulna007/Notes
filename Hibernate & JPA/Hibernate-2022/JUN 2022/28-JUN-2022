@@ -1,0 +1,32 @@
+Why do we need to use Map as a collection type while working with one-to-many or many-to-many association?
+While working with one-to-many or many-to-many association, sometimes we wanted to persist or represent additional data out of the association relationship, which doesnt belongs to any entity class rather that data exist only when the classes are associated with each other.
+So such additional data can be placed as a Map key between the associated classes.
+	
+CourierCenter
+- courierCenterNo
+- centerName
+- location
+- contactNo
+- emailAddress
+- inChargeName
+- Map<String, Parcel> parcelMap;
+
+Parcel
+- parcelNo
+- description
+- weight
+- source
+- destination
+- parcelDate
+- shippingAmount
+
+
+<map name="parcelMap">
+	<key column="courier_center_no" not-null="false"/>
+	<map-key column="awb_no"/>
+	<one-to-many class="Parcel"/>
+</map>
+
+
+note:-
+when we are working with List and Map type association we cannot write both the side of association as List/Map incase of many-to-many one side has to be taken as Set only.

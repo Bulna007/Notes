@@ -1,0 +1,209 @@
+For any #2 projects of different technology the tasks that should be applied in building the project would not be same. But the projects of same nature (language/technologies) if those are created based on standard conventions, then the tasks needs to be applied in building the project across them would be same. That is where Gradle has abstracted the build process for building each type of project by providing plugins
+
+A Plugin in represents 2 things
+1. standard conventions
+2. group of pre-defined tasks that has to be executed in a specific order in building the specific type of project
+
+From the above we can understand Gradle has provided lot of built-in or predefined plugins for each type of project with standard conventions and tasks defined aspart of them. Few of the times we may want to perform custom build activities or actions during the time of building project, we cannot accomplish it easily incase of Maven, because we need to write our own plugin with goals defined. publish it into remote repository and associate plugin as part of build lifecycle within our project, which seems to be very complex job
+
+Where as in Gradle, we can write our own task using groovy or kotlin language and customize the build process by ading these additional tasks in build the project easily
+
+Gradle = Ant  + Maven
+        Tasks + Conventions/Lifecycle through Plugins
+				---------------------------------------------
+				additionally we can add additional tasks easily
+				
+Gradle has flexibility and power of Ant and Conventions of Maven in building the projects.
+---------------------------------------------------------------------------------------------------------------------------------------------
+How does Gradle executes the Tasks?
+(or)
+How does Gradle determines what Tasks needs to be executed in which order?
+The basic building block in building the project in Gradle is Task. These Tasks are pre-defined aspart of the plugins. In addition the programmer also can write his own tasks either by deriving from existing Tasks or can write a Task from scratch.
+	
+The programmer has to write/configure Tasks aspart of gradle build file by declaring dependencies between the tasks. Each task contains:
+1. action = operation or piece of work todo
+2. inputs = values, files or directories on whom the action should be performed
+3. outputs = files and directories that the action has modified or generated
+
+all of these tasks has to be executed in a specific order to build the project. Now Gradle inorder to build the project, it reads the Task configurations that are defined in the build script file and derives the dependencies between the tasks and draws an Directed Acyclic graph (DAG) to understand the tasks execution order and performs the build.
+--------------------------------------------------------------------------------------------------------------------------------------------
+Gradle Build Lifecycle
+
+Incase of Maven, the build lifecycle refers to the pre-defined set of phases associated with plugins/goals that needs to be applied in building the project. This is something equals to an Plugin in Gradle, that as defined pre-defined tasks and conventions that needs to be applied in building project
+
+So when it comes to Gradle, the term build lifecycle doesnt refers to the phases and plugins to be executed rather it refers to the stages/phases in which the Gradle performs the build for a project.
+upon triggerring an build in Gradle
+1. The gradle identifies the Tasks and Plugins that are defined/configured in the buildscript file
+2. derives their order of execution
+3. executes the tasks in the derived order, to build for the project
+
+The Gradle evaluates and executes an buildscript file in 3 phases
+1. Initialization = Reads the buildscript and determines the environment and identifis the project to be build
+2. Configuration = constructs and configures the task graph for the build and determines the task execution order
+3. Execute = Runs the tasks selected at the end of the Configuration phases
+
+
+
+
+
+How to build a Gradle project?
+Gradle works ontop of 2 concepts
+1. project
+2. task
+
+A project can represent anything, it could be an java library or web application or could be a zip produced out of compressing multiple files and distributed. In gradle, project is defined based on what things are being performed, rather than what is being built
+In-short: Gradle project can be anything
+
+Each project madeup of tasks, A task represents an atomic piece of work, that should be perform aspart of the build process.
+
+How to install the Gradle?
+1. download the binary distribution of the Gradle
+https://gradle.org/next-steps/?version=8.5&format=bin
+
+2. copy the zip file into c:\drive or $USER_HOME and extract it
+here it would be extracted to $USER_HOME/middleware/gradle-8.5
+	
+3. add the gradle/bin directory to the system PATH variable
+export GRADE_HOME=~/middleware/gradle-8.5
+export PATH=$PATH:$GRADLE_HOME/bin
+
+check by running the below command whether installation works or not
+gradle -v
+---------------------------------------------------------------------------------------------------------------------------------------------
+Building our first project with Gradle:
+Gradle doesnt makes any assumptions of a project type unlike maven.  So while creating the project we dont need to create any standard project directory structure like Maven. We can just create an empty directory in which we can write a buildscript file declaring one or more tasks to be executed.
+By default gradle looks for a file under project root directory with name build.gradle.
+	
+project/
+|-build.gradle
+
+In this buildscript file we can define project information and tasks. The buildscript file can be written either in groovy or kotlin language.
+	
+task "taskName" {
+	doLast {
+		println "Hurray Gradle project works!"
+	}
+}
+
+goto the project directory and run the gradle taskName to run the project.
+	
+In the above build.gradle file we wrote groovy scripting, it is similar to java code, but it has few differences interms of syntaxes
+1. no need to terminate the project statement with ";" semicolon
+2. no imports are required, unless we have naming conflict between the 2 classes of different package
+3. we can call functions without parenthesis, if it has only one argument
+4. no primitive data types, for all the primitive types, the groovy has defined wrapper classes
+5. operators are overloaded to perform arthematic, logical and relational operations on these wrapper classes
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

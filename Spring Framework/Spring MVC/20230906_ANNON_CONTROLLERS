@@ -1,0 +1,169 @@
+In an enterprise application development, the developers has to rely on runtime environments, platforms, frameworks or third-party libraries in quickly developing the software applications. otherwise the developers has to write lot of boiler-plate logic in building an application
+
+For eg.. while building an web application in java, if there is no servlet container/jee server then programmer has to write the code in each and every class in the application
+	1. to receive the request over the network
+	2. extract the data from the http request that has been received over the network
+	3. using the data perform business logic
+	4. wrap the data into http response message
+	5. dispatch it as an response back to the user over the network
+if we look at this the network and protocol related logic would be common across all the classes in our application, which would endup in huge amount of boiler-plate logic to be written inour application
+
+instead we can take the support of runtime environments/platforms/containers (servlet containers), now the servlet containers takes the responsibility of managing the network & protocol related aspects of receiving the request, extract and dispatching the response back, so that in our application classes we only need to write the code for performing the request/business logic
+
+From the above we can understand, while developing an enterprise application we need to use runtime engines or frameworks or libraries in expedite the development
+
+How do we build the applications to work with platforms/runtimes/frameworks or libraries?
+The frameworks or runtime environments or libraries provides bunch of api classes of their own wrapped with boiler-plate functionality, inorder to make use of that functionality, we need to write code in instantiating the framework/runtime provided api classes and invoke their methods within our classes to reuse the functionality
+
+
+many of the times, the frameworks or the runtime environments has to execute first-in place in performing the mandatory boiler-plate logic and there by passing the control to our class allowing us to perform the operation. In such case how does the framework or runtime environment knows the information about our application classes to invoke them?
+
+The developer of the application has to pass the information about the application components as an input to the framework or runtime environment, so that it would be able to callback our application classes upon performing the pre-processing logic. There are 2 ways we can pass the information about our application classes to the underlying frameworks or runtime env
+
+1. metadata approach
+2. programmatic approach
+
+1. metadata approach
+Inorder to provide the information about our application classes as an input to the framework or runtime engine the developer has to write configuration files either interms of XML or any other format describing the details of the classes, methods and their parameters in calling those methods to the underlying framework/runtime engine
+The platforms/runtime engines reads those configuration metadata in understanding the components of our application in invoking them.
+	
+There are lot of problems with this approach:
+1. writing the configuration information describing all the classes, methods including their parameters is going to be very complex and takes huge amount of time in documenting them
+2. its is tough to memorize and write the configuration information
+3. every change in the class has to be reconfigured
+4. configuration files are not compilable, so an errors in these reports runtime exceptions and takes huge amount of time in debugging
+
+to overcome the above problems in providing the info about the application classes the programmatic approach has been introduced
+2. programmatic approach (interface-based programming)
+instead of documenting or configuring the information about the application classes in the configuration files, the framework or the runtime engine itself provides standard interfaces with pre-defined set of methods and parameters enabling the developers to write the classes to work with the framework/runtime engine
+
+The developer can quickly write the application classes extending/implementing from framework/runtime engine provided interfaces/classes, so that our classes can be invoked by the runtime engines
+
+now the developers has to configure little information about our application classes to the framework or runtime engine letting it know what components are there in our application.
+with this approach with minimal configuration we can let our classes work with frameworks or runtime engines.
+	
+In this approach also there are lot of problems are there:
+1. The developer has to endup in memorizing all the api interfaces/abstract classes provided by the framework or runtime engine, unless otherwise he cannot build the application
+2. memorizing these api classes and their methods, parameters in writing the application logic makes the developer find complex in building the application
+3. The developer has not been left with an option of choosing the own classnames, methods names in writing the application logic reflecting the functionality he/she is implementing, thus making the code less readable/understandable
+4. the programmer doesnt have choice choosing the methods signature and the returnTypes since those are derived from base interfaces/abstract classes of the framework/api/libraries. 
+	
+so to overcome the problems with both the above approaches, the annotation-drive programming has been introduced.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

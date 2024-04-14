@@ -1,0 +1,67 @@
+2. SessionFactory
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+There are 3 things the SessionFactory is going to perform
+1. By reading the hibernate configuration, it creates an Connection Pool internally, so that it can quickly grab the Connection while creating the object of Session
+2. it creates the Dialect object and holds within it
+3. acts as an registry/repository in holding the Mapping information using which it can create the object of Session
+4. Factory for creating the object of Session
+
+How many objects of the SessionFactory we need to create within the application?
+we need to create one object of the SessionFactory per one database in an application.
+	
+How to maintain one object of the SessionFactory per one database in an application?
+#1 Solution	
+
+class AccountDao {
+	public Account findAccount(SessionFactory sessionFactory, int accountNo) {
+		Session session = null;
+		Account account = null;
+		try {
+			session = sessionFactory.openSession();
+			account = session.get(Account.class, accountNo);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+			return account;
+		}
+	}
+}
+
+class BranchDao {
+	public Branch findBranch(SessionFactory sessionFactory, int branchNo) {
+		Session session = null;
+		Branch branch = null;
+		try {
+			session = sessionFactory.openSession();
+			branch = session.get(Branch.class, branchNo);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+			return branch;
+		}
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		Configuration configuration = null;
+		SessionFactory sessionFactory = null;
+		
+		try {
+			configuration = new Configuration().configure();
+			sessionFactory = configuration.buildSessionFactory();
+			AccountDao accountDao = new AccountDao();
+			Account account = accountDao.findAccount(sessionFactory, 1);
+			
+			BranchDao branchDao = new BranchDao();
+			Branch branch = branchDao.findBranch(sessionFactory, 1);
+			
+		}finally {
+			if(sessionFactory != null) {
+				sessionFactory.close();
+			}
+		}
+	}
+}

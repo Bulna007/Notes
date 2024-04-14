@@ -1,0 +1,47 @@
+How to query the data from database table interms of objects using hibernate framework?
+To retrieve data from database table interms of object we need an entity class representing the structure of the database table
+	
+Entity class is an java bean written based on the structure of the database table. There are few rules we need to follow while writing an entity class
+1. it is recommended to write the entity class implementing from Serializable interface
+2. for all of the attributes representing the database columns we declared, we need to must and should have accessors (setters/getters) method written, hibernate uses these accessor methods only to bind or access the data from the attributes
+3. entity class must and should have default constructor under public access modifier
+4. it is recommended to override equals and hashcode for every entity class
+	
+Hibernate Framework has provided a class called "Session", A Session class holds the jdbc Connection object to connect and communicate with the database, unlike Connection the Session is more intelligent object
+
+Session class internally holds an Connection object, whenever we ask Session object to perform a database operation in querying the data, it takes care of creating PreparedStatement, substituting query parameters and executing the query and grabs the ResultSet
+Then the Session internally uses the GenericMapper in converting the ResultSet into corresponding entity class object and returns to us.
+	
+Now developer dont have to write boiler-plate logic in accessing the data from database interms of object
+
+account 
+--------
+account_no
+account_holder_nm
+account_type
+branch_code
+mobile_no
+email_address
+balance
+
+class Account implements Serializable {
+	int accountNo;
+	String accountHolderName;
+	String accountType;
+	String branchCode;
+	String mobileNo;
+	String emailAddress;
+	double balance;
+	
+	// setters and getters
+}
+There is a method called get() to which we can pass primary key column value based on which we want to fetch the object along with that the EntityClass for whom we want to access the data as below
+session.get(id, classType);
+
+Account account = (Account) session.get(1, Account.class);
+
+The Session class byitself cannot drive the table from which it has to query the data when we pass EntityClass as input, along with that it dont know which columns of the table should be mapped to which attributes of the entity class. Now we need to pass the information mapping table to class and columns to attributes by writing Mapping information
+	
+We need to write the mapping information describing the entity class and its corresponding database table in hibernate standard format which is called Hibernate Mapping file and it is basically an XML File
+
+There are few rules or conventions we need to follow in writing the Hibernate Mapping file.	

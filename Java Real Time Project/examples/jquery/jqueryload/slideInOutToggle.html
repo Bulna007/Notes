@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Effect</title>
+    <style>
+        .heading {
+            margin: auto;
+            width: 100%;
+            padding: 5px 5px 0px 5px;
+            border: 1px solid black;
+            background-color: beige;
+            margin-bottom: 30px;
+        }
+        .heading div {
+            background-color: white;
+            border-top: 1px solid black;
+        }
+        .heading a {
+           text-decoration: none;            
+           color: brown;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Slide Effect</h2>
+    <div class="heading"><a id="jqueryWorksAnchor" href="#">How does JQuery Works</a>
+        <div id="queryWorks">
+            Although moreover mistaken kindness me feelings do be marianne. Son over own nay with tell they cold upon
+            are. Cordial village and settled she ability law herself. Finished why bringing but sir bachelor unpacked
+            any thoughts. Unpleasing unsatiable particular inquietude did nor sir. Get his declared appetite distance
+            his together now families. Friends am himself at on norland it viewing. Suspected elsewhere you belonging
+            continued commanded she.
+            Boy desirous families prepared gay reserved add ecstatic say. Replied joy age visitor nothing cottage. Mrs door paid led loud sure easy read. Hastily at perhaps as neither or ye fertile tedious visitor. Use fine bed none call busy dull when. Quiet ought match my right by table means. Principles up do in me favourable affronting. Twenty mother denied effect we to do on
+        </div>
+    </div>
+    <div class="heading"><a id="jqueryFeatureAnchor" href="#">JQuery Features</a>
+        <div id="jqueryFeature">
+            Way nor furnished sir procuring therefore but. Warmth far manner myself active are cannot called. Set her half end girl rich met. Me allowance departure an curiosity ye. In no talking address excited it conduct. Husbands debating replying overcame blessing he it me to domestic.
+            It real sent your at. Amounted all shy set why followed declared. Repeated of endeavor mr position kindness offering ignorant so up. Simplicity are melancholy preference considered saw companions. Disposal on outweigh do speedily in on. Him ham although thoughts entirely drawings. Acceptance unreserved old admiration projection nay yet him. Lasted am so before on esteem vanity oh.
+        </div>
+    </div>
+    <div class="heading"><a id="jqueryActionAnchor" href="#">JQuery Action</a>
+        <div id="jqueryAction">
+            Considered an invitation do introduced sufficient understood instrument it. Of decisively friendship in as collecting at. No affixed be husband ye females brother garrets proceed. Least child who seven happy yet balls young. Discovery sweetness principle discourse shameless bed one excellent. Sentiments of surrounded friendship dispatched connection is he. Me or produce besides hastily up as pleased. Bore less when had and john shed hope.
+            Whole every miles as tiled at seven or. Wished he entire esteem mr oh by. Possible bed you pleasure civility boy elegance ham. He prevent request by if in pleased. Picture too and concern has was comfort. Ten difficult resembled eagerness nor. Same park bore on be. Warmth his law design say are person. Pronounce suspected in belonging conveying ye repulsive.
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $(".heading").children("div").hide();
+            $(".heading").children("a").click(function() {
+                $(this).next("div").slideToggle(1000);
+            });
+        });
+    </script>
+</body>
+
+</html>

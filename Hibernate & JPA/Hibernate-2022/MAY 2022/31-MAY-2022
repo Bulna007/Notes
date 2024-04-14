@@ -1,0 +1,40 @@
+How to map the entity classes based on table per subclass inheritance strategy?
+
+InsurancePlan.hbm.xml
+----------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.tpsc.entities">
+	<class name="InsurancePlan" table="insurance_plan">
+		<id name="insurancePlanNo" column="insurance_plan_no">
+			<generator class="increment"/>
+		</id>
+		<property name="planName" column="plan_nm"/>
+		<property name="description"/>
+		<property name="minEligibilityAge" column="min_eligibility_age"/>
+		<property name="maxEligibilityAge" column="max_eligibility_age"/>
+		<property name="minInsurredAmount" column="min_insurred_amt"/>
+	</class>
+</hibernate-mapping>
+
+AccidentalInsurancePlan.hbm.xml
+--------------------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.tpsc.entities">
+	<joined-subclass name="AccidentalInsurancePlan" table="accidental_insurance_plan" extends="InsurancePlan">
+		<key column="accidental_insurance_plan_no"/>
+		<property name="coverageType" column="coverage_type"/>
+		<property name="disabilityCoveragePercentage" column="disability_coverage_percentage"/>
+	</joined-subclass>
+</hibernate-mapping>
+
+MedicalInsurancePlan.hbm.xml
+----------------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.tpsc.entities">
+	<joined-subclass name="MedicalInsurancePlan" table="medical_insurance_plan" extends="InsurancePlan">
+		<key column="medical_insurance_plan_no"/>
+		<!-- join column or foreign key column of the table -->
+		<property name="networkType" column="network_type"/>
+		<property name="copay"/>
+	</joined-subclass>
+</hibernate-mapping>

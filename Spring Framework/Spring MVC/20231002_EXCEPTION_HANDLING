@@ -1,0 +1,177 @@
+Exception Handling
+How do we handle exceptions in spring mvc application?
+-------------------------------------------------------------------------------------------------------------------------------------
+Field Formatter
+---------------
+FieldFormatters are used for converting String value into ObjectType and ObjectType into String value to support WebDataBinding.
+
+The developers has to write the FieldFormatter with relevant logic for converting the String value into Object or Object to String, so that the WebDataBinding uses the FieldFormatter for converting the parameters to/fro back
+
+Spring has provided an interface Formatter , from which we need to write our own implementation class and plugin into the WebDataBinding allowing him to use our implementation.
+	
+interface Formatter<T> extends Printer<T>, Parser<T> {
+}	
+
+interface Printer<T> {
+	default String print(T value, Locale locale);
+}
+
+interface Parser<T> {
+	default T parser(String value, Locale locale);
+}
+	
+Printer interface supports converting objectType into String value
+Parser interface supports converting String value into objectType, which is used while binding the request data into form object attributes.
+	
+Formatter interface extends from both these interfaces to support converting to/fro, based on our requirement either we can override both the methods or any one of the method we would like in our FieldFormatter implementation.
+	
+
+class PhoneNumber {
+	String countryCode;
+	String number;
+	
+	// accessors
+}	
+
+919392929291
+	10-01-2023
+	
+class SignUpForm {
+	private String firstName;
+	private String lastName;
+	private Date dob;
+	private String gender;
+	
+	@PhoneNumber
+	private PhoneNumber phoneNumber;
+	
+}
+
+class DateFormatter implements Formatter<PhoneNumber> {
+	public PhoneNumber parse(String text, Locale locale) {
+		PhoneNumber phoneNumber = null;
+		
+		phoneNumber = new PhoneNumber();
+		if(text.size() == 11) {
+			phoneNumber.setCountryCode(text.indexOf(1));
+			phoneNumber.setNumber(text.subString(1, 12));
+		}else {
+			phoneNumber.setCountryCode(text.subString(0, 2));
+			phoneNumber.setNumber(text.subString(2, 13));
+		}
+		return phoneNumber;
+	}
+	
+	public String print(PhoneNumber phoneNumber, Locale locale) {
+		return phoneNumber.getCountryCode()+phoneNumber.getNumber();	
+	}
+}
+
+The WebDataBinder has to use the Formatter to convert the String value being passed into Object or Object into String format. In order to let the WebDataBinder understand to use this Formatter for convering the String into PhoneNumber object type we need to write the configuration. Instead of specifying this information interms of configuration we can define annotation through which we can bind the formatter to be used whenever we use that annotation
+
+From the above we can understand, for each Formatter we need to define our own Annotation and bind the annotation to the Formatter using AnnotationFormatterFactory
+
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@interface PhoneNumber {	
+	
+}
+
+To bind the annotation to the formatter class to be used we need to write AnnotationFormatterFactory. The AnnotationFormatterFactory determines based on the annotation what Formatter to be used for converting string to object or object to string as below.
+	
+class PhoneNumberAnnotationFormatterFactory implements AnnotationFormatterFactory<PhoneNumber> {
+	public Set<Class<?>> getFieldTypes() {
+		return new HashSet(Arrays.asList(new Class<?>[] {PhoneNumber.class}));
+	}
+	public Printer<?> getPrinter(PhoneNumber annotation, Class<?> fieldType) {
+		return new PhoneNumberFormatter();
+	}
+	public Parser<?> getParser(PhoneNumber annotation, Class<?> fieldType) {
+		return new PhoneNumberFormatter();
+	}
+}	
+
+Place all the AnnotationFormatterFactories in the ioc container, so that WebDataBinder can search through the FormatterFactory's to identify which Formatter class to be used for an given annotation
+	
+@Configuration
+@EnableWebMvc
+public class WebMvcConfig implements WebMvcConfigurer {
+	
+	public void addFormatters(FormatterRegistry registry) {
+		registry.addFormatterForFieldAnnotation(new PhoneNumberAnnotationFormatterFactory());
+	}
+}	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,137 @@
+Microservices is an methodology or architecture style of building enterprise large-scale complex systems/applications. The Microservices methodology or architectural style has provided guidelines, recommendations and design patterns that must be followed in building the application, so that it can be called as "Microservices Application".
+	
+The enterprise large-scale complex business system should be broken down into smaller microservices modules/applications based on these characteristics:
+1. loosely coupled
+2. independently deployable
+3. highly scalable
+4. collaborative services (through api calls usually through gateway applications)
+5. resilient 
+6. highly available
+that can be developed by multiple smaller mutually collaborating teams independently
+
+building the microservices application from the scratch is highly complex, and requires support of programming languages. But when it comes to microservices application we just not only require apis from the languages we need lot of tools in building, deploying, collaborating, discovering, monitoring etc the microservices 
+
+But unfortunately no programming language is available in providing all the necessary apis/tools in developing the microservices. So to help us in building the microservices, the third-party vendors has provided several tools for us.
+	
+There are various different third-party players in the market provided tools required for developing, delivering and deploying the microservice applications, few of them are:
+
+1. Netflix
+Netflix is an early adaptor of the microservices technolgy and has build lot of tools in implementing the microservices and made them available as opensource to the world
+1.1 eureka server = discovery server
+1.2 ribbon = client-side loadbalancer
+1.3 hystrix = circuit breaker (resilience)
+1.4 zuul = api gateway
+
+2. Apache
+1. Zookeeper = distributed configuration management 
+2. Zipkin = Tracing server for troubleshooting the latecy problems in microservices
+3. Consul = Discovery Server
+4. Camel = Gateway
+
+To build a microservice application in java platform, the developer has to use programming language apis and has to choose the tool stack to be used in building the microservices. Understand these different vendor tools, making them work together by integrating them seems to be very complex, so instead of we dealing with complexity in working with different tools and integrating them, spring has provided spring cloud & spring microservices modules.
+	
+Spring Framework aspart of Spring Cloud + Spring Microservices has provided their own stack of tool set replacing most of the third-party vendor tools
+1. Eureka Server Integration 
+2. Spring Cloud ConfigServer / ConfigClient (Replacing Zookeeper)
+3. Spring Circuit Breaker (Resilience4J)	(Replacing Hystrix) RateLimiter/TimeLimiter
+4. Spring Api Gateway (Replacing Zuul)
+5. Spring Loadbalancer (Replacing Ribbon)
+6. Feign Client Api (Declarative client library to access the microservices)
+-------------------------------------------------------------------------------------------------------------------------------
+What is Monolithic Application Architecture?
+An Enterprise large-scale complex business system/application is built out of one single sourcecode project.	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

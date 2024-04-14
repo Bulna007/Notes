@@ -1,0 +1,59 @@
+How many SessionFactory objects we need to create within an Hibernate Application?
+We need to create one SessionFactory object per 1 database in an application. it is not recommended to create multiple objects of the SessionFactory pointing to the same database, because SessionFactory is an heavy weight object wherein hold the ConnectionPool, each time when we create a SessionFactory it creates a pool of connections and when we close the SessionFactory it releases the connections from the pool.
+So creating and closing the ConnectionPool is an costly operation and impacts the performance of the application. In addition even we create multiple objects of the SessionFactory as SessionFactory is immutable, keeping hold of the same Configuration/Mapping information across the SessionFactory objects will waste lot of jvm memory so it is advised to create only one object of SessionFactory per one database in an application.
+From the above we can understand SessionFactory should be closed at the end of the Application.	
+
+Why not hibernate framework made the SessionFactory as singleton?
+While working with multiple databases in an application we need one SessionFactory object per one database, so making it as singleton class doesnt permits us to work with multiple databases.
+	
+How many Session objects to be created within an Hibernate application?
+For each operation/transaction we perform within our application we need to use a Session object and close the Session object at the end of the usage
+
+
+class AccountDao {
+	public Account getAccount(SessionFactory sessionFactory, int accountNo) {
+		Session session = null;
+	}
+}
+
+class AddressDao {
+	public Address getAddress(SessionFactory sessionFactory, int addressNo) {
+		
+	}
+}
+
+class Application {
+	public static void main(String[] args) {
+		Configuration configuration = new Configuration().configure();
+		SessionFactory sessionFactory = configuration.buildSessionFactory();
+		
+		AccountDao accountDao = new AccountDao();
+		Account account = accountDao.getAccount(sessionFactory, 1);
+	}
+}
+The above technic of managing the SessionFactory is not recommended since all of the Dao classes and their methods are exposed to the Hibernate Apis and infuture if we want to switch to a different persistence api, we need to not only rewrite the logic in the method, even we have to redesign the apis of the classes which inccurs huge amount of changes all over the application
+
+Instead let us create and manage the SessionFactory centrally at one place within our application and let the individually Dao's take care of pulling the SessionFactory object from the Repository
+	
+class SessionFactoryRegistry {
+	private static SessionFactory sessionFactory;
+	
+	static {
+		Configuration configuration = new Configuration();
+		sessionFactory = configuration.buildSessionFactory();
+	}
+	
+	public static SessionFactory getSessionFactory() {		
+		return sessionFactory;
+	}
+}	
+	
+class AccountDao {
+	public Account getAccount(int accountNo) {
+		SessionFactory sessionFactory = null;
+		
+		try {
+			sessionFactory = SessionFactoryRegistry.getSessionFactory();	
+		}		
+	}
+}

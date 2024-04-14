@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/flc/pom.xml" />
+        <option value="$PROJECT_DIR$/jpaorm/pom.xml" />
+        <option value="$PROJECT_DIR$/moreorm/pom.xml" />
+        <option value="$PROJECT_DIR$/beginorm/pom.xml" />
+        <option value="$PROJECT_DIR$/hibannon/pom.xml" />
+        <option value="$PROJECT_DIR$/manageSF/pom.xml" />
+        <option value="$PROJECT_DIR$/getandload/pom.xml" />
+        <option value="$PROJECT_DIR$/hibernatetx/pom.xml" />
+        <option value="$PROJECT_DIR$/idgenerators/pom.xml" />
+        <option value="$PROJECT_DIR$/bootstrapping3/pom.xml" />
+        <option value="$PROJECT_DIR$/compositeid/pom.xml" />
+        <option value="$PROJECT_DIR$/jpacompositeid/pom.xml" />
+        <option value="$PROJECT_DIR$/dmloperations/pom.xml" />
+        <option value="$PROJECT_DIR$/tableperclasshierarchy/pom.xml" />
+        <option value="$PROJECT_DIR$/tablepersubclass/pom.xml" />
+        <option value="$PROJECT_DIR$/tableperconcreteclass/pom.xml" />
+        <option value="$PROJECT_DIR$/jpainheritancemapping/pom.xml" />
+        <option value="$PROJECT_DIR$/onetomanyassoc/pom.xml" />
+        <option value="$PROJECT_DIR$/onetomanyasonetoone/pom.xml" />
+        <option value="$PROJECT_DIR$/onetoone/pom.xml" />
+        <option value="$PROJECT_DIR$/onetomanylist/pom.xml" />
+        <option value="$PROJECT_DIR$/onetomanymap/pom.xml" />
+        <option value="$PROJECT_DIR$/manytomany/pom.xml" />
+        <option value="$PROJECT_DIR$/onetomanyassocannon/pom.xml" />
+        <option value="$PROJECT_DIR$/manytooneassocannon/pom.xml" />
+        <option value="$PROJECT_DIR$/onetomanyasonetooneannon/pom.xml" />
+        <option value="$PROJECT_DIR$/onetooneannon/pom.xml" />
+        <option value="$PROJECT_DIR$/manytomanyannon/pom.xml" />
+        <option value="$PROJECT_DIR$/inverse/pom.xml" />
+        <option value="$PROJECT_DIR$/inverseannon/pom.xml" />
+        <option value="$PROJECT_DIR$/hql/pom.xml" />
+        <option value="$PROJECT_DIR$/secondlevelcache/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK" />
+</project>

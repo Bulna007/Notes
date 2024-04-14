@@ -1,0 +1,270 @@
+What are Microservices?
+Microservices is not an api/library or not even an programming language, its a methodology or architectural style of building enterprise large-scale complex business systems. The Microservices architecture has provided recommendations, guidelines and design patterns that should be followed in building the enterprise large-scale complex business systems.
+	
+In-Short:
+Microservices is nothing but an architecture style that comprises of guidelines/design patterns put together in building an enterprise large-scale complex business solutions.
+	
+An Enterprise large-scale complex business application/system comprises of several modules/functionalities aspart of it, rather than building them into one single large system(application), when it comes to Microservices architectural style breaking them into smaller microservices application based on below characteristics:
+1. loosely coupled
+2. independently deployable
+3. highly scalable
+4. collaborative services
+5. resilent
+6. highly available
+that can be developed by multiple smaller collaborating teams independently
+--------------------------------------------------------------------------------------------------------------------------------
+What is Monolithic application architecture?
+The Enterprise large-scale business system has been built out of single sourcecode project, since it is an enterprise large-scale application that comprises of several functionalities, to easily organize and manage them we can break them into several modules (here modules refers to sub-projects).
+	
+These modules may refer other modules directly through classpath references, the whole application is built into one single deployable artifact and deployed on a server runtime. Since it has only one layer/artifact into which it is build into, it is called "Monolythic Application"	
+	
+Characteristics:
+1. the entire system/application is built into single sourcecode project
+2. inter-dependencies between the classes are expressed through classpath references
+3. build into one single deployable artifact
+
+When to build an application based on Monolithic Architecture:
+We want to build an enterprise large-scale complex business solution, that comprises of several functionalities/modules which are logically related with each other and should work together. Our application should support different types of clients like desktop browsers, mobile browsers and native mobile applications to use the functionality of our application. In addition we want to build integrations with third-parties 
+
+The application should be integratable with other third-party applications through webservices, httpEndpoints and via message brokers and should support data exchange interms of XML,JSon and HTML etc. 
+	
+There are few circumstances or context under which we we need to build the application based on Monolithic architecture:
+1. we want a team of developers to work on development of the project/application/system
+2. since the whole application is built out of single sourcecode project, everyone in the team knows all the modules or functional areas of the application and can easily work across the modules insupport of developing the application
+3. The new members added into the team can quickly understand the holistic view of the entire system, modules and their dependencies because it is built out of single sourcecode. Any member in the team can work on any modules of the project
+4. we can achieve scalability and high-availability by deploying multiple instances of the application across the cluster of computers
+
+What are the advantages of building the application based on Monolithic Architecture?
+1. Easy to develop
+Many of the existing IDEs and tools are designed to support development of Monolithic applications, so a developer can quick develop and build the applications
+
+2. Easy to Scale
+To scale the application all that we just need to do is run one more instance of the application on another server
+
+3. Easy to deploy
+As the entire application has been packaged into one-single deployable artifact, we just need to copy it onto the server to deploy
+
+4. Easy of Debugging and Troubleshooting 
+since the application and all of its modules are deployed together on a single server we can easily locate the logs and trace the errors .
+	
+
+Along with advantages, we have quite a number of dis-advantages are also there in choosing and building the application based on monolithic architecture
+dis-advantages:
+1. overloaded IDE environments
+The larger the sourcecode of the project, the slower the IDE. For every change we make in the sourcecode of the project, IDE has to rebuild the entire application and all of its modules that takes huge amount of time and cpu for each change, thus kills the developers productivity in building the application
+
+2. overloaded server runtimes
+The bigger the application is, it takes more time for deploying and starting the application in ServerRuntime environment. The developers quite frequently modifies the sourcecode of the project and want to debug or verify the changes the made holds good or not, for this they need to recompile, repackage, redeploy and restart the Server Runtimes which takes lot of time to startup the application and kills the developers productivity
+
+3. Reusability through Modularity is difficult to achieve
+As the application is build into one single sourcecode, identifying the modules and reusing the components across these modules becomes very complex. Whenever a developer needs some functionality, rather than searching through the modules and their components in reusing, he would endup in creating new components that leads to duplication and results in maintainability problems.
+	
+4. Large monolithic applications makes the developers feel afraid of working on the projects, they often find it very complex to understand the modules, due to lack of knowledge interms of functionality/technical that results in poor development and affects the quality of the system being built at great extent.
+	
+5. Scaling the application becomes very difficult and quite costly
+	1. The Monolithic applications supports only horizontal scaling, which means the whole system has to be scaled at one shot deploying them across multiple server runtimes. We cannot scaleup a part or a module of the system for whom the load or the traffic is high
+
+	2. The cost of scalability is very high
+	
+	3. different modules as different requirements interms of computing resources. For eg.. few modules are memory intensive, few others are cpu bounded and requires more cpu to perform. since we package all the modules into one single deployable artifact we cannot cater and allocate resources to each module based on their nature while scaling
+	
+6. Continous Integration and Continous deployment is tough to achieve
+It is tough to achieve continous integration and continous deployment with monolithic architecture. Because these applications are very huge in size they take lot of time in shutting down and starting up. There could be a possiblility where while shutting down the application, they can be few cron jobs that are scheduled to be run aspart of the application can be there resulting in failure in shutting down the application. When we retrigger a new deployment of the application, the existing jobs might cause startup failures because they have failed during shutdown earlier and resulting in failure of the startup of the application thus leaving the system in-consistent state
+
+7. Distribute the people into multiple teams and assign them to work across different modules of the project would be highly challenging:
+	1. since the teams are working independently on their respective modules, the changes made by one team on a module would result in breaking the other modules being developed by other teams within the project thus leaving the whole system in-compatible
+	2. even though one team has finished working on a module, they need to wait for other module teams to uptake their changes and integrate into their modules. because the whole code needs to get released together. due to this the entire team has to wait and sit idle for other modules to be finished
+	So excessive planning and coordination is required in executing the monolithic applications with multiple teams which is highly difficult
+	
+8. Long term commitment towards the technology stack is required
+Monolithic Applications forces us to stick to the technology stack. At the begining of the development itself we need to choose the technical stack and stick to it. Later on new technologies has been emerged or introduced we cannot uptake them since we cannot modify or upgrade a single module in the system incrementally and integrate with existing system. The only way is to rebuild the entire system which results in huge cost.
+--------------------------------------------------------------------------------------------------------------------------------	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

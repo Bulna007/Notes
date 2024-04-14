@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation</title>
+</head>
+<body>
+    <h2>Form Validations</h2>
+    <form name="addProfileForm" id="addProfileForm" action="success.html" method="post">
+        <label for="fullname">Fullname : </label><input type="text" required name="fullname" id="fullname" /><br>        
+        <p>Choose Gender</p> <label for="male">Male :</label><input type="radio" required name="gender" id="male" value="male"/> (or) 
+        <label for="female">Female :</label><input type="radio" required name="gender" id="female" value="female"/><br/>
+        <label for="dob">Date of Birth:</label><input type="date" required name="dob" id="dob"/> <br/>
+        <label for="experience">Work Experience : </label><input type="number" min="1" max="55" name="experience" id="experience"/><br/>
+        <label for="jobTitle">Job Title : </label><input type="text" name="jobTitle" required id="jobTitle"/><br/>
+        <button onclick="validateAndSave();">Save</button>
+    </form>
+    <script type="text/javascript">
+        function validateAndSave() {
+            
+            var flag = true;
+            const inpFullname = document.getElementById("fullname");
+
+            if(inpFullname.checkValidity() == false) {
+                flag = false;
+            }
+            const rdMale = document.getElementById("male");
+            const rdFemale = document.getElementById("female");
+            if(rdMale.checkValidity() == false && rdFemale.checkValidity()==false) {
+                flag = false;
+            }
+
+
+            if(flag == true) {
+                document.forms['addProfileForm'].submit();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+What is persistency?
+Persistency is all about storing the data and accessing the data permanently on a computer storage device.
+	
+Why do we need to persist the data permanently on a storage device of a computer?
+Even though the store keeper is using the computing device or a calculator, still he has to maintain the data on a piece of paper and track it and manually enter into the calcuator which is taking huge amout of time.
+	
+unless the store owner writes the data on paper he cannot keep track of the information	of what has been entered/fed to calculator which is actually taking lot of time,instead of if the calculator itself can memorize the data and allows me to track, i can avoid writing the data on a paper. that is where along with computing we need memory also to calculating device.
+	
+Naturally the business data has to stored for longer amount of time for deriving various different types of calculations on top of it.
+How to maintain the data permanently for longer amount of time?
+Write the data on a book/keep track of the information by writing on paper, so that he refer it and use it in future permanently.
+	
+If we maintain the data on a peice of paper manually we run into several problems:
+1. it takes lot of time in writing the data on a piece of paper to maintain it permanently
+2. The information written by the people may not be legitimate or easy to read and difficult understand as different people has different style of hand writing
+3. searching the data and identifying the data infuture may take lot of time and sometimes we may not be able to find the data as well we are looking for
+4. The data we stored on the paper has wear and tear, where after certain amount of time in future, the information we wrote may disappear/vanish or might tored by nature, so it is not permanent
+5. any one can access the data that is written on the paper there is no security
+6. The data that we have stored on the book/paper is not being used for one-time, it is the data that has to be repeatedly used for performing different types of operations where repeatedly we might have to enter the data into a computing device which takes huge amount of time
+
+From the above we can understand storing/writing the data manually on a book has several problems, instead of it if we can somehow someway can keep the data permanently on the computer system itself, the programs by themself can read the data that has been stored and can quickly compute/perform operations and provide the outcome to us. that is where we need permanent storage of data on a computer, which is called persistency.
+	
+advantages of storing the data permanently on the computer storage device:
+1. there are various ways we can input and enter the data into the computer quickly there by which the data is stored permanently and can reused for computing rather than entering repeatedly which saves lot of time.
+2. the information stored is highly legitimate
+3. searching and identifying the data that has been stored is quick and easy
+4. the data that has been stored on a computer will never vanish over the lifetime, there is no wear and tear for the data
+5. higher security
+6. we dont need to repeatedly enter the same data to perform different operations into computer, since the data has been stored permanently on the computer itself the programs bythemself can quickly read and perform operations	

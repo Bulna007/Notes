@@ -1,0 +1,142 @@
+What are the advantages of using Hibernate Framework over the jdbc api?
+#1.
+jdbc: we need to write lot of boiler-plate logic in performing the persistence operation.
+hibernate: the hibernate framework has provider api classes wrapping the boiler-plate logic within them, so we dont need to write the boiler-plate logic while working with hibernate framework in building the persistence requirement of an application
+
+#2. 
+jdbc: resource management is a very tough job in jdbc api, always no matter how effectively we wrote the logic in managing the resource, there is always a chance of resource leakage issues. more over the amount of code we need to write in handling these resources is very high
+hibernate: we only have to manage a single resource called "Session" and should be closed at the end of the operation which is pretty easy. The SessionFactory has to be closed at the end of the application, by comparing with jdbc api based application managing resource is not a tedious job while working with Hibernate Framework
+
+#3. 
+jdbc: jdbc supports only local transactions and it doesnt support global transactions. To work with global transactions we need to use jta api. so switching always between local to global or viceverse requires significant amount of code changes in our application.
+hibernate: hibernate supports working with both local/global transactions. it has provided a unified api through which we can manage both the types of transactions, it is an biggest advantage while working with hibernate framework.
+	
+#4. 
+jdbc: the jdbc api based applications are not portable across the databases, we have to rewrite considerable amount of code in migrating the application from one database to another
+hibernate: hibernate has provided hql language and it is database agnostic query language that is translated into native sql queries based on the database against which we are running the application through the help of dialect. so hibernate applications are portable across the databases
+
+#5. 
+jdbc: doesnt support caching, it has not been designed to meet enterprise persistency requirements of an application.
+hiberante: hibernate from the ground has been built keeping in view of enterprise persistency requirements of an application, so that it supports all the enterprise class-level features like
+1. global transactions
+2. rich support of caching
+3. database portability etc
+hibernate supports 3 levels of caching first-level cache, second-level cache and query-level cache 
+
+#6. 
+jdbc: all the jdbc api exceptions are checked exceptions due to which we need to write our code surrounding annoying try/catch block. So our code is cluttered around the try/catch blocks and makes it difficult to understand
+
+hibernate: all the execptions designed by the Hibernate Framework or un-checked exceptions so we never need to write our code sourrounding un-necessary try/catch blocks, which saves lot of development time and improves code readability
+
+The base class for all the exceptions in Hibernate Framework are HibernateException which is an runtime exception.
+	
+#7.
+jdbc api:
+while working with jdbc api, to perform persistence operation on the underlying database tables we build sql queries. In these queries we refer to tables and columns in performing the operations. So that the jdbc logic we wrote is exposed to the underlying database tables and in future if the tablename or columnname has been changed again we need to re-write the code in our application. 
+	
+hibernate: 
+while working with Hibernate Framework also we need to write queries to access the data from database. but the query we write while working with Hibernate Framework is "HQL" query. HQL query is an object query language in which we are not going to refer table name or column name rather we refer entity class and attributes of it in the query which will be translated into native sql query by the dialect.
+So if there is a change in underlying database table name or column names we need to modify the mapping information only, we dont have to change the code/sql queries in java code. so our application is loosely coupled from underlying database
+
+	
+class Employee {
+	int empNo;
+	String empName;
+	String designation;
+	int experience;
+	double salary;
+}	
+employee.hbm.xml
+----------------
+<hibernate-mapping package="com.advhib.entities">
+	<class name="Employee" table="emp">
+		<id name="empNo" column="emp_no"/>
+		<property name="empName" column="emp_nm"/>
+		<property name="designation"/>
+		<property name="experience"/>
+		<property name="salary"/>
+	</class>
+</hibernate-mapping>
+
+select emp_no, emp_nm, designation, experience, salary from employee
+
+select e.empNo, e.empName, e.designation, e.experience, e.salary from Employee e
+object query langauge
+
+
+------------------------------------------------------------------------------------------
+Why do we need exception handling?
+With poor/no error management technics in place, the programmer never knows the failure/error information about what makes the program terminate abnormally, due to which we can never overcome the failures and leads to poor quality of application
+
+If a program can report the failure information and the context of the failure the programmer can analyze the failure and understand the root cause of the error and modify the program to overcome it due which the quality of the code improves. That is where we need error reporting
+
+The languages like c/c++ doesnt have capability of gathering failure or reporting the failure due to which programmers suffered alot in traiging and identifying the failures of execution to improve the quality of the application
+
+What is an exception?
+exception is a way through which the programming language wraps the information about the failure of the execution of the program and will be reported to the programmers helping him in debugging and rectifying from it
+
+For all the types of failure that arises during the execution of the program, we dont have to terminate the program abnormally by reporting the failures rather there can few failures/errors that can be handled and can provide alternate path of execution in continuing the execution of the program.
+	
+To help us in recovering from the failures java has introduced exception handling. ExceptionHandling is an mechanism through which we can see the failure information and can even recover out of the failures as well without terminating the program.
+	
+by introducing exception handling, now in our programs we need to write 2 paths of execution
+1. normal path of execution
+2. code to be executed when we encouter failure 
+
+To let the jvm differentiate the 2 paths of code java has introduced try/catch block constructs
+
+Not all the errors are recoverable there are some error types that are recoverable and others may not be. So it is not necessary that we need to write our code always by keeping in try/catch block construct
+The programmer has to think wisely in understanding adopting/implementing exception handling as part of the application.
+	
+since the freedom of writing the try/catch has been left to the programmers, they may not use exception handling (due to lack of knowledge or awarenes) as part of the application due to which the purpose of exception handling will be mis-utilized
+
+To guide the programmers and help them in implementing the exception handling as part of the application java has divided the exceptions into 2 groups
+1. checked = recoverable failures / known exceptions
+2. un-checked = may or may not be recoverable / unknown failures
+
+Now Sun Microsystems has done a bit interms of helping programmers in understanding the type of errors by providing pre-defined exceptions (checked exceptions) for each api letting them know the type of failures and asking them to prepare their programs to handle
+
+Now it is the responsibility of developer to write the code in handling these well-known failures while developing the application. It means the programmer while writing the code with an api, he has to learnt for each class/method he use, what type of failures will be reported and accordingly he has to write the code wrapping try/catch block
+
+its a bit tricky and quite difficult to memorize which api classes and methods reports what type of exceptions and handle them by writing try/catch block
+
+
+So sun microsystems to further help the programmers to know what failures or exceptions will be caused while using which api/methods they defined each class and the methods reporting the failures/checked exceptions
+
+Hurray! finally I known which api/method in java causes what type of failures, i dont have to memorize only I have to handle.
+	
+
+There are 2 types of exceptions are there
+1. checked exceptions
+These are the known failures that can be anticipated during the execution of the program. since these are well known failues that will be encourtered while working with a specific api, we can write try/catch block in handling them
+
+2. un-checked exceptions
+These are the unknown failures cannot be predicted or identified and may occur during the execution of the program. since these are unknown we may not be able to write try/catch block in handling these failures
+
+Sun Microsystems or Java platform has defined few unknown failures like
+1. ArrayIndexOutOfBoundsException
+2. OutOfMemoryException
+3. NullPointerException
+etc
+
+few unknown failures like OutputMemoryException, StackOverflowException leads to abnormal termination of the program since those are critical failure in the Runtime
+-----------------------------------------------------------------------------------------
+1. Working with Hibernate program
+2. Hibernate core objects
+	- Configuration
+	- SessionFactory
+	- Session
+3. How to objects of SessionFactory should be created in hibernate application and how do we need to maintain?
+4. How to manage Session and SessionFactory resources in our hibernate application?	
+5. How to work with Transactions?
+6. Advantages of using Hibernate Framework over Java jdbc api
+------------------------------------------------------------------------------------------
+Hibernate bootstrapping
+There are 3 bootstrapping options are available as part of Hibernate Framework
+1. Hibernate 3.x bootstrapping 
+	1.1 Hibernate Xml-based configuration approach
+	1.2 Properties based approach
+	1.3 Programmatic approach
+	
+2. Hibernate 4.x bootstrapping (Service and ServiceRegistry api) 
+3. Hibernate 5.x bootstrapping (Metadata data api) 

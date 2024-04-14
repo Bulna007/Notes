@@ -1,0 +1,429 @@
+How to install Ant?
+Ant is distributed as an binary distribution and requires java to be installed on the machine to use it. The current version of ANT: 1.10.14 and the minimum jdk required is 8
+	
+1. download ANT binary distribution
+https://dlcdn.apache.org//ant/binaries/apache-ant-1.9.16-bin.tar.gz
+(or)
+https://dlcdn.apache.org//ant/binaries/apache-ant-1.10.14-bin.tar.gz
+
+2. extract the zip file and copy into an Filesystem directory location.
+windows: unzip tools
+linux: tar -xzvf apache-ant-1.9.16-bin.tar.gz
+
+3. once extracted copy into 
+windows: directly under c:\ drive
+linux: $HOME\
+
+4. configure the PATH variable pointing to the directory location of $ANT_DIR\bin location
+Linux:
+export ANT_HOME=$USER_HOME/apache-ant-1.10.14
+export PATH=$PATH:$ANT_HOME/bin
+
+windows:
+export ANT_HOME=c:\apache-ant-1.10.14
+export PATH=%PATH%\%ANT_HOME%\bin
+
+once we configured the above env variables permanently we can access the ant from any location on our computer
+--------------------------------------------------------------------------------------------------------------------------------------
+How to write the ANT build script?
+We need to write ANT build script file describing the build activities we wanted to apply for building our project. Ant by default looks for the build script file in our project with name "build.xml" only and it should be placed directly under the root of the project directory.
+	
+project directory structure:
+
+basicant
+|-src
+|-bin
+|-build.xml 
+
+For each build activity ant has provided an pre-defined Task class. Each Task class is associated with an Tag that should be written in the build.xml asking ant to execute that task. For building the project we need to perform bunch of build activities so we have to declare several ant task tags in the build.xml
+
+To perform one action/operation we might need to execute multiple ant Tasks. For eg.. when compiling an java project (an operation) we have to perform several activities like
+	1. modify configuration files
+	2. copy them into build directory
+	3. compile the java sourcecode
+	
+so we need to write #3 tasks that needs to be wrapped into one target. So a target represents bunch of tasks that needs to be executed together in accomplishing an operation/action. each target will be assigned with an name to identify it. In a build script file all the tasks must and should be associated with an target indicating what operation we are applying this task for. A target can have dependency as another target.
+	
+Let us write an sample build script file depicting the structure of an basic build file in ant.
+	
+$USER_HOME/ant/
+	|-basicant	
+		|-src
+		|-bin
+		|-build.xml
+		
+build.xml
+---------
+<?xml version="1.0" encoding="utf-8"?>
+<project name="basicant" basedir=".">
+	<target name="clean">
+		<echo>cleaning bin\ directory</echo>
+	</target>
+	<target name="compile" depends="clean">
+		<echo>compiling sourcecode</echo>
+	</target>
+	<target name="run" depends="compile">
+		<echo>running the application!</echo>
+	</target>
+</project>
+	
+to execute the buildscript file be in the root directory of the project and run ant	
+$USER_HOME\ant\basicant:$ ant targetName
+
+the ant CLI tool searches for build.xml in the current location and begins execution.
+ant run
+----------------------------------------------------------------------------------------------------------------------------------------------------
+How to build and run an java application using Ant build?
+Let us create an java application with directory structure with classes and build it
+
+$USER_HOME\ant
+|-Remainder
+  |-src
+		|-com
+			|-remainder
+				|-routines
+					|-AlarmRoutine.java
+	|-build
+	  |-classes
+			|-AlarmRoutine.class
+|-build-remainder.xml				
+			
+	
+package com.remainder.routines;
+public class AlarmRoutine {
+	public static void main(String[] args) {
+		System.out.println("Finding remainders to Alarm!");
+	}
+}
+	
+build.xml
+---------
+<?xml version="1.0" encoding="utf-8"?>
+<project name="remainder" basedir="." default="execute">
+	<target name="clean">
+		<delete dir="build/classes"/>
+		<delete dir="build"/>
+	</target>
+	
+	<target name="createdirs" depends="clean">
+		<mkdir dir="build"/>
+		<mkdir dir="build/classes"/>
+	</target>
+	
+	<target name="compile" depends="createdirs">
+		<javac srcdir="src" destdir="build/classes"/>
+	</target>
+	
+	<target name="execute" depends="compile">
+		<java classname="com.remainder.routines.AlarmRoutine" classpath="build/classes"/>
+	</target>
+</project>
+
+$USER_HOME/ant/remainder$ ant
+
+-f = is used for passing the build script file name, if we are not using the default filename as build.xml
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Ant Variables
+--------------
+Variables are the placeholders or reserved memory locations, in which we can store data/values. In our application or code instead of using values/literals we can refer the values through these variables. The advantage is in-future if we wanted to change the value/literal instead of searching through and identifying the value where we have used in our project we can modify the value assigned to that variables.
+	
+even in ant build script file we often refer literal values, instead we can define variables with values and use them in build file
+
+How to define variables in ant build script file?
+Ant has provided an DataType called "property"	which is used for creating an property for holding the data. So we can refer the data using property name rather than directly using the value
+syntax:-
+<property name="variableName" value="variableValue"/>
+The property tags are defined at the project level and can be reffered within the tasks of the target
+
+build.xml
+----------
+<?xml version="1.0" encoding="utf-8">
+<project name="variables" basedir="." default="print">
+	<property name="javaVersion" value="17.0"/>
+	
+	<target name="print">
+		<echo>${javaVersion}</echo>
+	</target>
+	
+</project>
+------------------------------------------------------------------------------------------------------------------------------------
+ANT supports 4 different types of variables
+1. pre-defined variables (or) built-in variables
+2. SystemProperties of Java
+3. Environment Variables
+4. User-defined variables
+
+
+1. pre-defined variables or built-in variables
+There are pre-defined variables that are created by the ANT engine and passes them as input during the time of executing the build. Within the build script file we can refer these variables for accessing the env/build specific of the project
+There are lot of pre-defined variables are made available by ANT
+1.1 ant.version
+1.2 ant.project.name
+1.3 ant.java.version
+1.4 basedir
+1.5 ant.project.default-target
+1.6 ant.home
+1.7 ant.core.lib
+1.8 ant.library.dir
+
+java.specification.version : 17
+sun.jnu.encoding : UTF-8
+java.class.path : /Users/sriman/Library/Application Support/Code/User/workspaceStorage/2e10886e12953fd5bc9b1277ab87f69b/redhat.java/jdt_ws/ant_77cabe8d/bin
+java.vm.vendor : Oracle Corporation
+sun.arch.data.model : 64
+java.vendor.url : https://java.oracle.com/
+java.vm.specification.version : 17
+os.name : Mac OS X
+sun.java.launcher : SUN_STANDARD
+user.country : US
+sun.boot.library.path : /Users/sriman/scratch/middleware/jdk-17.0.2.jdk/Contents/Home/lib
+sun.java.command : com.sp.test.SystemPropsTest
+http.nonProxyHosts : local|*.local|169.254/16|*.169.254/16
+jdk.debug : release
+sun.cpu.endian : little
+user.home : /Users/sriman
+user.language : en
+sun.stderr.encoding : UTF-8
+java.specification.vendor : Oracle Corporation
+java.version.date : 2022-01-18
+java.home : /Users/sriman/scratch/middleware/jdk-17.0.2.jdk/Contents/Home
+file.separator : /
+java.vm.compressedOopsMode : Zero based
+line.separator : 
+
+sun.stdout.encoding : UTF-8
+java.vm.specification.vendor : Oracle Corporation
+java.specification.name : Java Platform API Specification
+sun.management.compiler : HotSpot 64-Bit Tiered Compilers
+ftp.nonProxyHosts : local|*.local|169.254/16|*.169.254/16
+java.runtime.version : 17.0.2+8-86
+user.name : sriman
+path.separator : :
+os.version : 14.0
+java.runtime.name : OpenJDK Runtime Environment
+file.encoding : UTF-8
+java.vm.name : OpenJDK 64-Bit Server VM
+java.vendor.url.bug : https://bugreport.java.com/bugreport/
+java.io.tmpdir : /var/folders/qz/6l2_jb7s6_l0_4d3x6v1_n4w0000gn/T/
+java.version : 17.0.2
+user.dir : /Users/sriman/scratch/labs/javarealtimetools/20230901/ant
+os.arch : aarch64
+java.vm.specification.name : Java Virtual Machine Specification
+native.encoding : UTF-8
+java.library.path : /Users/sriman/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
+java.vm.info : mixed mode, sharing
+java.vendor : Oracle Corporation
+java.vm.version : 17.0.2+8-86
+sun.io.unicode.encoding : UnicodeBig
+socksNonProxyHosts : local|*.local|169.254/16|*.169.254/16
+java.class.version : 61.0
+sriman@Lakshmis-MacBook-Pro ant % 
+-----------------------------------------------------------------------------------------------------------------------------
+2. SystemProperties
+SystemProperties are the jvm variables created by the jvm by gathering the information about the environment from the underlying operating system of the computer. Since ANT runs ontop of the JVM it gathers or captures these SystemProperties of the underlying jvm and makes them available as variables to our build script
+
+Let us write a small java program to iterate and print all the SystemProperties on an machine?
+package com.sp.test;
+public class SystemPropertiesTest {
+	public static void main(String[] args) {
+		Properties props = System.getProperties();
+		props.forEach((key,value)-> {
+			System.out.println(key + " : " + value);
+		})	
+	}
+}
+
+we can use all the above program generated system properties in our ant build script to know additional details about the env.
+	
+SystemProperties
+|-src
+|-build
+  |-classes
+|-build.xml
+
+build.xml
+<?xml version="1.0" encoding="utf-8"?>
+<project name="systemprops" basedir="." default="printVars">
+	<target name="printVars">
+		
+		<echo>os name: ${os.name}</echo>
+		<echo>java vendor: ${java.vendor}</echo>
+	</target>
+</project>
+
+#3. environment variables
+environment variables are defined by the user at operating system level and are accessible to all the programs that are running on the operating system of that computer. ANT identifies such operating system variables defined at os level and will pass them as varaibles to the build execution
+
+To let ant knows we are referring to an environment vairables we need to define a prefix for accesisng the env as below
+
+<?xml version="1.0" encoding="utf-8">
+<project name="envvars" basedir="." default="print">
+	<property environment="env"/>
+	<target name="printEnvVaraibles">
+		<echo>${env.PATH}</echo>
+	</target>
+</project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

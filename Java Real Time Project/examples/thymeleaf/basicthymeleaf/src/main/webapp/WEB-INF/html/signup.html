@@ -1,0 +1,36 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+    <style>
+      .error {
+        color: red;
+      }
+    </style>
+</head>
+<body>
+  <h2>Signup</h2>
+  <form method="post" th:action="@{'/signup.htm'}" th:object="${signUpForm}">
+    <label for="username">Username:</label>
+    <input type="text" name="username" id="username" th:field="*{username}">
+    <p class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">username errors</p>
+
+    <label for="password">Password:</label>
+    <input type="password" name="password" id="password" th:field="*{password}">
+      <p class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">password errors</p>
+
+      <label for="dob">Date of Birth:</label>
+      <input type="date" name="dob" id="dob" th:field="*{dob}">
+      <p class="error" th:if="${#fields.hasErrors('dob')}" th:errors="*{dob}">dob errors</p>
+
+     <label for="male">Male:</label>
+      <input type="radio" name="gender" id="male" value="M">
+      <label for="female">Female:</label><input type="radio" name="gender" id="female" value="F">
+      <p class="error" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}">gender errors</p>
+      <button type="submit">Register</button>
+  </form>
+</body>
+</html>

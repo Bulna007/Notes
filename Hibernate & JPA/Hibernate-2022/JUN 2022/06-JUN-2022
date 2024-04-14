@@ -1,0 +1,120 @@
+There are 3 ways the jpa api supports mapping inheritance relationship between the entity classes into database model
+Inheritance Strategies
+1. SINGLE_TABLE (DISCRIMINATOR_COLUMN, DISCRIMINATOR_VALUE)
+2. JOINED
+3. TABLE_PER_CLASS
+
+#1. SINGLE_TABLE
+
+@Entity
+@Table(name="insurance_plan")
+@GenericGenerator(name="incrementgen", strategy="increment")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)	
+@DiscriminatorColumn(name="plan_type")	
+@DiscriminatorValue("ip")
+class InsurancePlan {
+	@Id
+	@Column(name="insurance_plan_no")
+	@GeneratedValue(generator="incrementgen")
+	int insurancePlanNo;
+	@Column(name="plan_nm")
+	String planName;
+	String description;
+}
+
+@Entity
+@DiscriminatorValue("aip")
+class AccidentalInsurancePlan extends InsurancePlan {
+	String coverageType;
+	int disabilityCoveragePercentage;
+}
+
+@Entity
+@DiscriminatorValue("mip")
+class MedicalInsurancePlan extends InsurancePlan {
+	String networkType;
+	int copay;
+}
+
+#2. JOINED
+
+@Entity
+@Table(name="insurance_plan")
+@GenericGenerator(name="incrementgen", strategy="increment")
+@Inheritance(strategy=InheritanceType.JOINED)	
+class InsurancePlan {
+	@Id
+	@Column(name="insurance_plan_no")
+	@GeneratedValue(generator="incrementgen")
+	int insurancePlanNo;
+	@Column(name="plan_nm")
+	String planName;
+	String description;
+}
+
+@Entity
+@Table(name="accidental_insurance_plan")
+@PrimaryKeyJoinColumn
+class AccidentalInsurancePlan extends InsurancePlan {
+	String coverageType;
+	int disabilityCoveragePercentage;
+}
+
+@Entity
+@Table(name="medical_insurance_plan")
+@PrimaryKeyJoinColumn
+class MedicalInsurancePlan extends InsurancePlan {
+	String networkType;
+	int copay;
+}
+
+#3.
+@Entity
+@Table(name="insurance_plan")
+@GenericGenerator(name="incrementgen", strategy="increment")
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)	
+class InsurancePlan {
+	@Id
+	@Column(name="insurance_plan_no")
+	@GeneratedValue(generator="incrementgen")
+	int insurancePlanNo;
+	@Column(name="plan_nm")
+	String planName;
+	String description;
+}
+
+@Entity
+@Table(name="accidental_insurance_plan")
+class AccidentalInsurancePlan extends InsurancePlan {
+	String coverageType;
+	int disabilityCoveragePercentage;
+}
+
+@Entity
+@Table(name="medical_insurance_plan")
+class MedicalInsurancePlan extends InsurancePlan {
+	String networkType;
+	int copay;
+}
+	
+class Payment {
+	payment_no
+	payment_dt
+	description
+	customer_nm
+	amount
+
+}
+
+class CardPayment extends Payment {
+	String cardNo;
+	String cardHolderName;
+	int expiryDay;
+	int expiryMonth;
+}
+
+class ChequePayment extends Payment {
+	String bankName;
+	String branch;
+	String chequeNo;
+}

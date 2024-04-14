@@ -1,0 +1,216 @@
+jpql queries in datajpa
+-----------------------
+most of the time in an application we want to query the data based on different criterias or filter conditions with which we want to access the data. So to do this we need to execute an jpql queries to fetch the entity objects
+
+How to execute an jpql query while working with jpa api?
+	
+EntityManager entityManager = entityManagerFactory.createEntityManager();	
+TypedQuery<Plan> typedQuery = entityManager.createQuery("from Plan p where p.planType like :planType", Plan.class);
+typedQuery.setParameter("planType", planType);
+List<Plan> matchingPlans = typedQuery.getResultList();
+
+
+for executing any queries in jpa api the code we need to write is same across, so instead of we writing the above code in executing the queries in dao classes, the datajpa has provided an InvocationHandler
+
+
+interface PlanRepository extends JPARepository {
+  @Query("from Plan p where p.planType=:planType")
+	List<Plan> findPlansByPlanType(@NamedParameter("planType") String planType);
+	
+	@Query("from Plan p where p.planName=:planName")
+	List<Plan> findPlansByPlanName(@NamedParam("planName")String planName);
+}
+
+public class JPQLQueryInvocationHandler implements InvocationHandler {
+	private EntityManagerFactory emf;
+	
+	public Object invoke(Object proxy, Method method, Object[] args) {
+		String jpqlQuery = null;
+		Argument
+		Map<String, Object> sqlParams = null;
+		
+		Query query = method.getAnnotations().stream().filter(annotation-> annotation.getClass()==Query.class);
+		jpqlQuery = query.getValue();
+		
+		Annotation[][] annotations = method.getParameterAnnotations();
+		for(int i=0;i<annotations.length;i++) {
+			params.put(annotation.getValue(), args[i]);
+		}
+		
+		EntityManager entityManager = emf.createEntityManager();
+		TypedQuery<?> typedQuery = entityManager.createQuery(jpqlQuery, Entity.class);
+		params.forEach((k,v)->{
+			typedQuery.setParameter(k, v);
+		});
+		Object ret = typedQuery.getResultList();
+		return ret;		
+	}
+}
+
+From the above we can understand we dont need to write the code for executing an jpql query, instead represent one query we want to execute write one method inside the repository interface. So that when we call the query method on the interface object (proxy)
+	
+The proxy delegates the calls to InvocationHandler, which has logic for extracting the query, substituting the namedparameters and executes it and returns the result to us. So that datajpa has completely eliminated writing the boiler-plate logic in executing the jpql queries
+
+
+DataJpa supports 2 types of queries
+1. derived queries
+2. declared queries
+
+1. derived queries
+Representing a query we need to write one method in repository interface, incase of derived queries we dont need to bind each method with an jpql query. Instead datajpa itself will derives/constructs the jpql query if we have written the method based on standard conventions or keywords that are provided by datajpa
+
+interface PlanRepository extends JpaRepository<Plan, Integer> {
+	List<Plan> findByPlanType(String planType);
+}
+
+List<Plan> plans = proxy.findByPlanType("Risk Coverage");
+
+
+
+public class JPQLDerivedQueryInvocationHandler implements InvocationHandler {
+	private EntityManagerFactory emf;
+	
+	public Object invoke(Object proxy, Method method, Object[] args) {
+		String jpqlQuery = null;
+		Argument
+		Map<String, Object> sqlParams = null;
+		
+		String methodName = method.getName();
+		jpqlQuery = parse the methodName and create the query from it
+		
+		Annotation[][] annotations = method.getParameterAnnotations();
+		for(int i=0;i<annotations.length;i++) {
+			params.put(annotation.getValue(), args[i]);
+		}
+		
+		EntityManager entityManager = emf.createEntityManager();
+		TypedQuery<?> typedQuery = entityManager.createQuery(jpqlQuery, Entity.class);
+		params.forEach((k,v)->{
+			typedQuery.setParameter(k, v);
+		});
+		Object ret = typedQuery.getResultList();
+		return ret;		
+	}
+}
+
+
+From the above we can understand we dont need to bind jpql query for each method we write in repository interface, we just need to write the method using standard keywords and naming conventions provided by datajpa
+
+find = select
+count = select count(p)
+	
+keywords:
+#1.
+In, NotIn
+select p from Product p where p.category in ('electronics', 'fashion', 'home appliances');
+findByCategoryIn(List<String> categories);
+
+select p from Product p where p.category not in ('electronics', 'fashion', 'home appliances');
+findByCategoryNotIn(List<String> categories);
+
+#2. Between
+select p from Product p where p.price between :minPrice and :maxPrice;
+findByPriceBetween(double minPrice, double maxPrice)
+	
+#3. GreaterThan or LessThan or GreaterThanOrEqual or LessThanOrEqual
+
+select e from Emp e where e.salary >= :salary
+findBySalaryGreaterThanOrEqual(double salary);
+
+#4. or/and
+select e from Emp e where e.firstName=:firstName or e.lastName=:lastName
+findByFirstNameOrLastName(String firstName, String lastName);
+
+#5. Like
+select p from Plan p where p.planName like :planName
+findByPlanNameLike(String planName);
+
+#6. before/after
+select p from Person p where p.dob <= :date
+findByDobBefore(LocalDate date);
+
+#6. StartingWith, EndingWith
+select p from Plan p where p.planName like a%
+findByPlanNameStartingWith(String planName);
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to perform update/insert/delete operations on an entity class using sql queries while working with datajpa?
+The datajpa by default treats any query as select query and performs an typedQuery.getResultList() only. But when we bind DML query on the repository method like insert/update/delete we need to explicitly specify to the data jpa that the query is DML query and should call appropirate method on typedQuery object using @Modifying 	
+
+interface TripRepository extends JpaRepository<Trip, Integer> {
+	@Query("from Trip t where t.days = ?1")
+	List<Trip> getTripsByDays(int days);
+	
+	@Modifying
+	@Query("update Trip t set t.days = ?2 where t.source=?1")
+	int updateTripDaysBySource(String source, int days);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

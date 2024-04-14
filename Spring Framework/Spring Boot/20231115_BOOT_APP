@@ -1,0 +1,266 @@
+How to work with spring core application using spring boot?
+1. create an project
+even though it is not mandatory, it is highly recommended to use an build tool for setting up and managing the project while working with spring boot. either we can use 1 of the below build tools like
+1.1 ant + ivy
+1.2 maven
+1.3 gradle
+
+let us create the project using maven build tool. Setup the project as an regular maven java project itself using maven-archetype-quickstart archetype
+
+d:\workspace
+mvn archetype:generate -DgroupId=boot.org -DartifactId=boot-core -Dversion=1.0.0 -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4
+	
+2. add required dependencies to the project
+as we are working with spring core application, we need to add all the spring-core modules and other spring module dependencies it requires. Additionally we need to add third-party libraries these modules are dependent on.
+setting up the project with module dependencies and third-party libraries takes time, to help us quickly creating the spring framework project springboot team has provided starter-dependencies
+
+The spring boot team has provided an spring-boot-starter as an dependency that can be added while working with spring core application. This starter adds all the relevant spring core module dependencies and third-party libraries.
+	
+boot-core
+|-src
+	|-main
+		|-java
+		|-resources
+|-pom.xml
+
+pom.xml
+-------
+<dependencies>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter</artifactId>
+		<version>3.1.5</version>
+	</dependency>
+</dependencies>
+
+3. write the application components in developing the application, it is recommended to follow package convention provided while organizing the classes of our application.
+	
+in our application we should have one basePackage and all the components of our application should be located under the basePackage into any of the subPackages of it as show below
+
+boot-core
+|-src
+	|-main
+		|-java
+		  |-com
+			  |-bootcore (basepackage)
+				  |-beans
+					|-controllers
+					|-config
+					|-repositories
+					|-service
+		|-resources
+|-pom.xml
+
+
+
+package com.bootcore.beans;
+@Component
+class LoanApplication {
+	@Value("${applicationNo}")
+	int applicationNo;
+	@Value("applicantName")
+	String applicantName;
+	@Value("${principleAmount}")
+	double principleAmount;
+	@Value("${tenure}")
+	int tenure;
+	@Value("${loanType}")
+	String loanType;
+	
+	// accessors
+}
+
+package com.bootcore.beans;
+@Component
+class CreditReport {
+	@Value("${cibilScore}")
+	int cibilScore;
+	@Value("${description}")
+	String description;
+	@Autowired
+	LoanApplication loanApplication;
+	
+	// accessors
+}
+
+to inject the values into the attributes of the bean components we need to write them in an properties file as below
+appValues.properties
+---------------------
+applicationNo=939
+applicantName=Joe
+loanType=personal
+principleAmount=200000
+tenure=36
+cibilScore=640
+description=approved
+
+
+To have these properties injected into the attributes of the bean class, we need to load these keys/values into environment object of the ioc container. This can be done by using @PropertySource annotation written on Config class as below.
+
+@Configuration
+@PropertySource("classpath:appValues.properties")
+@ComponentScan(basePackages={"com.bootcore.beans"})	
+class JavaConfig {
+}
+
+4. The Main class for our application, in which create the ioc container to use the bean definitions
+
+class Application {
+	public static void main(String[] args) {
+		ApplicationContext context = new AnnotationConfigApplicationContext(JavaConfig.class);
+		CreditReport report = context.getBean("creditReport", CreditReport.class);
+		sout(report);
+	}
+}
+
+There are few changes in the way we write the code when we are working with spring boot as demonstrated below
+1. dont write appValues.properties instead spring boot has provided an pre-defined properties/yaml file called application.properties|yaml in which define all the configuration values we want to use in our application
+Place this properties file under the classpath of our application directly. this means in a maven project it should be placed under src/main/resources directory.
+
+application.properties
+-----------------------
+applicationNo=939
+applicantName=Joe
+loanType=personal
+principleAmount=200000
+tenure=36
+cibilScore=640
+description=approved
+
+To have these properties loaded into environment object of ioc container, we dont need to write @PropertySource annotation. This file will be read and loaded automatically into the env object of ioc container by spring boot
+
+2. we can reuse the Main Application class itself as an Configuration class instead of writing an separate configuration class for defining bean configurations, so that we can avoid number of classes being written in our application.
+
+@Configuration
+@ComponentScan(basePackages={"com.bootcore.beans"})
+class Application {
+	
+	public static void main(String[] args) {
+		ApplicationContext context = new AnnotationConfigApplicationContext(Application.class);
+	}
+}
+
+2.1 This Application class is usually called as BootApplication class
+	1. The standard naming convention used in writing this classname is ApplicationNameApplication. For e.g.. here the name of the class will be BootCoreApplication
+	2. The Boot Application class should be placed under basePackage of the project only. here it should be under com.bootcore
+	
+2.2 Instead of creating the ioc container by our own using AnnotationConfigApplicationContext use SpringApplication for creating ioc container as shown below
+
+class BootCoreApplication {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(BootCoreApplication.class);
+		CibilReport report = context.getBean("cibilReport", CibilReport.class);
+		sout(report);
+	}
+}
+
+2.3 instead of writing @Configuration and @ComponentScan we need to annotate the Boot Application with @SpringBootApplication annotation.
+
+@SpringBootApplication	
+class BootCoreApplication {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(BootCoreApplication.class);
+		CibilReport report = context.getBean("cibilReport", CibilReport.class);
+		sout(report);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

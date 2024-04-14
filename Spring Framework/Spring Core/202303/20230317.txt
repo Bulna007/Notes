@@ -1,0 +1,43 @@
+singleton
+for a given class, if it allows us to create only one single object within the scope of the application, then that class is called singleton class.
+How to make a class as singleton?
+1. dont let other classes in our application to create the object of our class, by making the constructor of our class as "private".
+2. let the class by itself instantiate its own object and return the object to other classes of the application.
+	 to do this, we need to write an static factory method inside the class, that can be called by any other classes within our application to get the object of our class
+3. to ensure the class creates only one object of itself, store the object upon creating in a static private variable and refer it before creating 
+
+class DateUtils {
+	private static DateUtils instance;
+	
+	private DateUtils() {
+	
+	}
+	public synchronized static DateUtils getInstance() {
+		if(instance == null) {
+			instance = new DateUtils();
+		}
+		return instance;
+	}
+}
+
+
+class MyRunnable implements Runnable {
+	public void run() {
+		DateUtils du = DateUtils.getInstance();
+		sop(du.hashCode());
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		MyRunnable runnable = new MyRunnable();
+		
+		Thread t1 = new Thread(runnable);
+		Thread t2 = new Thread(runnable);
+		
+		t1.start();
+		t2.start();		
+	}
+}
+-----------------------------------------------------------------------------------------------------------------------------------
+when to use singleton class, when do we need to use non-singleton class?

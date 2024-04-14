@@ -1,0 +1,78 @@
+Git Repository directory
+------------------------
+When we run git init inside an empty directory, the git tool creates an .git directory under the current directory in which we have ran the command. .git directory will be created at the root of the working tree and holds the entire information about the repository. To keep track of the sourcecode and maintain the version history the git creates several sub-directories under the .git directory as below.
+	
+project (repo) (root working tree)
+|-.git
+	|-objects
+	|-hooks
+	|-logs
+	|-refs
+	|-HEAD
+	|-config
+	
+1. objects
+All the objects that are associated with this repository are stored inside the objects/ directory of the repository. For eg.. all the files we have committed into the repository are stored as blob files inside the objects/ directory along with refferenced objects of these files like commit history, author etc also is stored as blob files inside the objects/ directory itself.
+	
+2. hooks
+Hooks are customization scripts used by various Git commands that would be executed along with the GIT commands
+
+3. logs
+Record of changes made to the refs are stored in this directory
+
+
+4. HEAD
+An pointer file that holds the 
+
+5. config
+holds the configuration information pertaining to the repository
+-------------------------------------------------------------------------------------------------------------------------------------
+Git uses #2 technics in storing and organizing the sourcecode within the repository directory
+1. Blob files
+2. Hashing
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

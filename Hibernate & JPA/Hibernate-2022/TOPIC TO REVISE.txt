@@ -1,0 +1,4 @@
+1. select id generator
+2. foreign id generator
+3. AUTO (mysql db)
+4. Table 

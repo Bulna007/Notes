@@ -1,0 +1,154 @@
+There are 4 types of variables supported by ANT build tool
+1. Ant built-in variables
+2. Java System Properties
+3. Environment variables
+4. User-defined variables
+
+1. Ant Built-In Variables
+These are pre-defined variables that are pre-created and made available to be used aspart of build process for an application. Using the variables we can access environment and build related information.
+	
+1. ant.version
+2. ant.project.name
+3. ant.java.version
+4. basedir
+5. ant.project.default-target
+6. ant.core.lib
+7. ant.home
+8. ant.library.dir
+
+2. Java System Properties
+Java System properties are properties gathered by the jvm from the system and makes it available to the java programs that are running on that jvm. Since ANT runs ontop of the jvm it takes all the system properties and makes it available as variables in the ant build. we can refer all of them using ${systemProperty} expression in the build script
+
+${os.name}
+${user.name}
+${java.vendor}
+
+etc
+3. Environment variables
+All the operating system global/env variables can be accessed within the ant build script using
+<property environment="env"/>
+using env. as prefix we can refer and access all the env variables
+
+4. user-defined variables
+we can create our own variables aspart of the build script using <property name="" value=""/>
+---------------------------------------------------------------------------------------------------------------------------------------------
+let us explore an example on how to package an application as an jar and run the main class out of it
+
+grocerystore
+|-src
+	|-com
+	  |-gstore
+		  |-main
+			  |-App.java
+|-build
+  |-classes
+	|-dist
+|-build.xml	
+	
+package com.gstore.main;
+public class App {
+	public static void main(String[] args) {
+		System.out.println("GStore is launched");
+	}
+}
+
+build.xml
+----------
+<?xml version="1.0" encoding="utf-8"?>
+<project name="grocerystore" basedir="." default="init">
+	<property name="build.dir" value="build"/>
+	<property name="src.dir" value="src"/>
+	<property name="classes.dir" value="${build.dir}${file.separator}classes"/>
+	<property name="dist.dir" value="${build.dir}${file.separator}dist"/>
+	
+	<target name="init" depends="clean,createdirs,compile,package,execute"/>
+	
+	<target name="clean">
+		<delete dir="${classes.dir}"/>
+		<delete dir="${dist.dir}"/>
+		<delete dir="${build.dir}"/>
+	</target>
+	<target name="createdirs">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${classes.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+	</target>
+	<target name="compile">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}"/>
+	</target>
+	<target name="package">
+		<jar destfile="${dist.dir}${file.separator}${ant.project.name}.jar" basedir="${classes.dir}"/>
+	</target>
+	<target name="execute">
+		<java classname="com.gstore.main.App" classpath="${dist.dir}${file.separator}${ant.project.name}.jar"/>
+	</target>
+</project>
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

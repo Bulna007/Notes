@@ -1,0 +1,198 @@
+Transaction
+------------
+What is Transaction?
+Transaction is an Unit of work, where all the actions/activities that takes place within an operation should be either committed or rollbacked completely is called "Transaction".
+	
+There are 2 types of transactions are there:
+1. Local Transaction 
+2. Global Transaction
+
+
+1. Local Transaction
+Within the transactional boundary, there will be only one single transactional participating resource is there on whom we directly issue a commit or rollback on it is called "Local Transaction".
+	
+For e.g.. aspart of an business operation like new mobile customer, we might have to insert the data into customer table and subscription table which are part of one database. The both operations should be either comitted or rollback at oneshot which is said to be local transaction
+
+2. Global Transaction
+Within the transactional boundary we have multiple global transactional participating resources are there, on whom we are issuing a commit/rollback at oneshot is called "Global Transaction".
+
+1. 	
+How to work with Local transactions using java jdbc?
+Let us consider an business operation as registering/issuing an new simcard to an new customer. Aspart of this process we might have to insert #2 records into #2 tables (customer and subscription) table respectively to complete the operation, this can be done aspart of one single transaction using jdbc api as below.
+	
+customer
+customer_no (pk)  customer_nm   age   gender   mobile_no   email_address
+
+subscriber
+subscriber_no (pk)   sim_no (unq)  customer_no (fk)  plan_nm  circle  bill_amount
+
+
+public int saveSubscriber(CustomerBo cBo, SubscriberBo sbo) throws SqlException {
+	boolean flag = false;
+	int subscriberNo = 0;
+	Connection con = null;
+	PreparedStatement pstmt1 = null;
+	PreparedStatement pstmt2 = null;
+	
+	try {
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		con = DriverManager.getConnection(url, un, pwd);
+		// by default the connection object will be created by setting autoCommit = true
+		// whenever an DML query has been executed using this connection, upon completing the query execution, the data will be committed into the database automatically.
+		con.setAutoCommit(false);
+		
+		
+		pstmt1 = con.preparedStatement("insert into customer(customer_nm, age, gender, mobile_no, email_address) values(?,?,?,?,?)", new String[] {"customer_no"});
+		//substitute the parameters
+		pstmt1.executeUpdate(); 	
+		Map<String, Object> keyMap = pstmt1.getGeneratedKeys();
+		int customerNo = (int) keyMap.get("customer_no");
+		
+		pstmt2 = con.preparedStatement("insert into subscriber(sim_no, customer_no, plan_nm, circle, bill_amt) values(?,?,?,?,?)", new String[] {"subscriber_no"});
+		// substitute the parameters
+		pstmt2.executeUpdate(); 
+		subscriberNo = (int) pstmt2.getGeneratedKeys().get("subscriber_no");	
+		flag = true;
+	}catch(SqlException e) {
+		e.printStackTrace();
+		flag = false;
+		throw e;
+	}finally {
+		if(con != null) {
+			if(flag) {
+				con.commit();
+			}else {
+				con.rollback();
+			}
+		}
+		if(pstmt1 != null) {
+			pstmt1.close();
+		}
+		if(pstmt2 != null) {
+			pstmt2.close();
+		}
+		if(con != null) {
+			con.close();
+		}
+	}
+	return subscriberNo;
+}
+
+2. Can we manage global transactions using java jdbc?
+In Global Transactions: we have multiple global transactional participating resources are there in transaction boundary, on which we should issue commit/rollback at oneshot, then it is called "Global Transaction".
+	
+Let us consider an example to implement it using java jdbc to check the feasibility:
+We want to create an employee workschedule:
+
+workschedule: scheduling database
+work assignment: worker_profiles database
+
+work_schedule
+work_schedule_id  worker_id  start_date  end_date  hours_per_day
+
+worker_assignment
+worker_assignment_id  work_schedule_id  assignment_no  location  reporting_manager  starting_hour  ending_hour
+
+public int saveWorkerAssignment(WorkScheduleBo wsBo, WorkerAssignmentBo waBo) {
+	boolean flag = false;
+	Connection wsCon = null;
+	Connection waCon = null;
+	PreparedStatement wsPstmt = null;
+	PreparedStatement waPstmt = null;
+	int workScheduleId = 0;
+	int workerAssignmentId = 0;
+	
+	try {
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		wsCon = DriverManger.getConnection(url1, un1, pwd1);
+		wsCon.setAutoCommit(false);
+		
+		waCon = DriverManager.getConnection(url2, un2, pwd2);
+		waCon.setAutoCommit(false);
+		
+		wsPstmt = wsCon.preparedStatement("insert into work_schedule(worker_id, start_date, end_date, hours_per_day) values(?,?,?,?)", new String[] {"work_schedule_id"});
+		// substitute the parameters
+		wsPstmt.executeUpdate();
+		workScheduleId = wsPstmt.getGeneratedKeys().get("work_schedule_id");
+		
+		waPstmt = waCon.preparedStatement("insert into worker_assignment(work_schedule_id, assignment_no, location, reporting_manager, starting_hour, ending_hour) values(?,?,?,?,?,?)", new String[] {"worker_assignment_id"});
+		// substitute the parameters
+		waPstmt.executeUpdate();
+		workerAssignmentId = waPstmt.getGeneratedKeys().get("worker_assignment_id");
+	
+		flag = true;
+	}catch(ClassNotFoundException | SqlException e) {
+		e.printStackTrace();
+		flag = false;
+		throw e;
+	}finally {
+		if(wsCon != null && waCon != null) {
+			if(flag) {
+				wsCon.commit(); -- committed
+				waCon.commit(); -- exception/error
+			}else {
+				wsCon.rollback();
+				waCon.rollback();
+			}
+		}
+		if(wsPstmt != null) {
+			wsPstmt.close();
+		}
+		if(waPstmt != null) {
+			waPstmt.close();
+		}
+		if(wsCon != null) {
+			wsCon.close();
+		}
+		if(waCon != null) {
+			waCon.close();
+		}
+		return workerAssignmentId;
+	}
+}
+
+
+From the above we can understand we cannot manage global transactions using java jdbc api, to help us in implementing global transactions the jta api has been provided by jee platform.
+	
+JTA = Java Transaction management api
+jta api is provided aspart of jee platform and the support of jta api has been provided by jee application servers in java language.
+	
+How does global transactions or (XA) transactions or distributed transactions works?
+The global or xa transactions works based on 2-phase commit technic/process and the implementation of the 2-phase commit has been provided in java through JTA Api. The implementation of Jta api has been provided aspart of jee platform
+
+
+Summarize:
+Two types of transactions are there:
+if we are working with jdbc api in implementing persistency for our application:
+1. Local Transaction
+java jdbc api
+
+2. Global Transaction
+java jdbc api doesnt support global transactions, we need to use jta api
+
+As in java we have 2 different apis in working with local transactions and global transactions, switching our application between local to global and global to local is very difficult.
+
+In addition there are several third-party libraries/frameworks are available in working with persistency like
+1. Hibernate
+2. Jpa
+3. MyBatis
+4. Eclipse Link
+etc
+Each of these frameworks provides their own transaction management apis in support of local/global transactions.
+We not have difficulty in switching between global/local or viceversa while working with jdbc api, even while working with persistency frameworks or libraries, as we use their own apis in managing transactions, if we switch from one framework/library to another we need to rewrite the entire transaction management logic
+
+To overcome the above challanges in managing transactions aspart of our application spring transaction module has provided an unified transaction management api.
+	
+	
+project architectures
+how to apply transactions in a project?
+if we are developing the project using spring framework, how to manage transactions using spring framework?
+implementation of the code.
+	
+	
+Technical knowledge of transactions:	
+what are transactions?
+How many types are there?
+How do they work?
+
+How are you implementing transactions in your project, can you explain?

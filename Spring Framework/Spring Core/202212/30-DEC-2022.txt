@@ -1,0 +1,33 @@
+Introduction to Spring Framework
+Spring is an Framework, struts is also an Framework. using struts framework we can develop web applications. As part of typical webapplication we build 4 types of components
+1. view component [html/jsp] = In the view component we write the logic for rendering the data to the user
+2. presentation-tier component [servlet] = These are the components through which the user will interact with the application
+3. business-tier component = in these components we write logic for processing the input data and compute the output that can be rendered to the client/end-user
+4. persistence-tier component = In these components we write logic for persisting the data on a permanent storage device like a File/Database
+
+By using the struts framework we can build web applications, and only we can build web aspects (view/presentation-tier) of the application, but in a web application we have other types of components also exists like business/persistence tier components, the struts framework has not provided any apis in building these components and we need to rely on java apis or third-party libraries.
+So struts framework doesnt support build end-to-end web application development
+
+Conclusion: Struts is not an complete application development framework
+
+whereas when it comes to spring framework, spring framework not only supports developing web applications, it supports various different types of application developments like using spring framework we can build
+1. core
+2. database/persistence tier
+3. distributed web application
+4. integration-tier (soap/rest/microservices)
+5. enterprise applications
+etc
+
+In addition, using the spring framework we can build the application end-to-end. For eg.. while building the web application spring not only supports building web aspects, it supports building all the layers of the web application including business/persistence tier so we can say spring supports build end-to-end applications
+
+Conclusion: Spring Framework is an complete application development framework
+
+How many types of applications we can build using spring framework?
+Spring supports developing multiple application development types inpar with JEE.  Then why do we need to learn/use spring framework for building applications, since we already know JEE
+Let us explore and understand why should we use a Spring over JEE
+
+JEE is an api, api stands for application programming interface.
+The classes or the components provided by the languages, libraries, frameworks using which we build application programs for accomplishing an output are called "api classes"	
+These apis can be classified into 2 types
+1. java standard api = these are the components provided aspart of the java language or from oracle people
+2. third-party apis = There are few organizations that has build classes and distributed to the people around the world which can be used for building applications, since these are not coming from java language, these are called third-parties

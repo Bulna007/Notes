@@ -1,0 +1,13 @@
+Join queries
+------------
+Since the data has been normalized and distributed across multiple tables, inorder to query the data across the tables we need join the tables together.
+	
+In order to join the data across the tables we need to use primary key and foreign key of the tables to match the records across the tables.
+There are 3 types of joins are there
+1. Inner join
+2. Left outer join
+3. Right outer join
+
+#1. Inner join
+---------------
+When we inner join the 2 different tables, the matching records of both the tables will resulted as part of the outcome of the query

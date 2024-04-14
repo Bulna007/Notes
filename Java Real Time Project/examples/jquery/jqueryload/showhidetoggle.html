@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show, Hide and Toggle</title>
+</head>
+<body>
+    <h2>Show, Hide and Toggle</h2>
+    <div id="contents">
+        Although moreover mistaken kindness me feelings do be marianne. Son over own nay with tell they cold upon are. Cordial village and settled she ability law herself. Finished why bringing but sir bachelor unpacked any thoughts. Unpleasing unsatiable particular inquietude did nor sir. Get his declared appetite distance his together now families. Friends am himself at on norland it viewing. Suspected elsewhere you belonging continued commanded she.
+
+        Way nor furnished sir procuring therefore but. Warmth far manner myself active are cannot called. Set her half end girl rich met. Me allowance departure an curiosity ye. In no talking address excited it conduct. Husbands debating replying overcame blessing he it me to domestic.
+    </div>
+    <input type="button" id="showBtn" name="showbtn" value="Show"/>
+    <input type="button" id="hideBtn" name="hidebtn" value="Hide"/>
+    <input type="button" id="showOrHidebtn" name="showOrHidebtn" value="Show/Hide"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $("#showBtn").click(function(){
+                $("#contents").fadeIn(1000);
+            });
+            $("#hideBtn").click(function(){
+                $("#contents").fadeOut(1000);
+            });
+            $("#showOrHidebtn").click(function(){
+                $("#contents").fadeToggle(1000);
+            });
+        });
+    </script>
+</body>
+</html>

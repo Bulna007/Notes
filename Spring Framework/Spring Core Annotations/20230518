@@ -1,0 +1,84 @@
+Working with Profiles
+----------------------
+profiles are the once through which we can run the spring application attached with different configurations.
+	
+// no source code	
+class Motor {
+	int hp;
+	FuelTank fuelTank;
+	
+	public void setHp(int hp) {}
+	public void setFuelTank(FuelTank fuelTank) {}
+}	
+
+// source code
+@Component
+class FuelTank {	
+	@Value("${fuelType}")
+	String fuelType;
+	@Value("${capacity}")
+	int capacity;
+	
+	// toString
+}
+
+@Configuration
+@PropertySource("classpath:values-dev.properties")
+@Profile("dev")
+class DevConfig {
+	
+}
+
+@Configuration
+@PropertySource("classpath:values-test.properties")
+@Profile("test")
+class TestConfig {
+	
+}
+
+@Configuration
+@ComponentScan(basePackages = {"pkg2"})
+@Import({DevConfig.class, TestConfig.class})
+class CommonConfig {
+	@Bean
+	public Motor motor(@Value("${hp}") int hp, FuelTank fuelTank) {
+		Motor motor = new Motor();
+		motor.setHp(hp);
+		motor.setFuelTank(fuelTank);
+		
+		return motor;
+	}	
+}
+
+values-dev.properties
+------------------
+fuelType=diesel
+capacity=19
+hp=2300
+	
+values-test.properties
+----------------------
+fuelType=diesel
+capacity=25
+hp=3400
+
+	
+Test.java
+----------
+#1 Approach 1
+--------------	
+AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+context.register(CommonConfig.class);
+context.getEnvironment().setActiveProfiles("test");
+context.refresh();
+
+Motor motor = context.getBean("motor", Motor.class);
+System.out.println(motor);
+
+#2 Approach 2
+--------------	
+ApplicationContext context = new AnnotationConfigApplicationContext(CommonConfig.class); // empty 
+Motor motor = context.getBean("motor", Motor.class);
+sop(motor);
+
+java -Dspring.profiles.active=dev pkg2.Test

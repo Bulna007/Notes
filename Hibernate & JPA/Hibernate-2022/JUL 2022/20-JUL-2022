@@ -1,0 +1,45 @@
+class BikeRegistration {
+	- bikeNo
+	- bikeRegistrationNo
+	- modelName
+	- manufacturer
+	- purchaseDate
+	- ownerName
+	- chasisNo
+	- engineNo
+	@OneToMany(mappedBy="bikeRegistration")
+	Set<TrafficChallan> trafficChallans;
+}
+
+class TrafficChallan {
+	- challanNo
+	- description
+	- violationType
+	- amount
+	@ManyToOne
+	@JoinColumn(name="bikeNo")	
+	- BikeRegistration bikeRegistration;
+}
+
+BikeRegistration_.java
+TrafficChallan_.java
+
+#show me all the bike registrations who has atleast one traffic challan with violation as "helmet"
+	
+select br from BikeRegistration br inner join on br.trafficChallans tr where tr.violatioType=?
+	
+CriteriaBuilder cb = em.getCriteriaBuilder();
+CriteriaQuery<BikeRegistration> cq = cb.createQuery(BikeRegistration.class);
+Root<BikeRegistration> root = cq.from(BikeRegistration.class);
+Join<BikeRegistration, TrafficChallan> join = root.join(BikeRegistration_.TRAFFIC_CHALLANS);
+cq.where(cb.equal(join.get(TrafficChallan_.VIOLATION_TYPE), violationType));
+
+
+# give all the traffic challans info for all the bikes of modelName = honda
+select tc from TrafficChallan tc where tc.bikeRegistration.modelName = "honda"
+	
+CriteriaBuilder cb = em.getCriteriaBuilder();
+CriteriaQuery<TrafficChallan> cq = cb.createQuery(TrafficChallan.class);
+Root<TrafficChallan> root = cq.from(TrafficChallan.class);
+cq.where(cb.equal(root.get(TrafficChallan_.bikeRegistration.modelName), modelName));
+cq.select(root);

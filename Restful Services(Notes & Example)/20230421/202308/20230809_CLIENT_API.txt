@@ -1,0 +1,170 @@
+1. Setup a pool of socket objects by intantiating the Client
+
+Client = it is an class provided by jaxrs api, so it is an abstract class. while creating the object of Client, we need populate configurations/settings/properties, that should be used by client to instiantiate the socket pool
+
+To populate the Client object with properties in instantiating the socket pool, we need ClientBuilder
+
+2. ClientBuilder = again builder is also provided by jaxrs api, so it is an abstract class. implementation is provided by the vendor, to instantiate the implementation of the Builder class we need factory, so ClientBuilder itself has provided with static factory method inside it
+
+ClientBuilder builder = ClientBuilder.newInstance();
+builder.property("connection.timeout", "1000");
+
+Client client = builder.build();
+
+incase if we dont have any configurations/settings to be populated and wanted to instiate the client object with defaults then we can directly use the static factory method on the Builder class to create the object of Client as below
+	
+Client client = ClientBuilder.newClient(); // always creates the Client object with default configuration
+
+ClientBuilder is playing #2 roles
+1. Builder
+2. Factory
+
+interface Configuration {
+	void property(String key, String value);
+}
+both ClientBuilder & Client are implementing from an interface Configuration, that has an method property(key, value) through which we can configure configuration into them
+
+we can populate the configuration in #2 levels, either at builder or directly at client.
+	
+Client client = ClientBuilder.newClient();
+client.property("timeout", "1000");
+--------------------------------------------------------------------------------------------------------------------------------------
+2. WebTarget
+An WebTarget represents an URL of the resource whom we wanted to access. using the WebTarget object we can populate all the parameters that can be part of the URL like
+1. query parameters
+2. matrix parameters
+3. path parameters
+
+unless we have Client object we cannot create the object of WebTarget, so Client acts as builder for creating the object of WebTarget.
+	
+	
+ClientBuilder builder = ClientBuilder.newBuilder();
+Client client = builder.build();
+
+WebTarget webTarget = client.target("http://localhost:8080/payTM/api/account");
+webTarget = webTarget.queryParam("accountNo", "ac03894");
+
+3. Invocation.Builder
+Invocation.Builder = represents the request data like headers, cookies, request body using which we want to construct the request and send to the resource. But to create the Invocation.Builder we need url so WebTarget acts as builder for creating the object of Invocation.Builder
+
+Invocation.Builder invocationBuilder = webTarget.request();
+
+4. Invocation
+An Invocation class collects all of the information needed for constructing the httpRequest, and opens an connection using Socket object and sends the request to the Server/Resource, and upon receiving the HttpResponse from the server, extracts the data and wraps into Response object and returns to us
+
+Since Invocation.Builder has all of the information, it acts as builder for creating the object of Invocation.
+
+Invocation invocation = invocationBuilder.build();
+Response response = invocation.invoke("GET");
+if(response.getStatus() == 200) {
+	Double balance = response.readEntity(Double.class);
+}
+sout("balance : " +balance);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

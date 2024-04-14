@@ -1,0 +1,72 @@
+class MessageWriter {
+	IMessageConverter messageConverter;
+	void writeMessage(string message) {
+		String cMessage = null;
+		
+		cMessage = messageConverter.convert(message);
+		System.out.println(cMessage);
+	}
+	void setMessageConverter(IMessageConverter messageConverter) {
+		this.messageConverter = messageConverter;
+	}
+}
+
+interface IMessageConverter {
+	String convert(String message);
+}
+class HTMLMessageConverterImpl implements IMessageConverter {
+	String convert(String message){
+		return "<html><body>"+message+"</body></html>";
+	}
+}
+class PDFMessageConverterImpl implements IMessageConverter {
+	String convert(String message){
+		return "<pdf>"+message+"</pdf>";
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		MessageWriter messageWriter = new MessageWriter();
+		IMessageConverter messageConverter = new HTMLMessageConverterImpl();
+		messageWriter.setMessageConverter(messageConverter);
+		
+		messageWriter.writeMessage("Welcome to Spring Framework");
+	}
+}
+
+Let us not instantiate and manage the dependencies by our own, rather let us take the help of spring framework in instantiating and managing the dependencies of our components.
+	
+We need to define the information about the components of our application to the Spring Framework, so that spring can take care of instantiating and managing them.	If for any given class, if spring framework is taking care of creating the object and managing the dependencies, then the object is called "spring bean". So the information about our classes should be provided as an input to the spring framework in spring understandable format/language.
+	
+we need to define the information about our components in "spring bean configuration file", the spring bean configuration file holds the information about the classes that are instantiated & managed the spring framework so it is called "spring bean configuration file".
+The Spring Bean Configuration file is an XML file and will be written using a standard name called "application-context.xml". In the spring bean configuration file we define bean definitions.
+	
+#how to write spring bean configuration file?
+spring bean configuration file is an xml file, every xml starts with prolog and has one and only one root element. 
+prolog = prolog stands for processing instruction
+	
+application-context.xml
+------------------------
+<?xml version="1.0" encoding="utf-8"?>
+<beans>
+	<bean id="messageWriter" class="com.sc.beans.MessageWriter"/> #bean definition or declaration
+	<bean id="htmlMessageConverter" class="com.sc.converters.HTMLMessageConverterImpl"/>
+	<bean id="pdfMessageConverter" class="com.sc.converters.PDFMessageConverterImpl"/>
+</beans>
+
+core
+|-src
+  |-main
+		|-java
+		|-resources (non-java sourcecode)
+			|-application-context.xml
+|-target
+	|-*.jar
+	|-classes
+|-pom.xml
+
+BeanFactory
+#2 ways 
+1. absolute path = full location of the file right from the root directory
+2. relative path = path from an relative directory

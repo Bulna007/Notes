@@ -1,0 +1,128 @@
+How does the client application can access the microservices by discovering through Eureka server?
+The client application can be anything, it could be
+1. core java application
+2. web application
+3. another microservice or http endpoint
+because microservices are nothing but rest endpoints which are interoperable.
+	
+The Microservices are distributed across the nodes of the cluster. The Client Application dont know which microservices are running on which nodes of the cluster. Since all the microservices are registered with Eureka Discovery Server, the client application has to talk to the Eureka Server to identify the nodes on which the microservices are running inorder to access.
+	
+Every Microservice register by itself with Eureka Server with ServiceName, so the client application has to lookup or discover the Microservice application by using ServerName by going to the Eureka Server
+
+Inorder to talk to the Eureka Server the client application has to write logic for invoking the Eureka Server endpoints in discovering the microservice, since it is an common requirement for every client application while accessing the microservice instead of we writing the code, the Netflix has provided Discovery Client Api
+
+The Discovery Client api only helps us in discovering or looking up the microservice from Eureka Server, but it doesnt helps us in communicating/talking to the microservice itself, we still need to use RestTemplate component for accessing the microservice
+
+
+RetailStore
+|-src
+  |-main
+	  |-java
+		|-resources
+			|-application.yml
+|-pom.xml		
+	|-spring-boot-starter-eureka-client #DiscoveryClient api
+	|-spring-boot-starter-web #RestTemplate
+	
+
+DistributorNetwork -> Eureka: distributor-network = http://localhost:8080
+
+application.yml
+---------------
+eureka:
+  client:
+    register-with-eureka: false
+		fetch-registry: true
+		service-url:
+      defaultZone: http://localhost:9091/eureka, http://localhost:9092/eureka
+
+
+class DistributorDto {
+	private String distributorCode;
+	private String businessName;
+	private String proprietorName;
+	private String contactNo;
+	private String emailAddress;
+	private NetworkSettings networkSettings;
+	//accessors
+}
+
+@Service
+class DistributorService {
+	@Autowired
+	RestTemplate restTemplate;
+	
+	@Autowired
+	DiscoveryClient discoveryClient;
+	
+	public DistributorDto getDistributor(String distributorCode) {
+		List<ServiceInstance> instances = discoveryClient.getInstances("distributor-network");
+		
+		ServiceInstance instance = instances.get(0);// pickup the first-instance
+		String hostName = instance.getHost();
+		int port = instance.getPort();
+		
+		String endpointURL = "http://"+host+":"+port+"/distributor/{distributorCode}";
+		Map<String, String> variablesMap = new HashMap();
+		variablesMap.put("distributorCode", distributorCode);
+		
+		String url = UriComponentBuilder.fromUri(endpointURL).uriVariables(variablesMap).build().toString();
+		
+		DistributorDto dto = restTemplate.getForEntity(url, DistributorDto.class);
+		return dto;
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

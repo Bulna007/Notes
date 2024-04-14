@@ -1,0 +1,180 @@
+Maven Archetype
+----------------
+Maven Archetypes are pre-built project templates, that can be imported quickly in creating an maven project. While working with maven, inorder to build a project we need to create the project based on
+1. standardized directory structure of the maven project based on type of the project we are working. 
+2. need to write pom.xml defining the project information like gav cooridinates, dependencies and plugins
+
+creating an project manually while working with maven is an tedious job. developers has to memorize the directory structure of the project, and need to write the pom.xml memorizing those tags and takes lot of time as well.
+	
+To help in quickly creating the projects, the maven team/developers has built project by following the maven conventions like
+1. standardized directory structure
+2. pom file declared with placeholders for gav cooridinates
+packaged them into project template zip files and published as part of maven central repository which are called "Maven Archetypes".
+	
+In such a way maven has created hunders of out-of-box archetypes for developers to use. Because different types of projects has different directory structure and pom configurations. Additionally lot of opensource projects also has created their own archetypes and published into central repository for usage.
+	
+some of the maven provided standard archetypes are
+1. maven-archetype-archetype = an archetype project, from which we can create our own archetypes
+2. maven-archetype-j2ee-simple = for simple j2ee application
+3. maven-archetype-mojo = for plugin development
+4. maven-archetype-quickstart = for java project
+5. maven-archetype-webapp = for java webapplication
+
+
+How to use these archetypes in creating the project?
+All the maven and third-party provider archetypes are published and available aspart of the maven central repository by their gav cooridinates. 
+	
+If we want to create a project by using any one of these archetypes, first we need to browse through maven central repository, identify an appropriate archetype download the project template archetype zip. Extract it into an directory structure. Then navigate to pom.xml and replace all the placeholders to match with the project we want to develop and start using it.
+	
+Looks from the above, even though there are archetypes, using them in creating the projects is also an laborious job because we need to download, extract and reconfigure them to our project. So to help us in quickly using these archetypes the maven team has provided an plugin called archetype plugin.
+	
+The archetype plugin takes care of identifying, downloading the archetype based on the gav cooridinates we provided. extracts and replaces the gav cooridinates in the pom.xml with the ones we supplied to it asking to create the project. and make the project ready for development.
+	
+mvn archetype:generate -DgroupId=projectgroupid -DartifactId=projectname -Dversion=1.0.0 -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-* -DarchetypeVersion=archetypeVersion
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to create our own custom archetype?
+
+The Archetypes are nothing but special type of maven projects, that holds/contains project templates that has to be created on the developers machines.
+So an archetype also has defined by its directory structure using which we need to create and publish archetypes as below
+
+archetype
+|-pom.xml
+|-src
+  |-main
+	  |-resources
+			|-META-INF
+			  |-maven
+				  |-archetype-metadata.xml (metadata information in how to create the project from the project template it has)
+	    |-archetype-resources (template project)
+	      |-src
+				  |-main
+					  |-java
+						  |-App.java
+					|-test
+					  |-java
+						   |-AppTest.java
+				|-pom.xml
+				
+			
+pom.xml (project template)
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>${groupId}</groupId>
+	<artifactId>${artifactId}</artifactId>
+	<version>${version}</version>
+	<packaging>jar</packaging>
+	
+	<dependencies>
+		dependencies that needs to be included inthe generated project out of it
+	</dependencies>
+</project>	
+	
+	
+For creating our own archetypes, we need to create standardized directory structure of the archetype defining metadata configuration files which is an difficult job. So alternatively there are 2 ways we can easily create an archetype
+1. create an archetype project from maven-archetype-archetype archetype
+2. create an archetype from existing project
+
+2. create an archetype from existing project
+The quickest way of creating our own archetypes is from an existing project we have. This can be done as below.
+	
+1. create our own maven project with all the defined dependencies, plugins and classes we want to include in creating project
+For eg.. to create an archetype for spring boot project we can do the below
+
+mvn archetype:generate -DgroupId=boot.org -DartifactId=basicboot -Dversion=1.0 -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4
+	
+	
+basicboot
+|-src
+  |-main
+	  |-java
+		|-resources
+	|-test
+	  |-java
+		|-resources
+|-pom.xml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,99 @@
+What is setter injection?
+the dependent object will be injected into the target class attribute by using the setter of the attribute in the target class, since the dependent is injected through setter method, it is called "setter injection"	
+	
+class Remote {
+	Television television;
+	
+	public void poweron() {
+		television.on();
+	}
+	public void setTelevision(Television television) {
+		this.television = television;
+	}
+}	
+
+class Television {	
+	public void on() {
+		System.out.println("streaming the channel");
+	}
+}	
+
+application-context.xml
+<?xml version="1.0" encoding="utf-8"?>
+<beans>
+	<bean id="television" class="Television"/>
+	
+	<bean id="remote" class="Remote">
+		<property name="television" ref="television"/>
+	</bean>
+</beans>
+
+property tag = indicates to the ioc container the ref bean definition object should be injected into the specified "named" attribute via setter 
+
+class Test {
+	public static void main(String[]) {
+		BeanFactory beanFactory = new XMLBeanFactory(new ClassPathResource("com/si/common/application-context.xml"));
+		Remote remote = beanFactory.getBean("remote", Remote.class);
+		remote.poweron();
+	}
+}
+
+What is constructor injection?
+The dependent object will be injected into the target class by passing the dependent object as an argument to the target class constructor is called "constructor injection".
+	
+class Truck {
+	private Engine engine;
+	
+	public Truck(Engine engine) {
+		this.engine = engine;
+	}
+	
+	public void start() {
+		engine.on();
+		System.out.println("Truck started....");
+	}
+}
+
+class Engine {
+	public void on() {
+		System.out.println("engine on!");
+	}
+}
+
+application-context.xml
+<beans>
+	<bean id="engine" class="Engine"/>
+	
+	<bean id="truck" class="Truck">
+		<constructor-arg ref="engine"/>
+	</bean>
+</beans>
+
+class CITest {
+	public static void main(String[] args) {
+		BeanFactory beanFactory = new XMLBeanFactory(new ClassPathResource("com/ci/common/application-context.xml"));
+		Truck truck = beanFactory.getBean("truck", Truck.class);
+		truck.start();
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,83 @@
+cascade
+when we perform operation on an entity object, how does the operation should be propagated onto the associated child objects can be managed through cascade.
+There are 5 cascade options are supported by hibernate
+1. none
+2. all
+3. save-update
+4. delete
+5. orphan-delete
+
+#3. save-update
+whenever we perform an save or update operation on an entity object, hibernate automatically propogates the operation onto the associated child objects as well depends on the state of the child.
+if the child object is an transient object, it will save the child as well., if not it will update the child object automatically.
+	
+#transient object
+#save
+DeliveryAssociate deliveryAssociate = new DeliveryAssociate();
+// populated the data
+
+Parcel parcel = new Parcel();
+// populated data into parcel object
+parcel.setDeliveryAssociate(deliveryAssociate);
+session.save(parcel);
+
+In case of cascade = "none", since the associated object deliveryAssociate is transient, while storing the parcel it cannot persist foreign key column (relationship column), hibernate will throw exception indicating the associated object as transient.
+	
+enable cascade option:	
+<many-to-one name="deliveryAssociate" column="deliver_associate" not-null="true" cascade="save-update"/>	
+
+now when we save parcel, hibernate identifies the associated object also as transient and saves the deliveryAssociate first and then stores the parcel by populating the relationship column.
+
+#update	
+DeliveryAssociate deliveryAssociate = new DeliveryAssociate();
+// populated data
+
+// fetch existing parcel from database
+Parcel parcel = session.get(Parcel.class, 1);
+parcel.setDeliveryAssociate(deliveryAssociate);
+session.update(parcel);
+
+now during the update of parcel, hibernate identifies the associated object as transient and will save it before updating the parcel.
+	
+#delete
+when deleting an parent object, if we have child associated objects to it, then database will not allow us to delete the parent directly.
+First we need to delete child objects, then only we can delete the parent. for eg.. if we have a DeliveryAssociate object associated with 2 parcels.
+	
+	DeliveryAssociate deliveryAssociate = session.get(DeliveryAssociate.class, 3);
+	session.delete(deliveryAssociate);
+when we call delete on deliveryAssociate, it results in an error saying associated child objects exists. 
+So to delete deliveryAssociate we need manually delete/dis-associate them we can delete deliveryAssociate
+
+	DeliveryAssociate deliveryAssociate = session.get(DeliveryAssociate.class, 3);
+	Iterator<Parcel> it = deliveryAssociate.getParcels().iterate();
+	while(it.hasNext()) {
+		Parcel parcel = it.next();
+		session.delete(parcel);
+		it.remove();
+	}
+	session.delete(deliveryAssociate);
+
+we need to write lot of code in removing the parent objects when those are associated with their childs, instead of the above we can enable cascade="delete" on the associate as below.
+	
+	<set name="parcels" cascade="delete">
+		<key column="delivery_associate_no" />
+		<one-to-many class="Parcel"/>
+	</set>
+
+session.delete(deliveryAssociate);
+now hibernate takes care of automatically deleting the child associated objects while deleting the parent
+
+#5 orphan-delete
+when we dis-associate a child object from the parent, if the child object is not associated with any other parent object, then when we apply cascade option as "orphan-delete", then hibernate automatically deletes the child object
+
+	DeliveryAssociate deliveryAssociate = session.get(DeliveryAssociate.class, 3);
+	Set<Parcel> parcels = deliveryAssociate.getParcels();
+	Iterator it = parcels.iterator();	
+	while(it.hasNext()) {
+		Parcel parcel = it.next();
+		if(parcel.getWeight() > 5) {
+			it.remove();
+		}		
+	}
+	session.update(deliveryAssociate);
+#when we dis-associate an parcel object from deliveryAssociate, and update the deliveryAssociate, hibernate checks whether the parcel we dis-associated is associated with any others, if not will delete the child automatically since it is orphan

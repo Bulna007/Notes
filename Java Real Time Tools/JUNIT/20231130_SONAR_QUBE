@@ -1,0 +1,15 @@
+Code Coverage
+--------------
+Code coverage is about the lines of code being tested by the testcode written aspart of our application. In order to certify the code is working properly or not we need to ensure all the parts of code within our application has been executed/tested through testcode here all the parts refers to
+1. conditional statements
+2. branching
+3. looping
+4. exceptions
+etc
+
+We can analyze how much percentage of the code is being tested by the testcode by using code coverage tools like
+1. jacoco
+2. emma
+3. cobertura
+etc
+

@@ -1,0 +1,82 @@
+How to integrate microservice application in pulling the configuration from Cloud Config Server?
+distributor-network
+|-src
+  |-main
+	  |-java
+		|-resources
+		  |-application.yml
+		  |-bootstrap.yml
+|-pom.xml		
+
+The spring cloud has provided 2 starter dependencies that should be added in the pom.xml of our project
+1. spring-cloud-config-client
+2. spring-cloud-starter-bootstrap
+
+note:- 
+In the earlier versions of spring-cloud-config-client, the spring-cloud-starter-bootstrap is an transitive dependency. But in the latest releases of spring cloud, the spring-cloud-starter-bootstrap is not added as transitive dependency, so we need to explicitly add as an dependency in our project
+
+In spring cloud 3.x the spring-cloud-starter-config is an starter dependency, that pulls spring-cloud-config-client but not spring-cloud-bootstrap
+
+spring-cloud-starter-bootstrap during the bootstrap of the application looks for bootstrap.yml under the classpath of the project. if not found it looks for application.yml|properties under the classpath
+It is adviced to write bootstrap.yml for boostrap configuration apart from application.yml, there are few advantages to have these configurations separated:
+1. we can differentiate application configuration from bootstrap configuration that loads the configuration from external source like configserver
+2. in future if we dont want to load the external configuration from ConfigServer, we can remove bootstrap.yml without loosing application configuration
+
+In bootstrap.yml we need to specify the cloud configserver URI, allowing the config client to pull the configuration from ConfigServer
+
+bootstrap.yml
+-------------
+spring:
+  config:
+    import:
+      - configserver: http://host:port
+
+
+In addition to the ConfigServer URL, we can write file: and classpath: also so that we can load the external configuration during the boostrap of our application through file or classpath of the project. For eg.. we may have an YML or properties files in Local filesystem of our Machine, this can also be loaded into bootstrap context ioc container during the bootup of the application by adding it as config import in the boostrap.yml as below
+
+bootstrap.yml
+-------------
+spring:
+  config:
+    import:
+      - configserver: http://host:port
+      - file:${user.home}/app-config.yml
+
+In addition to spring.config.import, we need to specify the spring.application.name in the application.properties|yml file of our application, so that bootstrap can pull the configuration from ConfigServer pertaining to our application. In case if we dont specify spring.application.name, then it looks for default file with name application.yml|properties from ConfigServer
+--------------------------------------------------------------------------------------------------------------------------------
+How does the ConfigServer loads and serves the microservice configurations from ConfigServer?
+For each request to ConfigServer requesting the microservice configuration, the ConfigServer takes the applicatinName as an input and goes to the configuration repository location we specified loads all the configurations files and serves the configuration based on the name and returns it aspart of the response
+
+We can specify the configuration location as
+1. local git repository location
+2. remote git URI
+
+first-time when we request the configuration, the ConfigServer goes to the remote/local git repository reads all the configurations, cache them in local memory and returns the configuration pertaining to that application aspart of the response. For sub-sequent requests, the ConfigServer goes to git local/remote repository performs an git fetch operation to see are there are any new commits or not on the repository. if there are no new commits, it serves the configuration from local cache otherwise it pulls the new configurations from repo loads into memory and serves the latest.
+	
+For each request performing a git fetch operation is quite costly, this can be avoided by using refresh-rate. upon configuring the refresh-rate, the ConfigServer avoid performing git fetch operation for each request, rather based on refresh-rate it periodically loads the configuration from git local/remote repository based on new commits.
+	
+configserver
+|-src
+  |-main
+	  |-java
+		|-resources
+			|-application.yml
+|-pom.xml
+
+application.yml
+----------------
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri:
+            - "file://absolutepath pointing to git repo local directory"
+	    - "git repo URL"
+       	    - "https://username:pattoken@github.com/repo.git"	 
+          refresh-rate: 180
+	  default-label: master
+
+In addition we can specify the branch name of the git repository from where the configuration files should be lookup by using default-label: branchName
+
+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

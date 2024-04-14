@@ -1,0 +1,111 @@
+How does the spring boot application works?
+(or)
+What will happen when we call SpringApplication.run(BootApplication.class, args)?
+
+The entire Spring Boot echo system has been wrapped inside the SpringApplication class, which is the core or engine of the Spring Boot. Upon calling the static method run(...)	on the SpringApplication class, there are bunch of activities would be performed by it in creating ioc container or running the application as below.
+	
+ApplicationContext context = SpringApplication.run(BootApplication.class, args);
+1. creates an empty environment object
+The SpringApplication class creates an empty environment object
+
+2. detects and loads the external configuration of our application into the Environment object that is created above
+Environment object = is part of the ioc container into which we can load the properties/configuration values, so that these can be injected as dependent values into the attributes of the bean definitions.
+	
+the application.properties we wrote and placed under the classpath, will be loaded into the environment object of the ioc container by SpringApplication.run(..)
+	
+3. prints the spring boot banner
+
+4. detects/identifies the type of the application by looking at the project classpath as below
+	4.1 under the classpath of the application, it checks to see the springmvc jar is found or not, if the spring mvc jar is found under the classpath, it treats the WebApplicationType as WEB and creates the ioc container of type
+	AnnotationConfigServletWebServerApplicationContext
+	4.2 if spring WebFlux dependency is found under the classpath of the application, it treats the WebApplicationType as REACTIVE and instantiates the ioc container of Type
+	AnnotationConfigReactiveWebServerApplicationContext
+	4.3 else it treats the WebApplicationType as NONE and instantaites the ioc container of type
+	AnnotationConfigApplicationContext
+
+5. It instantiates the spring factories (AutoConfiguration classes) and registers them with the ioc container
+
+6. Invokes the ApplicationContextInitializer
+
+7. prepareContext
+
+8. refreshContext = instantiates the objects for the bean definitions
+
+9. executes the CommandLineRunners and ApplicationRunners and returns the reference of the ioc container to us (Main)
+	
+10. during the above stages of execution/operations, the SpringApplication class publishes different types of events indicating the stages at which the application is booting and triggers the Listener class allowing us for performing operations in handling those events.
+---------------------------------------------------------------------------------------------------------------------------------------------
+How many ways are there in setting up a spring boot project while working with Maven?
+There are 3 ways in which we can setup an spring boot application while working with maven.
+	
+1. directly we can use spring-boot-starter-* dependencies in creating the project
+
+When we are setting up the spring boot project using maven, we have to do #2 things as below
+
+1.1 add the starter dependencies into the pom.xml file of our project
+per each technology the spring boot has provided one starter. For eg.. to work with spring core application the spring boot has provided spring-boot-starter. Inorder to work with web application spring boot has provided spring-boot-starter-web.
+	
+In this way the spring boot team has provided several starter dependencies, now we need to identity what type of technologies we want to use in building the project, and choose and add those starters as dependencies within our project
+
+For all the spring boot starters the gav cooridinates will be
+groupId = org.springframework.boot
+artifactId=spring-boot-starter-* 
+all the spring boot team defined starters follows the standard naming convention of spring-boot-starter-*
+version=versionNo
+
+1.2 configure spring-boot-maven-plugin in our project
+spring boot has provided an maven plugin called "spring-boot-maven-plugin". it is an build plugin we need to add into the pom.xml of our project. This boot plugin builds our project as spring boot jar/war artifact
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

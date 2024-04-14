@@ -1,0 +1,89 @@
+N+1 Problem
+-----------
+
+class Product {
+	private Set<Review> reviews;
+}
+
+class Review {
+	private Product product;
+}
+
+Product.hbm.xml
+<set name="reviews" inverse="true" lazy="true" fetch="select">
+	<key column="product_no" not-null="true" />
+	<one-to-many class="Review"/>
+</set>
+
+Review.hbm.xml
+<many-to-one name="product">
+	<column name="product_no" not-null="true" />
+</many-to-one>
+
+TypedQuery<Product> productsQuery = session.createQuery("from Product p where p.category = ?1", Product.class); #10 products
+productsQuery.setParameter("1", category);
+
+List<Product> products = productsQuery.getResultList(); 
+
+1 led tv
+2 refrigerator
+3 washing machine
+
+for(Product product : products) {
+	Set<Review> reviews = product.getReviews(); #1 query for get the reviews for each product
+	
+}
+
+In the above code when we iterate over the products list and access the child associated objects Review, the hibernate will trigger 1 query for parent objects and per each parent object (product) to fetch the corresponding reviews of the product it executes one more sql query.
+	
+1 query = for fetching parent objects (products based on category)	
+per each parent object (product) = 1 query for fetching the child associated objects (reviews)
+Thus results in N + 1 problems. Since it executes N number of queries for fetching the child associated objects for N Parents the number hits to the database in fetching the child associates will be more thus degrades the performance of the application
+
+How to solve this problem?
+#1. one solution we can employ in reducing the number queries onto the database in fetching the child associations is using "subselect". 	
+
+<set name="reviews" inverse="true" lazy="true" fetch="subselect">
+	<key column="product_no" not-null="true" />
+	<one-to-many class="Review"/>
+</set>	
+
+incase of fetch="subselect" one query will be executed for fetching the parent objects. 
+
+List<Product> products = productsQuery.getResultList(); 
+for(Product product : products) {
+	Set<Review> reviews = product.getReviews();
+}
+
+to fetch the child associated objects of these products, hibernate will execute an subselect query for fetching child associated objects for all the products at one go
+
+select * from reviews where product_no in (select product_no from product where category=?)
+
+here we were able to overcome the problem of running more queries (N+1 problem), but the problem is since all the child associated objects of all the products are queries at oneshot we endup on consumption of huge jvm memory in holding these objects
+
+for eg.. if the parent query has resulted in 1000 products, then we endup in fetching the reviews for all the 1000 products at one shot with "subselect" which is not recommended.
+	
+#3. instead of using subselect we can join, here as well we endup in fetching the child associated objects for all the products at one shot resulting in memory and performance issue.
+	
+To overcome this problem hibernate/jpa has provided select + batchSize
+
+
+<set name="reviews" inverse="true" lazy="true" fetch="select" batchSize="10">
+	<key column="product_no" not-null="true" />
+	<one-to-many class="Review"/>
+</set>		
+
+
+TypedQuery<Product> productsQuery = session.createQuery("from Product p where p.category = ?1", Product.class);
+productsQuery.setParameter("1", category);
+
+List<Product> products = productsQuery.getResultList();  #1 query will be triggered on database to fetch all the matching products
+
+for(Product product : products) {
+	Set<Review> reviews = product.getReviews();
+}
+now while iterating the parent objects (products) in fetching the child associated object (reviews) per each parent, since along with fetch="select" we specified batchSize="10", hibernate will not fetch the reviews of one parent product object rather for the next 10 products all of the reviews will be fetched at one shot in batches.
+	
+1000 products = resulted in parent query
+per each 10 products = 1 query for fetching the reviews of 1-10 products will triggered
+in this way with #100 sql queries we can fetch the product reviews of all 1000 products thus resulting in less of sql queries and reduces the memory footprint aswell.

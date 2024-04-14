@@ -1,0 +1,257 @@
+What are the dis-advantages or drawbacks of developing an application based on Monolothic application Architecture?
+1. overloaded IDE environments
+2. overloaded Server runtime
+3. reusability through modularity is very difficult to achieve
+4. due to the huge sourcecode base always the developer will be afraid of understanding the application, which results in poor quality of the code being development
+5. not easily scalable
+	1. only supports horizontal scaling
+	2. cost of scaling is very high
+	3. we cannot customize the system resources catering to the needs of a module while scaling
+6. cannot achieve continous integration and continous delivery due to its huge size
+7. cannot scale-up the development team
+8. long-term commitment to the technology stack
+--------------------------------------------------------------------------------------------------------------------------------
+How to develop an Microservices Application?
+The large-scale enterprise application is broken down into smaller microservices applications based on few characteristics:
+1. loosely-coupled
+2. independently deployable
+3. highly scalable
+4. higly available
+5. reslient
+6. mutual collaborating services
+that can be developed by independent collaborating teams
+
+How to identify and break the enterprise large-scale complex business system into smailler microservices applications?
+The Large-scale enterprise application is not broken into smaller microservices applications based on functionality or modules, there are several decomposition patterns are available like
+1. Decompose by business capability
+2. Decompose by subdomain
+3. Self-contained service
+4. Service per team
+
+Microservices Pattern/Architecture:
+-----------------------------------
+Problem Context:
+Want to build an enterprise large-scale complex business application that comprises of several modules of various different functionalities. There are different types of clients like desktop browser based users, mobile browsers and native mobile application users want to consume the business services offered by the application. In addition there are partner systems want to integrate their business systems with our platform through webservices or messaging gateways. 
+Our application should be able serve or exchange various data representation formats like XML, HTML, JSON, YAML etc categorizing to the requirements of the clients.
+	
+Circumstances forces me to build the above system on microservices architecture:
+1. We want independent teams working in-parallel across the various functional areas in developing the application/business system.
+2. new members should be quickly productive and should contribute to the module/functional area of the system
+3. The application should be easy to understand and quick to maintain
+4. we want to adopt continous integration and continous deployment practices for the application
+5. we want to scale-up different functional areas of the system independently (vertical scaling)
+then we need to build our application based on microservices architecture
+
+What are the advantages of building and delivering the applications based on Microservices Architecture?
+From the developer and productivity perspective:
+1. Each Microservice is relatively small and is built out of its own sourcecode project independent of other modules/microservices of the system, because of it we have several advantages
+	1.1 IDEs are not overloaded in handling the projects, that would help us in quickly developing the project
+	1.2 Server Runtimes are not overloaded, they would quick in starting up and event shutdown, due to which the developers can debug their applications quickly thus reducing the wastage of time during development
+	1.3 as each developer works on his own independent microservice module which is very small when compared with monolithic application, he has better understanding of the system thus contributing towards quality of code
+	1.4 as the developer has deep knowledge on the module he is working on, he can encourage in reusing the existing components rather than duplicating them
+	
+2. From the scalability perspective:
+	 each module can be scaled independent of others which is called "vertical scaling" due to which we have lot of advantages:
+		2.1 cost of scalability will be less
+		2.2 we can entitle or allocate resources to the microservice module based on the nature of the module thus can achieve better performance
+
+3. Microservices promotes and supports parallel development by mutually collaborating teams works independent of each other that speeds up development and delivery of the whole system
+4. testability of the system becomes very easy
+5. Fault isolation = if a module gets impacted, the whole system will not be brough down
+6. Eliminates long-term commitment towards the technology stack
+7. it is easy to implement continous integration, deployment and delivery
+
+
+along with the advantages there are few dis-advantages exists with microservices
+by choosing microservices architecture based application development, the developer has to deal with design & development complexities in building and deploying the applications as below
+1. developer has to write complex code for inter-service communication for reusing the functionality across the microservices
+2. during the inter-service communication, there is a high chance of communication failure could arise between them, the developer has to write relevant logic to handle such communication failures to make them resilient
+3. The developer has to write complex orchestration logic in communicating accross multiple microservices by passing output of one microservice as an input to another microservice to build the functionality of the system
+4. Testing the interactions between the Microservices is complex, because we need to isolate a microservice from other for that we need to stub the microservices which is an complex job. In addition we need to mimic the failures by stubbing them as well to see how does the system behaves
+5. IDEs/Tools are not favor to develop microservices based application
+6. deployment complexities in production and operational changes are quite high
+7. The more the number of microservices are scaled, the more or increased consumption of jvm memory
+8. debugging and traging the failures is highly complex
+--------------------------------------------------------------------------------------------------------------------------------
+What is the support of JEE platform in development and delivery of Microservices Architecture based Applications?
+(or)
+Can we leverage or use JEE Platform tools/technologies in developing and delivering the Microservices based Applications?
+1. No, If no Why No
+2. What is the Alternate?
+
+	
+Before understanding whether we can use JEE platform for development and delivery of Microservice Application, Let us first explore what features are there in JEE and how can we use these features in development and delivery of the typical jee application.
+	
+	
+spring cloud
+-------------
+1. spring cloud config server
+2. spring cloud config client
+
+	
+spring microservices
+--------------------
+1. eureka server (master/slave)
+2. discovery client
+3. spring cloud loadbalancer
+4. spring circuit breaker (resilience4j) (resilience, retry, ratelimiters)
+5. feign client
+6. spring cloud gateway (important!)
+7. cqrs	(implementation)
+	
+saga design pattern (kafka)
+	
+
+
+							
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

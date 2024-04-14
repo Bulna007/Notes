@@ -1,0 +1,130 @@
+There are 3 types of joins are there
+1. inner join
+2. left outer join
+3. right outer join
+
+#1. inner join
+inner join returns the records matching in both the tables based on primary key and foreign key columns.
+	
+by default when we execute an sql query against multiple tables as shown below.
+select * from member, policy
+
+The database will perform catesian product of both the tables and returns the records as an result for example if the table t1 has 10 records and the table t2 has 20 records it return 10 * 20 = 200 records as a result, by taking each record from 1 table and combines with every record of 2nd table and returns 200 records.
+	
+But we wanted to return the records combining these 2 tables based on matching primary key and foreign key only (which means related records only), this can be done through inner join and join condition as below
+
+#1 example
+select * from policy p inner join member m on p.member_no = m.member_no where m.member_nm = 'paul'
+
+#2 example
+account
+-------
+account_no  account_holder_nm   age  gender
+	
+address
+--------
+address_no  address_line1   address_line2  city   state  zip   country  account_no (fk)
+	
+1) query all the account holders who are staying in city 'hyderabad'
+select * from account ac inner join address addr on ac.account_no = addr.account_no where add.city='hyderabad'
+	
+2) query all the account holders who are living in city = hyderabad and gender = 'female'	?
+select * from account acc inner join address addr on acc.account_no = addr.account_no where add.city='hyderabad' and acc.gender='female'
+	
+#3 example
+driving_license
+-----------------
+driving_license_no  license_holder_nm   age  gender
+
+challan
+---------
+challan_no  violation_type  location   amount  driving_license_no (fk)
+
+query the driving license holders details who has violated wearing helmet?
+select * from driving_liencse dl inner join challan ch on dl.driving_license_no = ch.driving_license_no where ch.violation_type = 'helmet'	
+	
+	
+journey
+-------
+journey_no  source  destination  journey_dt  bus_no  amount
+
+passenger
+----------
+passenger_no(pk) passenger_nm gender age mobile_no email_address
+
+journey_passenger
+------------------
+journey_no (fk)  passenger_no (fk)
+	
+select p.passenger_no, p.passenger_nm, j.source, j.destination, j.bus_no from passenger p inner join journey_passenger jp on p.passenger_no = jp.passenger_no inner join journey j on jp.journey_no = j.journey_no where p.age > 60
+	
+players
+player_no  player_nm   rank  
+
+series
+series_no   series_nm   series_conducted_dt
+
+player_series
+player_no   series_no
+
+query all the players who has played in "pakistan ODI Series"
+select p.* from player p inner join player_series ps on p.player_no = ps.player_no inner join series s on ps.series_no = s.series_no where s.series_nm = 'pakistan odi series'
+---------------------------------------------------------------------------------------------------
+
+#2. left outer join
+return matching records of both the tables based on primary key and foreign key along with that return all the remaining records of the left side of the table
+
+select * from member m left outer join policy p on m.member_no = p.member_no
+give me all the records of member table along with that the matching records of policy table
+	
+driving_license
+-----------------
+driving_license_no  license_holder_nm   age  gender
+
+challan
+---------
+challan_no  violation_type  location   amount  driving_license_no (fk)
+
+give me all the driving licenses of the users along with their relevant challan details.
+
+select * from driving_license dl left outer join challan ch on dl.driving_license_no = ch.driving_license_no where ch.violation_type = 'helmet' or ch.violation_type is null
+----------------------------------------------------------------------------------------------------
+
+Right outer join
+-----------------
+return the records of both matching tables based on primary key and foreign key in addition to that return all the records that existing in right side of the table in join condition
+
+----------------------------------------------------------------------------------------------------			
+#2
+student
+--------
+student_no	student_first_nm	student_last_nm	qualification	dob	gender	mobile_nbr	email_address
+
+course
+------
+course_no	course_nm	duration	fee
+
+faculty
+---------
+faculty_no	faculty_first_nm	faculty_last_nm	experience	mobile_nbr	email_address
+
+student_course_faculty
+-----------------------
+student_no (fk)	course_no (fk)	faculty_no (fk)
+
+1. query all the students and the faculty information who are attending the course 'core java' of duration = 6 months of fee >= 1500
+
+select * from student s inner join student_course_facutly scf s.student_no = scf.student_no inner join course c on c.course_no = scf.course_no inner join faculty f on scf.faculty_no = f.faculty_no where c.course_nm = 'core java' and c.duration = 6 and c.fee > 1500
+	
+2. query all the students details who are attending the course with a faculty joseph
+select s.* from student s inner join student_course_facutly scf on s.student_no = scf.student_no inner join faculty f on scf.faculty_no = f.faculty_no where f.faculty_nm = 'joseph'
+	
+3. query all the faculties along with courses there are teaching, return faculties information even there are not taking any course right now
+columns: faculty_nm  mobile_no email_address  course_nm  duration  fee
+
+select f.faculty_nm, f.mobile_no, f.email_address, c.course_nm, c.duration, c.fee from faculty f left outer join student_course_facutly scf on f.faculty_no = scf.faculty_no left outer join course c on scf.course_no = c.course_no
+
+4. query faculties which are teaching the courses along with return all the courses even there is no faculty assigned
+
+select f.*, c.* from faculty f right outer join student_course_faculty scf on f.faculty_no = scf.faculty_no 
+inner join course c on scf.course_no = c.course_no

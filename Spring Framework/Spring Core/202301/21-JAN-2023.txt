@@ -1,0 +1,12 @@
+Strategy design pattern
+There are #3 design principles are there in strategy design pattern
+1. Favor composition over inheritance
+2. Always design to interfaces never design to concreate classes
+3. Code should be open for extension and closed for modification
+
+1. Favor composition over inheritance
+There are problems in using Inheritance for reusing the functionality of another class, to avoid them it is recommended to use composition.
+1. Most of the realtime usecases are solvable through composition rather than inheritance, because a class wants to use only few of the functionalities of another class, not all the functionalities
+2. multiple inheritance is not supported by many programming languages, so to reuse functionality of multiple other classes, we need to use composition only
+3. Inheritance makes the components fragile, where as composition makes the class less fragile
+4. Inheritance doesnt support testability, where as composition supports testability

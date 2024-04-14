@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/annoncontrollerparams/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/annoncontrollerparams/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/basicannoncontrollerweb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/basicannoncontrollerweb/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/exhandlingweb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/exhandlingweb/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/formhandling/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/formhandling/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/i18n/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/i18n/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/interceptorsweb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/interceptorsweb/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jbvcore/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jbvcore/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prognoconfigdispatcherweb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prognoconfigdispatcherweb/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prognoconfigdispatcherweb2/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prognoconfigdispatcherweb2/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/requestwrappingweb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/requestwrappingweb/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springformjbv/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springformjbv/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

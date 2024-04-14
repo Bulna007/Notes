@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="miniTruckBuilder"
+		class="com.instancefactorymethod.beans.TruckBuilder" c:truckNo="9838"
+		p:model="Tata Mini Carrier" p:manufacturer="Tata" p:capacity="9384"
+		p:tires="4" p:price="938494" />
+
+	<bean id="miniTruck" factory-bean="miniTruckBuilder" factory-method="build"
+		c:truckType="mini" />
+
+	<bean id="cargoManager" class="com.instancefactorymethod.beans.CargoManager"
+		p:truck-ref="miniTruck" />
+
+
+</beans>

@@ -1,0 +1,20 @@
+Matrix Parameters
+-----------------
+The Matrix parameters is something that exists from the initial specification of http protocol, but majority of the adopters of the program has ignored them. With restful services introduced to the world, the matrix parameters came into existence.
+	
+What are Matrix parameters?
+There are the key/value pair data/information attached to the path parameter of the URI adding additional information to that parameter. These are used for building complex Query URIs in accessing the resources. If we want to query multiples levels of resources and sub-resources usually we use matrix parameters.
+	
+/products/electronics/cameras?type=dslr&lens=wideangle&power=usconnector&voltage=12v
+
+/products/electronics;voltage=12v;powerPlug=usconnector/cameras;type=dslr;lens=wide
+
+	
+/search/apartment/hyderabad?area=kukatpally&facing=east&floor=5&size=1800
+/search/apartments;facing=east;floor=5;size=1800/hyderabad;area=kukatpally
+The matrix parameters are appended right after the path parameter with separated by ; as an key=value pair
+
+
+What is the difference between query, path and matrix parameters?
+	
+

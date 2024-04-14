@@ -1,0 +1,40 @@
+Irrespective of the application or the language in which the applications are being developed, if it is an object oriented programming languages, they wanted to process the data interms of objects and its that every one has to write the code in converting relational data into object format and viceversa.
+So, it looks like an universal problem of mapping data between relational database to objects. To address this problem, there are group of experts came together and has provided set of rules and guidelines towards mapping relational data into object format.
+	
+These set of rules and guidelines defined by these experts are called "orm technology". Now the application developers in their respective languages has to write the code adopting orm technology rules/guideliness in mapping the data from relational to object format.
+	
+adopting the rules/guidelines of orm technology in building the software applications are quite complex, so its the responsibility of programming languages to support building software applications based on orm technology principles by providing apis
+
+Along with all the object oriented programming languages, java has to also provide api for working with orm technology.
+Initially java has not provided any api toward building applications based on ORM technology.
+In the space of database/persistence world java has quite a number of apis like
+	1. jdbc
+	2. ejb (entity beans)
+The ejb entity beans is an api which is build on the similar groups of accessing the relational data interms of objects. 
+So java platform dont want to adopt orm technology as it raises a confusion with the people interms of usage of these apis
+
+Many of the people in the java are not leaned towards ejb due to its complexity and heavy weight and everyone is looking for support of orm technology. since many of the people are looking for orm technology the third-party vendors came into market and has started providing pre-built software libraries which are developed based on orm technology guidelines and distributed in the market
+
+Few libraries are opensource and few others are commercial as well, few of them are listed below.
+Third-Party Libraries
+-------------------------
+1. Hibernate Framework 
+2. EclipseLink (Toplink)
+3. MyBatis (iBatis)	
+	
+Hibernate is an Framework that supports developing ORM technology based applications in java programming language
+
+At a later point of time, by looking at the massive adoption of orm technology libraries in java and loosing popularity and adoption of ejb sun micro systems has realized the importance of ORM technology and has provided an api called Jpa api
+
+jpa stands for java persistency api provided by sun microsystems to support working with orm technology in java platform.
+
+api = are not complete they provide interfaces/abstract classes to work with api we need implementation
+
+jpa api has been designed by hibernate developers to a greater extent and they are the key contributes in building the specification and its api. since jpa is an api, it requires implementation so hibernate framework developers itself has built an implementation for jpa api
+
+To support existing framework adopters and to provide implementation for jpa api hibernate framework from hibernate 3.x onwards started distributing into 2 parts
+
+hibernate-core = Hibernate only framework
+hibernate-entitymanager = implementation of jpa api
+
+over the time hibernate has merged both these lines into single lane in hibernate5, now all the hibernate framework components are removed and are provided as an implementation of jpa api only.

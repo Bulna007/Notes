@@ -1,0 +1,24 @@
+buildscript {
+    repositories {
+        //mavenLocal()
+        maven {
+            url = uri('/Users/sriman/repo')
+            metadataSources {
+                artifact()
+            }
+        }
+    }
+    dependencies {
+        classpath("org.tools:utilitytasks:1.0.0")
+    }
+}
+
+
+tasks.register("debug", org.tools.DebugTask) {
+    message = "Hurray! custom gradle task is working"
+}
+tasks.register("projectapi") {
+    doLast {
+        println project.path
+    }
+}

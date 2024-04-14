@@ -1,0 +1,21 @@
+Table per concreate class:
+how the tables are created for the inherited hierarchy of classes?
+For each concrete class in the hierarchy one seperate table will be created
+	
+How does the database operations will be performed on the underlying entity classes?
+1. PERSIST/SAVE:
+	1. superclass:
+	directly into the superclass table
+	2. subclass:
+	directly into the subclass table
+
+To support polymorphic retrieval of the data across the entity classes in the hierarchy the id/pk column should be unique. 
+To ensure the pk column is unique we should not use identity generator.
+We can use 
+1.1 increment (hibernate only): it uses an union query to find the max(id) from all the tables
+1.2 sequence generator = we need to use same sequence name in generating the id for all the tables in the hierarchy
+1.3 Table generator = the pk columnname to be used for generating the id should be same across all the tables/entities in the hierarchy
+
+2. GET/FETCH:
+	1. subclass: directly query the data from the subclass table
+	2. superclass: query the data from all the tables in hierarchy using union query and identify the record belongs to which table and return an appropriate entity class object.

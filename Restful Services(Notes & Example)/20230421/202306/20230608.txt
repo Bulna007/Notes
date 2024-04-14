@@ -1,0 +1,88 @@
+Template Parameters
+Template parameters are place holders or reserved tokens aspart of the PATH/URI of the request. Through then help of Template Parameters we can ask the clients/users to pass the data as an input aspart of URI of the request itself 
+
+for eg.. we can specify a position/location/placeholder within URI as below
+URI: "/product/*/details"
+in the above URI the "*" indicates user should pass anything aspart of the position within the path inorder to send the request to be recieved by the Servlet/Resource class
+Here the intention is we want the user to pass productCode aspart of that position, so that we can write the code inside the Servlet class in reading the Path, extracting the productCode and using it for performing the operation as below
+
+@WebServlet(urlPatterns={"/product/*/details"})
+class ProductServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		String path = httpReq.getPath();
+		String[] splits = path.split("/");
+		String productCode = splits[1]; // extracted the data from the specific position within the URI and using it
+	}
+}
+From the above we can understand we can reserve a position within the URI through which we can receive the data asan input
+The same can be applied in Restful Services as well
+
+@Path("/product")
+class ProductApiService {
+	
+	@GET
+	@Produces("application/json")
+	@Path("/{productCode}/details")
+	public String getProductDetails(@PathParam("productCode") String productCode) {
+		String path = request.getPath();
+		
+	}
+
+}
+here within the URI we defined an template parameter with name : "productCode" stating to the jaxrs runtime, what ever the value supplied within that position should be treated as productCode and should be inject into which parameter of the method annotated @PathParam("productCode")
+-------------------------------------------------------------------------------------------------------------------------------------------
+Sub-Resource locator
+Sub-Resource locator is the mechanism through which we can encourage modularity in developing restful service/apis
+
+manufacturing (philips)
+#2 business divisions
+- audio/stereo
+- household appliances
+
+
+@Path("/philipsCare")
+class PhilipsCustomerCareApiService {
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{city}/locate")
+	public String locateUs(@PathParam("city") String city) {
+		return "Somajiguda";
+	}
+	
+	#locator method
+	@Path("/stereo")
+	public PhilipsStereoCustomerCareApiService stereoCustomerCareService() {
+		return new PhilipsStereoCustomerCareApiService();
+	}
+	
+	@Path("/household")
+	public PhilipsHouseholdAppliancesCareApiService householdAppliancesCareService() {
+		return new PhilipsHouseholdAppliancesCareApiService();
+	}
+	
+}
+
+
+#the below classes are not resources and are not directly accessible	
+class PhilipsStereoCustomerCareApiService {
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/warranty")
+	public String getProductWarranty(@QueryParam("serialNo") String serialNo) {
+		// write the implementation logic for finding the warranty of the product.
+		return warranty;
+	}
+}
+
+class PhilipsHouseholdAppliancesCareApiService {
+	@PUT
+	@Path("/extendWarranty")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String extendWarranty(@QueryParam("serialNo") String serialNo) {
+		return "extended";
+	}
+}
+	
+METHOD: GET	
+URL: /philipsCare/stereo/warray?serialNo=S93839

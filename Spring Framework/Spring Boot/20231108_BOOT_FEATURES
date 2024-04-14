@@ -1,0 +1,92 @@
+There are 6 features are there in spring boot
+1. auto configurations
+2. starter dependencies
+3. actuator endpoints
+4. devtools
+5. embedded servlet containers
+6. springboot cli
+
+1. auto-configurations
+while working with spring framework in building our application, we need to write lot of configuration information pertaining to our application enabling the spring framework components work for our application. So most of the time we endup in configuring the framework components within our application even though our application will not use them directly, thus making the developers find it complex and difficult to use the spring framework
+
+since these classes are provided by the framework developers, they know the details of their classes so instead of we configuring the framework components manually within our application, let the framework by itself configure their components and make them available for our application, this can be done through spring boot auto-configurations
+
+There are lot of components provided aspart of the framework, if auto-configurations takes care of configuring all of the framework components as beans in our application, then we would endup in wasting huge amount of jvm memory even though we dont use them.
+	
+So to avoid this spring boot auto-configurations are designed to work based on opinionated view. 
+For example if we add spring jdbc module as a dependency within our application, along with h2 database as well. By looking at h2 database within the classpath of our application, the auto-configurations will understand we are using in-memory database in our application and takes care of configuring the jdbc module classes as bean definitions with default configuration.
+	
+here the auto-configurations takes care of configuring the DataSource, JdbcTemplate and PlatformTransactionManager as bean definitions with default values pointing to h2 database of our application, but incase if we are using an mysql-connector-java as a database driver in our application, the spring boot auto-configurations dont know the details of our database in configuring the framework components.
+	
+So if the requirements are diverging from the defaults, then the developers can pass the configuration values with which the components should be configured as bean definitions to auto-configurations. So with minimal efforts we can quickly fine tune framework components for our application
+
+In-short: Instead of we configuring the framework components as bean definitions in our application, the spring boot auto-configurations takes care of configuring the framework components as bean definitions within our application based on opinionated view. even the developers can pass configuration values as input to the auto-configurations in customizing the way they configure the framework components to work for application with minimal efforts. Now the developers dont have to write lot of code in tuning the framework to work for our application.
+	
+2. starter dependencies
+-----------------------
+starter dependencies provides jump start experience in begin development of an application using spring framework.
+
+	
+spring core module
+
+spring-core-6.0.1.jar = classpath
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

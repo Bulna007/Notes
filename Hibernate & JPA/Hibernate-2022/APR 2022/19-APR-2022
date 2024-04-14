@@ -1,0 +1,86 @@
+jpa api 
+--------
+1. EntityManager = Session in Hibernate Framework
+2. EntityManagerFactory = SessionFactory in Hibernate Framework
+3. Persistence = Configuration class
+	
+How many objects of the EntityManagerFactory we need to create in an jpa application?
+1 object of EntityManagerFactory per one database of an application.
+	
+How many objects of EntityManager we need to create?
+per operation we need to create one object of EntityManager
+
+How many ways we can map an entity class to a database?
+There are 2 ways are there
+1. xml-based configuration approach (jpa mapping file)
+2. annotation-driven approach
+
+How to write the jpa configuration for performing persistence operation?
+we need to configure database and jpa configuration in an xml file called persistence.xml
+1. we need to place the persistence.xml under the classpath of the project inside META-INF/ directory
+2. the name of the file must and should be persistence.xml only
+3. we need to write <persistence-unit/> declaration within persistence.xml per each database we are working with. we dont need to write multiple persistence.xml files
+------------------------------------------------------------------------------------------
+jpa api with xml-based mapping file approach
+--------------------------------------------
+subscriber
+----------
+[subscriber_no, subscriber_nm, subscribed_dt, subscription_type, circle, credit_limit, mobile_no, email_address, dob, gender]
+
+package com.jpamf.entities;
+public class Subscriber {
+	@Id
+	@Column(name="subscriber_no")
+	int subscriberNo;
+	String subscriberName;
+	String subscriptionType;
+	Date subscribedDate;
+	String circle;
+	float creditLimit;
+	Date dob;
+	String gender;
+	String mobileNo;
+	String emailAddress;
+	
+	// accessors
+}
+
+Subscriber.orm.xml
+-------------------
+<?xml version="1.0" encoding="utf-8"?>
+<entity-mappings>
+	<entity class="com.jpamf.entities.Subscriber">
+		<table>subscriber</table>
+		<attributes>
+			<id name="subscriberNo">
+				<column name="subscriber_no"/>
+			</id>
+			<basic name="subscriberName">
+				<column name="subscriber_nm"/>
+			</basic>
+			<basic name="subscriptionType">
+				<column name="subscription_type"/>
+			</basic>
+			<basic name="subscriberDate">
+				<column name="subscriber_dt"/>
+			</basic>
+			<!-- remaining attributes also should be mapped-->
+		</attributes>
+	</entity>
+</entity-mappings>
+
+META-INF/persistence.xml
+------------------------
+<?xml version="1.0" encoding="utf-8"?>
+<persistence>
+	<persistence-unit>
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>		
+		<mapping>com/jpamf/entities/Subscriber.orm.xml</mapping>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value=""/>
+			<property name="javax.persistence.jdbc.url" value=""/>
+			<property name="javax.persistence.jdbc.user" value=""/>
+			<property name="javax.persistence.jdbc.password" value=""/>
+		</properties>
+	</persistence-unit>
+</persistence>

@@ -1,0 +1,269 @@
+How does the spring boot application works?
+1. 
+Most of the application we built using spring boot looks same as spring framework application only. While working with spring boot also we wrote components annotated with streotype annotations.
+	
+@Component	
+class LoanApplication {
+	@Value("${loanApplicationNo}")
+	int loanApplicationNo;
+	@Value("${applicantName}")
+	String applicantName;
+	@Value("${principleAmount}")
+	double principleAmount;
+	@Value("${loanType}")
+	String loanType;
+	@Value("${tenure}")
+	int tenure;
+	// accessors
+}	
+
+@Component
+class CreditReport {
+	@Value("${cibilScore}")
+	int cibilScore;
+	@Value("${description}")
+	String description;
+	@Autowired
+	LoanApplication loanApplication;
+	// accessors
+}
+
+// no sourcecode
+class LoanAnalyzer {
+	LoanApplication loanApplication;
+	public void setLoanApplication(LoanApplication loanApplication) {}
+	public LoanApplication getLoanApplication() {}
+}
+
+@Configuration
+@ComponentScan(basePackage={"com.bootcore.beans"})
+@PropertySource("classpath:appValues.properties")
+class JavaConfig {
+	
+	@Bean
+	public LoanAnalyzer loanAnalyzer(LoanApplication loanApplication) {
+		LoanAnalyzer analyzer = new LoanAnalyzer(loanApplication);
+		return analyzer;
+	}
+}
+
+class App {
+	public static void main(String[] args) {
+		ApplicationContext context = new AnnotationConfigApplicationContext(JavaConfig.class);		
+	}
+}
+
+appValues.properties
+--------------------
+loanApplicationNo=93
+applicantName=joe
+principleAmount=39393
+loanType=personal
+tenure=23
+	
+2. 
+From the above code, there are few changes we need to make inorder to align the application to spring boot
+
+2.1 Instead of writing an separate Java Configuration class for defining the bean definitions we can use our Main class inour application itself as Configuration class. So that we can eliminate writing one more class for defining the bean configurations of our application.
+	
+@Configuration
+@ComponentScan(basePackages={"com.bootcore.beans"})
+@PropertySource("classpath:appValues.properties")
+class App {
+	@Bean
+	public LoanAnalyzer loanAnalyzer(LoanApplication loanApplication) {
+		LoanAnalyzer analyzer = new LoanAnalyzer(loanApplication);
+		return analyzer;
+	}
+	public static void main(String[] args) {
+		ApplicationContext context = new AnnotationConfigApplicationContext(App.class);		
+	}
+}	
+
+2.2 	
+instead of writing appValues.properties, if we can write the configuration values to be used in our application inside application.properties those would be automatically loaded into the environment object of the ioc container, so that we can eliminate writing @PropertySource to explicitly load the properties file
+
+src/main/resources/application.properties
+--------------------
+loanApplicationNo=93
+applicantName=joe
+principleAmount=39393
+loanType=personal
+tenure=23
+	
+2.3 
+We need to write the App class under the root package of our application, where all the other components of our application falls into the sub-packages of the root in which we have our App class written.
+The spring boot has provided an annotation called @SpringBootApplication, it is equivalent to 3 annotations of spring framework
+1. @Configuration 
+2. @ComponentScan = applied with basePackages as .* 
+3. @EnableAutoConfiguration 
+	
+The Main class we wrote above instead of writing the @Configuration and @ComponentScan we can replace it with @SpringBootApplication as below
+	
+package com.bootcore;
+
+@SpringBootApplication
+class App {
+	@Bean
+	public LoanAnalyzer loanAnalyzer(LoanApplication loanApplication) {
+		LoanAnalyzer analyzer = new LoanAnalyzer(loanApplication);
+		return analyzer;
+	}
+	public static void main(String[] args) {
+		ApplicationContext context = new AnnotationConfigApplicationContext(App.class);		
+	}
+}	
+	
+upon writing @SpringBootApplication on Main class
+	1. The App class becomes @Configuration class
+	2. it has been annotated with @ComponentScan with basePackages as ".*" which means scan for all the sub-packages under the root package for streotype annotated classes
+	3. @EnableAutoConfiguration = by default AutoConfigurations are not enabled in spring boot application. To enable them explicitly we need to write @EnableAutoConfiguration annotation on the Configuration class. By writing @SpringBootApplication on the Main class (Configuration class) we are enabling auto-configurations of spring boot by default here
+	
+since we are annotating the Main class with @SpringBootApplication annotation this class is even called as "Boot Application" class.
+	
+
+4. Within the Main class inside the main method, we need to write the logic for creating ioc container. Instead of we writing the code for creating the ioc container using AnnotationConfigApplicationContext or any of the implementations of ApplicationContext interface we need to use SpringApplication provided by spring boot developers in creating the ioc container
+	
+ApplicationContext context = SpringApplication.run(App.class);
+Let us understand what will happen when we invoke SpringApplication.run(App.class):
+
+The whole echo system of spring boot has been built into SpringApplication class, it is the core or the fundamental component of Spring Boot.
+When we call the static method SpringApplication.run(BootApplication.class, args); it performs the below operations aspart of our application.
+	
+ApplicationContext context = SpringApplication.run(App.class, args);
+1. creates an empty ioc container
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

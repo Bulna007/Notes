@@ -1,0 +1,272 @@
+Sub-Resource Method:
+if the resource method is annotated with @Path("/") annotation by binding an subURI to access it then the method is called "Sub-Resource" method.
+	
+interfaces & abstract class in building an restful services
+-----------------------------------------------------------
+1. interface
+we can develop restful service through interface as well. The only reason for developing restful service or api class based on an interface is to decouple/separte the resource class from jaxrs api annotations. So, that we can achieve better readability of the code 
+
+when we are using interface, write all the jaxrs api annotations on the interface methods itself, so that these annotations would be inherited in the implementation class when we override those methods, so again we dont need to annotation the methods in implementation class.
+	
+@Path annotation should be written on the implementation to expose it as an Api class.
+	
+interface ProductApiService {
+	@GET
+	@Produces("text/plain")
+	public double getProductPrice(@QueryParam("productCode") String productCode);
+}	
+
+@Path("/product")	
+class ProductApiServiceImpl implements ProductApiService {	
+	public double getProductPrice(String productCode) {
+		// business logic
+		return 93;
+	}
+}	
+--------------------------------------------------------------------------------------------------------------------------------------------
+2. Abstract classes
+we can build restful service classes out of an abstract class as well. we can have partial functionality in the base abstract class and reuse it across several implementations of the abstract class in providing different functionality.
+	
+abstract class AutomobileServiceApi {
+	@GET
+	@Produces({"application/json", "application/xml"})
+	String getBill(@QueryParam("jobCardNo") String jobCardNo) {
+		// business logic in fetching the bill information
+		response = buildBillResponse(bill);
+		return response;
+	}
+	abstract String buildBillResponse(Bill bill);
+}
+
+@Path("/jsonautomobileservice")
+class JSONAutomobileServiceApi extends AutomobileServiceApi {
+	String buildBillResponse(Bill bill) {
+		StringBuilder response = null;
+		response = new StringBuilder();
+		builder.append("{'billNo':").append(bill.getBillNo()).append(", 'jobCardNo':'").append(bill.getJobCardNo).append("'}");
+		return response;
+	}
+}
+
+@Path("/xmlautomobileservice")
+class JSONAutomobileServiceApi extends AutomobileServiceApi {
+	String buildBillResponse(Bill bill) {
+		StringBuilder response = null;
+		response = new StringBuilder();
+		builder.append("<bill><billNo>").append(bill.getBillNo()).append("</billNo><jobCardNo>").append(bill.getJobCardNo).append("</jobCardNo></bill>");
+		return response;
+	}
+}
+
+GET
+/xmlautomobileservice?jobCardNo=10
+
+-------------------------------------------------------------------------------------------------------------------------------------------	
+@Path("/jsonautomobileservice")	
+class JsonAutomobileServiceApi {
+	@GET
+	@Produces("application/json")
+	String getBill(@QueryParam("jobCardNo") String jobCardNo) {
+		// business logic in fetching the bill information
+		// construct application/json bill response
+		return response;
+	}
+	
+	@Post
+	@Consumes("application/json")
+	@Produces("text/plain")
+	String newService(InputStream in) {
+		// extract the json requestBody data into JobDetails object
+		// business logic
+		// build the response in text/plain format
+		return response;
+	}	
+}	
+
+@Path("/xmlautomobileservice")	
+class XmlAutomobileServiceApi {
+	@GET
+	@Produces("application/xml")
+	String getBill(@QueryParam("jobCardNo") String jobCardNo) {
+		// business logic in fetching the bill information
+		// construct application/xml bill response
+		return response;
+	}
+	
+	@Post
+	@Consumes("application/xml")
+	@Produces("text/plain")
+	String newService(InputStream in) {
+		// extract the xml requestBody data into JobDetails object
+		// business logic
+		// build the response in text/plain format
+		return response;
+	}	
+}
+
+AutomobileServiceCenter
+	@GET
+	@Produces("application/json")
+	String getBill(@QueryParam("jobCardNo") String jobCardNo) {}
+responseType:
+	jobCardNo
+	billNo
+	billDate
+	description
+	billAmount
+	supervisorName
+	
+	@POST
+	@Consumes("application/json")
+	@Produces("text/plain")
+	String newServiceRequest(InputStream in) {}
+		
+requestType:
+	registrationNo
+	model
+	year
+	color
+	kilometers
+	serviceType
+responseType:
+	jobCardNo
+-------------------------------------------------------------------------------------------------------------------------------------------
+Working with Template Parameters
+Template parameters are the fixed/reserved tokens aspart of the URI of the request, within which the user can supply the values as an input to the resource class.
+
+resource:
+TrainEnquiryResource
+	String getRunningStatus(String trainNo) {}
+
+
+@Path("/trainenquiry")
+class TrainEnquiryApiService {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{trainNo}/status")
+	public String getRunningStatus(@PathParam("trainNo") String trainNo) {
+		return "Ghaziabadh";
+	}
+}
+
+METHOD: GET
+URI: /api/trainenquiry/83i8s/status
+
+"/api/trainenquiry/*/status"
+
+
+@WebServlet(urlPatterns={"/trainEnquiry/*/status"})
+class TrainEnquiryServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		
+		String reqPath = httpReq.getPath();
+		String[] splits = reqPath.split("/");
+		String trainNo = splits[1];		
+	}
+}
+
+URI: /trainEnquiry/T939/status
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

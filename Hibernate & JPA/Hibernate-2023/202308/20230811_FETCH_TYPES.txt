@@ -1,0 +1,133 @@
+1. FetchType
+The FetchType is applicable to only the associated objects of an entity class.
+In hibernate Mapping file:
+on the association mapping we need to write an attribute lazy="true/false"
+	
+In Jpa annotations:
+we need to declare an attribute on the mapping annotation fetch=FetchType.LAZY/EAGER
+
+class Product {
+	private int productNo;
+	private String productName;
+	private String category;
+	private String manufacturer;
+	private double price;
+	
+	@OneToMany(mappedBy="product", fetch=FetchType.LAZY)
+	Set<Review> reviews;
+	// accessors
+}	
+
+class Review {
+	private int reviewNo;
+	private int rating;
+	private String remarks;
+	private String postedBy;
+	private LocalDate postedDate;
+	
+	@ManyToOne
+	@JoinColumn(name="product_no", nullable="false")
+	Product product;
+	// accessors
+}
+
+Product.hbm.xml
+<hibernate-mapping package="com.invs.entities">
+	<class name="Product" table="product">
+		<id name="productNo" column="product_no">
+			<generator class="identity"/>
+		</id>
+		...
+		<set name="reviews" inverse="true" lazy="true/false">
+			<key column="product_no" not-null="true"/>
+			<one-to-many class="Review"/>
+		</set>
+	</class>
+</hibernate-mapping>
+
+Review.hbm.xml
+<hibernate-mapping package="com.invs.entities">
+	<class name="Review" table="review">
+		<id name="reviewNo" column="review_no">
+			<generator class="identity"/>
+		</id>
+		<many-to-one name="product">
+			<column name="product_no" not-null="true" />
+		</many-to-one>
+	</class>
+</hibernate-mapping>
+
+
+Product product = session.get(Product.class, 1);
+By default when we fetch an entity object, only the primitive attributes corresponding to the object form the relevant table will be queried, the associated objects will not be fetched from the database.
+	
+	
+when we access the associated objects by using the accessor methods on the associated attribute then hibernate queries the data from database table in fetching the associated objects as well.
+	product.getReviews(); // now goes to the database and fetches the Reviews associated with that product
+
+So the default FetchType for an associate is "LAZY". 
+There are 2 FetchTypes are supported by hibernate/jpa api
+1. LAZY
+2. EAGER
+
+incase if we have specified the EAGER as FetchType for that associate along with quering the entity object, their associated objects also will be queried and populated into the entity object.
+-------------------------------------------------------------------------------------------------------------------------------------
+Fetch Mode
+A Fetch Mode indicates how does the child associated objects should be queried from the database table
+There are 3 fetch modes are available
+1. select
+2. join
+3. subselect
+
+#1. select
+select is the default fetchMode incase of hibernate. when we tried fetching an entity object, the associated entities will be fetched from the database table in an separate select query.
+1 query for fetching the entity object and 1 query per each child entity objects associated with that parent
+
+for eg.. when we tried fetching the product entity object, product has reviews as associated object, so it queries the product in 1 query and 1 more query will be fired on the database to fetch reviews.
+	
+Product product = session.get(Product.class, 1);
+here one query will executed by hibernate to fetch product object data from product table. here if we specify fetchType as EAGER along with that one more "select" query also will be fired on the database to fetch reviews of the product. otherwise the 2nd select query will be delayed untill we access the reviews associated object.
+	
+fetchType = when to fetch the child objects
+fetchMode = how to fetch the child objects
+
+fetchType = LAZY
+fetchMode = select
+Product product = session.get(Product.class, 1);
+in this case only the product entity object will be queried from the database, the child associated reviews will be queried
+
+Set<Review> reviews = product.getReviews();
+reviews.forEach(review-> {});
+
+To support Lazy initialization of the child collection, hibernate instantiates their own implementation of the collection interface by wrapping the Session object and populates into the associate attribute. PersistentSet, PersistentList, PersistentMap.
+So when we iterate over the Set, we are iterating over the PersistentSet implementation which has logic for going to the database and querying the data and fetching it.
+	
+	
+2. FetchMode: join
+if FetchMode as join, while querying the data for parent entity object, hibernate makes an join query with child associated table and queries together the child object records also from the database table. So a single query will be triggered on the database in fetching the child associated objects along with parent, using join queries so it is called FetchType: JOIN
+
+For eg.. while querying the product entity object, along with querying the product the child associated objects reviews also will be queried from the database by using join query as below.
+	
+Product product = session.get(Product.class, 1);
+select * from product left outer join reviews on product.product_no = reviews.product_no where product.product_no = 1
+	
+3.fetchMode: subselect
+
+<set name="reviews" inverse="true" lazy="true" fetch="select">
+	<key column="product_no"/>
+	<one-to-many class="Review"/>
+</set>
+
+
+TypedQuery<Product> query = session.createQuery("from Product p where p.category=?", Product.class); #2 product nos
+query.setParameter(1, "electronics");
+
+List<Product> products = query.getResults(); 
+
+for(Product product : products) { #30
+	Set<Review> reviews = product.getReviews(); 
+}
+
+To query the child associate objects, hibernate rather than executing one query per each child association of the parent, it queries the child associations for all the parents that resulted in outerquery at one shot as below by running an subselect query as below:
+
+select r1.* from review r1 where r1.product_no in(select p1.product_no from product p1 where p1.category_nm=?)

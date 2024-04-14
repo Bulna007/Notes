@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>Validity Property</h2>
+    <label for="age">Age :</label>
+    <input type="number" name="age" id="age" min="1" max="100" />
+
+    <button onclick="proceed();">Submit</button>
+    <script type="text/javascript">
+        function proceed() {
+            const inpAge = document.getElementById("age");
+            if(inpAge.validity.rangeOverflow) {
+                alert("age is greater than 100");
+            }else if(inpAge.validity.rangeUnderflow) {
+                alert("age is lessThan 1");
+            }else {
+                alert("You are qualified");
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+There are multiple ORM Technology supported frameworks are available in java
+1. Hibernate Framework
+2. EclipseLink
+3. MyBatis
+
+Later on Sun Microsystem has provided jpa api in-support ORM technology as part of java language.
+JPA stands java persistence api, for this api Hibernate Framework has provided implementation along with sun implementation as well called jpa ri (reference implementation) implementation.
+
+There are 2 parts of Hibernate Framework
+1. Hibernate Core [Hibernate Framework]
+2. Hibernate EntityManager (implementation of jpa api)
+-----------------------------------------------------------------------------------------------
+How to establish relationship between the tables in relational database management system?
+We store the data interms of tables defined with columns. not all the data of the application can be stored in one single table as it throws us into maintainability problems.
+
+Breakdown the data and distribute across multiple tables, use normalization technics in identify the tables to store the data. 
+
+since the data has broken down and placed across multiple tables how can we establish relationship between the data?
+In order to establish relationship between the data across the tables
+	1. each table must and should have an primary key with which we uniquely identify a record of information if it wants to participate in relationship
+	2. write the primary key column of a table as a referential column in another table which is called foreign key column through which we can identify what records of data are related together across the tables
+	
+By writing primary key and foreign key across the tables we can derive 3 types of relationships between the tables
+1. one-to-one relationship
+2. one-to-many or many-to-one relationship
+3. many-to-many relationship
+
+How do we derive the type of relationship we should establish between the tables?
+it purely depends on the business assumptions on which we are storing the data and we cannot derive the relationships by looking at data or table names.
+		
+How to establish the relationship between the tables?

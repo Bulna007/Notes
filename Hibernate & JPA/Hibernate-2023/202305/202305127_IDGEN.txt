@@ -1,0 +1,117 @@
+What is an primary key? what is the purpose of it?
+primary key is a column that holds unique data across the records of data within the table, so that it can be considered or taken as an logical address of that record inorder to establish relationship with other records of other tables within the schema
+
+How to choose a primary key for a table while designing?
+always avoid choosing business/natural columns that holds the business data as key columns, because the assumptions we have made in considering those columns as key columns might change in future due to which the whole data model needs to be redesigned and a huge amount of rework in redeveloping the software application working on that schema 
+instead it is recommended to consider the key column of the table as an surrogate column.
+surrogate column: additional column that is not related to the business or not part of the business data.
+
+since the surrogate key is independent of the business data, if there is a change in business model it would not impact the surrogate column and hence doesnt require to redesign the schema/application
+
+Who will supply the value for these surrogate key columns while persisting the data into the tables?
+since these columns are not business data columns, the enduser dont have knowledge of what is it and what value should be passed so that it would be unique and would be accepted by the system.
+
+for eg.. if we are registering customers in an application, and if we ask the customer to enter the below information
+customer (table)
+-------- 
+first_nm
+last_nm
+age
+gender
+mobile_nbr
+email_address
+
+he/she can provide this data, since it is related to him, but if we have added a surrogate column to the table as a key column below.
+
+customer (table)
+-------- 
+customer_no (pk)
+first_nm
+last_nm
+age
+gender
+mobile_nbr
+email_address
+
+here if the system is prompting the customer to pass the customer_no as an input along with other fields for registering himself, the enduser dont have any clue about what is his customer_no for registering and what makes it unique also
+so the software application, that is performing that business operation of registering the customer itself is expected to generate the customer_no using which the application should persist the customer information rather than prompting the user to provide the input.
+
+in-short: for surrogate key columns, the system/application by itself should be able to generate the value using which the data needs to be persisted.
+
+How to make these surrogate columns to be generated values, in an application?
+The developer has to write the code within the application to generate the key column values, uniquely using which the application should be able to persist the data
+
+class Customer {
+	String firstName;
+	String lastName;
+	int age;
+	String gender;
+	// accessors
+}
+
+class CustomerDao {
+	public int saveCustomer(Customer customer) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		Statement stmt = null;
+		boolean flag = false;
+		int customerNo = 0;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd);
+			con.setAutoCommit(false);
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("select max(customer_no) from customer");
+			if(rs.next()) {
+				customerNo = rs.getInt(1);
+			}
+			customerNo++;
+			pstmt = con.preparedStatement("insert into customer(customer_no, first_nm, last_nm, age, gender) values(?,?,?,?,?)");
+			pstmt.setInt(0, customerNo);
+			pstmt.setString(1, customer.getFirstname());
+			pstmt.setString(2, customer.getLastname());
+			pstmt.setString(3, customer.getAge());
+			pstmt.setString(4, customer.getGender());			
+			pstmt.executeUpdate();
+
+			flag = true;
+		}catch(Exception e) {
+			flag = false;
+		}finally {
+			if(con != null) {
+				if(flag) {
+					con.commit();
+				}else {
+					con.rollback();
+				}
+			}
+			// close the resources
+		}
+	}
+}
+
+here we used the technic of querying the last or max generated key value and incrementing by 1 for the new customer, even though this approach seems working, it has lot of limitations lets explore:
+1. the above piece of code will not works in multi-threaded environment, there is always a chance of having same key computed for 2 different users if they are sending the request concurrently
+2. the developer has to write the key generation logic for each table that we have in our application, which is an tedious job and difficult to maintain
+3. the above key generation strategy we have choosen only works for integer values only, but always the key columns will not be integers in an application, we might want to have keys as alphanumeric, insuch case again we need identify the algorithm/strategy of generating/computing these keys uniquely
+
+From the above we can understand managing/generating the surrogate keys to be used for persisting the data in an application is quite complex job, and its a common requirement in building any application
+
+To help us in generating these keys the hibernate framework has provided ID Generators. There are several ID generators are provided by hibernate framework insupport of different types of key columns . There are 11 id generators are provided by hibernate framework
+1. assigned
+2. sequence
+3. increment
+4. hilo
+5. seq_hilo
+6. uuid
+7. guid
+8. foreign
+9. select
+10. identity
+11. native
+	
+all the above id generators are deprecated and removed in hibernate6 to align with jpa specification. Hibernate framework supports only the jpa api id generators
+1. AUTO
+2. SEQUENCE
+3. IDENTITY
+4. TABLE

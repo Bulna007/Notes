@@ -1,0 +1,74 @@
+How many formats in which we can store the data on a File of a computer?
+There are 2 formats are there
+1. human understandable format
+2. programmable format
+
+2. Programmable format
+While storing the data on a file of a computer we use special format in storing/writing the data, so that software programs can interpret the data and read them to perform the operations 
+
+There are lot of programmable formats of storing the data are there
+1. Fixed-with field size format
+2. csv format
+
+2. CSV (Comma Separated Value) text format
+The data is stored interms of records and each field of information is delimited by "," to differentitate various fields of data. based on the comma (,) and field position we write programs to extract the data and perform operations on that data
+
+advantage:-
+	1. no wastage of memory
+	2. cost of storage is very less and will be only to the extent of the data we stored
+	3. both machine & human understandable
+	4. no need of prior knowledge and assumptions in deriving the field sizes, because the fields are not identified based on size rather those are identified based on "," and position
+	5. this format is flexible for storing the data of varied length for each field, so dont need to migrate the data or modify the software program when there is a change in the length of the fields
+dis-advantage:-
+	1. random access of the data is not supported
+	2. performing delete, update, insert or add new records of data is very complex
+	3. no semantics are attached to the data, so it will be difficult to identify the which field is representing what data
+	4. the information is not structured, so we cannot derive the boundaries of the data which means we cannot identify the start and end of a field. For eg.. if the actual data itself contains "," character then the boundaries of the data are mis-interpreted by the programs	
+there is no accuracy in retrieving the data from csv format and hence not recommended for storing business data
+
+
+3. XML (eXtensible markup language)
+XML stands for eXtensible markup language. XML is not a programming language, rather XML is an data representation format used for storing the data on a File. XML allows us to store the data in structured format and attaches semantics to the data
+
+structured format = we can understand the boundaries of the data, means start of a field and end of a field because we are enclosing the data in start and end tag
+
+semantics = meaning of the data, which means each field is representing what information is stored along with data
+
+<sales>
+	<sale>
+		<customer-name>joseph</customer-name>
+		<sale-date>2023/03/01T10:02</sale-date>
+		<quantity>3</quantity>
+		<bill-amount>394</bill-amount>
+	</sale>
+</sales>
+
+For eg. we want to restrict for sales xml to have only these tags, we can define this structure in an DTD or XSD allowing only those tags of information in our xml
+and we can validate whether the XML has been written based on the definition we defined in DTD or XSD
+
+DTD = Document Type definition document
+XSD = Xml Schema document
+
+the advantage of storing the data in structured format by attaching the semantics to is, there is zero chance of mis-interpreting the data.
+			
+advantages:-
+	1. both human readable and machine understandable as well
+	2. supports sequential and random access of the data
+	3. the data is well structured so that we can easily identify and extracts the fields of information. there is no need of historical data or assumption in deriving the field sizes or no chance of breaking the boundaries because of having "," in the data
+	4. since the is attached with semantics, everyone can understand the meaning of the data so there is no chance of mis-interpreting the data
+	5. we can validate the data being stored is valid or not using DTD or XSD
+	
+business data will always have relationship
+
+customer.txt
+joseph 839484733 joseph@gmail.com  Male  05/09/1998
+john   034404950 john@yahoo.com    Male  07/03/2001
+	
+sale.txt
+1 2023/02/12T10:03 23 38494
+2 2023/03/01T10:39 3  39
+	
+The only way to establish relationship between the entities of the data in fixed-width field size format or csv format is by writing in one line (because these are linear data representation models)	
+sales.txt	
+joseph 839484733 joseph@gmail.com  Male  05/09/1998 1 2023/02/12T10:03 23 38494
+john   034404950 john@yahoo.com    Male  07/03/2001 2 2023/03/01T10:39 3  39

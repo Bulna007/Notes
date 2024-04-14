@@ -1,0 +1,102 @@
+Java programs wants to read the data from underlying source system like RDBMS or File as input to perform operations, but if we write java programs to directly read the data from underlying source system in performing the operations we run into several problems as described below.
+
+class SalesManager {
+	public double getTotalSalesAmount() {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		double TotalSalesAmount = 0;
+		double saleAmount = 0;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd);
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("select * from sales");
+			while(rs.next()) {
+				totalSalesAmount = totalSales + rs.getDouble("paid_amount");
+			}
+			
+		}catch(SqlException | ClassNotFoundException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			// close all the resources
+		}
+		return totalSalesAmount;
+	}
+}
+
+In the above program we have written 2 types of logics, one is business logic and other is persistence logic, we are writing business logic intermingled with persistence logic within our application due to which we run into several problems
+The business logic will become tightly coupled with persistence logic there by which
+
+1. our business logic will exposed to the underlying source system from where the data is coming as an input, due to which if the underlying source system has been changed again there will be an impact on business logic
+2. if the underlying source system format in which the data is stored has been changed, again we need to modify the business logic
+3. we need to duplicate the same business across various different source system of inputs
+
+
+class Sale {
+	int saleNo;
+	Date saleDate;
+	double billAmount;
+	double discount;
+	double paidAmount;
+	// setters & getters
+}
+
+class SalesManager {
+	public double getTotalSalesAmount(List<Sale> sales) {
+		double totalSalesAmount = 0;
+		
+		sales.stream().forEach((saleAmount) ->
+		{
+			totalSaleAmount = totalSaleAmount  +saleAmount;
+		});
+		return totalSaleAmount;
+	}
+}
+
+class SalesAccessor {
+	List<Sale> getSales() {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		Sale sale = null;
+		List<Sale> sales = null;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd);
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("select * from sales");
+			sales = new ArrayList();
+			while(rs.next()) {
+				sale = new Sale();
+				sale.setSaleNo(rs.getInt("sale_no"));
+				sale.setSaleDate(rs.getDate("sale_dt"));
+				sale.setBillAmount(rs.getDouble("bill_amount"));
+				sale.setDiscount(rs.getDouble("discount"));
+				sale.setPaidAmount(rs.getDouble("paid_amount"));
+				sales.add(sale);
+			}
+			
+		}catch(SqlException | ClassNotFoundException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			// close all the resources
+		}
+		return sales;
+	}
+}
+
+
+class Test {
+	public static void main(String [] args) {
+		SalesAccessor accessor = new SalesAccessor();
+		List<Sale> sales = accessor.getSales();
+		SalesManager salesManager = new SalesManager();
+		double totalSalesAmount = salesManager.getTotalSalesAmount(sales);
+		sop(totalSalesAmount);
+	}
+}

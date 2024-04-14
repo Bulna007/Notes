@@ -1,0 +1,82 @@
+class Calculator {
+	int add(int a, int b) {
+		int sum = 0;
+		sum = a + b;
+		sop("in add()");
+		return sum;
+	}
+}
+
+class LoggingAdvice implements MethodInterceptor {
+	public Object invoke(MethodInvocation invocation) {
+		String methodName = null;
+		Object[] args = null;
+		
+		methodName = invocation.getMethod().getName();
+		args = invocation.getArguments();
+		System.out.println("entered into " + methodName+"("+args[0]+","+args[1]+")");
+		
+		Object ret = invocation.proceed();
+		
+		System.out.println("exiting from " + methodName + " with ret : " + ret);
+		return ret;
+	}
+}
+
+
+ProxyFactory pf = new ProxyFactory();
+pf.setTarget(new Calculator());
+pf.addAdvice(new LoggingAdvice());
+
+Calculator proxy = (Calculator) pf.getProxy();
+//proxy.getClass().getName();
+
+int sum = proxy.add(10, 20);
+sop("sum : " + sum);
+
+ProxyFactory upon calling the getProxy() method will generates an runtime proxy class using CGLIB & ASM proxy generation libraries within the jvm memory extending from original class and overrides the targetClass joinpoint to extend/enhance the functionality of the original method as below.
+	
+Then it creates the object of the proxy class and returns the object to us. Since the proxy is an subclass of the original class, we can hold it super class variable
+
+upon calling the proxy.add(10, 20), the jvm will looks for the add method on Proxy class (subclass by default) and invokes the proxy method only.
+	
+
+// only for illustration, the actual code might differ	
+class Calculator$Proxy extends Calculator {
+	Object target;
+	MethodInterceptor methodInterceptor; // LoggingAdvice
+	
+	Calculator$Proxy(Object target, MethodInterceptor methodInteceptor) {
+		this.target = target;
+		this.methodInterceptor = methodInterceptor;
+	}
+	
+	#The job of the proxy: to apply aspect advice logic ontop of targetClass. 
+	#if it is around advice: dont execute targetClass method, just execute invoke method with neccessary information wrapped in Methodinvocation object
+		
+	public int add(int a, int b) {
+		MethodInvocation methodInvocation = null;
+		
+		methodInvocation = new MethodInvocation();
+		methodInvocation.setMethod(method);
+		methodInvocation.setArguments(args);
+		methodInvocation.setTarget(target);
+		methodInvocation.setThis(this);
+		Object ret = methodInterceptor.invoke(methodInvocation);
+		return ret;		
+	}
+}
+
+
+#MethodInvocation contains the invocation information about an method like Method Signature, argments, object
+class MethodInvocation {
+	private Method method;
+	private Object target;
+	private Object[] args;
+	private Object this;
+	
+	Object proceed() {
+		Object ret = method.invoke(target, args);
+		return ret;
+	}	
+}

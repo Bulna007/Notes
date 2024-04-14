@@ -1,0 +1,44 @@
+Strategy Design Pattern
+-----------------------
+1. Favor composition over inheritance
+2. always design to interfaces, never design to concreate classes
+3. code should be open for extension and closed for modification
+
+
+1. Favor composition over inheritance
+A class can use the functionality of another class in #2 ways
+1. inheritance
+2. composition
+
+1. inheritance
+Inheritance is a mechanism through which a class can acquire/reuse the functionality of another class. When we use inheritance all the traits of another class will become part of our class. Inheritance always established IS-A relationship between the classes.
+
+2. composition
+The another way of achieving reusability across the classes is through composition. In case of composition we declare other class as an attribute in our class, then instantiate the object of another class and hold in the reference variable. using the object of another class we access the functionality of other class. Composition always establishes HAS-A relationship between the classes
+
+when to use Inheritance and when we should use composition
+Inheritance
+There are #2 thumb rules based on which we need to decide whether a class can reuse the functionality of another class via Inheritance or not
+1. if we want to use all the traits of another class in our class
+2. if we can express or represent our class onbehalf the another class
+then we can establish inheritance relationship between the classes
+
+For eg.. An SmartPrinter is a class which can be extended from Printer because a SmarterPrinter wants to
+1. reuse all the traits of a Printer
+2. In place of a Printer we can replace it withan SmartPrinter, which is nothing but SmartPrinter is also an Printer.
+
+Composition
+If we want to use partially the functionality of other class within our class then we need to use Composition.
+For eg..
+A Radio class will use the functionality of an Transmitter, but a Radio cannot be substituted in place of Transmitter so a Radio should use the functionality of a Transmitter using composition
+Radio has a Transmittor, but Radio is not an Transmitter
+
+Favor composition over inheritance, means use most of the time Composition only in reusing the functionality of another class, rather than using Inheritance. There are certain limitations or drawbacks of using Inheritance in reusing the functionality of another class, so to overcome or avoid those problems Strategy Design Pattern is recommending us to use Composition only
+
+So let us understand what are the limitations or drawbacks of using Inheritance
+There are #4 problems we run into when we use Inheritance for reusing the functionality of another class
+1. Sometimes if we wanted to use Inheritance in reusing the functionality of another class, we cannot use it, because most of the programming languages doesnt support multiple inheritance, where our class cannot extend or reuse the functionality of multiple other classes through inheritance, only way we can reuse the functionality of multiple class in our class is by using Composition only
+
+2. In most of the realtime projects/usecases a class will not use all the traits of another class, most of the time a class want to use few of the features/traits of another class, in such case it is not preferrable to use Inheritance rather we should use composition only
+
+3. When we use Inheritance, the class will become fragile, whereas if we use Composition in reusing the functionality of another class, then the classes will become less fragile

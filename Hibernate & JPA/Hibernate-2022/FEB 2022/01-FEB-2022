@@ -1,0 +1,53 @@
+Types of databases
+1. Hierarchial database
+2. Network database
+3. Relational database
+4. Object Oriented database
+5. No-Sql or Semi-Structured database
+6. Un-Structured or Object Storage database
+
+Based on the typical requirement of the application people might use any of the three or could all even sometimes in below list
+1. Relational database
+2. No-Sql or Semi-Structured database
+3. Object Storage database
+
+None of them are mutual exclusive each of these databases compliments the application in one or the other way and plays their role in managing the data for an application/business.
+----------------------------------------------------------------------------------------------
+Based on the discussion we carried previously, we learnt the RDBMS databases are being used for storing business/structured or transactional data for an application.
+
+RDBMS supports storing the data interms of tables. tables are defined with columns and data is stored in tupples/records. but our java applications wants to read the data interms of objects to perform the operations.
+	
+Why does java programs wants to hold the data interms of objects to perform operations?
+
+public class SalesManager	{
+	public double getTotalSaleAmountOfaDayFromDatabase(Date date) {		
+		ResultSet rs = null;
+		Connection con = null;
+		double totalSaleAmount = 0;
+		PreparedStatement pstmt = null;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/kiranadb", "root", "root");
+			pstmt = con.preparedStatement("select paid_amount from sales where sale_dt = ?");
+			pstmt.setDate(1, new java.sql.Date(data.getTime()));
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				totalSaleAmount += rs.getDouble("paid_amount");
+			}						
+		}catch(ClassNotFoundException | SqlException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			// close the resources
+		}
+		return totalSaleAmount;
+	}
+	public double getTotalSaleAmountOfaDayFromCSVFile(Date date) {		
+		File f = new File("d:\sales.csv");
+			
+		totalSaleAmount += rs.getDouble("paid_amount");
+				
+		return totalSaleAmount;
+	}
+}

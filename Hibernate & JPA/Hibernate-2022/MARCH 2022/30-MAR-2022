@@ -1,0 +1,59 @@
+What are the advantages of using Hibernate Framework over jdbc api?
+#1.
+jdbc: While working with jdbc api, we need to write lot of boiler-plate logic in performing the persistence operation.
+hibernate: While using Hibernate Framework, it has provided api class Session, in which most of the persistence logic has been wrapped inside, which takes care of performing the persistence operation, so we dont need to write any of the boiler-plate logic in performing the persistence operation
+
+#2. 
+jdbc: managing the resources is a very difficult job. We need to load the driver, we need to create the connection, prepared statement and we should close them at the end of their usage. Most of the time we endup in resource leakage issues, due to improper handling of closing these resources.
+	
+try {
+	Class.forName(driverClassname);
+	con = DriverManager.getConnection(url, un, pwd);
+	pstmt = con.preparedStatement(sql);
+	rs = pstmt.executeQuery();
+}catch(ClassNotFoundException e) {
+	
+}finally {
+	try {
+		if(rs != null) {
+			rs.close();
+		}
+	}catch(SqlException e) {}
+	try {
+		if(pstmt != null) {
+			pstmt.close();
+		}
+	}catch(SqlException e) {}
+	try {
+		if(con != null) {
+			con.close();
+		}
+	}catch(SqlException e) {}
+}
+
+if we look at the above code each resource has to be closed within a dedicated try/catch block of its own within the finally block of the method. and these resources has to be closed in a specific order from ResultSet->Statement/PreparedStatement->Connection
+
+Many of the people writes this code poorly and lands into resource leakage issues
+
+hibernate:- While working with Hibernate Framework we only need to close a Session object at the end of each operation, where we dont have handful of resources to manage. and SessionFactory has to be closed at the end of the application which seems to be quite manageable when compares with jdbc resources
+
+#3.
+jdbc: jdbc api supports only local transactions and doesnt support global transactions. To work with global transactions we need to use jta api. so while working with java jdbc api we always need to re-write the code to switch between local transaction to global transactions and viceversa which is very difficult to manage.
+	
+hibernate: hibernate framework has provided unified api which is called "org.hibernate.Transaction" interface through which we can work with both global/local transactions as well
+switching between global to local or otherway around just need a change in configuration file rather than re-writing the application logic
+
+#4. 
+jdbc: The code we have written in jdbc api is not portable across the databases. While working with jdbc api, we write the native sql queries specific to the database in querying or performing persistence operation. when we change from one database to another database, we need to re-write the sql queries, so that the outcome of executing the sql query might be impacted, due to which we need to even rewrite the jdbc logic in wrapping the data. So it is biggest drawback while working with jdbc api
+
+hibernate: while working with hibernate framework, it has provided its own query language called "HQL" stands for Hibernate Query Language (database agnostic query language) in which we need to write the sql queries in accessing the data from database. since the database cannot understand hql queries the hibernate has provided an component called "dialect" which takes care of translating the hql queries into native sql queries.
+So our code written using the Hibernate Framework will be portable across all the databases.
+	
+#5. 
+jdbc: jdbc api has not been designed from ground in handling enterprise persistence requirements of an application. for eg.. there is no support of caching as part of the jdbc api for performance optimization 
+
+hibernate: hibernate framework has rich support caching in built as part of it there are 3 different levels of caching supported by hibernate framework  
+first-level cache
+2nd level cache
+query level cache
+through which we can achieve transaction isolation and performance optimization as well

@@ -1,0 +1,25 @@
+Exception Handling
+When the resource class methods are reporting/throwing an exception, the jaxrs runtime receives the exception and reports it as error response to the client
+
+The default behaviour of jaxrs runtime in propagating the exceptions to the client:
+By default jaxrs runtime upon receiving the exception, it constructs an http response message with
+1. status code: 500 (internal server error)
+2. headers = standard response headers
+3. response body = stacktrace of the exception
+and dispatches it to the client
+
+appropriate status code with response body contains error information that is parsable, interpretable and understandable for the clients to process
+
+HTTP RESPONSE
+status: 400 (BAD REQUEST)
+header
+standard headers
+body
+{
+	"errorcode": "a001",
+	"errorcause": "subscription not active"
+}
+
+
+
+

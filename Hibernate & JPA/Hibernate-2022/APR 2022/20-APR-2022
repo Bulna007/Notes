@@ -1,0 +1,78 @@
+get() vs load() method in hibernate framework
+----------------------------------------------
+get() and load() methods are single object query api methods in hibernate framework. if we wanted to query an record from database against the primary key column value then we need to use either get() or a load() method
+
+signature of these methods:
+1. Object obj = session.get(ClassType, Object id)
+2. Object obj = session.load(ClassType, Object id)
+	
+Both of these methods are part of Session class of hibernate api and both are meant for performing the same operation.
+	
+Before diving into the details of those 2 methods, let us try to understand how does these methods basically fetch an object from database.
+	
+For eg.. we calling a get(ClassType, Object id) on an entity class as below.
+	Account account = session.get(Account.class, accountNo);
+how does the method call to get() performs operation
+
+#1. upon calling get(Account.class, accountNo), the Session object grabs the database Connection to query the data for the Entity class provided
+	
+#2. In order to query the data for that Entity class the Session needs to know what is the table, and what is primary key column unless otherwise it cannot construct the query to execute it on the database. so it quickly goes to Mapping Metadata that is available as part of the SessionFactory 
+
+#3. Once the Mapping Metadata for the given entity class has been retrieved, it goes to dialect by passing entity mapping metadata, asking to create an sql query to retrieve data from table against the primary key
+
+#4. creates an PreparedStatement and substitutes the parameters into PreparedStatement and executes the query
+
+#5. after getting the ResultSet passes the ResultSet and Corresponding Entity class into which the Resultset has to be wrapped to GenericMapper to convert into Entity class object
+	
+#6. Then returns the entity class object to us
+------------------------------------------------------------------------------------------
+Looks like both get() and load() are meant to query a single object from the database, then why 2 methods are there, what is purpose of them?
+	
+There are differences in the way get() works and load() works let us explore
+#1 
+get(ClassType, id)
+Whenever we call a get(ClassType, id) asking to fetch an object from database, the get() method immediately goes to the underlying database queries the data and returns the corresponding entity class object to us. So, get supports eager loading in querying and fetching the object from database
+	
+load(ClassType, id)
+Whenever we call a load(ClassType, id), the load method will not query the data from database, rather it returns an proxy of the Entity object to us without accessing the data from database.
+The actual data will be queried from the database whenever we tried accessing the data using the entity object
+Account account = session.load(Account.class, 1); // the data will not be fetched from db
+account.getAccountHolderName(); // now it goes to the database and fetches the data
+
+From the above we can understand load(ClassType, id) supports lazy loading.
+	
+How does load(ClassType, id) is performing lazy loading?
+
+class Account implements Serializable {
+	int accountNo;
+	String accountHolderName;
+	Date dob;
+	String gender;
+
+	public setAccountHolderName(String accountHolderName) {}
+	public String getAccountHolderName() {}
+	// accessors
+}	
+
+Account.hbm.xml
+-----------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.gl.entities">
+	<class name="Account" table="account">
+		<id name="accountNo" column="account_no"/>
+		<property name="accountHolderName" column="account_holder_nm"/>
+		<property name="dob"/>
+		<property name="gender"/>
+	</class>
+</hibernate-mapping>
+
+Account account = session.load(Account.class, 12);
+When we call the load(ClassType, id) it will not goto the database and queries the data, rather it creates an proxy ontop of the Entity class object by populating the primary key column value we gave and returns proxy of our Entity object
+	
+The load() methods works based on Proxy design pattern
+Proxy design pattern
+---------------------
+
+Proxy is an substitute of surrogate of the original class
+	-> original class = #outcome
+	-> proxy class -> original class = #outcome

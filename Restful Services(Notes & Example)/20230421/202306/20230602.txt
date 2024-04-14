@@ -1,0 +1,53 @@
+1. setup the maven-archetype-webapp application using resteasy dependencies
+2. develop the resource class
+	
+@Path("/policy")	
+class PolicyApiService {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getPolicyHolderName(@QueryParam("policyNo") String policyNo) {
+		return "Steve";
+	}	
+}	
+
+3. configure jaxrs runtime in web.xml
+In case of RestEasy implementation the Jaxrs runtime = org.jboss.resteasy.plugins.server.HttpServletDispatcher
+3.1
+web.xml  [servlet <= 2.5 versions]
+--------
+<!-- kickoff the auto-scanning of the resources within the application -->
+<context-param>
+	<param-name>resteasy.scan</param-name>
+	<param-value>true</param-value>
+</context-param>
+
+<context-param>
+	<param-name>resteasy.servlet.mapping.prefix</param-name>
+	<param-value>/rest</param-value>
+</context-param>
+
+<servlet>
+	<servlet-name>resteasy</servlet-name>
+	<servlet-class>org.jboss.resteasy.plugins.server.HttpServletDispatcher</servlet-class>
+</servlet>
+<servlet-mapping>
+	<servlet-name>resteasy</servlet-name>
+	<url-pattern>"/rest/*"</url-pattern>
+</servlet-mapping>
+
+3.2
+if we are working on Servet 3 or above supported Servlet Containers, we dont need to configure HttpServletDispatcher manually. The Resteasy runtime will be auto configured by itself through RestEasyServletInitializer during the time of bootstrapping or deployment of the application.
+	
+so the only configuring we need to write in web.xml is prefix
+
+web.xml (Servlet3+ versions)
+	
+<context-param>
+	<param-name>resteasy.servlet.mapping.prefix</param-name>
+	<param-value>/api</param-value>
+</context-param>
+
+3.3 use programmatic approach with Application class annotated with @ApplicationPath() annotation.
+
+@ApplicationPath("/rest")
+class MyApplication extends Application {}

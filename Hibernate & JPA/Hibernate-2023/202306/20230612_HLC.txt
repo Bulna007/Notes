@@ -1,0 +1,74 @@
+What are the DML operations supported by the Hibernate/jpa api?
+1. Object save(entityObject)	
+Object save(entitObject) is used for inserting the new record of data into the database. during the time of inserting the data, the save() method invokes the id generator if any configured and generates the id using which it performs the insert operation. In addition to that it even populates the id with which the object has been persisted into the data and returns the id of the object as an returnValue.
+	
+ServiceRequest serviceRequest = new ServiceRequest();
+//populate the data into object
+int serviceRequestNo = (Integer) session.save(serviceRequest);
+the save method returns the primary key value of the object it has persisted along with populating the id into the entity object we supplied.
+	
+2. void persist(Object entityObject)	
+void persist(Object entityObject) is another method available for inserting a new record of data into the database, but it is provided aspart of jpa api. The persist() method also invokes the id generated configured and by taking the generated id, it inserts the data into database. The only difference between save() and persist() is save() method returns the id/primary key value of the object used for inserting the data whereas persist() will not return the id, since its returnType is void.
+but the persist() method populates the id being used for inserting the data into the entity object provided.
+	
+Note:
+The persist() method may not reflects/populates the id generated/used while inserting the data into database to the entity object. it is guaranteed to populate the id only after the transaction has been comitted successfully onto the underlying database. but it purely depends on the implementation vendor who has implemented the persist() method.
+In case of Hibernate, the persist() method pre-populates the id into the entity object before comitting the transaction
+
+3. void saveOrUpdate(entityObject)
+void saveOrUpdate(entityObject) either inserts or updates an entity object into the underlying database based on unsaved-value configured for the entity class.
+It doesnt check whether the entity object exists in the database or not to perform insert or update operation.
+	
+ServiceRequest.hbm.xml
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.dmlops.entities">
+	<class name="ServiceRequest" table="service_request">
+		<id name="serviceRequestNo" column="service_request_no" unsaved-value="-1">
+			<generator class="identity"/>
+		</id>
+		
+		<property name="problem"/>
+		...
+	</class>
+</hibernate-mapping>
+
+ServiceRequest serviceRequest = new ServiceRequest();
+serviceRequest.setServiceRequestNo(-1);
+// populate data
+session.saveOrUpdate(serviceRequest);
+upon calling the saveOrUpdate(entityObject) with entityObject, the saveOrUpdate() method checks the primary key attribute value, if the value matches with unsaved-value configuring for the entity class in mappingFile, then it considers the object as new and inserts the record into database.
+	
+ServiceRequest serviceRequest = session.get(ServiceRequest.class, 1);
+// modify the attributes of data
+
+session.saveOrUpdate(serviceRequest);
+since the id value is not matching with unsaved-value configured in the above example, the saveOrUpdate() method updates the entity object
+
+
+#4. void update(entityObject)
+update() method is used updating an existing entity object into the underlying database. 
+There are #2 ways we can perform update operation
+
+1. partial update
+2. full update of an object
+
+1. partial update
+if we want to update few fields/attributes of data in an existing entity object, we can fetch the existing object from database and modify those attributes and update them using update() method as below.
+	
+ServiceRequest serviceRequest = session.get(ServiceRequest.class, 4); // fetch the existing entity object
+serviceRequest.setRequestType("Transfer");
+serviceRequest.setProblem("Cheque book request");
+session.update(serviceRequest);
+
+
+2. full update
+if we want to modify all the fields/attributes of data inan existing entity object, then there is no point of fetching the existing object, instead we can create a new object with existing id and populate all the fields of data into it and pass to the update method as below
+
+
+ServiceRequest serviceRequest = new ServiceRequest();
+serviceRequest.setServiceRequestNo(5); //existing id, manually populate it
+serviceRequest.setRequestType("Transfer");
+serviceRequest.setProblem("Cheque book request");
+// all the fields with new value should be populated since we want to change all the attribute values
+
+session.update(serviceRequest);

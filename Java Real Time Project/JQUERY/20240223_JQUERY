@@ -1,0 +1,370 @@
+JQuery
+------
+It is an library or a framework built-on top javascript language, it provides bunch of api objects and functions using which we can interact with page elements instead of writing lot of javascript logic 
+
+jquery has been built ontop of a principle "write less, do more". using jquery we can perform all the javascript operations more easily like
+1. we can access the page elements of a web page
+2. we can modify the attributes of the elements
+3. we can change the styles of the elements
+4. we can bind events
+5. we can apply animations and effects to the web pages and elements
+6. we can perform ajax operations very easily rather than using javascript objects
+
+There are lot of advantages of using jquery:
+1. write less code and do more things
+2. jquery minimizes the complexity in writing the javascript for a web page
+3. it takes very less amount of time in programming the elements of a web page
+4. while working with javascript, achieving browser compatibility or portability is very difficult. The code we write in javascript language may work on one browser, but may not work on another browser and even across different versions of the same browser.
+So javascript developers has to write logic for detecting the browser type and their versions in executing the javascript code for achieving browser compatibility, this resulted in writing lot of complex code, huge time in development and difficult to maintain. Along with this the webpages needs to be tested across different browsers to verify the browser compatibility of the pages, thus further increases the delay in delivering the application
+
+Instead use jquery, we work with javascript using jquery api objects and the functions provided, these api objects has been wrapped internally with appropriate logic in detecting and executing compatible code on the underlying web browser, so programmer always relies on jquery in executing the javascript logic without bothering about browser compatibility.
+	
+5. jquery has been evolved as a standard and most adopted javascript library in the market, because of its ease of usage, flexibility and extensibility
+6. there are lot of javascript libraries in the market that are built internally by using jquery only like dojo, bootstrap etc
+
+To learn jquery we need to know
+1. HTML
+2. CSS
+3. Javascript
+4. Ajax
+--------------------------------------------------------------------------------------------------------------------------------
+How to work with jquery in our application?
+jquery is an framework and it has provided lot of api objects and functions, which can be used in writing javascript logic for programming the page elements of a web page. 
+These api objects and functions are provided by the jquery team by writing in another javascript file. So to make use of their api objects and functions, we need to download the jquery javascript file and import/include in our webpages of our application
+
+There are 2 ways we can add jquery in our projects:
+#1. download the jquery js file and add into our project and import javascript file in our html/webpages of our application as shown below
+
+project 
+|-src
+	|-main
+		|-java
+		|-resources
+		|-webapp
+			|-js
+				|-jquery-3.7.1.js
+			|-WEB-INF
+				|-web.xml
+|-target
+	|-classes
+|-pom.xml
+
+within the webpages of our project we need to include/import the jquery-3.7.1.js file inorder to use the api objects/functions of it
+
+home.jsp
+<body>
+	<script type="text/javascript" src="js/jquery-3.7.1.js"></script>
+</body>
+
+when the client browses the HTML/jsp pages of our application, upon downloading the webpages and parsed by the browser, the browser realizes the references to the resources like js, images, fonts, css etc and makes an another call to the webserver for downloading these resources to the browser.
+
+if we have jquery file being referenced, the browser makes another call to the webserver/application server asking to download the jquery file, thus results in lot of problems.
+
+1. bandwidth consumption on the webserver will be high, due to which the i/o capacity of the machine/server will be occupied in serving static content
+2. network traffic will increase in downloading/serving static resources repeatedly
+3. due to higher network traffic, the network latency will be high
+
+all these above factors contributes towards poor page loading and rendering that hinders the endusers experience in using the application.
+The above approach of referencing the jquery is done during development not for production usage.
+	
+#2. through cdn servers
+jquery team to avoid the above problems in using the jquery within the applications, they have published the jquery file on various different popular cdn providers that are available in the market like microsoft, google etc. Now instead of downloading jquery js file and placing in our project and referring in our pages, we can directly add the cdn server query js url aspart of our web pages, which has lot of advantages:
+
+1. the jquery js will be located and downloaded from the nearest/closest cdn server of the client location
+2. load on the webserver in serving the static resources like jquery.js will be reduced
+3. due to faster downloads of the jquery the page loading and enduser experience will be quick
+
+dis-advantage:-
+1. we cannot use cdn server urls without internet, so preffered to be used in higher or production env only
+
+
+How is jquery distributed?
+The jquery js file is distributed in 2 forms
+1. uncompressed js = should be used in development
+2. minified js = production deployments
+
+jquery has many library distributions, to work on different aspects of javascript
+- jquery core = a javascript library built to facilitate working on managing the page elements of a webpage based on dom api
+- jquery ui = is a library that provides ui components like calendar, courosel, progress bars, horizontal sections etc, we can use these components quickly in building the web pages
+- jquery mobile = building pages and components for mobile application development
+
+
+How to use jquery api objects and functions in our web pages?
+The jquery has been distributed into one single javascrit file, in this javascript file the wrote lot of javascript functions wrapped in JQuery object. To access the api methods of the JQuery object we need to always prefix JQuery object "." function names and this seems to be a bit length interms of syntax
+
+So Jquery team has defined an alias for the jquery object as "$", so we can access all the attributes, methods of the jquery object using $ notation.
+var $ = JQuery; // has assigned the JQuery object reference to $ variables 
+so we can perform the operations on the HTML page elements by wrapping in JQuery $object as below
+for eg.. $('id').function('');
+--------------------------------------------------------------------------------------------------------------------------------
+Where to write the JQuery code aspart of the WebPage?
+In general it is recommended to write javascrpt logic at the endof the webpage before closing the <body> element or even <html> element so that we can avoid
+	1. page loading issues
+	2. dom errors in referring the page elements
+	
+Incase of jquery we dont have to write the jquery javascript code at the end of the body, rather jquery has provided an jquery block, in which we need to write the javascript code. this jquery block can be written at any place within the webpage.
+	
+$(document).ready(function() {
+	// write the jquery code here
+});	
+The above code executes once only after the document object has been fully constructed, so we can write the code anywhere else on the web page. This is nothing but executing the javascript after the page has been loaded.
+	
+The short form of writing the jquery-block is:
+$(function(){
+	// jquery code
+});
+--------------------------------------------------------------------------------------------------------------------------------
+JQuery selectors
+The JQuery supports #2 ways of accessing the page elements of a webpage
+1. primary selectors
+2. psuedo selectors
+
+1. primary selectors
+There are 3 types of primary selectors are there
+1.1 id
+1.2 tag
+1.3 className
+
+1.1 by id
+<p id="p1">paragraph</p>
+
+var p = document.getElementById("p1");
+p.innerHTML = "paragraph changed";
+
+$("#p1").html("paragraph changed");
+here # indicates, the element is referenced by id
+
+1.2 by element/tagName selector
+<p>paragraph1</p>
+<p>paragraph2</p>
+<p>paragraph3</p>
+
+var paras = document.getElementsByTagName("p");
+for(var i=0;i<paras.length;i++) {
+	var para = paras.item(i);
+	para.innerHTML =para.innerHTML + " Changed";
+}
+
+$("p").foreach(function(para) {
+	$(para).html($(para).html() + " Changed")
+});
+
+html();  = returns innerHTML (query)
+html('value'); = sets the innerHTML value of an element (modifying)
+
+in jquery
+$(function(){
+		$("p").html(function(idx, text){
+				$(this).html(text + " changed");
+		});
+});
+
+1.3 by styleClass selector
+
+<style>
+	.para {
+		font-family: Tahoma;
+		font-size: 14px;
+		color: blue;
+	}
+</style>
+
+<p>paragraph1</p>
+<p class="para">paragraph2</p>
+<p>paragraph3</p>
+<p class="para">paragraph4</p>
+<p>paragraph5</p>
+
+<script type="text/javascript">
+	$(function(){
+		$(".para").html("modified");
+	});
+</script>
+
+
+#2. psuedo selectors
+psuedo here refers to additional options using which we select the elements on the page. We can query or select the HTML page elements based on
+1. positions
+2. filtered by attributes etc
+
+$("tr:even").css("") = give me all the tr at the even position
+$("input[type=text]") = give me all the input tags with type as "textboxes"
+$("p:last") = give me last paragraph on the web page
+-------------------------------------------------------------------------------------------------------------------------------
+Jquery event handling
+We can bind events/handlers to the page elements using jquery event handling
+
+static binding:-
+<input type="button" value="signup" onclick="signup();"/>
+
+<script type="text/javascript">
+	function signup() {
+
+	}
+</script>
+
+Instead of static binding, we can bind the event dynamically also using jquery
+<input type="button" id="signupbtn" value="signup"/>
+
+<script type="text/javascript">
+	$(function() {
+		$("#signbtn").click(function(){
+		
+		});
+	});
+</script>
+--------------------------------------------------------------------------------------------------------------------------------
+hide/show/toggle elements on the page
+We can hide show and toggle the elements on the web page using hide(), show() and toggle() respectively.
+	
+<div id="contents">
+	Random text
+</div>
+
+<input type="button" id="showBtn" name="showbtn" value="Show"/>
+<input type="button" id="hideBtn" name="hidebtn" value="Hide"/>
+<input type="button" id="showOrHidebtn" name="showOrHidebtn" value="Show/Hide"/>
+
+<script type="text/javascript">
+		$(function(){
+				$("#showBtn").click(function(){
+						$("#contents").show();
+				});
+				$("#hideBtn").click(function(){
+						$("#contents").hide();
+				});
+				$("#showOrHidebtn").click(function(){
+						$("#contents").toggle();
+				});
+		});
+</script>
+
+we can use fadeIn(), fadeOut() and fadeToggle() for showing, hidding or toggling the elements of the page with fade effect.
+We have even slideUp(), slideDown() and slideToggle() for showing, hidding and toggling the elements of the page with slide effect.
+	
+$(function(){
+		$("#showBtn").click(function(){
+				$("#contents").fadeIn(1000);
+		});
+		$("#hideBtn").click(function(){
+				$("#contents").fadeOut(1000);
+		});
+		$("#showOrHidebtn").click(function(){
+				$("#contents").fadeToggle(1000);
+		});
+});
+--------------------------------------------------------------------------------------------------------------------------------
+How to access the values of the page elements?
+The JQuery has provided accessor methods for accessing the values of the page elements
+For HTML Input controls like text, radio, password, select controls etc we can use val
+val() = getter
+val("value") = setter
+
+<input type="text" name="experience" id="experience"/>
+var experience = $("#experience").val(); // getter
+$("#experience").val("20"); // setter
+
+For container elements to access or modify the contents inside them we use html() or text() methods. For eg.. <p>, <span>, <div>, <a>, <li>, <b> etc
+
+html() = getter = to access the innerHTML of that element
+html("content") = setter = for changing or modifying the innerHTML of an element
+
+text() = returns the contents of the element as a text
+text("text content") = sets the given contents as a text to the element
+--------------------------------------------------------------------------------------------------------------------------------
+We can access the attributes of any HTML elements using attr() function
+attr("attributeName") = its acts as an getter in querying or fetching the attribute value of an element
+attr("attributeName", "attributeValue") = acts as an setter method in set the value for that attribute of an element
+
+<input type="text" id="emailAddress" name="emailAddress"/>
+$("#emailAddress").attr("type", "email");
+-------------------------------------------------------------------------------------------------------------------------------
+There are DOM api methods for manipulating the page elements like
+1. append() = adding an child element to an parent
+2. prepend() = adding the child element at the first
+3. remove() = remove the specified child element
+4. before() = adding a new element before the specified child element
+5. after() = adding after
+6. empty() = remove all the child elements
+
+<ul id="products">
+</ul>
+
+var li = document.create("li");
+$("#products").append(li);
+--------------------------------------------------------------------------------------------------------------------------------
+There are DOM methods for managing the css class for an element of a web page
+1. removeClass()
+2. addClass()
+3. toggleClass()
+	
+<style>
+	.important {
+		border: 1px solid black;
+		color: red;
+	}
+</style>
+<p id="para">Paragraph</p>
+
+$("#para").addClass("important");
+$("#para").removeClass("important");
+--------------------------------------------------------------------------------------------------------------------------------
+noConflict()
+JQuery has defined $ as an alias for the jquery object/functions provided aspart of its api. Instead of using JQuery object inorder to access the api functions, we use $ as an short-form of writing the code.
+There are lot of javascript frameworks/libraries are available in the market similar to jquery like bootstrap, dojo etc. All of these libraries has defined $ as an alias name in accessing their api objects and functions.
+	
+So when we are using jquery along with other javascript libraries, we endup in $ conflict and results in javascript error while referring jquery api functions. To resolve these $ conflict, jquery has provided an noConflict() that re-assign the jquery object to an different alias than $
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$.noConflict(); // by invoking noConflict() function, it re-assigns the JQuery object alias to jQuery itself without using $
+  jQuery(document).ready(function(){
+		// jquery
+	});
+</script>
+after invoking the noConflict() function, it releases the $ alias so that we need to refer jQuery object directly in accessing the api functions of the jquery. Looks like we are referring the jQuery object which leads to difficulty in writing the code, so we can rebind the jQuery object to an different alias using noConflict() method as below
+
+syntax:-
+var alias = $.noConflict();
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script type="text/javascript">
+  
+	var $j = $.noConflict(); // by invoking noConflict() function, it re-assigns the JQuery object alias to jQuery itself without using $
+  $j.(document).ready(function(){
+		// jquery
+	});
+--------------------------------------------------------------------------------------------------------------------------------
+jquery ajax
+------------
+instead of using javascript XMLHttpRequest object inorder to make ajax calls in partial page refresh, the jquery aspart of its core library itself has provided an ajax object using which we can make an ajax calls to the server
+
+$.ajax() = is a method in jQuery object to which we need to provide the details of the server endpoint  and the response handlers in processing the response as below.
+	
+$.ajax(
+	{
+		url: "serverEndpoint",
+		success: function(response) {
+			// process or handle the response
+		},
+		async: false,
+		beforeSend: function(xhr) {
+			xhr.addHeader("h1", "v1");
+		}
+	}
+);
+there are plenty of other parameters that can be populated aspart of the ajax request:
+1. async: true/false, by default is true
+2. beforeSend(xhr) = a function to be invoked before the request is send
+3. complete(xhr, status) = a function that will invoked after the request has been finished irrespective of success or failure of the request processing
+4. error(xhr, status, error) = a function invoked incase of failure response
+5. username = to http authentication
+6. password = http authentication
+7. url = to specify the request url 
+8. type = indicates request method type (GET/POST)
+9. timeout = local timeout (milliseconds) for the request
+10. dataType = indicating the response type expected from the server (basically we are setting an Accept header)
+11. data = specifies the data to be send to the server incase of POST/PUT/DELETE request
+
+
+Let us try to fetch the stock price from the server asynchronously using ajax partial page refresh.

@@ -1,0 +1,86 @@
+class CommonRequestHandler {
+	public Object applyCommonServices(HttpServletRequest httpReq, HttpServletResponse httpResp, 
+																		String formClass, String validatorClass, String page) {
+		RequestWrapper wrapper = new RequestWrapper();
+		Object form = wrapper.wrap(httpReq, formClass);
+		
+		Validator validator = (Validator) Class.forName(validatorClass).newInstance();
+		List<String> errors = validator.validate(form);
+		if(errors != null && errors.size() > 0) {
+			httpReq.setAttribute("errors", errors);
+			httpReq.setAttribute("form", form);
+			httpReq.getRequestDispatcher(page).forward(httpReq, httpResp);
+			return;
+		}
+		return form;		
+	}
+}
+
+class AddDoctorServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		CommonRequestHandler handler = new CommonRequestHandler();
+		Object form = handler.applyCommonServices(httpReq, httpResp, "DoctorForm", "DoctorValidator", "/add-doctor.jsp");
+		if(form == null) {
+			return;
+		}
+		// execute business logic by calling the service
+		// display the success page
+	}
+}
+
+eventhough we have eliminated most of the boiler-plate logic within our application with the above approach, we still have challenges/difficulties
+1. again the logic for invoking the CommonRequestHandler is being duplicated across all the servlets of our application, due to which we still run into maintainance problems
+2. even though the CommonRequestHandler logic should be applied for every request of our application, we couldnt able to enforce it to be applied for all the requests
+
+From the above we understood, there are few mandatory services that should be applied for every request that is coming into our application
+
+*.htm
+class FrontControllerServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		RequestWrapper wrapper = new RequestWrapper();
+		Object form = wrapper.wrap(httpReq, formClass);
+		
+		Validator validator = (Validator) Class.forName(validatorClass).newInstance();
+		List<String> errors = validator.validate(form);
+		if(errors != null && errors.size() > 0) {
+			httpReq.setAttribute("errors", errors);
+			httpReq.setAttribute("form", form);
+			httpReq.getRequestDispatcher(page).forward(httpReq, httpResp);
+			return;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

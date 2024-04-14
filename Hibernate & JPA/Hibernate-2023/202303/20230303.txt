@@ -1,0 +1,42 @@
+How many formats in which we can store the data on a File of a computer?
+There are 2 formats are there
+1. human understandable format
+2. programmable format
+
+There are many programmable formats are available
+1. Fixed width field size format
+2. comma separated value (csv) format
+3. XML format
+
+3. XML
+XML stands for eXtensible Markup Language. XML is an data representation format used for storing the data on a file of a computer.
+1. structured format = boundaries of the data are well known
+2. semantics = meaning of the data is stored along with the data itself
+
+advantages:-
+	1. both human readable and machine understable
+	2. since it is an text-based data representation standard, irrespective of operating system platform or language any one can read/process the data in XML. This is called "interoperable"
+	3. supports sequential and random access
+	4. no chance of mis-interpreting the data as the data is structured and semantics are attached to the data
+	5. we can represent relationship between the data using hierarchial model
+	6. we can validate the data using DTD or XSD languages
+dis-advantage:-
+	1. too much verbosed due to which huge amount of storage memory will be occupied for storing data
+	2. need to have knowledge on XML language syntaxes to use XML, everyone cannot use XML format 
+	3. since it is hierarchial representation model, it takes huge cpu and memory while processing the data from XML, so ideally not suitable for large volumes of data
+	4. learning curve required for learning the xml is high as too many methodologies are available for working with XML
+
+From the above XML is not suitable for storing business data
+
+Based on the above discussion we had regarding the different storage formats, we are able to identify or understand typical requirements of storing the data permanently on the storage device of the computers.
+1. data should be both human readable and machine understandable format
+2. support sequential and random access of data
+3. along with data we should be able to represent relationship between the data
+4. data should be stored in structured format and should have semantics attached to the data, so that everyone can understand and interpret it properly
+5. the data manipulation operations like inserting the new record or appending a new record, updating a field of data or deleting an record should be faster and easy to achieve
+6. no wastage of memory
+7. should be able to handle large volumes of data without consuming more cpu/memory
+8. data should be secured
+9. should be able to validate the data while storing
+
+now considering these requirements, we need to comeup with an data representation standard in persisting the data on the Files of the computer. upon defining an representation standard we need to build software programs around that standard in performing operations on the data	

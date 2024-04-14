@@ -1,0 +1,35 @@
+problems in storing semi-structured data in relational tables:
+1. complexity in designing the schema model for storing the data is very high
+2. programmers has to write complex logic in performing the persistence operations on these tables
+3. while storing the semi-structured data in relational tables as columnar tables, we endup in breaking down the data across the tables, so that we would need to perform unnecessary joins in fetching the data from the tables
+4. the cost of retrieval of the data is very high, because we need filter the data from joins
+
+mongodb/couchdb = documents
+cassendra, dynamodb = key/value pair in columnar fashion
+
+lab_test_report
+lab_test_no  glucose   wbc_count   rbc_count   esr   platelets
+938           93        39          39  
+983           100                               23       39
+	
+lab_test_report where wbc_count > 30
+	
+ 
+lab_test
+lab_test_no  patient_nm
+938
+
+lab_test_result
+lab_test_no   column_nm   column_value
+938           glucose     93
+938           wbc_count   39
+938           rbc_count   39
+	
+select * from lab_test inner join lab_test_report lt.lab_test_no	= ltr.lab_test_no where wbc_count > 30
+
+938 938           wbc_count   39
+-----------------------------------------------------------------------------------------------------------------------------------
+object storage databases
+
+users
+user_id   username   email_address mobile_no  password   profile_pic (blob)

@@ -1,0 +1,65 @@
+2. starter dependencies
+starter dependencies are provided by the spring boot to provide jump start experiece in developing the spring framework application
+
+Inorder to develop an application using spring framework, we need to add spring modules as dependencies to our project. Each of the spring modules has inturn other spring modules as dependencies and even they have external third-party libraries also as dependencies. Now we need to identify which modules are dependent on what other modules and external libraries along with their version compatibilities in creating the project for development.
+	
+identifying and compiling these list of dependencies in creating the project is very complex task and takes huge amount of time. Many of the times we endup with exceptions while compiling or running the application
+
+To overcome the above problems in setting up the project while working with spring framework, the spring boot team has introduced starter dependencies
+
+starter dependencies are nothing but maven dependencies/artifacts that works based on the concept of maven transitive dependency management technic.
+The spring boot developer team has identified the popular list of technologies we use in building the application with spring framework and compiled them as maven starter dependencies
+
+in each of these maven starter dependencies per technology, they defined spring modules and third-party libraries as transitive dependencies with appropriate versions within them. So that the developers rather than identifying by themself in compiling the list of dependencies, they can quickly add starter dependencies as dependencies into their maven project
+
+So that maven takes care of downloading all the spring module dependencies and third-party libraries declared as transitives within that starter and made it available for our project quickly, so that with no time the developer can start development of the application using spring framework.
+	
+In-Short:-
+1. auto-configurations  = these helps in quickly configuring framework components as beans in our application
+2. starter dependencies = these are maven artifacts declared with transitives as spring modules and third-party libraries, that can be quickly used in setting up the project
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

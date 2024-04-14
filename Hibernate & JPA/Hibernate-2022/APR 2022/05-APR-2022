@@ -1,0 +1,85 @@
+How to bootstrap the hibernate application?
+bootstrapping is nothing but how to kickoff or create the core objects of the hibernate framework within the hibernate application is refers to as bootstrapping
+
+There are 3 ways we can bootstrap an hibernate framework application
+1. Hibernate 3.x bootstrapping 
+	1.1 properties approach
+	1.2 xml-based configuration approach
+	1.3 programmatic approach
+	
+2. Hibernate 4.x bootstrapping
+In favouring towards services & service registry hibernate 4.x bootstrapping has been introduced
+
+3. Hibernate 5.x bootstrapping
+To support Metadata approach hibernate 5.x bootstrapping has been introduced
+
+Majority of the times we use Hibernate 3.x bootstrapping only, and only incase if we want to enhance or customize the Hibernate service apis we need to Hibernate 4.x or Hibernate 5.x bootstrapping
+
+#1. Hibernate 3.x
+There are 3 ways of bootstrapping the Hibernate Framework components.
+1.1 properties approach
+In properties approach instead of writing hibernate configuration information in a xml-based configuration file, we write in properties file.
+
+class Policy {
+	int policyNo;
+	String policyHolderName;
+	String planName;
+	int tenure;
+	double premiumAmount;
+	double insurredAmount;
+	// accessors
+}
+
+Policy.hbm.xml
+---------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.hb3.entities">
+	<class name="Policy" table="policy">
+		<id name="policyNo" column="policy_no"/>
+		<property name="policyHolderName" column="policy_holder_nm"/>
+		<property name="planName" column="plan_nm"/>
+		<property name="tenure"/>
+		<property name="premiumAmount" column="premimum_amount"/>
+		<property name="insurredAmount" column="insurred_amount"/>
+	</class>
+</hibernate-mapping>
+
+along with mapping information we need hibernate configuration information describing the database details and other hibernate framework configuration properties to persist the data into database
+usually to define the hibernate configuration, we write hibernate.cfg.xml, instead we can define the information in a properties file as well.
+		
+In hibernate 3.x we need to write the properties file with name "hibernate.properties" only and should be placed only under classpath of the project. There are multiple reasons behind using properties file over xml 
+
+#1. while working with xml-based configuration file we need to include dtd declaration/xsd namespace as part of xml file in addition we need to following structure of the xml and write the configuration information. all this makes complex to write xml-based configuration file, so alternatively we can prefer properties file in defining the information
+
+#2. Mostly frequently the properties approach in configuring the hibernate configuration will be used during unit testing. quickly the developer can setup an hibernate.properties file configuring the information about test database against which he wanted to testing the entities and their persistence logic. Then add the relevant entities we wanted to test rather than all of them in the application
+
+The major different between hibernate.cfg.xml and hibernate.properties is in hibernate.cfg.xml we can add <mapping resource=""/> tag in defining all the entities of our application. but we cannot add mapping resources in properties approach
+only way to define the mapping information is by adding them to Configuration object programmatically
+
+For all the properties we define in hibernate properties file we need prefix "hibernate." to avoid naming conflit with other keys defined.
+	
+[classpath]
+hibernate.properties
+---------------------
+hibernate.connection.driver_class=com.mysql.cj.jdbc.Driver
+hibernate.connection.url=jdbc:mysql://localhost:3306/hibdb
+hibernate.connection.username=root
+hibernate.connection.password=root
+hibernate.show_sql=true
+hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+// mapping information is not allowed in properties file approach
+
+Test.java
+----------
+Configuration configuration = new Configuration();
+
+The default constructor of the Configuration class has the logic for reading the "hibernate.properties" from the classpath if it is available, loads the configuration properties into itself, otherwise will be created as empty object
+
+now programmatically add mapping files into Configuration object, since the properties file dont container mapping information
+
+configuration.addMappingResource("com/hb3/entities/Policy.hbm.xml");
+
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+Session session = sessionFactory.openSession();
+// perform operation

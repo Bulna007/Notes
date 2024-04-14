@@ -1,0 +1,50 @@
+Working with Sub-resource methods
+---------------------------------
+write a BookApiResource resource/api, that has two methods:
+1. price 
+2. author
+takes isbn no of the book
+
+
+@Path("/book")
+class BookApiResource {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public double getBookPrice(@QueryParam("isbn") String isbn) {
+		return 38.3;
+	}
+	
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getAuthor(@QueryParam("isbn") String isbn) {
+		return "Micheal";
+	}
+}
+
+The client application is sending an HTTP GET Request
+with URI: /book?isbn=is9383
+     Method: GET
+		 Accept: "*/*"
+		 
+In the above Resource class, we have 2 resource methods, both are mapped to same HTTP Method: GET, with incomming/outgoing mediaTypes as same, this results in ambiguity in mapping the incoming request to the Resource Method of the Resource class
+
+So to help us in resolving the ambiguity, even each resource method also can be attached with an subPath using @Path() annotation on the resource method level. If the resource method is annotated with @Path annotation attached sub-uri, then the method is called "Sub-resource" Method
+
+@Path("/book")
+class BookApiResource {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/price")
+	public double getBookPrice(@QueryParam("isbn") String isbn) {
+		return 38.3;
+	}
+	
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/author")
+	public String getAuthor(@QueryParam("isbn") String isbn) {
+		return "Micheal";
+	}
+}
+/book/price?isbn=is038
+/book/author?isbn=is0278

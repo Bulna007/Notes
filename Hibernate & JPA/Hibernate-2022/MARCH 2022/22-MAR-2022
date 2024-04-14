@@ -1,0 +1,10 @@
+What is SessionFactory, how do we need to manage in an Hibernate application?
+SessionFactory acts as an repository for holding configuration/mapping information with which it creates a ConnectionPool to optimize in creating the Session object
+
+How many SessionFactory objects we need to create within an application?
+1 SessionFactory = 1 application, per 1 database
+
+How many Session objects we need to create in an application?
+1 session object per 1 operation
+
+Why we should not create multiple objects of the SessionFactory for a same database in an Hibernate application?

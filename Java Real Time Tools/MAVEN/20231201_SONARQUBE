@@ -1,0 +1,77 @@
+code coverage
+code coverage is the amount of code being tested by the testcode written aspart of the project. Unless the code is throughly tested and verified for quality it cannot be delivered to the qa for further testing, so to certify the code, we need to ensure all the parts of the code has been tested well including
+1. conditional statements
+2. branchings
+3. loops
+4. exceptions
+etc
+
+the way to measure what parts of the code is tested through our testcode is using code coverage tools.
+	
+Code Review
+The code review process is used for verifying the quality of the code written by the developer. There can be bad programming mistakes or poor algorithmic implementation of the logic that can be identified and made better through code review process. 
+There are 2 types of reviews are there
+1. peer review 
+2. static code analysis tools
+
+1. peer review = The developer delivers the code to the other members of the team asking them to review the code which is called "peer-review process". This can be done through creating an PR in github
+
+2. static code analysis tools - it takes more time to do the peer review of the code, so to identify the most commonly made programmatic mistakes like
+1. unused variables
+2. unreachable try/catch blocks
+3. infinite loops
+4. un-initialized variables
+5. resource leakages
+6. uncessary imports
+7. duplicate code
+etc
+
+such kind of well-known problems are identified and reported by the code review tools.
+	
+sonarqube_java
+sqp_266d2c2afe6232c4db6575c7f9b72a724ea92e21
+
+mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=sonarqube_java \
+  -Dsonar.projectName='sonarqube_java' \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.token=sqp_266d2c2afe6232c4db6575c7f9b72a724ea92e21
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

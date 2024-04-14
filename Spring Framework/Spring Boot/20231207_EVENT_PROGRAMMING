@@ -1,0 +1,188 @@
+Spring Boot Application Events and Application Listener
+-------------------------------------------------------
+What is event-driven programming model, what is the purpose of it?
+In the event-driven programming model always there are 4 actors are there
+1. source
+2. event
+3. EventListener
+4. EventHandler
+	
+1. source
+source is the originator or publisher of an event, whenever the source wants to ask someone to perform an operation, representing the operation he wanted to request, he publishes an event
+
+2. event
+event is an object, encapsulated with information about the operation/action and the data with which we wanted the operation to be performed.
+	
+3. EventListener
+Listener is a broker or a platform that sits between the source and the EventHandler. Always the Listener listens for the events that are published by an source, upon recieving the event, it identifies one of the EventHandler that has been registered to listen for such type of events and invokes it
+
+4. EventHandler
+EventHandler is a component written with event handling methods, that contains appropriate logic for performing an action or operation by taking the data as an input that is wrapped inside the event.
+	
+	
+1. 	always event-driven programming is uni-directional, upon publishing an event by the source, the Handler performs the operation but doesnt return any returnValue or response back. So the event handler methods return type is void
+
+2. neither the source nor the handler knows each other. They dont see the interfaces of each other or dont known each of them, the only contract based on which they communicate is through event itself. So we can achieve completely loose-coupling
+
+3. the events are captured and processed either synchronously or asynchronously.
+synchronous: the source will be blocked, until the event has been captured and processed by the handler
+asynchronous: the source upon publishing an event, will disconnect (without waiting) and continue to perform the operation. upon receiving the event, the Handler process the event and terminates
+here both source and handler executes on their own thread of executions without blocking each other.
+	
+In java programming language, it has provided an api called "observer api", using which we can implement event-driven programming. But observer api is too low-level api and has to write lot of boiler-plate logic in implementing event-driven application.
+	
+So to help us in building event-driven programs, the spring has provided support for event-driven programming by providing necessary apis aspart of spring.	
+	
+class NewCityController {
+	public int addCity(String cityName) {
+		// adds the city into database and returns the cityid
+		return 39;
+	}
+}
+
+1. how to write an event class?
+The spring has provided an base abstract class called ApplicationEvent, inorder to write an Event class representing an action/operation to be performed we need to write our class extending from ApplicationEvent declaring the necessary data to be published aspart of it
+	
+abstract class ApplicationEvent {
+	protected Object source;
+	ApplicationEvent(Object source) {
+		this.source = source;
+	}
+}	
+
+class ReloadCacheEvent extends ApplicationEvent {
+	String tableName;
+	
+	public ReloadCacheEvent(Object source, String tableName) {
+		super(source);
+		this.tableName = tableName;
+	}
+	// getter
+}
+
+2. upon publishing the event, it will be received by the EventListener. here in spring the ioc container acts as an EventListener in receiving the events and invoking the appropriate handler
+
+3. EventHandler
+How to write an EventHandler, that receives the event and perform operation for it?
+The spring has provided an interface called ApplicationListener that has onApplicationEvent(...)
+	
+interface ApplicationListener {
+	void onApplicationEvent(ApplicationEvent e);
+}
+
+class ReloadCacheEventApplicationListener implements ApplicationListener<ReloadCacheEvent> {
+	public void onApplicationEvent(ReloadCacheEvent event) {
+		String tableName = event.getTableName();
+		CacheManager.reload(tableName);
+	}
+}
+
+
+
+class A {
+	int i;
+	A(int i) {}
+}
+
+class B extends A { 
+	B(int i) {
+		super(i);
+	}
+}
+
+B b = new B(10);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

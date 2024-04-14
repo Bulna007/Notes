@@ -1,0 +1,61 @@
+Cookie Param
+------------
+What are cookies, what is the purpose of it?
+Cookies are the used for storing the state of the Http Client. Cookies holds the text data and are created by the server and will be written back to the Client browser aspart of the Response.
+	
+So that for each iteraction between the Client & Server, the WebBrower transfers all the cookies that are stored for that domain of that Path to the Server. These cookies are stored at Client side and will be erased based on expiry specified.
+	
+There are 4 ways of sending the data as an input aspart of the Http Request
+1. URI
+	1.1 QUERY PARAM
+	1.2 MATRIX PARAM
+	1.3 PATH PARAM
+2. HEADER
+3. COOKIES
+4. BODY
+Note: Cookies are also send/received aspart of the HttpRequest within the Header itself. There is an special header called "Cookie", whose value is list of cookies separated by ";" (semi-colon)
+
+How to receive the data that is send aspart of the Cookies within the HttpRequest in our resource class?
+The Jaxrs runtime supports in reading the Cookies that are being send aspart of HttpRequest and inject them as input to the Resource Method parameters by using @CookieParam("cookieName")
+	
+@Path("/cab")	
+class CabApiService {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{source}/{destination}/estimateTrip")
+	public String estimateTrip(@PathParam("source") String source, @PathParam("destination") String destination, @QueryParam("cabType") @DefaultValue("mini") String cabType, @CookieParam("activeSession") String activeSessionId) {
+		return "source :" + source + " destination : " +destination + " cabType  : " +cabType + " activeSession : " +activeSessionId;
+	}
+	
+}	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	

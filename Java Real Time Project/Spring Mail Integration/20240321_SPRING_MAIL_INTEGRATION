@@ -1,0 +1,12 @@
+Java Mail Api
+-------------
+Aspart of every application handling mails is an typical requirement. The software application should be able to construct/send emails programmatically to the users of the application in many scenarios. For eg.. in an e-commerce application we want the system to generate/send emails to the customers when
+1. a new user has been registered into the system for email verification
+2. incase of forgot password, we need to send an email asking the user to reset
+3. when a user has placed an order
+etc
+
+when a action/event happened in the application, the system should be able to notify the users by sending emails. Handling these email deliveries manually is very difficult/errorneous instead we want the software program itself to generate these emails and send them programmatically, that is where java mail api has been introduced.
+	
+Inorder to understand how to use java mail api in sending/receiving the emails, first we need to have knowledge on how does emails works?
+	

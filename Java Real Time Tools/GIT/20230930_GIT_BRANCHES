@@ -1,0 +1,95 @@
+What is a GIT Branch?
+Git branch can be viewed as an sub-repository of the whole, where a developer can work on an feature/extension and can be delivered without breaking the working copy of the code.
+	
+How to work with branches in git repository?
+By default when we create a repository by using git init, an empty repository is created with a default branch as "main"
+	
+we can create a new branch from the existing branch using 
+git branch branchName = a new branch will be created from the current branch we are in.
+(or)
+git checkout -b branchName
+
+2. How to see all the branches that are there in the repository?
+git branch
+will shows all the existing branches within the repository by showing an "*" indicating the branch in which we are in
+
+What are the git branching strategies are available?
+There are 2 popularly used git branching strategies are available
+1. feature-based release strategy
+2. trunk-based release strategy
+--------------------------------------------------------------------------------------------------------------------------------------
+What is cherry-pick?
+Before the feature is being merged into the master/develop the wip code should be shared/collaborated with other developers in the team, this can be done through cherry-pick
+
+The developers can pick the changes/commits of other developers of other branches without merging the code using cherry-pick.
+-------------------------------------------------------------------------------------------------------------------------------------
+How many ways we can merge a branch into another branch?
+There are 2 ways we can merge a branch into another branch
+1. git merge
+2. git rebase
+
+1. git merge
+git merge, to merge the commits of one branch into another branch git creates an merge commit for adding all the commits of another branch into current branch we are in. So swim lines are drawn showing the branch has been merged when we open in GUI
+
+The problem with Merge Commit is we cannot identify these changes are brought from which commits, that means git log will not be clear to understand.
+	
+drawbacks:
+1.1 when we do git merge the log history will not be clear, so we cannot identify which branches/commits are merged into which branch when using git merge. The more the git merges happen in Main, the more merge commits will be added, making the git log history difficult to understand.
+	
+advantage:-
+	1. easy to use and understand
+	2. The commits in the source branch for eg.. feature branch are seperated from another branch. so that we can merge the feature into another branch if required
+	3. preseves the commit history and keeps the history graph semantically correct
+	
+2. git rebase
+This is the another way of merging one branch into another branch, where git rewrites the commits of one branch into the current branch we are in as if the commits are made in this branch itself.
+	
+drawbacks:
+	2.1 rebase is slow, because it performs commit by commit comparision to determine the path at which the commits should be included in the branch we are rebasing
+	2.2 if there are any conflicting changes across the branches, each commit should be resolved manually that takes lot of time
+	2.3 it is not adviced to use rebase or rewrite the commits when we are working in a team
+	
+advantages:-
+	1. the git log/history is linear and readable
+	2. easy to track a bug or when a feature is introduced.
+	
+when we are working on a public repositories where there are lot of developers contributing towards the development of the project then it is not recommended to use git rebase, since the complexity of rewriting and resolving the merge conflicts would be very high
+
+
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

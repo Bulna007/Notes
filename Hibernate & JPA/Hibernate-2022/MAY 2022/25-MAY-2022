@@ -1,0 +1,9 @@
+There are 3 ways an inheritance relationship between the entity classes can be mapped into the database tables
+1. Table per class hierarchy	= For all the classes within the inheritance hierarchy we create one single table
+2. Table per subclass = Per each subclass within the hierarchy we create a separate table in relationship with superclass table
+3. Table per concreate class = per each concreate class within the hierarchy create a separate table including the inherited attributes, representing them as columns in their tables
+	
+Let us explore by choosing each strategy how can we perform persistence operation on the underlying tables
+
+#1. Table per class hierarchy
+For all the classes within the inheritance hierarchy create one-single table representing all the attributes of the entire hierarchy of classes as columns within that table

@@ -1,0 +1,15 @@
+JUnit5
+------
+JUnit5 has been modularized and distributed into 3 independent modules
+
+1. JUnit Platform
+2. JUnit Jupiter
+3. JUnit Vintage = previous apis of junit3/4 framework
+
+
+
+junit4 = #200 testcase classes (forever)
+junit5
+	|-#new api
+	
+

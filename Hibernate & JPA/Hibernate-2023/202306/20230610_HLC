@@ -1,0 +1,37 @@
+DML Operations using Hibernate Framework/Jpa api
+DML stands for Data Manipulation language which are nothing but
+1. insert
+2. update
+3. delete 
+the data on the underlying database table, the hibernate/jpa has provided required api methods on Session/EntityManager classes to support performing DML operations on the database tables
+
+1. save(Object entityObject)
+2. saveOrUpdate(Object entityObject)
+3. persist(Object entityObject)
+4. update(Object entityObject)
+5. delete(Object entityObject)
+6. merge(Object entityObject)	
+	
+1. Object save(Object entityObject)	
+Object save(Object entityObject)	is part of Session class in Hibernate framework and from hibernate6 save() method has been marked as deprecated infavor of jpa persist() method and should stop using it going forward
+save() method is used for saving/inserting an new object into the underlying database table. save() will generates the id using the id generator specified (if any) using which the record of data will be inserted into the database. upon inserting the data, it populates the id with which the object has been persisted into the database aspart of the entity object and returns the id to us
+	
+<class name="Account" table="account">
+	<id name="accountNo" column="account_no">
+		<generator class="identity"/>
+	</id>
+</class>
+
+Account account = new Account();
+// populated data (expect accountNo)
+int accountNo =(Integer) session.save(account);
+// we can get the accountNo, using which the account object has been persisted by accessing the accountNo property of that object as below
+account.getAccountNo();
+accountNo
+
+2. void persist(Object entityObject)
+persist() jpa api method. the persist() is also used for inserting a record of data into the database table and during the time it invokes the id generator if specified any using which the object will be persisted into the database
+
+the major difference between save() and persist() is save returns the id of the object persisted, but persist() returnType is void which means it doesnt return the id. but it populates the id with which the current object has been persisted into the database
+
+note: there is no guarantee the object will be populated with id unless the transaction has been comitted

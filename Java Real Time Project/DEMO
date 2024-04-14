@@ -1,0 +1,355 @@
+Docker, Kubernetes and Jenkins including (ELK)
+date: 29/01/2024
+timings: 6:00 am ist - 7:00 am ist (Monday-Friday), 7:00 am ist - 8:00 am ist (Saturday/Sunday)
+Fee: 5k
+duration: 2 months, 15 days
+
+Java Microservices on Spring Boot & Spring Microservices
+date: 24/01/2024
+timings: 7:00 am ist - 8:00 am ist (Monday - Friday), 8:00 am ist - 9:00 am ist (Saturday/Sunday)
+Fee: 4k
+duration: 25 days
+
+New Devops with aws batch = Feb End / March 1st week [7:00 am - 8:00 am] [12k]
+Java Framework package = March 2nd week [6:00 am - 7:00 am][15k]
+------------------------------------------------------------------------------------------------------------------------------------
+Java Realtime Project Training (Live!)
+
+goals of realtime project batch:
+#1. corporate exposure interms of tools & process:
+jira or any project management tools (story points, userstories, sprints)
+artifactory servers (publish the artifacts/distributes)	
+git servers & collaborative development
+slack (channels)
+email domain 
+confluence (documentation)
+staging environment (deploying and testing the features)
+architecture & designing (draw.io)
+	
+#2. project development from scratch (live coding):	
+project development from scratch demonstrating the full SDLC 
+
+Date: 24/01/2024
+Timings: 
+Monday, Wednesday, Friday: 8:00 pm ist
+Tuesday (off), Thursday: 7:00 pm ist
+Saturday/Sunday: 6 PM ist (1, or extend to : 2 hours)
+
+Fee: 6k (same for old/new students)
+Duration: 2 months (15 days)
+
+Note: No recordings, no youtube, no sharing videos. if any student found to be recording the classes, his/her admission will be cancelled immediately without fee refund.
+	
+Live project code will be shared with the students through git repo
+Few technologies are being taught during the classes and for them the notes will be provided on weekly basis
+
+Note: People should be responding during the sessions, no throwing laptops away and leaving the class, if found the students will be removed from the classes.
+-------------------------------------------------------------------------------------------------------------------------------------
+Pre-requisite:
+1. Core Java 
+	1.1 oops principles
+	1.2 collections
+	1.3 lambda
+	1.4 streaming api
+	1.5 i/o streams
+	1.6 exception handling
+	1.7 functional interfaces
+	1.8 multi-threading/concurrency
+	
+2. servlet & jsp programming (in-directly) (no jsp technology being used in building the project)
+3. hibernate & jpa api	
+	3.1 annotation-driven programming
+	3.2 entity mappings (one-to-one, one-to-many, many-to-many, many-to-one) (bi-directional/uni-directional)
+	3.3 inverse, fetch, cascade
+	3.4 jpql queries / join queries
+4. spring framework (annotation-driven programming)
+	1. core
+	2. aop 
+	3. transactions
+	4. mvc / restful
+	5. datajpa
+			|-projections
+			|-repositories
+			|-derived queries & declared queries
+	6. spring boot 
+	------------------------------------- new batch for the below has been started from today: 7:00 am - 8:00 am
+	7. spring cloud (Feign client api)
+	8. spring microservices
+	9. spring security
+	
+5. HTML 
+6. CSS 
+7. Javascript & Jquery (will be taught)
+	
+Tools:
+1. Maven
+2. Git Repository
+--------------------------------------------------------------------------------------------------------------------------------------
+Project:
+--------
+Technologies: 
+1. spring boot  (mvc, tx, aop)
+2. spring cloud (spring cloud gateway)
+3. spring microservices (feign client api)
+4. Thyemleaf (view)	
+-------------------------
+[optional]
+5. docker/kubernetes (example) #dont know, need not worry [29/01/2024 new batch]
+react js or angular  = we are not going to use these technologies for project development. 
+
+domain:
+retailing, ecommerce, shipping & logistics and transport [2/3 projects: choose and throw your thoughts around it]
+1. security (login)
+2. account management
+	|-signup (email verification / otp verification)
+	|-forgot password
+	|-reset password	
+3. dashboard (home page)	
+4. feature (primary)
+5. payment gateway
+
+note/disclaimer: we cannot build the entire project end-to-end, it takes lot of time in building the whole system. We are going to build few modules aspart of it like security, account management, home pages, crucial module etc
+
+
+How does the project will be developed:
+Phases:-
+#1. 
+1. Requirement Gathering
+2. High-level design
+3. domain architecture model
+4. deployment model
+
+#2. data modeling (mysql database, S3)
+#3. Project development
+	- Each user story, understand the story
+	- design (class modelling)
+	- coding/implementation
+	- demos
+	
+1. The people will be distributed into teams and the group of people works closely in collaborating and sharing the knowledge.
+2. individual person should code the project
+
+Realtime environment setup:
+1. Email Addresses
+2. Slack channel
+3. Jira
+4. Maven repositories
+5. XWiki
+6. Stage environment
+
+Technologies: [15/20 days]
+1. javascript/jquery
+2. ajax
+3. Thymeleaf
+4. Spring Java Mail Integration
+5. jfrog artifactory (setup) 
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

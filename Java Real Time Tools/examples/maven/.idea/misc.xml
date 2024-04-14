@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/bootbasic/pom.xml" />
+        <option value="$PROJECT_DIR$/firstmaven/pom.xml" />
+        <option value="$PROJECT_DIR$/basicjava/pom.xml" />
+        <option value="$PROJECT_DIR$/bootconnector/pom.xml" />
+        <option value="$PROJECT_DIR$/customplugin/dependencyanalyzer-maven-plugin/pom.xml" />
+        <option value="$PROJECT_DIR$/customplugin/plugin-test/pom.xml" />
+        <option value="$PROJECT_DIR$/multimodule/rapido/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

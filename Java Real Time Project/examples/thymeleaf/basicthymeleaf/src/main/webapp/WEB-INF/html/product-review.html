@@ -1,0 +1,27 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Review</title>
+</head>
+<body>
+<h2>Product Review</h2>
+<p>ProductName <span th:text="${product.productName}">Product Name</span></p>
+<p>Description <span th:text="${product.description}">Description</span></p>
+<p>Price <span th:text="${product.price}">price</span></p>
+<p>
+    Ratings <span th:text="${product.rating}">Rating</span>&nbsp;
+    <span th:if="${product.rating >= 9}">Exceptional</span>
+    <span th:if="${product.rating >= 7 && product.rating <= 8}">Good</span>
+    <span th:if="${product.rating >= 5 && product.rating <= 6}">Average</span>
+    <span th:if="${product.rating < 5}">Poor</span>
+</p>
+<p>Features:
+    <ul th:each="feature:${product.features}">
+        <li th:text="${feature}">Feature</li>
+    </ul>
+</p>
+</body>
+</html>

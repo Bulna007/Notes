@@ -1,0 +1,72 @@
+How can we establish relationship between the tables, and how many types of relationships are there?
+	
+By writing primary key of a table as a foreign key in another table we can establish relationship between the tables
+There are 3 types we can establish relationship
+1. one-to-one
+	1. direct one-to-one [pk (table) ->::-> pk,fk (another table)]
+	2. one-to-many as one-to-one [pk (table) ->::-> (fk, unqiue) (another table)]	
+2. one-to-many / many-to-one = [pk (table) ->::-> fk(another table)]
+3. many-to-many = [pk (both tables) ->::-> fk,composite pk (third-table))]
+
+
+How many ways we can represent relationship between the classes?
+There are 2 ways we can represent relationship between the classes.
+	1. Inheritance = Inheritance Mapping Model
+	2. Association 
+
+
+#2. Association
+A class will be declared as an attribute in another class, to form association relationship between the classes
+There are 3 forms of association relationship are there
+1. Association
+2. Aggregation
+3. Composition
+
+There are 2 characteristics are there for every association relationship
+1. cardinality = A class holds how many objects of another class
+									[1-1, 1-*, *-*]
+2. directionality = uni-directional or bi-directional
+uni-directional = only oneside of the association is represented
+bi-directional = both the classes holds each of the other objects
+
+Association Mapping model, represents how to map association relationship between the classes into database relationships
+Then how to perform persistence operation based on the way we mapped 
+	
+How do we map an association relationship between the classes into the table relationships?
+We can derive relationship between the tables for the given associated classes based on
+	1. cardinality = both the sides of the association
+	2. directionality 
+	
+class Person { 1..1
+	int personNo;
+	String fullname;
+	int age;
+	String gender;
+	Address address;
+}	
+
+class Address { 1..1
+	int addressNo;
+	String addressline1;
+	String city;	
+}
+
+1person->1 address 1address->1person
+
+
+Person (1, "mathew", 23, "Male", address)
+Address(1, "Parklane street", "Chennai")
+
+
+person
+person_no (pk)
+fullname
+age
+gender
+address_no (fk) (unique)
+
+
+address
+address_no (pk)
+address_line1
+city

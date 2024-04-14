@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>object through class declaration</title>
+</head>
+<body>
+    <h2>object through class declaration</h2>
+    <script type="text/javascript">
+        class IRobot {
+            constructor(suctionPower, batteryCapacity, modes) {
+                this.suctionPower = suctionPower;
+                this.batteryCapacity = batteryCapacity;
+                this.modes = modes;
+            }
+            sweep(mode) {
+                document.write("suctionPower : " + this.suctionPower + " batterCapacity : " + this.batteryCapacity + " modes : " + this.modes);
+                document.writeln("<br>sweeping with mode : " + mode);
+            }
+            toString() {
+                return JSON.stringify(this);
+            }
+        }
+        var irobot = new IRobot(10000, "8000 mah", ["dry", "wet", "pet friendly", "spot cleaning"]);
+        irobot.sweep("dry");
+
+        document.writeln("<br>"+ irobot.toString());
+    </script>
+</body>
+</html>

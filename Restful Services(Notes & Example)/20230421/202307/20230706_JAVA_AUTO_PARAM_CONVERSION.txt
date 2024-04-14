@@ -1,0 +1,68 @@
+Java Automatic Parameter Type Conversion
+----------------------------------------
+There are several ways we can pass the data as an input to the resource class aspart of the Http Request like
+	1. URI
+	2. HEADER/COOKIES
+	3. BODY
+to receiving this data within the resource method, we need to declare parameters, so that jaxrs runtime takescare of extracting all of the values being send aspart of the request and injects them as parameters into Resource Method.
+	
+While declaring these parameterTypes in resource method, we need to follow the java automatic type conversion rules that are defined by the jaxrs runtime so that the jaxrs runtime takes care of converting the character data that is passed aspart of the request into the respective parameterType, this is called "java automatic parameter type conversion"
+	
+The rules in declaring the parameterTypes of the resource method, to be qualified for java automatic parameterType conversion are as below:
+1. all the primitive dataTypes like int, float, byte, boolean, long, double etc are qualified to be automatic Type conversion by jaxrs runtime
+2. The jaxrs runtime supports injecting the request parameters into the ObjectType parameter of the resource method, given if the underlying class has:
+		
+class AwbNo {
+	String sourceLocationCode;
+	String destinationLocationCode;
+	int parcelNo;
+	
+	public AwbNo(String in) {
+		sourceLocationCode = in.substring(1, 7);
+		destinationLocationCode = in.substring(7, 13);
+		parcelNo = Integer.parseInt(in.substring(13, 17));
+	}
+	
+	public static AwbNo valueOf(String in) {
+		AwbNo awbNo = new AwbNo();
+		awbNo.setSourceLocationCode(in.substring(1, 7));
+		awbNo.setDestinationLocationCode(in.substring(7, 13));
+		awbNo.setParcel(Integer.parseInt(in.substring(13, 17)));
+		return awbNo;
+	}
+	
+	// accessors
+}
+
+int i = 10;
+String s = String.valueOf(i);
+
+
+@Path("/parcel")		
+class ParcelApiService {
+	@GET
+	@Produces("text/plain")
+	@Path("/{awbNo}/track")
+	public String trackParcel(@PathParam("awbNo") AwbNo awbNo) {
+		
+	}
+}		
+
+By default jaxrs runtime cannot extract the parameter value and inject into the ObjectType parameter of the resource class, because it dont know how to construct the objectType out of the String value it has extracted from request.
+	
+so we should write an 
+1. single argument stringType constructor in the ParameterType class
+2. static valueOf() method that takes the string arg, constructs the object of the same class and returns
+	
+so that jaxrs runtime can construct the object for the ParameterType defined in the resource method either by using single-arg stringtype constructor or using static valueOf method and injects it as parameter into the resource method.
+	
+3. incase of multi-valued parameters like queryParameters, matrixParameters, headerParams etc, we can declare Collection class with primitiveTypes as generic, so that jaxrs runtime takes care of extracting the multiple values being passed for that parameter and wraps into the respective collection class object and injects it
+	
+4. The Collection class genericType can be objectType as well, given the objectType we declared has again
+	1. single-arg string parameter constructor
+	or
+	2. static valueOf method inside it
+	or
+	3. static fromString(String) inside it
+	
+In all the above cases, the jaxrs runtime takes care of extracting the request parameter value and injects into the resource method parameter by performing automatic type conversion.

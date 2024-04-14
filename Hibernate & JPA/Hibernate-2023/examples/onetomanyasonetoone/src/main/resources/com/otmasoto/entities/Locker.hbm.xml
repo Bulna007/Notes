@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping package="com.otmasoto.entities">
+    <class name="Locker" table="locker">
+        <id name="lockerNo" column="locker_no">
+            <generator class="increment"/>
+        </id>
+        <property name="dimensions"/>
+        <property name="keyNo" column="key_no"/>
+        <property name="branchCode" column="branch_code"/>
+        <property name="termsAndConditions" column="terms_and_conditions"/>
+        <property name="charges"/>
+        <!-- There is an associated object account, indicates this locker is issued to this account -->
+        <!-- which side pk should be mapped to which side fk -->
+        <many-to-one name="account">
+            <column name="account_no" unique="true"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

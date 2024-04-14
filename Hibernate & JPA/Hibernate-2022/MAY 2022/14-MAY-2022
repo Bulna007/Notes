@@ -1,0 +1,65 @@
+dml operations
+---------------
+1. save()
+Object save(entityObject)
+save inserts the entity object into the database table and returns the primary key/id value with which the object is stored in the underlying database. along with that it updates the entity object with id value it has used in storing the data
+
+2. persist()
+void persist(entityObject)
+persist inserts the entity object into the database, but will not returns the id value with which it stored the object into the database.
+in case of persist the id with which the entity object has been stored will be reflected into the entity object, but it may not reflects immediately upon calling the persist method, it may be delayed until we commit the transaction and it varies based on implementation vendor.
+	
+3. saveOrUpdate()
+void saveOrUpdate(entityObject)
+based on the unsaved-value we configured for an entity object in the mappings it either updates or saves the entity object
+if the entity object id attribute value is matching with unsaved-value of the entity object it will saves the object, otherwise it treats the object as existing object and updates it into the database
+
+4. update()
+void update(entityObject)
+update() method is used for updating an existing entity object into the database table, if for the given id of the object we wanted to update, if there is no record in the database table, then it results in an exception indicating object not found to update.
+	
+From the above we can understand update is only for updating an existing object, but not for inserting an new object into the database
+
+There are 2 ways we can update an entity object into the database table
+#1. fetch an existing object perform the changed needed and call update
+Customer customer = session.get(Customer.class, 1);
+customer.setMobileNo("038938993");
+session.update(customer);
+
+if we want to modify few/partial update of an object, then query the entity object using id then modify only the attributes you want to change and call update() method on that object
+
+#2. create an new entity object with the existing id and populate the data for updating
+Customer customer = new Customer();
+customer.setCustomerNo(10); // with this id the record should be there in database
+// populate all the attribute values
+customer.setFullname("dave");
+customer.setAge(23);
+customer.setGender("male");
+customer.setEmailAddress("dave@yahoo.com");
+customer.setMobileNo("03389388");
+session.update(customer);
+
+incase if we want to modify all the attributes of the entity object then we create an new entity object with existing id and populate the attribute values and call update method
+
+#4. merge
+if there exists an entity object with the same id within the session, then when we call an update method by passing the new entity object with the same id of an existing object in the session, the hibernate will throw non-unique id object exception
+
+void update(Customer customer) {
+	# the customer object that is passed has only email and mobileno fields populated with customerNo
+	[10, "john.c@gmail.com", "93894984"]
+	Customer customer1 = session.get(Customer.class, customer.getCustomerNo());
+	#10 = the object will be stored in the session cache
+	
+	customer.setFullname(customer1.getFullname());
+	customer.setAge(customer1.getAge());
+	customer.setGender(customer1.getGender());
+	session.update(customer);// dont call update
+	session.merge(customer);
+	
+	# here we are creating an new Customer object with same #10 customerno that exists in the session and calling update method
+	so there is a chance where the existing entity object changes of the session may be overrides the new entity object, so hibernate identifies this and throws an exception when we call update() method
+}
+NonUniqueIdObjectException = since hibernate session class has found an existing customer within the Session cache with the same id, which could lead to loosing the changes that are already exists in the cached instance.
+	
+To let the hibernate ignore the existing object of the session and takes the new object to be used for updating we call merge
+session.merge(customer); // we are forcing hibernate to merge our new object into session, even though there is an existing object with the same id inside the session.

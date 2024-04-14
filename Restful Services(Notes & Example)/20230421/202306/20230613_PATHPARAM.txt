@@ -1,0 +1,149 @@
+Working with Path Parameters
+-----------------------------
+Path Parameters are the fixed positions reserved aspart of the URI of the request through which the client/user can send the data as an input to the Resource class and its methods.
+	
+While defining the Path for an resource method, we can reserve an position within the URI and can bind a Name to position which is called "template parameter". We can access the value that is passed at that position the URI by using @PathParam("templateParameterName"), so that jaxrs runtime extracts the value being passed at that position and injects to the parameter of the resource method.
+	
+There are 2 ways we can send the data as an input aspart of the URI of the request
+1. Path Parameter
+2. Query Parameter
+
+always it is preferred to pass the data aspart of the Path Parameter within URI of the request while designing the resources rather than using query parameters because there are lot of challenges involved in using query parameters as described below.
+1.
+query parameters:
+query parameters are complex to use, because the syntax of writing the query parameters is quite difficult. those always needs to be appended at the end of the URI. The query parameters should be started with an separate as ? and subsequent parameters should be written separated with &. The enduser may not find it easy to write the parameters following the complex syntax
+
+path parameters:
+those are the simple tokens directly being written aspart of the URI, no complex syntax is required in passing the data using path parameters
+
+2. 
+query parameters:
+while working with query parameters, it is difficult to understand the URI of the request, because we need to interpret the parameters being supplied aspart of the URI to understand what the request is for. 
+	
+path parameters:
+the URI are readable and easily understandable as there is no special syntax being used in passing the parameters
+
+3. 
+query parameters:
+The client/user should know the names of parameters inorder to pass them aspart of the URI of the request
+
+path parameters:
+those are directly being written aspart of the URI, no need to memorize any names in writing the URI and sending the data
+
+From the above from the usability and end-user perspective it is recommended to use Path Parameters whereever it is applicable than query parameters. But it doesnt mean we should not use query parameters, if required we can use them
+
+
+What is the difference between query parameters & path parameters, which one should be used when?
+1. 
+query parameters
+These will not participate in resolving the request to the resource, so irrespective of the presence of them the request will be always resolved/received by Resource whom we are trying to access. So, query parameters are optional to be passed aspart of the URI of the request. 
+	
+@WebServlet(urlPatterns={"/product"})
+class ProductServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		String productNo = httpReq.getParameter("productNo");
+		// logic
+	}
+}
+
+inorder to access the above servlet we need to send the request using the URI/URL pattern as "/product". if the incoming request is matching with the Servlet urlPattern, then the request will be received by the Servlet class.
+	GET
+	URI: /product?productNo=29
+	here if the client is not sending the productNo also the request will be resolved to the resource, because query parameters will not be considered in matching the request to the resource
+	GET
+	URI: /product 
+	
+path parameters:
+path parameters since these are the reserved positions within the URI, unless the value is being sent aspart of the position within the URI the request will not be resolved the resource and hence the pathparameters are mandatory
+
+
+@WebServlet(urlPatterns={"/*/product"})
+class ProductServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		String productNo = httpReq.getPath().split("/")[0];
+		// logic
+	}
+}
+
+here "/*/product", the * is the reserved position within the URI in which the client is expected to send productNo, if the client has not supplied the productNo aspart of the URI the request will be identified/resolved to the Servlet
+
+GET
+URI: /938/product = matches with /*/product
+URI: /product = not matches with /*/product
+
+2.
+query parameters:
+in case of query parameters, they can be multi-valued as well. one can send multiple values for the same parameter by writing it repeatedly aspart of the URI as below.
+	
+/products?category=electronics&category=fashion
+
+in the above URI we are specifying give all the products of category = electronics or fashion where category takes multiple values
+
+path parameters:
+since those are fixed position within the URI, one can send only one-single value at that position. we cannot send multiple values aspart of the URI
+
+3. 
+query parameters:
+query parameters always appears at the end of the URI only, we cannot write query parameters within the middle of the URI, so that we cannot build more meaningful URIs for a resource
+
+/employees/hyderabad?gender=Female&designation=software engineers
+
+path parameters:
+path parameters can appear at any place within the URI of the request, so that the developer can construct the URIs for the resource, that appears to be more meaningful and easy to interpret as below
+
+  gender                          designation
+/{female}/employees/hyderabad/{softwareengineers}
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+Scope of the Path Parameters
+We can declare the PathParameters at 2 scopes
+1. class-level
+2. resource method level
+
+1. class-level
+if the specific path parameter seems to be common across all the resources methods of the resource class, instead of declaring it for each resource method, we can define it as an template Parameter at the class scope as shown below. So that while accessing any of the resource methods the templateParameter is mandatory to be passed.
+
+@Path("/patient/{patientNo}")
+class PatientApiService {
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/details")
+	public String getPatient(@PathParam("patientNo") int patientNo) {
+	
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/appointments")
+	public String getAppointments(@PathParam("patientNo") int patientNo) {
+	
+	}
+}
+2. method-level
+if that templateParameter is specific to a resource method only, then define it at the method scope
+
+@Path("/order")
+class OrderApiService {
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{orderNo}/details")
+	public String getOrder(@PathParam("orderNo") int orderNo) {
+	
+	}
+}
+
+incase if we have defined the same PathParameter both at class-level and method-level, the @PathParam() allows us to access only at the method-level overriding the class
+
+
+@Path("/{orderNo}/order")
+class OrderApiService {
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{orderNo}/details")
+	public String getOrder(@PathParam("orderNo") int orderNo) {
+	
+	}
+}
+
+URI: /10/order/20/details
+here at the method level when we access the orderno we only get:20 which is passed to the method-level ignoring the class

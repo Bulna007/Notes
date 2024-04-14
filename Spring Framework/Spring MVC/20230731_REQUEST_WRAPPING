@@ -1,0 +1,219 @@
+convention over configuration "coc" principle
+
+
+class RequestWrapper {
+	public Object wrap(HttpServletRequest req, String fqnFormClass) {
+		Class<?> formClass = null;
+		Object formObject = null;
+		Map<String, String[]> paramMap = null;
+		
+		formClass = Class.forName(fqnFormClass);
+		formObject = formClass.newInstance();
+		paramMap = req.getParameterMap();
+		
+		
+		paramMap.forEach((paramName, paramValue)->{
+			// patientName
+			String setterMethod = "set" + paramName.charAt(0).toUpper() + paramName.substring(1); //for eg.. setPatientName
+			Method method = formClass.getDeclaredMethod(setterMethod, new Class<?>[]{String.class});
+			method.invoke(formObject, new Object[]{ paramValue[0] });		
+		});
+		return formObject;
+	}
+}
+
+How to call method of a class, using generic reference of the class?
+class A {
+	int m1(int i) {
+		return 39;
+	}
+}	
+
+1. Class<?> clazz = Class.forName("A");
+2. Object obj = clazz.newInstance();
+
+3. get the reference of the method we wanted to call
+Method method = clazz.getDeclaredMethod("m1", new Class<?>[] {Integer.class});
+
+4. Then invoke the method on that object we want by passing parameters
+Object ret = method.invoke(obj, new Object[]{10});
+
+
+
+class RegisterPatientServlet extends HttpServlet {
+  public void service(httpReq, httpResp) {
+		PatientForm form = null;
+		RequestWrapper wrapper = null;
+		
+		wrapper = new RequestWrapper();
+		form = (PatientForm) wrapper.wrap(httpReq, "PatientForm");
+		// pass the form object to the service layer
+		// return jsp page to the user
+	}
+}
+
+class AddDoctorServlet extends HttpServlet {
+  public void service(HttpServletRequest httpReq, HttpServletResponse httpResp) {
+		DoctorForm form = null;
+		RequestWrapper wrapper = null;
+		
+		wrapper = new RequestWrapper();
+		form = (DoctorForm) wrapper.wrap(httpReq, "DoctorForm");
+		
+	}
+}
+
+Boilerplate logic that we have to write while building the Web Application using Servlet/Jsp?
+1. RequestWrapping
+The RequestWrapper is an common boiler-plate logic we need to write in each Servlet of our application in wrapping the request data into the form/javabean object, so that the data can be passed as an input to the lower-layers/tiers of the application. 
+	
+Since we are using Servlet/Jsp apis in building the application, these apis will not provide boiler-plate logic so we end up writing the same code across all the servlets of all the applications while we build them using servlet/jsp technologies. To elimiate this code/functionality being redundandtly written we need to write our own generic implementation of the RequestWrapper as shown above
+
+Use the RequestWrapper across all the Servlet components of our application, to eliminate the boiler-plate logic.
+	
+2. Form Handling
+
+
+class AddDoctorServlet extends HttpServlet {
+  public void service(HttpServletRequest httpReq, HttpServletResponse httpResp) {
+    DoctorForm form = new DoctorForm();
+    RequestWrapper wrapper = new RequestWrapper();
+    form =wrapper.wrap(httpReq, “DoctorForm”);
+
+    
+    if(form.getFullname() == null || form.getFullname().trim().length() == 0) {
+			httpReq.setAttribute("error", "fullname is required");
+			RequestDispatcher dispatcher = httpReq.getRequestDispatcher("/error.jsp");
+			dispatcher.forward(httpReq, httpResp);
+		}
+		
+		if(form.getDob() == null) {
+			httpReq.setAttribute("error", "dob is required");
+			RequestDispatcher dispatcher = httpReq.getRequestDispatcher("/error.jsp");
+			dispatcher.forward(httpReq, httpResp);
+		}
+		if(form.getExperience() < 0 ){ 
+			httpReq.setAttribute("error", "experience must be zero or positive integer only");
+			RequestDispatcher dispatcher = httpReq.getRequestDispatcher("/error.jsp");
+			dispatcher.forward(httpReq, httpResp);
+		}
+
+    doctorService.addDoctor(form);
+    
+  }
+}
+	
+	
+error.jsp
+---------
+<html>
+	<head>
+		<title>Validation Error</title>
+	</head>
+	<body>
+		<h3>Validation Errors</h3>
+		<p>
+			<c:out value="${error}"/>
+		</p
+	</body>
+</html>
+
+2.2 Handle all the validation errors at once itself
+
+class AddDoctorServlet extends HttpServlet {
+  public void service(HttpServletRequest httpReq, HttpServletResponse httpResp) {
+		List<String> errors = null;
+    DoctorForm form = new DoctorForm();
+    RequestWrapper wrapper = new RequestWrapper();
+    form =wrapper.wrap(httpReq, “DoctorForm”);
+
+		errors = new ArrayList();
+    
+    if(form.getFullname() == null || form.getFullname().trim().length() == 0) {
+			errors.add("fullname is required");
+		}
+		
+		if(form.getDob() == null) {
+			errors.add("dob is required");
+		}
+		if(form.getExperience() < 0 ){ 
+			errors.add("experience must be zero or positive integer only");			
+		}
+		
+		if(errors.size() > 0) {
+			httpReq.setAttribute("errors", errors);
+			httpReq.getRequestDispatcher("/errors.jsp").forward(httpReq, httpResp);
+			return;
+		}
+
+    doctorService.addDoctor(form);
+    //
+		httpReq.getRequestDispatcher("/success.jsp").forward(httpReq, httpResp);
+  }
+}	
+	
+	
+errors.jsp
+---------
+<html>
+	<head>
+		<title>Validation Error</title>
+	</head>
+	<body>
+		<h3>Validation Errors</h3>
+		<c:forEach items="${errors}" var="error">
+			<p>
+				<c:out value="${error}"/>
+			</p>
+		</c:forEach>
+	</body>
+</html>	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

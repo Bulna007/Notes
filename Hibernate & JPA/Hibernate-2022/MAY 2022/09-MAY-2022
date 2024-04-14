@@ -1,0 +1,47 @@
+Hibernate Tools
+----------------
+The developer has to write lot of configuration information describing the entity classes and the hibernate framework configuration about the underlying database and tables to the Hibernate Framework, unless otherwise hibernate framework will not perform the operation.
+	
+The amount of configuration/mapping information we need to write in our application seems to be very high due to which the time required for developing the application using hibernate will be very high
+That is where to help the developers in writing/generating most of these configurations hibernate framework has provided tools
+
+There are 2 types of tools are there
+1. graphical userinterface tools are provided as plugins in eclipse ide
+	1.1 hibernate configuration file
+	1.2 hibernate mapping editor
+	1.3 database explorer
+	1.4 reverse engineering wizard
+	1.5 hibernate console configuration
+	1.6 hql editor
+	1.7 criteria editor
+	
+2. command-line tools
+	2.1 SchemaExport
+	2.2 SchemaUpdate
+	2.3 SchemaValidate
+	
+1.1 hibernate configuration file = used for generating the hibernate.cfg.xml with properties filled with values.
+there are 2 ways to create
+	1. in the hibernate configuration modal fill all the values, add the jdbc (mysql) driver and create it
+	2. create datasource connection by switching to DataSource Explorer perspective and the create hibernate configuration file by loading value from connection
+	
+1.2 Hibernate Mapping Editor
+hibernate mapping editor generates the hbm.xml file automatically by taking our entity class as an input. since it doesnt have information about the underlying table and columns it generates a mapping file by using standard conventions like
+classname = tablename
+attributenames = columnnames
+it doesnt support inheritance mapping model / association mapping model since it dont have details of the database tables and relationships.
+	
+1.3 DataSource Connection
+Switch to DataSource Explorer perspective and create an database connection by providing all the details
+
+1.4 Hibernate Console Configuration
+hibernate console configuration is created by provided our application hibernateconfiguration and mapping files, so that it can be used by
+hql editor
+criteria editor
+reverse engineering wizard
+to perform operations.
+
+
+1.5 hql editor
+hql is an object query language where we refer the entityClass and attributes of it within the query, so we cannot test these queries by running on underlying database directly. So hibernate has provided hql editor in which we can write hql query and execute.
+It internally uses Hibernate Console configuration which has

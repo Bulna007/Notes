@@ -1,0 +1,192 @@
+How can we generate, update or validate the schema out of mappings in an Hibernate/jpa application?
+Jpa has provided Schema Manager tools using which we can create/generate, update or validate an database schema based on mapping information. The Hibernate as an Jpa implementor has provided necessary components within the framework to support jpa schema management specification.
+	
+Creating/Generating, Validating and updating the schema are one-time activities that will be performed before/during the startup of the application, we can kick-off these tools through the help of SessionFactory or EntityManagerFactory by writing an configuration in persistence.xml or hibernate.cfg.xml
+
+Incase of persistence.xml the property we need to write is
+jakarta.persistence.schema-generation.database.action and the possible values are as below
+1. create      = drops if exists an schema and creates an database schema out of the mappings defined in persistence.xml
+2. create-drop = drops if there exists an schema during startup, creates an new schema out of mappings defined in persistence.xml and drops the schema at the end of the application while closing the SessionFactory/EntityManagerFactory
+3. create-only = it creates the schema during the startup, but will not drop 
+3. drop        = drop the existing schema
+4. update      = identifies the deltas between the mapping and the existing tables within the database schema and finds the changes between the mappings/database and generates necessary alter queries in adding additional columns/tables asper the mappings in the database. if mappings and Schema are intact then no changes are made
+5. validate    = validate checks the mappings against the database schema, if there is a mis-match found, it aborts the deployment of the application
+6. truncate    = cleansup the data within the tables
+
+Incase of hibernate.cfg.xml we can write property as
+hibernate.hbm2ddl.auto = this means hbm (hibernate mappings) to ddl (data definition language) like creating or updating the schema will be taken place automatically. The possible values this property takes is as below:
+
+1. create = drops an existing schema and creates new during startup
+2. create-drop = drops an existing schema if exists and creates new during startup. at the end of the application while closing SessionFactory drops the schema
+3. drop        = drops the existing schema
+4. validate    = validates
+5. update      = updates
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to work with composite primary keys in a table aspart of the hibernate application?
+Hibernate:
+composite primary key: aspart of the primary key we have more than one-column to be included where a combination of these column values is unqiue among the records of the table
+
+person
+first_nm (pk)
+last_nm (pk)
+gender
+mobile_no
+dob
+email_address
+
+composite primary key is choose as both (first_nm & last_nm), so a combination of these #2 columns will be unique across the records of the table, but individual these column values my be duplicated across the records
+
+person
+first_nm  last_nm  gender  dob         mobile_no      email_address        
+greg      paul     male    10/01/1998  9394849489     greg.paul@gmail.com
+greg      mark     male    11/02/1998  9383784848     greg.mark@gmail.com
+
+note: we choose composite primary key columns out of the existing columns of the business data, so we dont need any ID Generators for composite primary keys
+
+In-Short:
+1. From the above we understood we dont need any id generators for composite primary keys
+2. as we have multiple columns aspart of the primary key for that database tables, how to represent them in entity class and map them aspart of Hibernate Mappings.
+	
+There are 2 ways in working with composite primary keys are there:
+#1 approach
+
+class Person implements Serializable {
+	String firstName;
+	String lastName;
+	String gender;
+	LocalDate dob;
+	String mobileNo;
+	String emailAddress;
+	
+	// accessors
+}
+
+Person.hbm.xml
+<hibernate-mapping package="com.cpk.entities">
+	<class name="Person" class="person">
+		<composite-id>
+			<key-property name="firstName" column="first_nm"/>
+			<key-property name="lastName" column="last_nm"/>
+		</composite-id>
+		<property name="gender"/>
+		<property name="dob"/>
+		<property name="mobileNo" column="mobile_no"/>
+		<property name="emailAddress" column="email_address"/>
+	</class>
+</hibernate-mapping>
+
+
+1. to persist or update the data for the above entity class, there is no change, we just populate all the fields with values and pass it as an input to Session
+
+2. to fetch the data based on primary key
+2.1 first create the object of Person by populating firstName & lastName 
+Person id = new Person();
+id.setFirstName("Greg");
+id.setLastName("Paul");
+
+Person p = session.get(Person.class, id);
+in this approach we need construct the whole entity object with key columns populated to fetch the entity. To overcome the above problem #2 approach is introduced
+
+#2. approach
+1. create an seperate pk class representing the primary key columns of your table. Your pk class must and should be Serializable.
+	
+class PersonPK implements Serializable {
+	String firstName;
+	String lastName;
+	//accessors
+}
+
+2. within the entity class declare pk class as an attribute
+
+class Person implements Serializable {
+	PersonPk id;
+	String gender;
+	LocalDate dob;
+	String mobileNo;
+	String emailAddress;
+	// accessors
+}
+
+Person.hbm.xml
+<hibernate-mapping package="com.cpk.entities">
+	<class name="Person" class="person">
+		<composite-id name="id">
+			<key-property name="firstName" column="first_nm"/>
+			<key-property name="lastName" column="last_nm"/>
+		</composite-id>
+		<property name="gender"/>
+		<property name="dob"/>
+		<property name="mobileNo" column="mobile_no"/>
+		<property name="emailAddress" column="email_address"/>
+	</class>
+</hibernate-mapping>
+
+
+1. while fetching the data now we dont need to create whole object populated with keyvalues to fetch the entity object
+PersonPk id = new PersonPk();
+id.setFirstName("Greg");
+id.setLastName("Paul");
+
+Person person = session.get(Person.class, id);
+
+How to work with composite primary key in jpa?
+There are #2 approaches are there in working with composite primary keys in jpa
+#1. @EmbeddedId
+#2. @IdClass
+	
+@Embeddable	
+class PersonPK implements Serializable {
+	@Column(name="first_nm")
+	private String firstName;
+	@Column(name="last_nm")
+	private String lastName;
+	
+	// accessors
+}
+
+@Entity
+@Table(name="person")
+class Person implements Serializable {
+	@EmbeddedId
+	private PersonPK id;
+	private int age;
+	private String gender;
+	@Column(name="mobile_no")
+	private String mobileNo;
+	@Column(name="email_address")
+	private String emailAddress;
+	
+	// accessors
+}
+	
+	
+#2. @IdClass
+	
+class AccountPK implements Serializable {
+	@Column(name = "account_nbr")
+  private String accountNumber;
+  @Column(name = "ifsc_code")
+  private String ifscCode;
+	
+	// accessors
+}
+
+@Entity
+@Table(name="person")
+@IdClass(AccountPK.class)
+class Account implements Serializable {
+	@Id
+	@Column(name="account_nbr")
+	private String accountNumber;
+	@Column(name="ifsc_code")
+	@Id
+	private String ifscCode;
+	
+	@Column(name = "account_holder_nm")
+	private String accountHolderName;
+	@Column(name = "account_type")
+	private String accountType;
+	private double balance;
+	
+	// accessors
+}

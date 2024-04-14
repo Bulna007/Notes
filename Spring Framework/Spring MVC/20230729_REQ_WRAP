@@ -1,0 +1,205 @@
+Request Wrapping
+-----------------
+
+class AddDoctorServlet extends HttpServlet {
+  public void service(HttpServletRequest httpReq, HttpServletResponse httpResp) {
+     /*String doctorName = httpReq.getParameter(“doctorName”);
+     String dob = httpReq.getParameter(“dob”);
+     String gender = httpReq.getParameter(“gender”);
+     String qualification = httpReq.getParameter(“qualification”);
+     // read all the req parameter values that user has submitted from jsp form page.
+     DoctorForm form = new DoctorForm();
+     form.setDoctorName(doctorName);
+     form.setGender(gender);
+     form.setDob(sdf.parse(dob));
+     form.setQualification(qualification);*/
+		 
+		 RequestWrapper wrapper = new RequestWrapper();
+		 DoctorForm form = (DoctorForm) wrapper.wrap(httpReq, "DoctorForm");
+  }
+}
+
+class RegisterPatientServlet extends HttpServlet {
+  public void service(httpReq, httpResp) {
+    /*PatientForm form = new PatientForm();
+    String patientName = httpReq.getParameter(“patientName”);
+    String dob = httpReq.getParameter(“dob”);
+    // all the request parameter values and bind to form object
+    form.setPatientName(patientName);
+    form.setGender(gender);
+    patientService.registerPatient(form);*/
+		RequestWrapper wrapper = new RequestWrapper();
+		PatientForm form = (PatientForm) wrapper.wrap(httpReq, "PatientForm");
+  }
+}
+
+How to eliminate writing the above boiler-plate request wrapping logic in each servlet class of our application?
+1. Per each request to hold the data that is send aspart of the request into an object, we need to create an class with attributes defined inside it.
+while declaring the attributes we should following convention over configuration, while writing the attribute names those must and should match with request parameter names that are submitted aspart of the request. So that we can easily derive which parameter of the request should be binded to which attribute of the class given if we know for that request which class we need to bind the data
+	
+	
+	
+class RequestWrapper {
+	public Object wrap(HttpServletRequest httpReq, String formClassName) {
+		Object formObject = null;
+		Map<String, String[]> paramMap = null;
+		
+		Class<?> clazz = Class.forName(formClassName);
+		formObject = clazz.newInstance();
+		paramMap = httpReq.getParameterMap();
+		
+		// all these keys/values should be binding to the attributes of the formObject
+		// per each requestParameterName, take the corresponding value and bind it to the attribute matching with same parameterName of that form object
+		paramMap.forEach((paramName, paramValue)-> {
+			Method method = clazz.getDeclaredMethod("set"+paramName.charAt(0).toUpper()+paramName.substring(1), new Class<?>[]{String.class});
+			method.invoke(formObject, new Object[]{paramValue});			
+		});
+		return formObject;		
+	}
+}
+
+
+class A {
+	
+	int m1(int i) {
+		// operation
+		return 10;
+	}
+	int m1(int i, int j) {
+		
+	}
+	float m4(double d1) {
+		return 3.3f;
+	}
+}
+
+A a = new A();
+int j = a.m1(20);
+
+class B {
+	int m2(int i, int j) {
+		// some operation
+		return 30;
+	}
+}
+
+B b = new B();
+int k = b.m2(10, 20);
+
+
+
+Class clazz = Class.forName("A");
+Object obj = clazz.newInstance();
+Method method = clazz.getDelcaredMethod("m1", new Class[]{Integer.class, Integer.class});
+
+obj.m1(10); // not possible because we hold generic reference of the object
+method.invoke(obj, new Object[]{10, 20});
+
+class Toy {
+	private String name;
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+}
+
+Class clazz= Class.forName("Toy");
+Object obj = clazz.newInstance(); // obj.name="train";
+Method method = clazz.getDeclaredMethod("setName", new Class<?>[]{String.class});
+method.invoke(obj, new Object[] {"train"});
+
+Toy toy = new Toy();
+toy.setName("train");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,5 @@
+1. Jersey-Bootstrapping
+2. Sub Resource Method
+3. Working with interfaces
+4. Working with abstarct classes
+5. Working with template parameters

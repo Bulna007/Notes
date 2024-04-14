@@ -1,0 +1,136 @@
+Ajax
+----
+Ajax stands for Asynchronous javascript and XML. Ajax is not a programming language, rather it is a combination of
+1. browser built-in XMLHttpRequest object to send the request to the web server
+2. Javascript and HTML DOM api to rewrite part of the page contents
+
+AJAX is misleading name. AJAX applications inorder to transport the data from the server requires a data representation format like
+1. csv
+2. xml
+3. json
+4. yaml
+so that the javascript DOM api can parse the response and render it on part of the page. 
+Initially it was choosen to use XML as other data representation standards are not popular or doesnt have existence. Later on the JSON is widely used in exchanging the data between the server and the ajax object, so that it can be quickly parsable and can render the contents.
+	
+AJAX is being used for partial page reload, rather than resubmitting the entire page to the server, for re-rendering/refreshing the part of the page.
+	
+
+How to work with AJAX?
+1. All the modern browsers has built-in object called XMLHttpRequest. In order to send the request to the server we need to create the XMLHttpRequest object as below
+	
+XMLHttpRequest is an transport object that takes care of constructing the HttpRequest and sending it to the server. The response that is return from the server will be kept by this object and allows us to extract and parse it for usage.
+	
+1. create the XMLHttpRequest object
+httpReq = new XMLHttpRequest();
+
+2. register an callback function to extract the response from the server
+httpReq.onreadystatechange = function() {
+	
+}
+XMLHttpRequest object will be in different readyStates
+0 = uninitialized
+1 = server connection established
+2 = request received
+3 = processing the request
+4 = request finished and response is ready
+
+The callback handler we registered will be invoked by the XMLHttpRequest object each time when its readyState has been changed. So here it would be called for 5 times.
+	
+if we want to collect the response from the server we need to look for readyState == 4 inside the callback function. upon reaching to readyState as 4, we need to even check for response status, because the response from the server could be either success or failure.
+	
+httpReq.onreadystatechange = function() {
+	if(httpReq.readyState == 4 && httpReq.status == 200) {
+		// collect the response
+		httpReq.responseText = for all the types of responses other than XML we use responseText
+			(or)
+		httpReq.responseXML = The response xml will be used when the returned response from the server is XML
+			
+	}
+}	
+
+var body = httpReq.responseText;
+if the body contains an JSON response, we can parse into javascript object so that we can easily process it using
+var account = JSON.parse(body);
+
+
+3. populate the attributes of the request by opening it.
+httpReq.open(requestMethod, uri, async, username, password)	
+	
+requestMethod = indicates GET or POST we would want to send to the server
+url : the backend server url
+async: true (asynchronous), false (synchronous)
+user: optional / password optional = to authenticate with backend server
+
+4. send the request
+httpReq.send(); = sends the request to the server used for GET requests
+httpReq.send(string); = used incase of POST request to send the data aspart of request body.
+	
+5. setRequestHeader() = used for adding headers to the httpRequest
+
+
+How to handle the response incase of synchronous request:
+var http = new XMLHttpRequest();
+http.open(method, url, false);
+http.send(); #blocked
+
+if(http.status == 200) {
+	http.responseText;
+}
+upon calling the send() method above, the javascript engine or browser blocks us on that call and allows to execute the next part of the code only when the response is available from the server. so upon getting into the next line the response is always available, so we dont need callback handler
+
+How to handle the response incase of asynchronous request:
+
+var http = new XMLHttpRequest();
+#register the callback handler
+
+http.open(method, url, true);
+http.send(); #un-blocked
+
+http.onreadystatechange=function() {};
+
+since the send is not being blocked on the response, we dont know when does the response is available from the server, so to capture the response return from the server we need to use callback mechanism.
+	
+http.onreadystatechange=function() {};
+note: this callback handler must and should be registered before opening the httpRequest object;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,50 @@
+Impedance Mismatch
+While mapping the data between object model to the relational model, there are few differences from the fundamental standpoint of view which are being termed as "Impedance Mismatch". There are 5 differences are there
+1. Granularity
+2. Subtypes
+3. Identity
+4. Association
+5. Data Navigation
+
+Association Mappings
+---------------------
+How to map the association relationship between the entity classes in relational model?
+The entity classes may have association relationship between them for reusing the data or functionality of another class, so how do we need to perform persistency operation on these objects of data that has association relationship between them
+
+for eg..
+A Person class may have Address class in association between them
+	
+class Person {
+	int uniqueNo;
+	String fullname;
+	int age;
+	String gender;
+	Set<Address> addresses;
+	// accessors
+}
+
+whenever we wanted to persist the Person, aspart of the person, we have addresses attribute of Type Address class, so along with persisting the person object, we need to persist addresses that are associated with that person. so we need to store Person object data in person table and addresses should be stored in address table, but having them stored in separate table will breaks the association relation between the objects, which means "these addresses belongs to that person".
+	
+So how to map the association relationship between the entity classes in table model, so that we can persist and retrieve the objects based on their relationship is called "Association Mapping"	
+	
+There are 3 types of Association relationships are there
+1. Association
+2. Aggregation
+3. Composition
+
+There are few characteristics of the Association relationship that derives the Type of association.
+	
+1. Cardinality    = how many objects are in relationship with other objects of other class
+	1. one-to-one
+	2. one-to-many
+	3. many-to-many
+	
+2. Directionality = either uni-directional or bi-directional
+3. Ownership      = who owns the relationship
+
+	
+How to map the association relationship between the objects into relational model?
+Given the classes with association relationship
+1. identify the cardinality of the association
+2. derive the ownership of the association
+based on which we can determine how do we want to map the association relationship into the table model.

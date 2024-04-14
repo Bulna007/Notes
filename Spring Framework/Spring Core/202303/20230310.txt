@@ -1,0 +1,76 @@
+Nested BeanFactories
+We can manage the dependencies between the bean definitions across the ioc containers using the Nested Bean Factories. In our application we have 2 ioc containers, inorder for one ioc container to see the bean definitions that are part of another ioc container  we need to nest (put one container inside the another container) one ioc container into another.
+upon nesting one ioc container inside the another, one container will act as parent and another one as child container.
+	
+parent container = the ioc container that is nested inside another ioc container becomes parent container
+child container = the ioc container that has nested (wrapped) another container becomes child container
+
+The child container can see/refer all the bean definitions that are part of parent ioc container, but a parent container cannot see the beans that are part of child ioc container
+
+How to nest the ioc containers?
+BeanFactory parentFactory = new XmlBeanFactory(new ClassPathResource("application-context1.xml"));
+BeanFactory childFactory = new XmlBeanFactory(new ClassPathResource("application-context2.xml"), parentFactory);
+
+
+#2 In addition to the above we need to tell the ioc container how the dependent bean definition should be reffered from in the configuration file
+
+2.1 refer the bean definition from parent ioc container
+<property name="b">
+	<ref parent="b"/> 
+</property>
+
+2.2 refer from local container
+<property name="b">
+	<ref local="b"/> #deprecated and removed from 3.2 
+</property>
+
+2.3 either local or parent
+<property name="b">
+	<ref bean="b"/>
+</property>
+
+(or)
+<property name="b" ref="b"/>
+	
+
+class Appointment {
+	int appointmentNo;
+	String patientName;
+	Date appointmentDate;
+	Doctor doctor;
+	
+	// setter
+} 
+
+class Doctor {
+	int doctorNo;
+	String doctorName;
+	String qualification;
+	int experience;
+	// setter
+}
+
+parent-beans.xml
+-----------------
+<bean id="doctor" class="Doctor" p:doctorNo="3984" p:doctorName="Samuel" p:qualification="MBBS" p:experience="10"/>
+
+child-beans.xml
+---------------
+<bean id="appointment" class="Appointment">
+	<property name="appointmentNo" value="9384"/>
+	<property name="patientName" value="Mark"/>
+	<property name="appointmentDate" value="10/03/2023"/>
+	<property name="doctor">
+		<ref bean="doctor"/>
+	</property>
+</bean>
+
+Test.java
+----------
+BeanFactory parentFactory = new XmlBeanFactory(new ClassPathResource("parent-beans.xml"));
+BeanFactory childFactory = new XmlBeanFactory(new ClassPathResource("child-beans.xml"), parentFactory);
+
+Appointment appointment = childFactory.getBean("appointment", Appointment.class);
+System.out.println(appointment);
+-----------------------------------------------------------------------------------------------------------------------------------
+Bean Autowiring

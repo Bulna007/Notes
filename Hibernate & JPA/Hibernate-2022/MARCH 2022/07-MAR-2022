@@ -1,0 +1,44 @@
+class AccountAccessor {
+	public Account getAccountByAccountNo(int accountNo) {
+		ResultSet rs = null;
+		Connection con = null;
+		Account account = null;
+		PreparedStatement pstmt = null;
+		try {
+			Class.forName("com.mysql.jdbc.cj.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/db", "root", "root");
+			
+		}catch(ClassNotFoundException | SqlException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			// close resources
+		}
+	}
+}
+
+db.properties
+--------------
+db.driverClassname=com.mysql.jdbc.cj.Driver
+db.url=jdbc:mysql://localhost:3306/db
+db.username=root
+db.password=root
+
+class ConnectionManager {
+	private static ConnectionManager instance;
+	private Properties props;
+	
+	private ConnectionManager() {
+		props = new Properties();
+		props.load(this.getClass().getClassLoader().getResourceAsStream("db.properties");
+		Class.forName(props.getProperty("db.driverClassname"));
+	}
+	
+	public static synchronized getInstance() {}
+	
+	public Connection newConnection() {		
+		Connection con = null;		
+		con = DriverManager.getConnection(props.getProperty("db.url"),props.getProperty("db.username"),props.getProperty("db.password"));
+		return con;
+	}
+}

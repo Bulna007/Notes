@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>function by itself</title>
+</head>
+<body>
+    <script type="text/javascript">
+        function greetings() {
+            document.writeln("<br>good evening");
+        }
+        const timeoutgreetings = setTimeout(greetings, 5000);
+        function stop() {
+            clearTimeout(timeoutgreetings);
+        }
+
+        
+    </script>
+    <input type="button" value="stop" onclick="stop();"/>
+</body>
+</html>

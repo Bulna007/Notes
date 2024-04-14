@@ -1,0 +1,50 @@
+Service and ServiceRegistry
+---------------------------
+What is a Service?
+Service is a component that provides various types of functionality. For different types of functionalities we need different Service types. Pluggability is achieved through interface and implementations.
+	
+In hibernate framework requires various different external resources and these resources should be pluggable into the Framework.
+
+How can we achieve the pluggability in using these external resources in Hibernate Framework?
+For each type of Resource/functionality the Hibernate Framework has defined an Service interface (it services a specific type of functionality). Each interface is defined for providing a specific type of functionality which are called "Service Role" interfaces. For all of these pre-defined interfaces, the Hibernate Framework itself has provided default implementations
+
+The pluggability comes from the aspect of Service Role and their implementations. The Hibernate Framework components uses these Service Role interfaces in using the functionality into which we can plugin different implementations of those interfaces. It is nothing but the principle of "design to interfaces and never design to concrete classes".
+	
+For eg Hibernate Framework components requires Connection as a Resource to perform persistence operations. Hibernate Framework has defined a ServiceRole interface called ConnectionProvider interface it has methods for acquiring and releasing the Connection	
+
+interface ConnectionProvider {
+	Connection getConnection();
+	void closeConnection();
+}
+For the above interface Hibernate Framework itself has defined several default implementations in support of multiple ways of acquring/closing the Connection as below
+1. JdbcConnectionProviderImpl = default hibernate connection pool
+2. C3P0ConnectionProviderImpl 
+3. DbCpConnectionProviderImpl
+4. ProxoolConnectionProviderImpl
+5. DataSourceConnectionProviderImpl = Jee Server Connection Pooling
+
+based on the connection configuration we have written in hibernate.cfg.xml an appropriate Service implementation of the ConnectionProvider interface will be instantiated and Plugged into Hibernate Framework components
+
+For all of these Service interface Hibernate Framework has defined one base interface called "Service", it is an marker interface and defined for TypeSafety and Polymorphism
+
+What is an ServiceRegistry?
+These services has special characteristics
+1. These services requires lifecycle management, which is nothing instantiating/initialization and destruction/release
+2. A Service is dependent on other Service(s)
+	
+To fulfill the above characteristics in managing these Services, The Hibernate Framework has introduced ServiceRegistry. ServiceRegistry is an "ioc container" which takes care of hosting these Services by instantiating appropriate implementations and manage their lifecycle and dependencies
+
+	
+Bus = functionality
+interface Bus {
+	int drive(int speed);
+	void break(int pressure);
+}
+
+class SchoolBus implements Bus {}
+class BenzBus implements Bus {}
+
+Banking = functionality
+interface Banking {
+	double deposite(String accountNo, double amount);	
+}

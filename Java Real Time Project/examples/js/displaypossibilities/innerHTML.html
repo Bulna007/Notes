@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>innerHTML</title>
+</head>
+<body>
+    <h2>InnerHTML demonstration</h2>
+    <div id="content">
+        No content here!!!
+    </div>
+    <script type="text/javascript">
+        var divElement = document.getElementById("content");
+        divElement.innerText = "<b>Hey! modified by javascript innerHTML...</b>";
+    </script>
+</body>
+</html>

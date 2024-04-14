@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>function with block declaration</title>
+</head>
+<body>
+    <script type="text/javascript">
+        printOddNumbers(20);
+        var printOddNumbers = function(n) {
+            for(let i=1;i<n;i++) {
+                if(i%2 != 0) {
+                    document.writeln(i);
+                }
+            }
+        }
+        
+    </script>
+</body>
+</html>

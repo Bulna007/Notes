@@ -1,0 +1,54 @@
+Controller
+Controller is an component that is written by the programmer to perform request processing logic for each type of request that is received within the application. The spring mvc has provided an interface Controller implementing it we need to write our own Controller class.
+	
+But there are different types of abstract/concreate implementations of Controllers are provided by spring mvc
+1. Controller
+2. AbstractController
+
+Forwarding Controllers:
+-----------------------
+3. ParameterizableViewController
+4. UrlFileNameViewController
+------------------------------- deprecated from spring 3.x and got removed in spring 4.x
+5. AbstractCommandController
+6. SimpleFormController
+7. AbstractWizardController
+
+Forwarding Controllers:
+Forwarding controllers are used for forwarding an incoming request to an static html/jsp page and these are the Concreate controllers that can be used directly within our application.
+	
+	
+no web.xml = how to bootup the spring mvc application 
+#important
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,69 @@
+Collection Dependency Injection
+Injecting collection class objects with pre-populated values as dependencies into the Target class attributes is called "Collection Dependency Injection".
+There are 4 types of collections are supported by ioc container to be injecting them as dependencies
+1. List
+2. Set
+3. Map
+4. Properties
+
+To support injecting these 4 types of collection class objects as dependencies, ioc container has provided special tags. but these collection tags has few limitations
+1. For each collection, we cannot specify the implementation type to be instantiated to the ioc container, it takes a default implementation for each type
+2. we cannot specify the generic type of the collection
+3. we cannot reuse the collection type instance across the properties of the bean definitions
+
+To overcome this problem ioc container has provided new util collection tags under "util" namespace. instead of using list, set, map, props tags we need to refer these tags from util namespace as <util:list>, <util:set>, <util:map>, <util:props>
+
+class Team {
+	List<String> players;
+	
+	public void setPlayer<List<String> players) {
+		this.players = players;
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="team" class="Team">
+	<property name="players" ref="players">
+</bean>
+
+<util:list id="players" value-type="java.lang.String" list-class="java.util.ArrayList">
+	<value>Dhoni</value>
+	<value>Virat</value>
+	<value>Rohit</value>
+</util:list>
+-----------------------------------------------------------------------------------------------------------------------------------
+Bean Alias
+giving more than one name to an bean definition is called bean aliasing. There are 2 ways in which we can give more than one name to an bean definition
+
+1. using "name" attribute
+2. using <alias> tag
+
+class Person {
+	int uniqueNo;
+	String fullName;
+	int age;
+	String gender;
+	
+	public Person(int uniqueNo, String fullName, int age, String gender) {
+		this.uniqueNo = uniqueNo;
+		this.fullName = fullName;
+		this.age = age;
+		this.gender  = gender;
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="person" name="person1,person2,person3" class="Person">
+	<constructor-arg value="10"/>
+	<constructor-arg value="John"/>
+	<constructor-arg value="23"/>
+	<constructor-arg value="Male"/>
+</bean>
+
+Test.java
+----------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/ba/common/application-context.xml"));
+Person person = beanFactory.getBean("person1", Person.class);
+sop(person);

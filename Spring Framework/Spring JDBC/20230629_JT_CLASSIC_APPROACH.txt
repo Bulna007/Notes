@@ -1,0 +1,74 @@
+Classic Approach
+-----------------
+Classic Approach resembles the java jdbc programming, here we need to create the statement/prepared statement, execute the query, interate over the resultset and gather the data from it.
+	
+Classic Approaches 
+1. Greatly relies on Callback Mechanism
+2. Any jdbc operation will be performed in Classic approach in #2 phases of execution.
+	2.1 Creator   = create the objects required for executing the query like Statement/PreparedStatement
+	2.2 Callback  = callback phases we execute the statement/preparedstatement and gather the results and return.
+		
+Let us execute an sql query to fetch all the students in the student table using PreparedStatement object. 
+To execute the sql query using PreparedStatement object we need to write the #2 classes implementing from spring jdbc provided standard interfaces
+1. PreparedStatementCreator = In the Creator class, write the logic for taking Connection as an input and create the PreparedStatement by substituting the parameters if any
+2. PreparedStatementCallback = Write the logic for executing the PreparedStatement, gather the results by iterating over the resultSet and return the data
+
+
+class StudentBo {
+	int studentNo;
+	String studentName;
+	int age;
+	String gender;
+	String mobileNo;
+	String emailAddress;
+	// accessors
+}
+
+
+class StudentDao {
+	private JdbcTemplate jdbcTemplate;
+	
+	public StudentDao(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
+	
+	public List<StudentBo> getAllStudents() {
+		List<StudentBo> students = null;
+		
+		students = jdbcTemplate.execute(new GetAllStudentsPreparedStatementCreator(), new GetAllStudentsPreparedStatementCallback());		
+		return students;
+	}
+}
+
+class GetAllStudentsPreparedStatementCreator implements PreparedStatementCreator {
+	public PreparedStatement createPreparedStatement(Connection con) {
+		PreparedStatement pstmt = null;
+		
+		pstmt = con.preparedStatement("select student_no, student_nm, age, gender, mobile_no, email_address, qualification from student");
+		return pstmt;
+	}
+}
+
+class GetAllStudentsPreparedStatementCallback implements PreparedStatementCallback<List<StudentBo>> {
+	public List<StudentBo> doInPreparedStatement(PreparedStatement pstmt) {
+		ResultSet rs = null;
+		List<StudentBo> students = null;
+		StudentBo bo = null;
+		
+		rs = pstmt.executeQuery();
+		students = new ArrayList<>();
+		
+		while(rs.next()) {
+			bo = new StudentBo();
+			bo.setStudentNo(rs.getInt(1));
+			bo.setStudentName(rs.getString(2));
+			bo.setAge(rs.getInt(3));
+			bo.setGender(rs.getString(4));
+			bo.setMobileNo(rs.getString(5));
+			bo.setEmailAddress(rs.getString(6));
+			bo.setQualification(rs.getString(7));
+			students.add(bo);
+		}
+		return students;
+	}
+}

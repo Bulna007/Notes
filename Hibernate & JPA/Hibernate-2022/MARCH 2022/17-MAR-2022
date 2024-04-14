@@ -1,0 +1,156 @@
+#1. write entity class
+package com.netsafe.entities;
+class Address implements Serializable {
+	private int addressNo;
+	private String addressLine1;
+	private String addressLine2;
+	private String city;
+	private String state;
+	private int zip;
+	private String country;
+	// accessors
+	// equals and hashCode()
+}
+
+#2. write mapping information
+com
+|-netsafe
+  |-entities
+		|-Address.hbm.xml
+
+Address.hbm.xml
+----------------
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "...">
+<hibernate-mapping package="com.netsafe.entites">
+	<class name="Address" table="address">
+		<id name="addressNo">
+			<column name="address_no" sql-type="integer"/>
+		</id>
+		<property name="addressLine1">
+			<column name="address_line1" sql-type="varchar" size="50" not-null="true"/>
+		</property>
+		<property name="addressLine2">
+			<column name="address_line2" sql-type="varchar" size="50" not-null="true"/>
+		</property>
+		<property name="city"/>
+		<property name="state"/>
+		<property name="zip"/>
+		<property name="country"/>
+	</class>
+</hibernate-mapping>
+
+quick points:-
+	1. we can define multiple entity classes information in one single mapping file, but it is recommended to write per each entity class a separate mapping file
+	2. define table columns separately by writing nested tag <column/> in which capture all the information about the database column. 
+	It is not mandatory to define database column details, by defining the details we can enable validation to ensure are we using right schema while running the application
+
+#3 hibernate configuration file
+hibernate.cfg.xml
+-----------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/hibdb</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+		
+		<mapping resource="com/netsafe/entities/Address.hbm.xml"/>
+	</session-factory>
+</hibernate-configuration>
+
+Dialect:
+--------
+How does hibernate appliations becomes portable across various databases?
+
+class AddressAccessor {
+	public Address getAddress(int addressNo) {
+		ResultSet rs = null;		
+		Connection con = null;
+		Address address = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd);
+			pstmt = con.preparedStatement("select * from address where address_no = ?");
+			pstmt.setInt(1, addressNo);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				//read the columns and map to object
+			}
+		}catch(SqlException | ClassNotFoundException e) {
+			
+		}finally {
+			// close resources
+		}
+		return address;
+	}
+}	
+In the above code the jdbc logic should work across multiple databases, but the queries that we wrote as part of our application are specific to the database 
+
+why sql queries are not portable?
+all the databases derives their sql language for sql92 standard language, in addition each of the databases has added their own query clauses in enhancing the query capabilities and features of the database, thus making sql queries not portable across the databases
+
+even though the jdbc logic is designed to work across databases, the sql queries we write as part of our code are not portable across databases. so due to this while changing from one database to another we need to re-write sql queries which might result in different outcome than earlier
+so again we need to modify the jdbc logic that we have written around the query in extracting the data from the resultset thus making jdbc logic also not portable across the databases
+
+How to solve this problem?
+as the problem lies with sql queries, if we can write the sql queries that works across any databases the problem will be solved
+So hibernate has introduced hql query language, "hibernate query language" where hibernate framework has defined its own query language with clauses and criterias
+
+since we are not using sql queries specific to the database, each time when we change from one database to another, we dont have to modify the code. but the underlying database will not understand hql queries to execute
+
+so hibernate has provided an component called "Dialect" which takes care of translating hql queries into native sql queries specific to the database on which we are working
+so while switching from one database to another database, we only just need to modify the dialect information in hibernate application thus making hibernate portable across the database.
+	
+dialect is an interface with multiple implementations each per one database hibernate framework developers has written, we need to configure the dialect information within hibernate configuration file as
+<property name="hibernate.dialect">fqnDialectClass</property>
+
+declaring the dialect is optional from Hibernate4, since it can derive the dialect based on sql driver we are using
+
+while designing the hql language the framework developers ensured only the compatible query clauses are defined as part of the hql language so that the queries can be translated across all popular databases
+------------------------------------------------------------------------------------------
+#1 Configuration
+Configuration class acts as an builder for creating the object of the SessionFactory by pre-populating with configuration and mapping information
+We need to create the object of Configuration class and populate the hibernate configuration and mapping information into the Configuration class object as below
+Configuration configuration = new Configuration();
+here we created an empty Configuration object, then we need to call configure() on the object to load configuration/mapping information into configuration object
+
+configuration = configuration.configure();
+
+instead of writing 2 lines of code we can combine into a single line as below.
+Configuration configuration = new Configuration().configure();
+// modify configuration, discard it
+
+Now we can ask the configuration object to instantiate or create the object of SessionFactory by calling build method
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+------------------------------------------------------------------------------------------
+#2. What is SessionFactory?
+SessionFactory acts as an repository in holding hibernate configuration and mapping information. There are 2 main responsibilities of SessionFactory
+
+1. SessionFactory acts as an factory class for creating the object of Session. always the SessionFactory will creates the object of the Session by pre-populating confguration & mapping information into it.
+In addition to this SessionFactory even populates the database connection into Session object since it requries the connection to perform operation
+
+Session session = sessionFactory.openSession();
+	
+2. While creating the SessionFactory, the SessionFactory byitself grabs the Connection objects from the database and creates an Connection Pool to optimize the performance in creating the objects of Connection, so that each time when it creates the object of Session it can quickly grab the Connection from ConnectionPool with which it creates the object of Session
+
+3. It acts as repository for holding the mapping and configuration information, so that it can reuse and pass the information in creating the object of Session
+
+SessionFactory is immutable, once created we cannot change it
+------------------------------------------------------------------------------------------
+#3. Session object
+Session object is an intelligent object that plays a key role in carrying persistence operations within the Hibernate application. The entire persistence logic that is required to carry a database operation is wrapped/abstracted inside the Session object by the Hibernate developers
+Always the Session object will be created by passing Connection as an input. In addition to it the Configuration and Mapping information will be populated by the SessionFactory while creating the Session object. Since the Session object holds a database Connection to perform an operation we need to create one Session object per one operation within an application and at the end we need to close the Session to release the Connection
+
+The Session object takes care of performing some common activities/boiler-plate logic to perform persistence operation on the database like:
+1. creating an sql query based on the operation using dialect
+2. creates an PreparedStatement by passing the query as an input
+3. substitute the parameters into the query
+4. executes the query and grabs the resultset
+5. converts the resultset into corresponding entity class objects using the help of Generic Mapper internally
+So that programmer dont have to write any persistence logic/boiler-plate logic to perform database operation while working with Hibernate Framework

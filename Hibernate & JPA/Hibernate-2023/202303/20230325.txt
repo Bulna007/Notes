@@ -1,0 +1,24 @@
+How many types of relationships we can establish between the tables in RDBMS database?
+There are 3 types of relationships are there
+1. one-to-one
+2. one-to-many / many-to-one
+3. many-to-many
+
+1. one-to-one relationship
+A record of one table is in relationship with only one record of another table, then the tables are said to be in "one-to-one" relationship
+There are 2 ways we can represent one-to-one relationship
+1. direct one-to-one relationship
+2. one-to-many as one-to-one relationship
+
+#2. one-to-many as one-to-one relationship
+If the participating entities/tables within the relationship has their own
+1. independent existence = one can exists without the presence of another
+2. individual identity = each of them can be identified and accessed independent of another (in-short: both has their own primary key)
+then the only way of representing one-to-one relationship between the entities is using one-to-many as one-to-one
+
+#1. direct one-to-one relationship
+both the entities participating in the relationship doesnt have
+1. independent existence = for eg.. an itemized_bill cannot exists without a bill
+2. individual identity = customer never access itemized_bill directly, he always identifies the itemized_bill by using bill_no itself
+
+in such case both the tables will not have primary key/identifier columns. To establish one-to-one relationship between the tables, we write primary key of one table as primary key and foreign key in another table, this way of representing one-to-one relationship is called "direct one-to-one" relationship

@@ -1,0 +1,75 @@
+ThrowsAdvice
+------------
+
+class Thrower {
+	int willThrow(int i) {
+		if(i <= 0) {
+			throw new IllegalArgumentException("invalid i");
+		}
+		return i;
+	}
+}
+
+class GlobalExceptionLoggingAspect {
+	public void logException(JoinPoint jp, IllegalArgumentException iae) {
+		sop(jp.getSignature().getName() +"("+args[0]+") has reported an exception with message : "+ iae.getMessage());
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="thrower" class="Thrower"/>
+<bean id="globalExceptionLoggingAspect" class="GlobalExceptionLoggingAspect"/>
+
+<aop:config>
+	<aop:pointcut id="pc1" expression="within(com.ta.beans.*)"/>
+	<aop:aspect ref="globalExceptionLoggingAspect">
+		<aop:afterThrowing method="logException" pointcut-ref="pc1" throwing="iae"/>
+	</aop:aspect>
+</aop:config>
+---------------------------------------------------------------------------------------------------------------------------------------------
+Annotation-drive aspectj aop
+Around advice:
+
+@Component
+class Calculator {
+	int add(int a, int b) {
+		sop("in add()");
+		return a+b;
+	}
+}
+
+@Component
+@Aspect
+class LoggingAspect {
+	@Around("execution( * com.ara.beans.Calculator.*(..))")
+	public Object log(ProceedingJoinPoint pjp) {
+		String methodName = null;
+		Object[] args = null;
+		
+		methodName=  pjp.getSignature().getName();
+		args = pjp.getArgs();
+		sop("entered into " + methodName+"("+args[0]+","+args[1]+")");
+		Object ret = pjp.proceed();
+		sop("existing from " + methodName + " with ret : "+ ret);
+		return ret;
+	}
+}
+
+@Configuration
+@ComponentScan(basePackages={"com.ara.beans", "com.ara.aspect"})
+@EnableAspectJAutoProxy
+class JavaConfig {
+	
+}
+
+Test.java
+---------
+ApplicationContext context = new AnnotationConfigApplicationContext(JavaConfig.class);
+
+application-context.xml
+-----------------------
+<context:component-scan base-packages="com.ara.beans,com.ara.aspect"/>
+<aop:aspectj auto-proxy="true"/>
+
+ApplicationContext context = new ClassPathXmlApplicationContext("a-c.xml");

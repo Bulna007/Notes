@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>psuedo selector</title>
+    <style>
+        table, td, th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            padding: 5px 5px 10px 10px;
+        }
+        .alternate {
+            background-color: bisque;
+        }
+    </style>
+</head>
+<body>
+    <h2>psuedo selector</h2>
+    <table id="busTable">
+        <tr>
+            <th>Bus No</th>
+            <th>Source</th>
+            <th>Destination</th>
+            <th>Arrival Time</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>Bus1</td>
+            <td>Hyderabad</td>
+            <td>Banglore</td>
+            <td>11:20 am</td>
+            <td>On-Time</td>
+        </tr>
+        <tr>
+            <td>Bus2</td>
+            <td>Hyderabad</td>
+            <td>Warangal</td>
+            <td>11:30 am</td>
+            <td>On-Time</td>
+        </tr>
+        <tr>
+            <td>Bus3</td>
+            <td>Suryapet</td>
+            <td>Banglore</td>
+            <td>11:40 am</td>
+            <td>On-Time</td>
+        </tr>
+        <tr>
+            <td>Bus4</td>
+            <td>Vijayawada</td>
+            <td>Banglore</td>
+            <td>11:50 am</td>
+            <td>On-Time</td>
+        </tr>
+        <tr>
+            <td>Bus5</td>
+            <td>Vijayawada</td>
+            <td>Hyderabad</td>
+            <td>12:20 pm</td>
+            <td>On-Time</td>
+        </tr>
+        <tr>
+            <td>Bus6</td>
+            <td>Ongole</td>
+            <td>Banglore</td>
+            <td>12:25 pm</td>
+            <td>On-Time</td>
+        </tr>
+        <tr>
+            <td>Bus7</td>
+            <td>Khammam</td>
+            <td>Hyderabad</td>
+            <td>1:20 pm</td>
+            <td>On-Time</td>
+        </tr>
+    </table>
+    
+    <p>para1</p>
+    <p>para2</p>
+    <p>para3</p>
+    <p>para4</p>
+    <p>para5</p>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $("tr:odd").addClass("alternate");
+            $("p:last").html("I am Last!!!");
+        });
+    </script>
+</body>
+</html>

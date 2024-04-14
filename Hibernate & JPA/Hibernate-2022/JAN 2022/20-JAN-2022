@@ -1,0 +1,37 @@
+The typical requirements that has to be addressed while persisting the data on a permanent storage device are:
+1. data should both human readable and programmable format
+2. support sequential and random access of the data
+3. inter-operable, any language and any platform should be able to use the data
+4. should be able to represent relationship between the data
+5. should be structured and has to have semantics and boundaries of the data defined, so that there is no chance of mis-interpreting the data
+6. data should be secured
+7. optimal in storing the data, and should not waste memory
+8. should be able to handle large volumes of data with minimal cpu and memory requirements
+
+now addressing above all these requirements in persisting the data on the Files are quite complex the programmer endup in writing huge amount of logic for storing/retrieving the data where the cost of development and time required for building the application goes quite high
+
+Since persisting the data permanently on computer storage device is a common requirement for every application, instead of programmer taking care of managing the persistency aspects we can take the use of database management systems.
+	
+What is a database management system?
+Database management system is software that takes of managing the persistency aspects of storing/retrieving the data on the permanent storage device of the computer. It abstracts the underlying persistency aspects of 
+1. how to store or 
+2. how to access, 
+3. in which data representation format we have to store the data on the underlying storage device
+are taken away from the programmer
+Now developer only has to write the logic for communicating with the dbms software pass the data asking to store, or request the data from dbms, so that managing the data persistency are handled by database. due to which the amount of code we need to write in performing the persistency operations reduces greatly and brings down development time and cost of developing the application.
+	
+Now most of the time developer works on building business logic of the application rather than spending time on thinking about managing the persistency of the application.
+
+There are different types of database management system softwares are available.
+1. Hierarchial databases
+2. Network databases
+3. Relational database
+4. Object-oriented database
+5. No-Sql or semi-structured database
+6. object storage databases 
+
+#1. Hierarchial database management system
+-------------------------------------------
+In hierarchial database we store the data interms of Nodes where each node has 2 parts, data part and address part with in the data part we store the data and in address part we store the address of the parent node with whom the data is in relationship with. Since it is hierarchical databases always a node has one parent only and a parent can have any number of child nodes in relationship with.
+	
+Since we are storing the data interms of nodes rather than sequence of records of data on a file, performing persistence operations like updating, searching, deleting and inserting the data is quite easier as we just only need to manipulate the address of the nodes most of the time.

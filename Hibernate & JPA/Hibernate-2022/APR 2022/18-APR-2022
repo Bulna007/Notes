@@ -1,0 +1,92 @@
+jpa api with hibernate 5.x as an implementation
+------------------------------------------------
+jpa stands for java persistence api, its an api provided by Sun Microsystems in support of ORM technology. since its an api, we need implementation to work with, The Hibernate Framework acts as an implementation for jpa api
+
+There are 2 ways of working with jpa application
+1. configuration approach in writing mapping information about the entity classes
+2. annotation-driven approach in mapping the entity classes.
+	
+The core objects provided by the jpa api is inline with hibernate framework object hierarchy.
+Below are api objects provided by jpa api and comparision interms of Hibernate Framework objects
+
+#1. EntityManager
+EntityManager is a same as the Session class in hibernate framework. The Jpa api has wrapped the persistence logic in performing the operations on an entity class within the EntityManager. The EntityManager holds the Connection object and Mapping/Configuration information by keeping a reference the EntityManagerFactory with which it performs the persistence operation
+
+#2. EntityManagerFactory
+EntityManagerFactory plays the role of an SessionFactory class. The EntityManagerFactory will be created by passing Configuration and Mapping information. It plays 3 roles
+1. It acts as an repository in holding the configuration and mapping information
+2. It acts as an factory for creating the object of EntityManager
+3. It holds connectionpool internally in grabbing the Connection object with which it can instantiate the object of EntityManager
+
+#3. Persistence = plays the role of an Configuration class in Hibernate Framework. The persistence class reads the jpa configuration and the corresponding mapping information with which it instantiates the object of Persistence class
+	
+#1. How to work with annotations-driven approach in jpa api
+mobile_bill
+[bill_no, subscriber_nm, bill_dt, subscription_type, bill_amount, due_dt, mobile_no]
+
+package com.jpaannon.entities;
+
+@Entity
+@Table(name="mobile_bill")
+public class MobileBill {
+	@Id
+	@Column(name="bill_no")
+	int billNo;
+	@Column(name="subscriber_nm")
+	String subscriberName;
+	@Column(name="bill_dt")
+	Date billDate;
+	@Column(name="mobile_no")
+	String mobileNo;
+	@Column(name="subscription_type")
+	String subscriptionType;
+	@Column(name="due_dt")
+	Date dueDate;
+	@Column(name="bill_amount")
+	double billAmount;
+	// accessors
+}
+
+To perform persistence operation on the above entity class we need configuration information. The jpa api has introduced an standard jpa configuration file called "persistence.xml", which will be same while working with any of the implementations vendors
+
+Few points to jpa configuration file:-
+1. The persistence.xml should be placed under the classpath of the project within /META-INF/ directory only.
+2. The name of the configuration file must and should be persistence.xml only and cannot be changed
+
+META-INF/persistence.xml
+------------------------
+<?xml version="1.0" encoding="utf-8"?>
+<persistence>
+	<persistence-unit name="pu1">
+		<provider>HibernatePersistenceProvider</provider>
+		
+		<class>com.jpaannon.entity.MobileBill</class>
+		
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/hibdb"/>
+			<property name="javax.persistence.jdbc.user" value="root"/>
+			<property name="javax.persistence.jdbc.password" value="root"/>
+
+			<!-- if we are using hibernate as an implementation vendor, we can write implementation vendor specific configurations also-->
+			<property name="show_sql" value="true"/>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+		</properties>
+	</persistence-unit>
+</persistence>
+
+In a jpa application irrespective of number of databases on which we are performing the operation there will be only one persistence.xml will be there unlike your hibernate.cfg.xml.
+representing each database/schema on which we want to perform persistence operations we represent it as an <persistence-unit name=""> defined with an identified name representing the schema.
+------------------------------------------------------------------------------------------
+Test.java
+----------
+EntityManagerFactory emf = Persistence.createPersistenceUnit("pu1");
+// create one object of the EntityManagerFactory per 1 persistence unit defined
+
+EntityManager em = emf.createEntityManager();
+EntityTransaction transaction = em.getTransaction().begin();
+MobileBill mobileBill = new MobileBill();
+// populate all the data into mobile bill object
+
+em.persist(mobileBill);
+transaction.commit() or transaction.rollback();

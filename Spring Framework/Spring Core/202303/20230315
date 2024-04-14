@@ -1,0 +1,132 @@
+Bean Scopes
+Through the bean scopes we tell the ioc container on how to instantiate and manage the objects of the bean definition. There are 5 scopes are available
+1. singleton (default) = only one object per the bean definition should be created within the scope of ioc container and should return the same instance whenever has been requested
+2. prototype = everytime when we request for the object of the bean definition, ioc container should instantiate new object and return it. (in prototype scope ioc container will not keep the reference of the bean definition object it has created)
+3. request = per each httpRequest received a new object for the bean definition will be created
+4. session = per each user session that is created newly in our application, a new object of the bean definition will be created and scoped to the session
+
+5. global session (deprecated)
+	
+The request & session scopes are applicable to only web applications and singleton & prototype are available for all types of applications.
+when we declare a bean definition, the default scope with which the bean definition will be created is "singleton". 
+How to change the scope of the bean definition?
+on the bean tag level we need write an attribute scope="scope"
+	
+class FuelTank {
+	int capacity;
+	String fuelType;
+	//setter
+	// toString
+}	
+
+application-context.xml
+------------------------
+<bean id="fuelTank" class="FuelTank" p:capacity="10" p:fuelType="petrol" scope="prototype"/>
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("application-context.xml"));
+FuelTank fuelTank1 = beanFactory.getBean("fuelTank", FuelTank.class);
+FuelTank fuelTank2 = beanFactory.getBean("fuelTank", FuelTank.class);
+
+sop(fuelTank1 == fuelTank2); == false
+	
+
+we can aggregate the bean definition configuration placed in different spring bean configuration file formations by using the below approach:
+
+BeanFactory beanFactory = new DefaultListableBeanFactory(); 
+BeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(beanFactory);
+BeanDefinitionReader propsReader = new PropertiesBeanDefinitionReader(beanFactory);
+xmlReader.loadBeanDefinitions(new ClassPathResource("application-context.xml"));
+propsReader.loadBeanDefinitions(new ClassPathResource("application.properties"));
+
+
+
+interface BeanFactory {}
+interface BeanDefinitionRegistry {}
+
+class DefaultListableBeanFactory implements BeanFactory, BeanDefinitionReader {}
+
+BeanFactory beanFactory = new DefaultListableBeanFactory();
+
+beanDefinitionReader = new XmlBeanDefinitionReader((BeanDefinitionRegistry) beanFactory);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>object prototype</title>
+</head>
+<body>
+    <h2>object prototype</h2>
+    <script type="text/javascript">
+        var Address = function(addressLine1, addressLine2, city, state, zip, country) {
+            this.addressLine1 = addressLine1;
+            this.addressLine2 = addressLine2;
+            this.city = city;
+            this.state = state;
+            this.zip = zip;
+            this.country = country;
+        }
+        Address.prototype.county = "CN";
+        Address.prototype.fullAddress = function() {
+            return JSON.stringify(this);
+        };
+
+        var address = new Address("adl1", "adl2", "ct", "st",939,"cunt");
+        address.county="SH";
+
+        document.writeln(address.fullAddress());
+
+    </script>
+</body>
+</html>

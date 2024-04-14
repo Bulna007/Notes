@@ -1,0 +1,22 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    runtimeOnly 'com.mysql:mysql-connector-j:8.2.0' //not available during compile-time
+}
+
+java {
+    toolchain {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+application {
+    mainClass = "com.basicjava.Application"
+}

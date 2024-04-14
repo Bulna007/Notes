@@ -1,0 +1,94 @@
+How to manage a single SessionFactory object for one database of an application?
+
+class SessionFactoryRegistry {
+	private static SessionFactory sessionFactory;
+	
+	static {
+		Configuration configuration = new Configuration().configure();
+		sessionFactory = configuration.buildSessionFactory();
+	}
+	
+	public static SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+	
+	public static void closeSessionFactory() {
+		if(sessionFactory != null) {
+			sessionFactory.close();
+		}
+	}
+}
+
+class AccountDao {	
+	public Account getAccount(int accountNo) {
+		SessionFactory sessionFactory = null;
+		Session session = null;
+		Account account = null;
+		
+		try {
+			sessionFactory = SessionFactoryRegistry.getSessionFactory();
+			session = sessionFactory.openSession();
+			account = session.get(Account.class, accountNo);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+		}
+		return account;
+	}
+}
+
+class Application {
+	public static void main(String[] args) {
+		AccountDao accountDao = null;
+		Account account = null;
+		
+		try {
+			accountDao = new AccountDao();
+			account = accountDao.getAccount(1);
+			sop(account);
+		}finally {
+			SessionFactoryRegistry.closeSessionFactory();
+		}
+	}
+}
+------------------------------------------------------------------------------------------
+How to manage sessionfactory while working with multiple databases?
+
+class SessionFactoryRegistry {
+	private Map<String, SessionFactory> sessionFactoryMap;
+	
+	static {		
+		SessionFactory financeSessionFactory = null;
+		Configuration financeConfiguration = null;		
+		SessionFactory hrSessionFactory = null;
+		Configuration hrConfiguration = null;
+		
+		sessionFactoryMap = new HashMap();
+		financeConfiguration = new Configuration().configure("finance.cfg.xml");		
+		financeSessionFactory = financeConfiguration.buildSessionFactory();
+		sessionFactoryMap.put("finance", financeSessionFactory);
+		
+		hrConfiguration = new Configuration().configure("hr.cfg.xml");
+		hrSessionFactory = hrConfiguration.buildSessionFactory();
+		sessionFactoryMap.put("hr", hrSessionFactory);	
+	}
+	
+	public static SessionFactory getSessionFactory(String db) {		
+		return sessionFactoryMap.get(db);		
+	}
+	
+	public static void closeSessionFactory(String db) {
+		if(sessionFactoryMap.containsKey(db) && 
+			 sessionFactoryMap.get(db).isClosed() == false) {
+			sessionFactoryMap.get(db).close();
+		}
+	}
+}
+
+We have 2 schema in our database
+1. finance
+2. hr
+we need 2 hibernate configuration files, so we can name the filename of configuration file accordingly and pass it as an input to configure() method
+finance.cfg.xml
+hr.cfg.xml

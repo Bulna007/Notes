@@ -1,0 +1,58 @@
+Spring Framework support developing multiple application development types and it is an end-to-end application development framework unlike the other frameworks like struts or java server faces (JSF).
+	
+Why do we need to use Spring Framework for building the applications, why cant we use Jee api itself for developing the applications?
+#1	
+JEE is an api, stands for application programming interface. Always standard apis are partial, they provide only interfaces and abstract classes. So to work with apis, we need implementations of them which are provided by vendors. So choosing the implementation in working with api always makes it complex
+
+#2 
+Apis are huge in nature, they provide lot of classes aspart of them, and these classes are inter-dependent on each other. due to huge number of classes and their inter-dependency
+2.1 it requires more learning curve in learning the api
+2.2 makes us feel more complex in understand the api
+2.3 we cannot learn partial the api to build the application
+
+#3.
+Apis will not provide boiler-plate logic, so programmer while building the application has to write the boiler-plate logic
+boiler-plate logic: redundant code that has to be repeatedly written across the applications we develop
+so using apis, we endup in writing lot of code for developing the application due to which we run into many problems
+3.1 more code, more time
+3.2 more code, more number of man-power resources required in developing the application
+3.3 more code, more time, more resources means more cost of developing the application
+3.4 more code, chances of increasing the bugs would be high
+3.5 more code, more time required for testing and certifying the application along with that the cost of testing increases
+From the above we can understand APIs doesnt support Rapid application development
+
+Framework
+#1
+Framework provides bunch of concrete classes, since these are concrete classes, we dont need implementations to work with, so we can directly start making using the framework in building the application
+
+#2 
+Framework provides bunch of concrete classes, which are less in number and they dont have inter-dependency between them due to which
+1. we can quickly learn the Framework
+2. since there is no inter-dependency it is easy to understand them
+3. we can partially learn the framework and can build application use it
+
+#3
+Framework classes are pre-written or developed by the framework developers with boiler-plate logic within them due to which the developer dont have to write lot of code in developing the application, so that we have plenty of advantages
+1. less code, less time required for developing the application
+2. less code, less number of resources required
+3. less code, the cost of developing the application will be less
+4. less code, chances of increasing the bugs will be less
+5. testing time required for testing the application will be less, so cost of testing would be reduced
+above all Frameworks supports Rapid Application Development
+------------------------------------------------------------------------------------------------------------------------
+Spring Framework is an light-weight application development framework, how can the spring framework is considered as an light-weight application development framework, even though it is too big?
+	
+To understand how the spring framework is considered as light-weight application development framework we need to understand the architecture of the spring framework
+
+To help us in easily using the spring framework, spring developers has broken down the spring framework into modules (smaller parts)
+1. core
+2. beans
+3. context
+4. aop
+5. jdbc
+6. orm
+7. web
+8. transactions
+9. security
+10. datajpa
+etc

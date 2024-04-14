@@ -1,0 +1,289 @@
+Java Framework package (Fee: 15k) [6:00 am - 7:00 am]
+pre-requisite: core java, servlets/jsp
+1. Spring Framework (5 months) [core, aop, jdbc, tx, mvc, datajpa, security]
+2. Spring Boot (1 month)
+3. Hibernate & JPA (3 months)
+4. Microservices/Kafka (20 days)
+5. Restful Services (3 months)
+6. Spring Reative WebFlux (20 days)
+
+Expected: 20 days, only online
+
+Devops with AWS (fee: 12k) (9/10 months) [7:00 am - 8:00 am]
+expected: 20 days
+--------------------------------------------------------------------------------------------------------------------------------
+Java Realtime Project (Live!)
+Timings:
+Monday, Wednesday, Friday: 8:00 pm ist - 9:00 pm ist
+Tuesday: holiday
+Thursday: 7:00 pm ist
+Saturday/Sunday: 6:00 pm ist (1 hour/1:30 minutes of session)
+
+Fee: 6k 
+Duration: 2 months, 15 days
+No recordings, no videos, no youtube, no subscriber or bell icon. students are not permitted to record the sessions, if we found any one recording from their end, the admission will be cancelled without fee refund. 
+
+Active participation of the students are required, you should not throw away your machine and leave, if found, your will be removed from the class and you cannot participate on that day and should join for next day
+
+Pre-requisite:-
+1. core java
+	1.1 oops principles
+	1.2 collections
+	1.3 lambdas
+	1.4 streaming api
+	1.5 i/0 streams
+	1.6 exception handling
+	1.7 functional interfaces
+	1.8 multi-threading
+	1.9 concurrency api
+
+2. servlet api is required and jsp is optional. (no jsp technology is being used in our project development)
+3. hibernate & jpa api
+	1. entities 
+	2. annotation-driven mapping
+	3. entity mapping (one-to-one, one-to-many, many-to-one, many-to-many)
+	4. sql, jpql queries
+	5. inverse, fetch, cascade
+4. Spring Framework (annotation-driven programming)	
+	1. core
+	2. aop
+	3. transactions
+	4. mvc/restful
+	5. datajpa
+			|-projections
+			|-repositories
+			|-derived queries & declared queries
+	6. spring boot
+	7. spring microservices knowldege
+		|-eureka
+		|-spring cloud gateway
+5. HTML
+6. CSS
+7. Javascript & JQuery
+
+Tools:
+1. GIT repository
+2. Maven
+--------------------------------------------------------------------------------------------------------------------------------
+Project development:
+Technologies:
+1. Spring boot 
+2. Spring Cloud 
+3. Spring Microservices
+4. Thymeleaf
+
+[optional]
+docker/kubernetes = I want to demonstrate at the end, how to run these applications on docker/kubernetes stack #demonstration only
+If you dont know docker/kubernetes, please ignore just for the sake of demonstration only the project will be executed on this stack.
+
+domain:
+conceptualize the business idea, derive requirements and develop the project 
+2/3 business ideas/concepts
+|-retailing
+|-ecommerce
+|-logistics
+
+note/disclaimer: we cannot build the entire project wihtin given duration end-to-end. we are going to build few modules (2-4 modules) and guranteed to include
+1. login (spring security)
+2. sigup / forgot password/ reset password (email/otp verifications)
+3. payment gateway integration
+4. 1/2 primary modules for development
+
+Phases:
+1. Requirement gathering
+2. high-level design
+3. domain/architectural model
+4. deployment model
+
+#2. data modeling
+#3. project development using agile model
+	1. user stories in jira
+	2. design
+	3. code/implementation
+	
+Realtime environment:
+1. email addresses
+2. slack channel
+3. jira
+4. maven repository
+5. xwiki
+6. stage environment
+
+Technologies:
+1. Thymeleaf
+2. spring javamail integration
+3. jfrog artifactory repository setup/usage
+
+
+
+tech.sriman@gmail.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

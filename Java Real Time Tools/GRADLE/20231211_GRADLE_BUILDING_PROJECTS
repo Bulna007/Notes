@@ -1,0 +1,209 @@
+Writing Tasks
+We are defining or creating our own tasks by declaring variables, actions aspart of part of them for performing build activities. Instead we can create the tasks from Gradle TaskType api 
+
+Gradle tasks are created by extending from a Task called "DefaultTask"
+DefaultTask = provides no action for gradle, if user wants to extend the capabilities of Gradle or their build script, we must either extend from Built-in task or create a custom task from scratch
+
+1. Built-in Tasks: Gradle has provided built-in tasks which are utilities as Copy, Jar, Zip, Delete etc
+2. Custom Task: you need to write the Task subclass DefaultTask to create our own task types
+
+Create a Task
+The easiest form of creating an custom task in buildscript file is
+
+build.gradle
+(TaskType)
+abstract class MessageTask extends DefaultTask {
+  @TaskAction
+  def print() {
+		println "Hello from gradle task"
+	}
+}
+
+tasks.register("helloGradle", MessageTask)
+	
+
+project (object)
+ |-tasks
+ 	|-helloGradle (MessageType)
+
+gradle helloGradle
+
+How to define our own TaskType with properties, so that we can reuse the task with different inputs passed?
+build.gradle
+-------------
+defaultTasks 'endMessage'
+abstract class MessageTask extends DefaultTask {
+	abstract Property<String> getMessage()
+		
+	MessageTask() {
+		message.convention("default message");
+	}
+	
+	@TaskAction
+	def print() {
+		println message.get()
+	}
+}	
+
+tasks.register("initMessage", MessageTask) {
+	message = "Gradle Build begins..."
+}
+
+
+tasks.register("endMessage", MessageTask) {
+	dependsOn 'initMessage'
+	message = "Gradle Build ends..."
+}
+---------------------------------------------------------------------------------------------------------------------------------------------
+TaskType as an standalone project
+Let us create a TaskType in a standalone project, so that we can publish and share with others. This project is an Groovy project that upon building produces an Jar containing Task classes. 
+	
+UtilityTasks
+|-src
+  |-main
+	  |-groovy
+		  |-org/utilities/gradle/DebugTask.groovy
+|-build.gradle
+
+DefaultTask.groovy
+package org.utilities.gradle
+
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.Input
+
+class DebugTask extends DefaultTask {
+	@Input
+	String message = "debug message"
+	
+	@TaskAction
+	def info() {
+		println message
+	}
+}
+
+build.gradle
+------------
+plugins {
+	id 'groovy'
+}
+
+dependencies {
+	implementation gradleApi()
+}
+---------------------------------------------------------
+How to use the above Task class in another project
+create an another project with build.gradle
+
+build.gradle
+-------------
+buildscript {
+	repositories {
+		maven {
+			url = uri("$USER_HOME/.m2")
+		}		
+	}
+	dependencies {
+		classpath 'org.tools:utilitytasks:1.0.0'
+	}
+}
+
+tasks.register("debug", org.tools.DebugTask) {
+	message = "Gradle Task is working!"
+}
+	
+
+gradle has build cache
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

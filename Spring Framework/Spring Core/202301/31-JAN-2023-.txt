@@ -1,0 +1,39 @@
+package com.marketing.beans;
+
+class MessageWriter {
+	IMessageConverter messageConverter;
+	public void writeMessage(String message) {
+		String convertedMessage = null;
+		
+		messageConverter = new PDFMessageConverterImpl();
+		convertedMessage = messageConverter.convert(message);
+		System.out.println(convertedMessage);		
+	}
+}
+
+package com.marketing.converter;
+interface IMessageConverter {
+	String convert(String message);
+}
+
+package com.marketing.converter;
+class HTMLMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<html><body>"+message+"</body></html>";
+	}
+}
+
+package com.marketing.converter;
+class PDFMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<pdf>"+message+"</pdf>";
+	}
+}
+
+package com.marketing.test;
+class Test {
+	public static void main(String[] args) {
+		MessageWriter messageWriter = new MessageWriter();
+		messageWriter.writeMessage("Welcome to Strategy Design Pattern");
+	}
+}

@@ -1,0 +1,28 @@
+In one-to-many or many-to-many association instead of using an Set or List type as collection objects,hibernate supports Map type collection as well to represent associated objects.
+	
+If we want to populate additional data out of their association then we need to use Map.
+	
+
+CourierServiceCenter
+serviceCenterNo
+courierServiceName
+branch
+address
+Map<String, Parcel> parcels;
+
+                          
+Parcel
+parcelNo
+description
+weight
+source
+destination
+price
+bookingDate
+
+
+<map name="parcels">
+	<key column="service_center_no"/>
+	<map-key column="awb_no"/>
+	<one-to-many class="Parcel"/>
+</map>

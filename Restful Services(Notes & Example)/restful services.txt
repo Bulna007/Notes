@@ -1,0 +1,142 @@
+What is Distributed Technology, why do we need it?
+Distributed technology is a mechanism through which we employ more than one person in working a job, so that these resources mutual participate together in computing the output quickly, by which we can achieve huge performance and drastic change in terms of time in computing the solution.
+
+Note:- Distributed technology is not an programming language or apu, rather it is an methodology defined by experts helping us in building applications that can scale-up by running across the network.
+
+What are the factors that influence us in building an application based on distributed technology?
+a. quicker turn-around time
+	turn-around time = the toatal time the job has taken to complete is called "turn-around time".
+
+	if we want to reduce the total time taken by a job to finish then go for distributed technology.
+
+b. higher through-put
+	through-put = no of jobs being completed within given amount of time, if we want more number of jobs to be completed then we need to go for distributed-technology.
+
+c. high-responsive or quicker response
+	If we want the job to be completed within the stipulated interval of time, then go for distributed technology.
+
+d. high-accurate and fail-ove safe
+	There are few systems that requires higher amount of accuracy and fail-over safe which means incase of fault also system should mitigate or handle without disrupting the operation then we need to go for distributed technology.	
+
+e. high utilization of resources
+	If we want to increase the utilization of a resource, then distribute the resource across multiple people using distributed technology so that effective utilization of resource is guaranteed.
+
+Q. How does the application/program looks like when we are building them using distributed technology?
+These programs are having ability of communicating over the network, so that 2 different programs can run on different computers(thus multiplying the computing capacity allocated for the job) inter-connected over the network so that they can mutual co-ordinate with each other by communicating over the network to accomplish the job/output desired.
+
+
+Q. What is the support of java programming language in building distributed technology application?
+To support building applications based on distributed technology, java programming languages has provided several apis in support of building distributed technology applications:
+a. Corba
+b. rmi
+c. ejb
+d. soap webservices
+e. restful services
+
+
+Q. What are Restful services, what is the purpose of them?
+Ans:- Restful Services is new architectural style of building inter-operable distributed technology applications.
+
+Developing the software applications based on the principles of Rest to make the application interoperable and distributed is called "Restful Services".
+
+Q. What are the principles of Restful Service?
+Ans:- There are 5 principles are there in Restful Services:
+1. Unique Addressable URI
+2. Uniform Constrained Interfaces
+3. Representation Oriented
+4. Communication Stateless
+5. HATEOS
+
+1. Unique Addressable URI:-
+---------------------------
+Every resource should have an direct addressable accessible URI for adopting the resource/integrating it easily.
+
+Q. What is an Resource/WebResource?
+Ans:- Anything that is being made accessible over the network through http protocol is called an "Resource" or an "WebResource".
+Incase of Restful Services we leverage Http Protocol in building the software components and exposing them over the network, so these Restful components we build and distribute can also be called as "Resource/WebResource".
+
+2. Uniform Constrained Interfaces:-
+-----------------------------------
+interface = always refers to how do we interact with the component to use its functionality (indirectly api methods exposed)
+constrained = fixed
+uniform = same across
+
+Across all the inter-operable distributed components we need to have same set of fixed number of interfaces over which we need to design the components.
+
+Q. How to implement Uniform Constrained Interfaces?
+Ans:- By exposing the interfaces of the component through application protocol operations.
+
+Q. Why do we need to implement Uniform Constrained Interfaces?
+Ans:- If there is no uniform constrained interfaces, we need documentation to integrate or access the distributed component.
+
+Advantages of Uniform Constrained Interfaces:-
+a. Familiarity :- Everyone knows what interfaces are exposed and their semantics, so we don't need additional documentation to adopt/access the component, that makes it easy to use.
+
+b. Interoperability:- Http protocol is universal and supported by every programming language, so achieving interoperability is very easy.
+
+c. Scalability:- Since the restful services are exposed over the finite set of operations of Http protocol. The Http protocol operations has predefined semantics, thus helping us in easily achieving scalability.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

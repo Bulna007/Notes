@@ -1,0 +1,49 @@
+Server Response
+---------------
+upon returning the returnValue from the resource method, the jaxrs runtime takes the returnValue and constructs the Http Response Message by populating the status code as : 200 with standard http headers with response body as the returnvalue we returned and dispatches to the client.
+	
+Incase if we want to return the response to the client with our own statuscode, headers, cookies and response body, then we need to construct Response class object with all the data and return to jaxrs runtime.
+The jaxrs runtime extracts the data from Response object using which it constructs the Http Response Message populated with data we supplied and dipsatches to the clinet
+
+abstract class Response {
+	int statuscode;
+	MultiValuedMap<String, String> headers;
+	List<NewCookie> cookies;
+	Object entity;
+	
+	// accessors
+	
+	static ResponseBuilder status(int statuscode) {}
+	static ResponseBuilder ok() {}
+	static ResponseBuilder noContent() {}
+	static ResponseBuilder created(URI) {}
+}
+
+The vendors provides implementation class for the Response abstract class. To instantiate the vendor implementation of the Response abstract class, the jaxrs api has provided builder class
+		
+abstract class ResponseBuilder {
+	int statuscode;
+	MultiValuedMap<String, String> headers;
+	List<NewCookie> cookies;
+	Object entity;
+	
+	public ResponseBuilder(int statuscode) {}
+	
+	ResponseBuilder status() {}
+	ResponseBuilder header(String key, String val) {}
+	ResponseBuilder cookie(NewCookie cookie) {}
+	ResponseBuilder entity(Object entity) {}
+	
+	Response build();	
+}	
+
+ResponseBuilder is an abstract class since it is provided by api, so we need factory for instantiating the implementation of the abstract class provided by vendors.
+	
+The jaxrs api has provided static factory methods aspart of Response class itself, that takes care of identifying the implementation of ResponseBuilder and instantiates them.	
+		
+ResponseBuilder builder = Response.status(200);
+builder = builder.header("h1", "v1");
+builder = builder.cookie(new NewCookie("k1", "v1"));
+builder = builder.entity(account);
+Response response = builder.build();
+return response

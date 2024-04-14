@@ -1,0 +1,5 @@
+What is association mapping?
+association mapping is about mapping association relationship between the entity classes into the table relationship so that we can perform persistence operation together with their relationship
+
+How to map association relationship between the entity classes into table relationship?
+We need to map association relationship between the entity classes into table relationship based on cardinality and directionality of the association

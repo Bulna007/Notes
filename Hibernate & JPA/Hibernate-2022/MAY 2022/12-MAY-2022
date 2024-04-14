@@ -1,0 +1,44 @@
+org.hibernate.tool.hbm2ddl.SchemaExport
+	--create
+	--drop
+	--text
+	--output=create.sql
+	--config=hibernate.cfg.xml
+
+--create = generates the create sql query for the table
+--drop = generates drop sql query
+--text = it will not export/execute the query on the database, it only prints the query on the console
+--output= writes the generate query into the given file
+
+org.hibernate.tool.hbm2ddl.SchemaUpdate
+	--text
+	--config=hibernate.cfg.xml
+	--output=schema.sql
+	
+if there is no table representing the entity class in the database, it creates the table
+if the table already exists but columns are not there representing the mapping, it alters the table and adds those columns
+
+org.hibernate.tool.hbm2ddl.SchemaValidator
+	--text
+	--config=hibernate.cfg.xml
+	--output=validate.txt
+	
+verifies the mapping with the database if there are any deltas it return errors showing those deltas
+
+These tools are executed internally by using SessionFactory and Session object only, instead of we running the tools manually we can configure these tools in the hibernate.cfg.xml so that those will be executed during the startup of the application by the SessionFactory itself.
+	
+hibernate.cfg.xml
+-----------------
+<property name="hibernate.hbm2ddl.auto">validate</property>
+
+in this property we can write 4 different values
+1. create = SchemaExport --create 
+(drops the tables and creates at the startup of the application)
+2. create-drop = SchemaExport --create/--drop 
+drops the tables and creates at the startup
+at the end of the application while closing SessionFactory, it will drops the tables
+
+3. update = SchemaUpdate  (development)
+4. validate = SchemaValidator (production usage)
+--------------------------------------------------------------------------------------------
+Hibernate dml Operations

@@ -1,0 +1,14 @@
+strategy design pattern
+1. Favor composition over inheritance
+2. always design to interfaces never design to concreate classes
+3. code should be open for extension and closed for modification
+
+#1. Favor composition over inheritance
+Strategy design pattern is recommending us to use composition rather than using inheritance, in reusing the functionality of one class in another class, because if we use Inheritance we run into certain limitations or drawbacks, to overcome them it is recommending us to use Composition only.
+There are #4 problems we run into if we use Inheritance
+
+1. Most of the realtime usecases are solvable through composition rather than inheritance, because a class wanted to use few of the traits of functionalities of another class, not every class use all the functionalities of another class. In such case we should avoid Inheritance and go for composition only
+
+2. sometimes even we wanted to use Inheritance also we cannot, because sometimes a class wanted to reuse the functionality of multiple other classes, where most of the programming languages including java doesnt support multiple inheritance, so the only way of reusing the functionality of multiple other classes is through Composition
+
+3. Class will become fragile when we use Inheritance, but if we use Composition class will become less fragile

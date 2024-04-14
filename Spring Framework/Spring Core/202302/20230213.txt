@@ -1,0 +1,96 @@
+class MessageWriter {
+	IMessageConverter messageConverter;
+	
+	void writeMessage(String message) {
+		String cMessage = nulll;
+				
+		cMessage = messageConverter.convert(message);
+		System.out.println(cMessage);
+	}
+	public void setMessageConverter(IMessageConverter messageConverter) {
+		this.messageConverter = messageConverter;
+	}
+}
+
+interface IMessageConverter {
+	String convert(String message);
+}
+class HTMLMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<html><body>"+message+"</body></html>";
+	}
+}
+class PDFMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<pdf>"+message+"</pdf>";
+	}
+}
+class Test {
+	public static void main(String[] args) {
+		MessageWriter messageWriter = (MessageWriter) ObjectFactory.createObject("messageWriter.class");
+		IMessageConverter messageConverter = (IMessageConverter) ObjectFactory.createObject("messageConverter.class");
+		
+		messageWriter.setMessageConverter(messageConverter);	
+		messageWriter.writeMessage("Welcome to Strategy Design Pattern");
+	}
+}
+
+To avoid coupling, we should not write classname of an java class inside another java class, we should externalize them by writing in a file, read the classname and instantiate the object.
+To quickly identify a class, for each class we can give an identifier and store them inside a properties file.
+	
+sourcecode = is an artifact (java class, file) that can be either an java class or a file or any other entity, that is required for running our application is called "sourcecode"	
+From this we can understand we have 2 types of sourcecode
+1. java sourcecode
+2. non-java sourcecode = properties, or xml file that contains configuration or data that acts as an input for executing the application
+	
+	
+[sourcecode]	
+d:\
+appClasses.properties
+---------------------
+messageWriter.class=com.sdp.beans.MessageWriter
+messageConverter.class=com.sdp.beans.PDFMessageConverterImpl
+
+class ObjectFactory {
+	public static Object createObject(String lclassname) {
+		
+		Properties props = new Properties();
+		//props.load(new FileInputStream(new File("d:\\work\\strategypattern\\target\classes\\appClasses.properties")));
+		we are passing absolute path, in reading the properties file, avoid using absolute paths, because if the location has been changed again we need to modify the code, rather use relativePath
+		
+		props.load(ObjectFactory.getClass().getClassLoader().getResourceAsStream("appClasses.properties"));
+		
+		
+		String fqnClass = props.getProperty(lClassname);
+		Class clazz = Class.forName(fqnClass);
+		Object obj = clazz.newInstance();
+		return obj;
+	}
+}
+
+d:\work:/>
+|-strategypattern
+	|-src
+		|-main
+			|-java
+				|-*.java
+			|-resources                 = place all the non-java sourcecode within resources\ directory of the project, that makes the project 
+				|-appClasses.properties   sourcecode easily distributable across the members of the team
+|-pom.xml
+|-target	
+	|-strategypattern.jar
+	|-classes  = #classpath location of the project
+		|-*.class
+		|-all the resources from resources\ directory will be copied into classes directory *.properties,*.xml etc
+		
+					
+now the maven has provided #2 directories 
+1. src\main\java = java sourcecode
+2. src\main\resources = non-java sourcecode
+to identify which code should be compiled with java compiler and which code doesnt require to compile. all the files we kept in java\ directory will be compiled by maven using java compiler and the rest we placed in resources\ will not be compiled
+
+set classpath=e:\work\strategypattern\target\classes
+java com.sdp.test.Test
+
+jvm looks under the classpath location of the project to pick Test.class file for execution. In order to execute a class, the class should be loaded into jvm memory. A class will be loaded into the jvm memory by the ClassLoader.
+ClassLoader is an another java class, that takes care of locating the .class from CLASSPATH and reads and loads into the jvm memory.

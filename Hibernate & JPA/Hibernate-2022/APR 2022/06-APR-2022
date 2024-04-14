@@ -1,0 +1,53 @@
+Hibernate bootstrapping
+------------------------
+1. Hibernate 3.x bootstrapping
+	1.1 Properties approach
+	1.2 Xml-based configuration approach
+	1.3 Programmatic approach
+	
+#1. Properties approach
+We can bootstrap the hibernate application by writing an properties file rather than writing hibernate.cfg.xml file. The name of the file should be "hibernate.properties" and should be placed under the classpath of the application only
+
+1. In properties file approach we can define mapping information, the mapping resources has to be configured programmatically to Configuration object
+2. We cannot work with multiple databases since the only filename it allows is "hibernate.properties"
+	
+When should we use properties file approach:
+1. while performing the unittesting to configure the test database and quickly test bunch of entity classes of our application we need to use properties approach
+2. many of the people find complex in writing the xml file, and prefer to use properties as an alternate
+------------------------------------------------------------------------------------------
+#2. Xml-based configuration approach
+We can configure the database information and hibernate framework configuration properties in xml-based configuration file called "hibernate.cfg.xml". even though it is not mandatory to write filename ending with ".cfg.xml", it is standard convention that should be followed to quickly differentiate from other xml files in our application
+
+By default the filename should be written as "hibernate.cfg.xml" only and should be placed under classpath
+Configuration configuration = new Configuration();
+The default constructor of Configuration object looks for hibernate.properties under classpath, if the file is found loads those properties and creates Configuration object and returns, otherwise it creates an empty Configuration object
+
+Here Configuration class acts as a builder pattern, so in the above code we instantiated the object of Builder now populate the configuration by calling "configure()" method.
+configuration =	configuration.configure();
+
+The configure() method quickly goes to classpath of our application looks for a default hibernate configuration file with name as "hibernate.cfg.xml". if the file is not found it quickly throws an HibernateException terminating the application. 
+If the hibernate.cfg.xml is found under the classpath, then checks wether the xml is well-formed or not and valid or invalid. if it is not well-formed or not valid again it throws an exception and terminates the application.
+If the given xml is well-formed and valid then reads that configuration information loads into an new Configuration object and returns it.
+	
+We can change the name of the configuration file or location under which we are placing this configuration file by passing the name explicitly to the configure() method as below.
+Configuration configuration = new Configuration().configure("netsecure.cfg.xml");
+
+So the above way of passing the filename as an input helps us in working with multiple datbaases as well. For each database we can write one hibernate configuration file in which we can define details of that database.
+	
+Now create 2 Configuration objects loading the respective configuration file using which create the object of SessionFactories
+------------------------------------------------------------------------------------------
+#3. Programmatic Approach
+I dont want to use Configuration file, and want to bootstrap the hibernate application. Then the only way we can bootstrap hibernate application is using programmatic approach
+
+Configuration configuration = new Configuration(); // creates empty configuration object
+Now populate hibernate configuration properties and mapping resources information programmatically to the Configuration object
+
+configuration.setProperty("connection.driver_class", "com.mysql.cj.jdbc.Driver");
+configuration.setProperty("connection.url", "jdbc:mysql://localhost:3306/hibdb");
+configuration.setProperty("connection.username", "root");
+configuration.setProperty("connection.password", "root");
+configuration.setProperty("show_sql", "true");
+configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
+configuration.addResource("com/hb3bs/entites/Policy.hbm.xml");
+
+SessionFactory sessionFactory = configuration.buildSessionFactory();

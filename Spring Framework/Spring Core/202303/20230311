@@ -1,0 +1,130 @@
+Bean Autowiring
+What is bean autowiring?
+Instead of we declaring the dependencies between the bean definitions, if ioc container identifies the bean dependencies automatically and wire them (inject them), then it is called "bean autowiring"
+
+by default bean autowiring is off, so that ioc container will not automatically manage the dependencies. to manage the dependencies one way is we need to delcare the dependencies between the beans manually or enable/turnon the autowiring
+
+1. How to turn-on the autowiring?
+To enable the autowiring we need to write an attribute autowire="autowiremode" on the bean definition.
+	
+2. Which bean definition we need to write the attribute?	
+The bean for which we wanted ioc container to identify the dependencies and inject them automatically, on that bean definition we need to write autowire attribute enabling the autowiring for that bean
+
+3. what is autowire mode?
+we tell the ioc container how to identify the dependency and how to inject into the Target class by using autowire mode.
+Mode of autowiring indicates #2 things to ioc container
+1. how to identify the dependent bean definition to be injected
+2. how to inject it (setter/constructor)
+	
+There are 4 modes of autowiring are there
+1. byName
+2. byType
+3. constructor
+4. autodetect (deprecated and removed from Spring 3.0)
+Let us explore how does these modes are used by ioc container to automatically inject the dependencies:
+	
+class Radio {
+	TransReceiver transReceiver;
+	
+	Radio(TransReceiver transReceiver) {
+		this.transReceiver = transReceiver;
+	}
+	
+	void listen(int station) {
+		transReciever.receive();
+		System.out.println("listening to the station : " + station);
+	}
+	
+	
+}	
+
+class TransReceiver {
+	private int frequency;
+	private String signalType;
+	
+	void receive() {
+		System.out.println("receiving the signals at frequency : " + frequency + "of signalType: "+ signalType);
+	}
+	// setter inject
+}
+	
+application-context.xml
+-----------------------
+<bean id="radio" class="Radio" autowire="constructor"/>
+<bean id="transReceiver1" class="TransReceiver" p:frequency="101" p:signalType="Analog" />
+<bean id="transReceiver2" class="TransReceiver" p:frequency="1001" p:signalType="Digital" />
+
+Test.java
+----------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/ba/common/application-context.xml"));
+Radio radio = beanFactory.getBean("radio", Radio.class);
+radio.listen("103");
+
+
+byName: 
+1. inject the dependent bean via setter injection
+2. the dependent object is identified by matching with attributeName of the Target class with bean id within the beans of the ioc container. if there is an bean definition available with matching "id" corresponding to the attribute of the targetClass, then it injects that into the targetclass attribute via setter injection
+
+
+byType:
+1. inject the dependent object still via setter injection
+2. identifies the dependent bean definition based on Attribute Type of the targetClass attribute with bean definition classType. if there is an matching bean definition of the same classType then inject it via setter injection
+
+if there are #2 matching bean definitions of the same type, ioc container would run into ambiguity (confusion) and will not inject any of them.
+How to resolve the ambiguity?
+There are #2 ways are there in resolving the ambiquity
+1. autowire-candidate="true/false" mark it on one of the bean definition, it indicates dont choose this bean definition for autowiring
+if we have #3 bean definitions of the matching type, we need to write on #2 bean definitions the autowire-candidate="false".
+
+2. primary = "true/false". instead of writing multiple beans with autowire-candidate="false", we can write for one bean definition primary=true, telling ioc container consider only this bean for autowiring
+
+constructor:
+1. inject the dependent object into the target class via constructor injection
+2. identify the dependent bean matching with argumentType of the constructor with bean classType
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,9 @@
+for any given table, how many entity classes are required to hold the data?
+we only need one single entity class because whenever we query the data from the table always the columns of data that would result from the table is same, so in order to hold the records of data of the table we need just one entity class mapping with attributes to the corresponding columns of the table.
+	
+if we create multiple entity classes, we unnecessarily endup in writing more number of classes of the same structure which is of no use
+
+from the above we can easily understand for a given table we need only one entity class.
+	
+when we query the data from a table anywhere in the application we always need to bind the data to the same entity class so the logic for mapping the record of data into the entity class attributes would be duplicated across all the classes whereever we are querying the data for that table
+So to overcome the problem we need to use Mapper classes. we need to write 1 mapper per 1 table to 1 entity class

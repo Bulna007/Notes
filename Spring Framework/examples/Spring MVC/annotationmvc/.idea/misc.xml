@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/prognoconfigdispatcherweb/pom.xml" />
+        <option value="$PROJECT_DIR$/prognoconfigdispatcherweb2/pom.xml" />
+        <option value="$PROJECT_DIR$/i18n/pom.xml" />
+        <option value="$PROJECT_DIR$/basicannoncontrollerweb/pom.xml" />
+        <option value="$PROJECT_DIR$/annoncontrollerparams/pom.xml" />
+        <option value="$PROJECT_DIR$/requestwrappingweb/pom.xml" />
+        <option value="$PROJECT_DIR$/formhandling/pom.xml" />
+        <option value="$PROJECT_DIR$/interceptorsweb/pom.xml" />
+        <option value="$PROJECT_DIR$/jbvcore/pom.xml" />
+        <option value="$PROJECT_DIR$/springformjbv/pom.xml" />
+        <option value="$PROJECT_DIR$/exhandlingweb/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_20" project-jdk-name="17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

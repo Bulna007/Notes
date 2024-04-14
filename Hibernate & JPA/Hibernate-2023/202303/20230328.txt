@@ -1,0 +1,34 @@
+How many ways we can establish relationship between the tables in RDBMS?
+There are 3 types of relationships are there
+1. one-to-one
+2. one-to-many / many-to-one
+3. many-to-many
+
+3. many-to-many
+In many-to-many relationship both the sides the records of the tables are in relationship with multiple records of the other table, then the tables are said to be in many-to-many relationship
+
+by writing primary key column of one table as foregin key column in another table, we establish only one-to-many relationship, so inorder to represent many-to-many relationship we always need third-table (this table is called relationship table)
+within the third-table we need to declare both the tables primary key as foreign keys and composite primary keys as well.
+--------------------------------------------------------------------------------------------------------------------------
+UML Class Modelling (or) Relationship between the classes
+A class might be in relationship with another class for #2 reasons
+1. for reusing the functionality of another class
+2. for the data being reused aspart of another class
+
+How to establish relationship between the classes?
+There are 2 ways we can establish relationship between the classes
+1. Inheritance
+Inheritance is a mechanism/principle through which a class can extend from another class, in reusing the functionality/data of another class. when we inherit a class from another class, all the members and methods of other class will be part of our class thus establishing "IS-A" relationship between the classes.
+
+again the Inheritance can be broadly classified into 3 types
+1. generalization
+2. specialization
+3. realization
+	
+2. Association
+Association is another form or way of achieving the reusability of functionality/data of another class. In case of assocation we declare a class as an attribute in another class, instantiate the object and use the functionality or data of another class through that object, since a class holds the object of another class in reusing the other class we said these classes are in "HAS-A" relationship
+
+There are 3 forms of assocation relationship are there
+1. Association
+2. Aggregation
+3. Composition

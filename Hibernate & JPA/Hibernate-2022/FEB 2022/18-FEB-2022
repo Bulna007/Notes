@@ -1,0 +1,21 @@
+Normalization
+--------------
+As part of a business there is an huge amount of data being generated, all of the data has to be stored for future usage in the database.
+	
+Can we store all of the business data within a single table inside the database?
+Yes we can store it but we will run into lot of anomolies (problems)
+	1. insertion anomoly
+	2. updation anomoly
+	3. deletion anomoly
+	
+so we need to break the data and distribute across multiple tables so that we can easily manage the data and can avoid data redundancy and anomolies in storing the data
+How to identify and break the data into multiple tables?
+To help us in easily identifying and grouping the data into tables, Normalization has been introduced by EF Codd. 
+Normalization is set of rules defined, which we have to following in designing the database tables for storing the data.
+
+There are total 5 Normal Forms are there
+1. 1st Normal Form
+2. 2nd Normal Form
+3. 3rd Normal Form
+4. Boyy Cott Normal Form (bcnf)
+5. 5th Normal Form

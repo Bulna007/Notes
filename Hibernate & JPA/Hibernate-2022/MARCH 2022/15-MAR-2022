@@ -1,0 +1,22 @@
+How to fetch the data from database table interms of entity object based on primary key in hibernate framework?
+1. write entity class
+2. mapping file (*.hbm.xml)
+3. configuration file (hibernate.cfg.xml)
+	
+4. use Session object for querying the data from database
+5. To create Session object use SessionFactory
+	1. SessionFactory acts as an factory for creating the object of Session
+	2. It acts as Repository for storing mapping & configuration information
+	Session session = sessionFactory.openSession();
+6. but to create Session object we need to create SessionFactory, how to create SessionFactory and load mapping and configuration
+Configuration class helps in reading hibernate.cfg.xml and loads it by creating the SessionFactory object
+Configuration configuration = new Configuration().configure();
+configure() = method reads hibernate.cfg.xml file and loads into it
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+
+Test.java
+----------
+Configuration configuration = new Configuration().configure();
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+Session session = sessionFactory.openSession();
+Account account = (Account) session.get(1, Account.class);

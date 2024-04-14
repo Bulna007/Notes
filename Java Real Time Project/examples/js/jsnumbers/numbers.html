@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Numbers</title>
+</head>
+<body>
+    <h2>JS Numbers</h2>
+    <script type="text/javascript">
+        var a = 20;
+        var b = 22.2;
+        document.writeln("typeof(a) : " + (typeof(a)));
+        document.writeln("typeof(b) : " + (typeof(b)));
+
+        var loanType = "personal";
+        var principle = 10000;
+        var tenure = 32;
+
+        var lpt = loanType + principle + tenure;
+        document.writeln("personal + 10000 + 32 results in: " + lpt);
+
+        var ptl = principle + tenure + loanType;
+        document.writeln("10000 + 32 + personal results in : " + ptl);
+
+        var p = "peacock";
+        var h = 34;
+        var r = p/h;
+        document.writeln("peacock / 34 : " + r);
+
+        var x = "200";
+        document.writeln("is x=200 not a number : " + isNaN(x));
+
+        var nx = parseInt(x);
+        document.writeln("typeof(nx) : " + typeof(nx));
+        
+        var f = "10.2";
+        var nf = parseFloat(f);
+        document.writeln("typeof(nf) : " +typeof(nf));
+
+        var lf = 12.3343;
+        var ff = lf.toFixed(2);
+        document.writeln("fixed float : " + ff);
+        
+    </script>
+</body>
+</html>

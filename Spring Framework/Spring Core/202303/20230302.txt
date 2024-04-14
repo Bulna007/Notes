@@ -1,0 +1,61 @@
+There are 2 types of dependency injection are there
+1. setter injection
+2. constructor injection
+
+What is the difference between setter injection and constructor injection, which one should be used when?
+setter injection  = The dependent object will be injected into the target class attribute by using the setter of the target class attribute 
+	
+constructor injection = The depenent object will be injected into the target class attribute by passing the dependent as an argument to the target class constructor
+	
+#1.
+Setter Injection: The dependent object will be injected into the target class attribute after creating the object of target class.
+	
+Since the dependent is injected after the target class object has been created, we cannot use the dependent object within the constructor of the Target class
+	
+Constructor Injection: The dependent object will be injected into the target class, at the time of creating the object of the Target class itself. So the dependent object will be accessible within the Target class constructor
+	
+when to use what?
+if we want the dependent object to be available within the constructor of the target class, then use constructor injection, if we dont need dependent to be available in the constructor of the target class, then use setter injection
+
+#2. 
+setter injection: incase if the dependent is being injected into the target class via setter injection, then it is optional to inject the dependency into the target class. without injecting the dependency we can create the object of target class
+	
+constructor injection: incase of constructor injection always the dependent object has to be mandatorily injected into target class
+	
+when to use what?
+if the dependent object is optional to be injected then use setter injection, if we want the dependent to be mandatory in the target class, then use constructor injection
+
+#3. 
+setter injection: even the classes are circularly dependent on each other, we can manage the dependencies between them while using setter injection
+constructor injection: we cannot manage the cyclic dependencies between the classes while using constructor injection
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Primitive dependency injection
+-------------------------------
+along with injecting objects as dependencies, spring even supports injecting primitive values as dependents into the target class attributes, it is called "primitive dependency injection"
+
+
+class FuelTank {
+	String fuelType;
+	int capacity;
+	
+	public void setFuelType(String fuelType) {
+		this.fuelType = fuelType;
+	}
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+}
+
+application-context.xml
+------------------------
+<bean id="fuelTank" class="FuelTank">
+	<property name="fuelType" value="petrol"/>
+	<property name="capacity" value="10"/>
+</bean>
+
+Test.java
+-----------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/pi/common/application-context.xml"));
+FuelTank fuelTank = beanFactory.getBean("fuelTank", FuelTank.class);
+System.out.println(fuelTank.getFuelType());

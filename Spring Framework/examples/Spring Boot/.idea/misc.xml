@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/bootcore/pom.xml" />
+        <option value="$PROJECT_DIR$/directstarterboot/pom.xml" />
+        <option value="$PROJECT_DIR$/bootparent/pom.xml" />
+        <option value="$PROJECT_DIR$/bootparentimport/pom.xml" />
+        <option value="$PROJECT_DIR$/bootextconfig/pom.xml" />
+        <option value="$PROJECT_DIR$/bootcustomization/pom.xml" />
+        <option value="$PROJECT_DIR$/nestedbeanfactories/pom.xml" />
+        <option value="$PROJECT_DIR$/eventhandlingcore/pom.xml" />
+        <option value="$PROJECT_DIR$/booteventhandling/pom.xml" />
+        <option value="$PROJECT_DIR$/bootprofiles/pom.xml" />
+        <option value="$PROJECT_DIR$/bootcp/pom.xml" />
+        <option value="$PROJECT_DIR$/bootjdbc/pom.xml" />
+        <option value="$PROJECT_DIR$/bootexitcodes/pom.xml" />
+        <option value="$PROJECT_DIR$/bootexitcode/pom.xml" />
+        <option value="$PROJECT_DIR$/commandandapplicationrunners/pom.xml" />
+        <option value="$PROJECT_DIR$/bootweb/pom.xml" />
+        <option value="$PROJECT_DIR$/travelgo/pom.xml" />
+        <option value="$PROJECT_DIR$/bootwebwithwebcomp/pom.xml" />
+        <option value="$PROJECT_DIR$/bootwebdatajpa/pom.xml" />
+        <option value="$PROJECT_DIR$/bootJarToWar/pom.xml" />
+        <option value="$PROJECT_DIR$/customautoconfiguration/voicom-parent/pom.xml" />
+        <option value="$PROJECT_DIR$/call-assist/pom.xml" />
+      </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/bootexitcodes/pom.xml" />
+      </set>
+    </option>
+    <option name="workspaceImportForciblyTurnedOn" value="true" />
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

@@ -1,0 +1,65 @@
+What are Matrix parameters, what is the purpose of it?
+Matrix parameters are the key/value pair data attached to the Path Parameter of the URI to add additional information describing that path parameter of the request.
+	
+difference between query parameter, path parameter and matrix parameter:
+1.
+query parameters: are appended to the end of the URI 
+path parameters: can appear at any place within the URI of the request
+matrix parameters: these appears with the Path Parameter of the request only
+
+2. 
+query parameters: optional to be passed aspart of the URI of the request, these doesnt participate in mapping a request to the Resource
+path parameters: mandatory to be passed aspart of the URI of the request, otherwise the request will not be resolved to the resource
+matrix parameters: are optional to be appeared or attached to the Path parameter of the request, as they dont participate in mapping the request to the resource similar to query parameters
+
+3. 
+query parameters: are multi-valued, we can supply multiple values for a give query parameter, by writing it repeatedly aspart of the URI
+path parameters: these are single-valued inputs only and can appear only once within the URI
+matrix parameters: are also multi-valued inputs can be appended several times with different values aspart of the path parameter of the URI
+
+4. 
+query parameters: are scoped to the request level, The input data we supplied aspart of the query parameters represents the whole request
+path parameters: are also scoped to request level only
+matrix parameters: the parameters we supplied respresents/describes the additional information attached to the pathparameter only these are not request level inputs
+--------------------------------------------------------------------------------------------------------------------------------------
+
+More on Query Parameters with DefaultValues
+--------------------------------------------
+Query Parameters are optional to be passed aspart of the URI of the request, incase if those are not defined aspart of the URI then the jaxrs runtime while invoking the resource method will pass default value to that parameters of the resource method.
+	
+
+@Path("/plan")	
+class PlanApiService {
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getPlans(@QueryParam("planType") @DefaultValue("ALL") String type) {
+		return "['plan1','plan2','plan3]";
+	}
+}
+
+Types:
+1. InsurancePlans
+2. MedicalPlans
+3. AccidentalInsurance Plans
+
+GET
+URI: /api/plan
+
+even we didnt supplied the planType query parameter aspart of the URI of the request, still the request will be mapped to the Resource class and its method, but the jaxrs runtime would pass default value 'null' for the planType parameter while calling the resource method.
+if we wanted we can define a default value asking the jaxrs runtime to pass as an input while calling the resource method, incase the queryparameter is not supplied aspart of the URI using @DefaultValue("value")	
+--------------------------------------------------------------------------------------------------------------------------------------
+Working with Header Parameters
+Not that we can only send the input data aspart of the URI of the request, we can still send the data as an input to the resource by writing them aspart of the Header of the request as key/value pair
+
+How to recieve the header data that is send aspart of the Request Header within the Resource class?
+We dont need to write the code in extracting the header data that is send aspart of the Http Request, rather the jaxrs runtime should be able help us in extracting the header data and pass it as an parameter to the Resource method which is why we call it as "Jaxrs Injection"	
+	
+Aspart of the headers the http standard headers will be exchanged describing the information about the request (these are not business data that acts as an input to perform operation)	like
+1. Content-Type
+2. Content-Length
+3. Accept
+4. CharSet
+5. Host
+etc
+
+Additionally the client application also can append/add custom headers while sending the request, that acts as an input to perform operations on the data supplied aspart of the request

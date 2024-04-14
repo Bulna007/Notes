@@ -1,0 +1,62 @@
+How to secure an Restful resources?
+The restful resources that we build are distributed components that are accessible over the network, since these are b2b applications we dont want everyone around the world to access them. So to enforce restrictions on who should be allowed to access the resources we need implement security for our resources.
+	
+There are 2 types of security we can enforce on restful services
+1. http basic authentication = standard web application security that can be enforced in authenticating the user inorder to grant access to the resource.
+	
+2. oauth2 = new security standard introduced in authenticating/authorizing the access to the resources/apis (delay)
+#spring boot / spring security
+
+
+#Zoom Meeting [7:00 AM - 8:00 AM]
+	1. Spring Framework
+	2. Package
+	3. Spring Boot & Microservices
+	4. Restful Services
+----------------------------------
+1. Spring Restful services
+2. Spring security
+3. Spring OAuth2
+--------------------------------------------------------------------------------------------------------------------------------------
+How to enforce security in securing the access to the Resources using Http Basic Authentication?
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+

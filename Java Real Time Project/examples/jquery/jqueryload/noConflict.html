@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jquery noConflict()</title>
+</head>
+<body>
+    <h2>jquery noConflict()</h2>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        var $j = $.noConflict();
+        $j(document).ready(function() {
+            console.log("jquery is re-assigned with a different alias as $j");
+        });
+    </script>
+</body>
+</html>

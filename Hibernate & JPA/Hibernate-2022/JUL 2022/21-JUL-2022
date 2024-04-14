@@ -1,0 +1,7 @@
+2nd-level cache
+----------------
+Hibernate Framework or jpa api is an full implementation of ORM technology/methodology, every ORM technology implementation has 2 problems
+
+1. huge memory consumption = when we are fetching the objects with association relationship between them, the object along with their child associated objects are fetched from the database and loaded into jvm memory, which will bloatup the memory and application quickly runs into memory issues
+	
+2. poor performance

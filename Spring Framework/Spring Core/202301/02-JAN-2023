@@ -1,0 +1,43 @@
+using the spring framework we can develop multiple application development types in-par with Jee, then why do we need to learn spring framework and use it to develop application, why cant we just use the JEE itself
+
+JEE is an api, api stands for application programming interface. java standard apis are always partial and they provide interfaces and abstract classes only, to work with api we need to choose an implementation, this makes most of the people find it difficult to work with api
+
+api provides lot of classes (interfaces/abstract classes) and these classes are inter-related with each other. Due to huge in number it takes more time to learn the api. Since the classes are inter-dependent on each other it is more complex to understand or learn them and we cannot partially learn the api to develop the application
+
+In addition apis will not provide boiler-plate logic.
+What is a boiler-plate logic?
+piece of code that has to be repeatedly or redundantly written across projects or applications on which we are working on to accomplish a specific functionality is called "boiler-plate"	 logic
+For eg.. while working with jdbc api, to execute an sql query we need to write #10 lines of code around like
+1. load driver
+2. open connection
+3. create statement
+4. execute query
+5. iterate over resultset
+etc
+across any project we are working on, since it is an common code that has to be written by everyone irrespectively to execute a query, it is called boiler-plate logic
+
+The developer has to repeatedly write the boiler-plate logic within the application while working with apis, due to which the amount of code we write in developing the application will become more due to which we run into several problems as described below
+1. the time required for developing the application will be more
+2. man power resources required in developing the application will be more
+3. due to more time and more resources required, the cost of building the application will be very high
+4. due to more number of lines being written in building an application, the chances of increasing the bugs would be high
+5. it takes more time for testing and certifying the application and the cost of certifying the application will be more
+By considering all the above, we can understand apis doesnt support rapid application development & delivery
+
+
+When it comes to Frameworks
+Frameworks always provides bunch of classes, and these classes are concrete class unlike api, so we can directly use Framework classes without the need of any implementations that makes them simple to use.
+	
+The number of classes provided aspart of the Framework are less in number when compared with apis and there is no inter-dependency between the classes thus making a Framework
+ 1. quick to learn
+ 2. no complexity in learning them
+ 3. we can learn the Framework partially to the extent we need and can start building the application
+ 
+The Framework classes are written by the Framework developers with pre-identified functionality within them (boiler-plate logic is provided aspart of the Framework classes). So while working with Framework in building application, the developers dont have to write boiler-plate logic, due to which we write less code in building an application by which we have lot of advantages:
+1. less code, less time it takes to develop an application
+2. less code, less number of resources required for building an application
+3. less code, less time, less resources means cost of developing the application will be quite less
+4. the chances of creeping up the bugs into the application will be less
+5. testing time required for testing and certifying the application will be very less and cost of testing the application always becomes less
+6. since the framework developers has built the components/classes with boiler-plate logic, they might have used best-practices and coding standards in building the components, so all these best practices will be applied to our application since we are building our application using their classes.
+From the above we can understand Frameworks support rapid application development and delivery of the application. So it is recommeded to use Frameworks for building the application rather than apis

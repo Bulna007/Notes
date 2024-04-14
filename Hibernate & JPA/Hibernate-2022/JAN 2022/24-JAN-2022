@@ -1,0 +1,54 @@
+There are 6 types of databases are there
+1. Hierarchial databases
+2. Network databases
+3. Relational databases (cost of managing the data)
+4. Object oriented databases
+5. No-Sql or Semi Structured databases
+6. Un-Structured or Object storage databases
+
+3. Relational database management system (RDBMS)
+RDBMS allows us to store the data interms of tables. We define table with fixed-set of columns and store the data in records which are also called "tupples". Each record has same number of columns in which we store the data.
+	
+Since the table definition has been fixed, we dont have to memorize the address of the data to fetch the data from the database, we can retrieve the data using the data itself. The database management system itself help us in searching and locating the data through data by using query language.
+	
+The RDBMS allows us break the data and store them in separate tables effectively, in addition it supports establishing relationship between the data, by writing primary key of one table as an relationship column or foreign key column in another table, so here we establish relationship between the tables through data itself rather than holding address
+
+Primary Key: it is a column in which we hold the data uniquely across all the records of the table, which is primarily used for establishing relationship between the records across the tables.
+	
+Foreign key: another table primary key column, in which we hold the data of other table primary key column values, through which we can relate the data between the tables
+
+advantages:-
+1. no need of memorizing the address of the data inorder to fetch the data, since the database schema has been defined, the database itself can help us in retrieving the data through the data itself. The real strength of RDBMS lies in query capabilities of searching, filtering, sorting and access the required data, which makes it stay on top of all the other databases in the market.
+2. Finally we can establish relationship between the data through the data itself, without using addresses, so lot of memory will be saved
+3. We can easily join the data based on relationships and access the data together through query capabilities
+4. updating, deleting and inserting the data becomes quite easy
+
+dis-advantages:-
+1. While working with join queries in joining the data across the tables, the RDMBS requires huge cpu and memory in processing the data and retriving records of information that makes these databases demands Physical hardware resources to work.
+2. Maintaining and managing these databases are very complex and requires specialized engineers in taking care of them.
+	
+In-short: Even though we can use RDBMS for storing and processing the business data, the cost of running these databases on large-scale hardware and the maintainance cost involved in keeping these databases running is quite high and makes them infeasible for small/moderate business systems.
+-----------------------------------------------------------------------------------------------
+#4. Object oriented databases 
+Object oriented database help us in directly persisting objects of data and accessing the data interms of objects. So, that data can be processed or persisted easily through object oriented programming languages like java or .net etc
+
+We can represent relationship between the data using inheritance or association and query the data and fetch them use object query language.
+
+give me all the employee objects where employee.salary > 50000 or we can every query through relationship also
+for eg.. give me all the employees who are working in "hr" department
+emp.department.name = "hr"
+
+class Employee {
+	int empNo;
+	String employeeName;
+	Department department;
+}	
+advantages:-
+	1. we can directly persist the data interms of objects and access the data in objects, so that programmer dont have to write data conversion/transformation logic in coverting the data from underlying format to the object format which saves huge development time and cost as well
+	2. since there is native support in accessing the data directly interms of objects, data retrievals will be quite fast
+	3. we can easily establish relationship between the objects and persist them as well
+dis-advantages:-
+	1. These are not matured and in early stages of innovation itself there are no adopters and stopped. we can find only handful of database management systems built-on oodbms concepts that too pre-matured
+	2. These databases can be used only by object oriented programming languages, which makes them highly infeasible to be used for other languages 
+	
+5. No-Sql or Semi-Structured database management systems

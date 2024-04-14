@@ -1,0 +1,287 @@
+How many ways we can setup a spring boot project while working with maven?
+There are 3 ways we can setup spring boot project 
+
+1. maven project with starter dependencies & plugins configured directly
+bootdirect
+|-src
+  |-main
+	  |-java
+		|-resources
+|-pom.xml
+
+In the pom.xml we need to declare 
+#1. starter dependencies:
+groupId: org.springframework.boot, artifactId: spring-boot-starter, version: 3.1.5 along with all the other starter dependencies based on the technologies we are using in building the project
+
+#2. spring boot plugin
+we need to declare spring-boot-maven-plugin under build/plugins section as below
+<plugin>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-maven-plugin</artifactId>
+	<version>3.1.5</version>
+	<executions>
+		<execution>
+			<phase>package</phase>
+			<goals>
+				<goal>repackage</goal>
+			</goals>
+		</execution>
+	</executions>
+</plugin>
+
+2. using spring-boot-starter-parent project approach
+This is the most commonly and widely used approach in setting up spring boot project while working with maven
+
+What are starter dependencies, what is the purpose of them?
+To setup an spring framework project, the developers has to spend lot of time in
+1. identifying the module dependencies based on the technologies we are using, and even their cross module dependencies of the spring framework along with their versions
+2. These spring framework modules we are using inturn are dependent on external third-party libraries, the developer has to identify these third-party libraries and their compatible versions in using them
+
+From the above we can understand, developer has to spend lot of time in debugging and identifying the spring modules and third-party libraries with their version compatibilities in creating an spring framework project.
+
+To overcome this problem the spring boot team has provided spring boot starter dependencies. The starter dependencies works based on maven transitive dependency management technic.
+
+The spring boot development team has identified most commonly used technologies in building the spring projects. For each popular/frequently used technologies they created starter dependencies.
+
+For eg.. people commonly develop web applications, so spring boot team has defined an starter dependency called "spring-boot-starter-web".
+Each starter dependency is nothing but an maven artifact attached with pom file. In the pom file they defined
+1. spring framework modules that are required to work on that technology along with cross module dependencies with their compatible versions
+2. third-party libraries with their compatible versions
+and published them into maven central repository
+
+So when we add a spring boot starter dependency to our project, all the transitive dependencies defined/declared within that starter will be added to the build/classpath of our project by maven.
+	
+In this way per each technology the spring boot team has defined a starter which results in several starters being provided aspart of spring boot. For all the starters provided by spring boot team, the artifactId starts with spring-boot-starter-*
+
+There is a base starter provided by spring boot called "spring-boot-starter", which has spring core and the required module dependencies commonly required for all the spring boot starters.
+	
+So per each release of the Spring Framework, the spring boot team provides an relevant release of boot with starter dependencies defined with transitives as the latest release of spring framework modules and their compatible third-parties.
+	
+For eg.. 
+Spring Framework 5, all the modules are at 5.0.0 version like
+ spring-core:5.0
+ spring-aop:5.0
+ spring-jdbc:5.0
+etc
+
+To work with spring framework 5, the spring boot has released an spring-boot: 2.7.0 declaring their starters with transitives as spring-framework 5.0 modules
+spring-boot-starter:2.7.0
+	|-transitivies
+		|-spring-core:5.0
+		|-spring-context:5.0			
+		|-spring-beans:5.0			
+		|-spring-context-support:5.0			
+			etc
+			
+For the new release of spring framework 6, the spring boot team has releases another version: 3.0.0 in which the starter dependencies are declared with transitives as spring framework 6 modules
+
+How to upgrade from one version of the spring framework to newer version while working with spring boot?
+To upgrade to an newer version of the spring framework we need to upgrade all the starter dependencies and spring boot plugins used in our project. There is always a chance where while migrating we might left/miss with upgrading one of the starters in the project that might lead to in-compatibilities even while using spring boot
+In addition it looks like an tedious job of modifying all the starters to migrate.
+	
+To overcome this problem, the spring boot team has defined an parent maven project called "spring-boot-starter-parent"	.
+	
+The spring-boot-starter-parent is an another maven project created by spring boot team for each release of the spring boot: In this project, the spring boot team defines/declared all the spring boot starters and boot maven plugin with relevant configurations that can be inherited in creating an project.
+	
+spring-boot-starter-parent (maven project)
+|-pom.xml
+  |-packaging="pom"
+	|-dependencyManagement (inheritable)
+	  |-dependencies
+			|-spring-boot-starter-*
+	|-build
+		|-pluginManagement
+			|-plugins
+				|-spring-boot-maven-plugin (inheritable with appropriate configurations)
+	
+This project can be declared as an parent project while creating our spring-boot project, so that all the starter dependency/plugin configurations would be inherited and can be reused aspart of our project as below
+
+bootparent
+|-src
+  |-main
+		|-java
+		|-resources
+|-pom.xml
+
+In our pom.xml we need to declare spring-boot-starter-parent as an parent project so that the parent project configurations would be inherited into our project as below
+
+<project>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.1.5</version>
+		<relativePath/>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId/>
+	<artifactId/>
+	<version/>
+</project>
+
+with the above our project is inherited from spring-boot-starter-parent, so while declaring starter dependencies in our project we dont need to specify the version of those dependencies and while configuring the plugin we dont need to specify version and plugin configurations. all these are inherited from parent pom.
+	
+bootparent
+|-src
+  |-main
+		|-java
+		|-resources
+|-pom.xml
+  |-parent
+	  org.springframework.boot:spring-boot-starter-parent:3.1.5
+	|-dependencies
+		|-declare starter dependencies without versions
+	|-plugins
+		|-declare spring-boot-maven-plugin without version & configuration
+
+with this approach we can easily migrate from one version of the spring framework to a another version just by modifying the parent project version.
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

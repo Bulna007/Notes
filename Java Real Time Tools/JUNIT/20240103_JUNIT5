@@ -1,0 +1,1830 @@
+JUnit5
+------
+The JUnit5 has been modularized and distributed as 3 different modules
+JUnit5 = JUnit Platform + JUnit Jupiter + JUnit Vintage
+
+1. JUnit Platform
+The JUnit Platform serves as a foundation for launching testing frameworks. It has defined TestEngine API for developing a testing framework that runs on the platform. Most of the popular IDEs and build tools uses the JUnit Platform for integrating their tools with JUnit 
+
+2. JUnit Jupiter
+it provides required programming model apis and extensions in JUnit5 for writing tests
+
+3. JUnit Vintage
+Provides an TestEngine for running JUnit3 and JUnit4 based tests on the platform.
+	
+The minimum jdk required for using JUnit5 is : jdk8
+
+#1. JUnit5 Test execution lifecycle
+wap to add n odd numbers within the given range
+for if N = 10 between 1 to 10 sum all the odd numbers and return 
+	
+package com.ju5.core;
+class NumberHelper {
+	public int addNOddNumbers(int n) {
+		return IntStream.range(1, n).filter(NumberHelper::isOdd).sum();
+	}
+	
+	public static boolean isOdd(int i) {
+		if(i%2 != 0) {
+			return true;
+		}
+		return false;
+	}
+}
+
+package com.ju5.core;
+class NumberHelperTest {
+	NumberHelper numberHelper;
+	
+	@BeforeEach
+	public void setUp() {
+		numberHelper = new NumberHelper();
+	}
+	
+	@Test
+	void testAddNNumbers() {
+		int n = 5;
+		int expectedSum = 9;
+		
+		int actualSum = numberHelper.addNOddNumbers(n);
+		assertEquals(expectedSum, actualSum);
+	}
+	
+	@AfterEach
+	public void tearDown() {
+		numberHelper = null;
+	}
+}
+
+#1. Test Execution Lifecycle
+-----------------------------
+How does the testcase class and the test methods will be executed by default?
+When we pass the testcase class as an input to the TestEngine asking to execute the testcase methods, it performs the below operations/activites in executing them
+
+1. Inorder to execute the testcase methods of the testcase class, the TestEngine requires the object of Testcase class, so it instantiates the object of the Testcase class
+2. Then executes @BeforeEach method ontop of the testcase object inorder to initialize the Test Fixtures
+3. it executes the test method annotated with @Test one at a time in the order in which those are written
+4. Then executes @AfterEach method to perform cleanup of the Test Fixtures that are intialized earlier
+5. destroys the Testcase class object
+This way of executing the testcase methods of the testcase class are called OBJECT_PER_METHOD lifecycle	
+OBJECT_PER_METHOD lifecycle means = "per each test method, a new object of the testcase class will be created"	
+	
+JUnit5 supports #2 Test Execution lifecycles in executing the testcase methods of the testcase class
+	1. OBJECT_PER_METHOD lifecycle
+	2. OBJECT_PER_CLASS lifecycle
+	
+note: incase of junit3/junit4 there is no choice of choosing the test execution lifecycle, it is always object_per_method only.
+	
+incase if we have choosen the OBJECT_PER_CLASS lifecycle, then only one object of the Testcase class will be created for executing all the testmethods of the Testcase class
+	
+If the testcase class holds the state and the state is being used in conducting the tests within the testmethods, then it is recommended to choose OBJECT_PER_METHOD otherwise we can use OBJECT_PER_CLASS lifecycle
+
+We need to use @TestInstance annotation ontop of the Testcase class to indicate what test execution lifecycle to be applied for executing the testmethods of the testcase class 
+1. Lifecycle.PER_CLASS
+2. Lifecycle.PER_METHOD
+
+@TestInstance(Lifecycle.PER_CLASS | Lifecycle.PER_METHOD)
+class NumberHelperTest {
+
+}
+
+#2. Test Fixture Methods
+-------------------------
+In JUnit5 there are #4 Test fixture methods are there categorized into 2 groups
+1. per class to carry one-time operations
+2. per each testmethod to perform initialization/destruction 
+
+#1. per class to carry one-time operations
+1.1 @BeforeAll
+1.2 @AfterAll
+
+We can write the test fixtures methods annotated with @BeforeAll and @AfterAll, these methods would be executed only once per the Testcase class for performing one-time initialization and destruction logic
+
+a) incase of Test Execution Lifecycle being choosen as Lifecycle.PER_CLASS, since only one object of the Testcase class will be created for executing the test methods.
+The @BeforeAll and @AfterAll methods will be called immediately after creating the object of the Testcase class and before destructing/deleting the Testcase class.
+	
+	
+b) incase of Test Execution lifecycle as Lifecycle.PER_METHOD, then per each testmethod a new object of the Testcase class will be created, so in this case the TestEngine should not call @BeforeAll and @AfterAll after creating the object and before deleting the object.
+Inorder to execute a Testcase class, the Testengine has to load the class into jvm memory and a class will be loaded one and only once into the jvm memory, so immediately after loading the class it will execute the @BeforeAll method and while removing the class from jvm memory upon finishing all the test methods it will call @AfterAll method.
+In this case the @BeforeAll and @AfterAll methods must be static.	
+	
+#2. per method to perform initialization/destruction per each testmethod
+1. @BeforeEach
+2. @AfterEach
+
+
+
+
+
+
+There are 2 Test execution lifecycles are supported by JUnit5
+1. PER_CLASS = only one object of the testcase class would be created in executing all the testcase methods of the class.
+2. PER_METHOD = per each testmethod to execute, it creates an new object of the testcase class
+	
+There are 4 test fixture methods are available in JUnit5. These can be categorized into 2 groups
+1. per-class to perform one-time operation 
+1.1 @BeforeAll
+1.2 @AfterAll
+
+Incase of Lifecycle.PER_CLASS: @BeforeAll will be executed immediately after creating the object of the testcase class, and once after completing execution of all the test methods of the testcase class it executes @AfterAll
+
+Incase of Lifecycle.PER_METHOD: @BeforeAll will be executed upon loading the Testcase class into the jvm memory and the @AfterAll method will be executed at the end of the all the test methods
+here the @BeforeAll and @AfterAll must be static to be executed without the object of the Testcase class.
+	
+2. per-each method to perform test fixture initialization and destruction
+2.1 @BeforeEach
+2.2 @AfterEach
+--------------------------------------------------------------------------------------------------------------------------------------
+#3.TestMethod Order
+In which order the testmethods of the testcase class are executed?
+Test Method execution order
+The order in which the testmethods executes should not matter, because theses unit tests are written isolated/independent from each other. But few times we want to enforce the order in which these test methods are executed, for example incase of integration-tests or functional tests while applying Lifecycle.PER_CLASS we want to enforce the order
+
+The default test method execution order is in the order in which the methods are declared in the testcase class from top-down approach. In JUnit5 we can control we can control the order of execution of these test methods by using @TestMethodOrder(MethodOrderer.*) annotation
+
+This annotation is written at the testcase class level to which we can pass the strategy we have choosen in executing the methods as:
+1. MethodOrderer.DisplayName
+2. MethodOrderer.MethodName = sorted by methodName order
+3. MethodOrderer.OrderAnnotation = based on @Order annotation written on the method
+4. MethodOrderer.Random = randomly executed
+
+package com.ju5.core;
+class ArrayHelper {
+	public int bigNumber(int[] inArray) {
+		int max = 0;
+		Arrays.asList(inArray).stream().forEach(number-> {
+			if(max < number) {
+				max = number;
+			}
+		});
+		return max;
+	}
+}
+
+package com.ju5.core;
+@TestInstance(Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class ArrayHelperTest {
+	ArrayHelper arrayHelper;
+	
+	@BeforeEach
+	public void setUp() {
+		arrayHelper = new ArrayHelper();
+	}
+	
+	@Test
+	@Order(2)
+	void testBigNumber() {
+			int[] inArray = new int[]{10, 20, 34, 2, 4, 7};
+			int expectedBigNumber = 34;
+
+			int actualBigNumber = arrayHelper.bigNumber(inArray);
+			Assertions.assertEquals(expectedBigNumber, actualBigNumber);
+	}
+
+	@Test
+	@Order(1)
+	void testBigNumberWithSameNumbersInInputArray() {
+			int[] inArray = new int[]{10, 10, 10, 10, 10};
+			int expectedBigNumber = 10;
+
+			int actualBigNumber = arrayHelper.bigNumber(inArray);
+			Assertions.assertEquals(expectedBigNumber, actualBigNumber);
+	}
+
+	@Test
+	@Order(3)
+	void testBigNumberWithSingleNumberArray() {
+			int[] inArray = new int[]{10};
+			int expectedBigNumber = 10;
+
+			int actualBigNumber = arrayHelper.bigNumber(inArray);
+			Assertions.assertEquals(expectedBigNumber, actualBigNumber);
+	}
+	
+	@AfterEach
+	public void tearDown() {
+		arrayHelper = null;
+	}
+	
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------
+4. DisplayName
+Test case classes and test methods can be attached with custom display name using @DisplayName annotation, so that we can write more descriptive names possible to produce nice test reports generating by Testengines and IDEs 
+
+
+package com.ju5.core;
+@TestInstance(Lifecycle.PER_CLASS)
+@DisplayName("ArrayHelper Testcase class")
+class ArrayHelperTest {
+	ArrayHelper arrayHelper;
+	
+	@BeforeEach
+	public void setUp() {
+		arrayHelper = new ArrayHelper();
+	}
+	
+	@Test
+	@DisplayName("test, find bigNumber in the array with multiple numbers in input array")
+	void testBigNumber() {
+			int[] inArray = new int[]{10, 20, 34, 2, 4, 7};
+			int expectedBigNumber = 34;
+
+			int actualBigNumber = arrayHelper.bigNumber(inArray);
+			Assertions.assertEquals(expectedBigNumber, actualBigNumber);
+	}
+	
+	@AfterEach
+	public void tearDown() {
+		arrayHelper = null;
+	}
+	
+}
+	
+-------------------------------------------------------------------------------------------------------------------------------------
+#5. DisplayName generators
+Instead of we writing the display names to the testcase class or testcase methods, we can use display name generators to generate the names automatically. We can configure display name generator to generate names based on different strategies using @DisplayNameGeneration annotation
+
+There are 4 display name generation strategies are supported
+1. Standard
+2. Simple = no paranthesis and no parameters
+3. ReplaceUnderScores = if we have underscores in methodName or Classname it replaces with space. For eg. if our test method name is test_BigNumber() = then it generates the displayname as test BigNumber
+4. IndicativeSentences = generates complete sentences by concatenating the names of the test method and enclosing classnames.
+--------------------------------------------------------------------------------------------------------------------------------------
+#6. Repeated Tests
+JUnit5 supports executing a test method repeatedly for specified number of times. each repeatition behaves like a regular test method execution with full support of Test Execution lifecycle
+
+By default a TestEngine executes a Test Method only once, but sometimes we want to conduct a test repeatedly for certain number of times to see the behavior/consistency of the method, this can be achieved only through repeated tests
+
+on the test method of a testcase class we need to write @RepeatedTest(ntimes) annotation. So that the test engine takes care of repeatedly executing the method for specified times
+
+In addition we can customize the displayName and can extract the RepeatitionInfo of the method by using the expression and other api classes as below.
+	
+class NumberHelper {
+	public boolean isPrime(int n) {
+		boolean prime = true;
+		
+		prime = IntStream.range(2, n/2).noneMatch(i-> {
+			return n%i==0;
+		});
+		
+		return prime;
+	}
+}	
+
+@TestInstance(Lifecycle.PER_CLASS)
+class NumberHelperTest {
+	NumberHelper numberHelper;
+	
+	@BeforeEach
+	void setUp() {
+		numberHelper = new NumberHelper();
+	}
+	
+	@RepeatedTest(5)
+	void testIsPrime(RepetitionInfo repetitionInfo) {
+		int n = 11;
+		boolean actualPrime = numberHelper.isPrime(n);
+		
+		sop(repetitionInfo.getCurrentRepetition() + "/"+ repetitionInfo.getTotalRepetitions());
+		
+		assertTrue(actualPrime);
+	}
+	
+	@RepeatedTest(value=4, name="{displayName} {currentRepetition}/{totalRepetitions}")
+	@DisplayName("test isPrime with number two")
+	void testIsPrimeWithNumberTwo() {
+		int n = 2;
+		boolean actualPrime = numberHelper.isPrime(n);
+		assertTrue(actualPrime);
+	}
+	
+	@AfterEach
+	void tearDown() {
+		numberHelper = 0;
+	}
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+#7. Disabled Test
+
+Sometimes we want to skip few test methods being executed aspart of the testcase execution, one way we can achieve is by commenting the test method or only just the annnotation @Test. But the problem with this approach is, these commented methods will be completely lost in place as if those never exists in our testcase class.
+	
+Instead of commenting the test methods to temporarily skip execution, we can use @Disabled annotation on the test method. So that the Test Engine while generating the Test report after execution along with totalNumber of tests, runs, it shows no of disabled tests as well.
+	
+class NumberHelper {
+	@Test
+	void testIsPrime() {}
+	
+	@Test
+	@Disabled("disabling temporarily, as we need to confirm this requirement from client")
+	void testIsPrimeWithZero() {}
+}	
+
+
+#8. Conditional Tests
+All the tests that are being written may not be applicable to execute across all the environments, few tests need to be executed on few env and others on different env.
+For eg..
+1. We want to apply few tests based on platform or operating system being used
+2. based on jdk version/vendor
+3. based on system property
+This can be achieved using conditional tests supported by Junit5
+
+8.1 based on operating system
+@EnableOnOs(MAC)
+	- MAC
+	- WINDOWS
+	- LINUX
+	
+@EnableOnOs(architectures = "x86_64")	
+	
+8.2 based on java version
+@EnableOnJre(JAVA_11)
+@EnableForJreRange(min=JAVA_11, max=JAVA_17)
+	
+	
+8.3 based on System Property
+@EnableIfSystemProperty(named="cache.enabled", matches="true")
+	
+8.4 based on environment variables
+@EnableIfEnvironmentVariable(named="M2_HOME", matches=".*")
+	
+8.5 custom conditions
+
+@Test
+@EnableIf("checkCondition")
+public void testIsPrime() {}
+
+
+static boolean checkCondition() {
+	// perform your conditional evaluation
+	return true;
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+#9. Nested Tests
+We can categorize or group testmethods into nested classes based on type of functionality or testing being applied, so that we can easily identify which group of tests are failing and at what percentage by looking at testreport generated by test engines.
+
+
+class UserAccountService {
+	void registerUser(UserAccount userAccount) {}
+	// age #qualified
+	// emailAdress @should be valid
+	// mobilenumber @should be valid
+	
+	
+	// emailAddress #should not be existing
+	// mobileNo #should not be existing
+	// user with mobile/email should be found with disabled/locked
+}
+
+@Test
+class UserAccountServiceTest {
+	@Nested
+	class NewUserAccountRegistrationTest {
+		void testRegisterUser() {}
+		void testRegisterUserWithAgeNotValid() {}
+		void testRegisterUserWithEmailAddressInvalid() {}
+		void testRegisterUserWithMobileNumberInValid() {}
+	}
+	
+	@Nested
+	class ExistingUserRegistrationTest {
+		void testRegisterUserWithExistingUser() {}
+		void testRegisterUserWithExistingLockedUser() {}
+		void testRegisterUserWithExistingDisabledUser(){}
+		void testRegisterUserWithEmailAddressExists() {}
+		void testRegisterUserWithUserFoundNotActive() {}
+		void testRegisterUserWithMobileNumberExists() {}
+	}
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+#10. Tag based tests
+There are several tests being written aspart of an application that can be categorized into different groups like performance tests, functional tests, stress tests and security tests etc. These tests can be tagged using @Tag annotation so that when we are executing the tests we can pickup the tests of the specific tag and execute them.
+	
+class Test {
+	
+	@Test
+	@Tag("performance")
+	void test1() {}
+	
+	@Test
+	@Tag("security")
+	void test2() {}
+}	
+
+We can run specific tag tests in #2 ways while running maven build as below
+1. goto pom.xml and add the groups configuration in the maven-surefire-plugin as below.
+	
+<plugin>
+		<artifactId>maven-surefire-plugin</artifactId>
+		<version>2.22.1</version>
+		<configuration>
+				<groups>performance</groups>
+		</configuration>
+</plugin>
+
+2. we can pass the groups as an System property while launching the maven build for running the tests on command-line 
+mvn clean test -Dgroups=performance,stress
+--------------------------------------------------------------------------------------------------------------------------------------
+#11 Parameterized Tests
+
+w.a.p to identify the max occurence number in the given array.
+for eg..
+given array: 10, 29, 3,10, 44, 3, 10, 29
+The max occurence number: 10
+
+package com.ju5.core;
+class ArrayHelper {
+	public int findMaxOccurence(int[] inArray) {
+		Map<Integer, Integer> occurencesMap = null;
+		int occurences = 0;
+		
+		occurencesMap = new HashMap<>();
+		for(number : inArray) {
+			if(occurencesMap.containsKey(number)) {
+				occurences = occurencesMap.get(number);
+			}
+			occurences++;
+			occurencesMap.put(number, occurences);
+		}
+		return occurencesMap.values().sort().get(occurencesMap.length-1);
+	}
+}
+
+package com.ju5.core;
+class ArrayHelperTest {
+	ArrayHelper arrayHelper;
+	
+	@BeforeEach
+	void init() {
+		arrayHelper = new ArrayHelper();
+	}
+	
+	@Test
+	void findMaxOccurence() {
+		int[] inArray = new init[] {10, 29, 3,10, 44, 3, 10, 29};
+		int expectedMaxOccurence=10;
+		
+		int actualMaxOccurence = arrayHelper.findMaxOccurence(inArray);
+		assertEquals(expectedMaxOccurence, actualMaxOccurence);
+	}
+	
+	@Test
+	void findMaxOccurenceNoOccurencesInArray() {
+		int[] inArray = new init[] {10, 29, 3, 44, 101, 129};
+		int expectedMaxOccurence=10;
+		
+		int actualMaxOccurence = arrayHelper.findMaxOccurence(inArray);
+		assertEquals(expectedMaxOccurence, actualMaxOccurence);
+	}
+	
+	@Test
+	void findMaxOccurenceWithOneElementInArray() {
+		int[] inArray = new init[] {10};
+		int expectedMaxOccurence=10;
+		
+		int actualMaxOccurence = arrayHelper.findMaxOccurence(inArray);
+		assertEquals(expectedMaxOccurence, actualMaxOccurence);
+	}
+	
+	@AfterEach
+	void cleanup() {
+		arrayHelper = null;
+	}
+}
+
+If we look at the above testcase class, we have written several testmethods in testing the findMaxOccurence() method of the ArrayHelper class with possible test inputs and outputs covering all the cases (positive, negative, boundary etc). But across these testmethods written for testing findMaxOccurence() method, the testcode written is duplicated across and resulted in more time and efforts in writing the testcases.
+	
+To overcome the problem in repeatedly testing any method with possible input combinations and expected outputs out of them, the JUnit5 has introduced Parameterized Tests.
+	
+1. @ValueSource = passing simple values
+2. @CsvSource = passing comma-separated valued
+3. @NullSource or @EmptySource or @NullAndEmptySource
+4. @EnumSource
+5. @MethodSource
+6. @ArgumentsSource = ArgumentProvider
+
+1. @ValueSource 
+Using @ValueSource we can pass an array of literal values as an parameters to the test method
+
+
+package com.ju5.core.params;
+
+class Number {
+	public boolean isPrime(int n) {
+		return IntStream.range(2, n/2).noneMatch(i -> n%i ==0);
+	}
+}
+
+class NumberTest {
+	Number number;
+	
+	@BeforeEach
+	void init() {
+		number = new Number();
+	}
+	
+	
+	@ParameterizedTest
+	@ValueSource(ints = {1, 2, 3, 7, 11, 17})
+	void isPrimes(int n) {
+		assertTrue(number.isPrime(n));
+	}
+	
+	@AfterEach
+	void cleanUp() {
+		number = null;
+	}
+}
+
+The limitation with @ValueSource is it supports primitive values being passed as input for testing and supports only the below parameter types
+1. int
+2. boolean
+3. short
+4. byte
+5. long
+6. float
+7. double
+8. char
+9. String
+10. Class
+
+2. @CsvSource
+The expected output that is generated by the original method is depends on the inputs with which we are conducting the test, then @ValueSource will not help us.
+For eg.. if we are testing an add(int a, int b), the sum returned by this method will be depends on what inputs we passed as a & b, then we cannot have the outcome to be pre-defined or fixed for all the combinations of input. So we need to use @CsvSource for performing the parameterized tests.
+	
+1. pass the inputs and expected output for those inputs also in your test method
+2. conduct the testing with those inputs supplied
+3. verify the output produced is matching with expected output that is passed to the test method.
+This can be done by using @CsvSource
+	
+class Number {
+	public int substract(int a, int b) {
+		return b-a;
+	}
+}	
+
+class NumberTest {
+	@BeforeEach
+	void init() {
+		number = new Number();
+	}
+	
+	@ParameterizedTest
+	@CsvSource({"10,20,10", "-10, 20,30", "0, 0, 0", "-1,-1, -2"})
+	void testSubstract(int a, int b, int expectedSub) {
+		assertEquals(expectedSum, number.add(a, b));
+	}
+	
+	@AfterEach
+	void cleanUp() {
+		number = null;
+	}
+}
+
+
+3. @EmptySource or @NullSource or @EmptyOrNullSource
+while working with testing string inputs, we need to pass, empty or null strings as inputs for testing, this can be done using @EmptySource, @NullSource or @EmptyOrNullSource
+
+class Strings {
+	int countVowels(String in) {
+		int count = 0;
+		
+		
+		count = in.chars().filter(c -> {
+			return c == 'a' || c == 'e' || c=='i' || c == 'o' || c == 'u';
+		}).count();
+		
+		return count;
+	}
+}
+
+class StringsTest {
+	Strings strings;
+	
+	@BeforeEach
+	void init() {
+		strings = new Strings();
+	}
+	
+	@ParameterizedTest
+	@ValueSource({"adam, madam, poter, hacker"})
+	@EmptyOrNullSource
+	void testCountVowels(String in) {
+		
+	}
+	
+	
+	
+	@AfterEach
+	void cleanUp() {
+		strings = null;
+	}
+}
+
+5. @MethodSource
+The argument sources till now we have discussed doesnt support passing complex objects as input source in executing the test method. one approach we can use in providing or passing complex objects as arguments is to use method source.
+	
+@MethodSource allows us to refer one or more factory methods of the test class or external class. The Factory methods must generate a stream of arguments, and each set of arguments within the stream will be passed as an parameters invoking the test methods.
+	
+The Factory method within the test case class must be static, unless the testclass is annotated with Test Lifecycle as @TestInstance(Lifecycle.PER_CLASS). Incase if we are writing the FactoryMethod in an external class, the method must be always static.
+	
+
+class Rectangle {
+	int length;
+	int breadth;
+	// accessors
+}	
+
+
+class ShapeService {
+	
+	int area(Rectable rectangle) {
+		return rectangle.length * rectangle.breadth;
+	}
+}
+
+class ShapeServiceTest {
+	ShapeService shapeService;
+	
+	@BeforeEach
+	void init() {shapeService = new ShapeService();}
+	@AfterEach
+	void cleanUp() {shapeService=null;}
+	
+	@ParameterizedTest
+	@MethodSource("rectangleSource")
+	void testArea(Rectangle rectangle, int expectedArea) {
+		assertEquals(expectedArea, shapeService.area(rectangle));
+	}
+	
+	
+	private static Stream<Arguments> rectangleSource() {
+		return Stream.of(
+			Arguments.of(new Rectangle(10, 20), 200),
+			Arguments.of(new Rectangle(10, 0), 0),
+			Arguments.of(new Rectangle(0, 0), 0)			
+		);
+	}
+}
+
+6. @ArgumentSource
+Another approach of supplying the arguments as parameters in executing the test methods is using ArugmentProvider. The JUnit has provided an interface called "ArgumentProvider"
+	
+we need to write our own implementation class either as an external class or as an nested static class inside the Testcase class in which override the provideArguments returning the arguments, that should be passed in executing the test method.
+	
+interface ArgumentProvider {
+	Stream<? extends Arguments> providerArguments(ExtensionContext context);
+}	
+
+one we write the ArgumentProvider implementation we can refer this provider within our test method using @ArgumentSource(ArgumentProvider.class)
+	
+
+class Loan {
+	double principle;
+	int tenure;
+	float ri;
+	// accessors
+}	
+
+class LoanCalculator {
+	double interestAmount(Loan loan) {
+		return (loan.getPrinciple() * loan.getTenure() * loan.getRi()) / 100;
+	}
+}
+
+class LoanCalculatorTest {
+	LoanCalculator loanCalculator;
+	
+	@ParameterizedTest
+	@ArgumentSource(LoanArgumentProvider.class)
+	void testInterestAmount(Loan loan, double expectedInterestAmount) {
+		assertEquals(expectedInterestAmount, loanCalculator.interestAmount(loan));
+	}
+}
+
+class LoanArgumentProvider implements ArgumentProvider {
+	public Stream<Arguments> provideArguments(ExtensionContext context) {
+		return Stream.of(
+			Arguments.of(new Loan(239, 34, 3.4), 933),
+			Arguments.of(new Loan(239, 34, 4.4), 1033)
+		);
+	}
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------
+#12 exception testing
+The test we are conduction here, is that the original class and the method we are testing should report an exception, and if the exception has been reported we want to mark the test as passed. But by default the JUnit marks the test being conducted as ERROR when the target class method is reporting an exception, then how can we test for exception from the target class?
+	
+
+class Shape {
+	int area(int length, int breadth) {
+		
+		if(length <0 || breadth < 0) {
+			throw new IllegalArgumentException("invalid length and breadth");
+		}
+		
+		return length * breadth;
+	}
+}
+
+class ShapeTest {
+	Shape shape;
+	@BeforeEach
+	void init() {}
+	@AfterEach
+	void cleanUp() {}
+	
+	@Test
+	void testArea() {
+		assertThrows(()->{
+			shape.area(-10, 10);
+		}, IllegalArgumentException.class);
+	}
+	
+}
+
+
+#13 timeout testing
+Many cases we want to test for whether the original method and its functionality has been computed within the specified interval of time. if the test runs beyond that interval we want mark it as failed.
+	
+For eg.. in a typical microservices application, we we are testing the apis and these apis are supposed to return the response within the specified interval of time otherwise we want to mark the test as failed, this can be achieved through timeout testing as below.
+	
+class Number {
+	long factorial(int n) {
+		return IntStream(1, n).reduce(1, (submultiplier, element)-> {submultiplier * element});
+	}
+}	
+	
+class NumberTest {
+	Number number;
+	
+	@Test
+	@Timeout(value=1, unit=TimeUnit.MILL_SECONDS)
+	void testFactorialOfBigNumber() {
+		number.factorial(10000000);
+	}
+}
+-------------------------------------------------------------------------------------------------------------------------------------
+#13 Test Suite
+We can group bunch of testcase classes together and can launch them for execution by using testsuites. For eg.. we can create testsuites per each module, that includes all the testcases of that specific module. so that we can quickly launch testing with that testsuite of the module whom we want to verify.
+	
+we need to add the below dependencies:
+<dependency>
+		<groupId>org.junit.platform</groupId>
+		<artifactId>junit-platform-suite-engine</artifactId>
+		<version>1.10.0</version>
+</dependency>
+	
+@SelectClasses({NumberHelperTest.class, UnitsConvertedTest.class})	
+@Suite	
+public class NuemaricTestSuite {
+	
+}	
+
+1. @SelectClasses is used for including the testcase classes into the suite.
+2. @SelectPackages is used for including the packages in which the testcases are distributed which we wanted to add in this testsuite
+
+along with that we can use @IncludeTags("performance") = for tag based testing
+--------------------------------------------------------------------------------------------------------------------------------------
+Principles of unit testing:
+
+1. Test-driven development = Code a little, Test a Little
+What is test-driven development means?
+Along with working on the functionality or a feature, in-parallel the developers has to write unit testcases in testing the functionality. while working on the code, once it has reached to an state that it can be testable, immediately the developers has to write the testcases in verifying the implementation before proceed on further development.
+	
+2. always design your code in such a way it is testable. Write from the stage of the design itself we need to plan our implementation in such a way it purely supports testing.
+	
+3. unit testing means each part/component should be independently tested from the others, to isolate the problem and understand the failure properly
+
+
+wap to find an given number is found in the array or not
+
+#bug
+class ArraySorter {
+	int[] sort(int[] inArray) {
+		int[] sortedArray = inArray.clone();
+		
+		for(int i=0;i<sortedArray.length-1;i++) {
+			for(int j = 0; j<sortedArray.length-1-i;j++) {
+				if(sortedArray[j] > sortedArray[j+1]) {
+					int temp = sortedArray[j];
+					sortedArray[j] = sortedArray[j+1];
+					sortedArray[j+1] = temp;
+				}
+			}
+		}
+		return sortedArray;		
+	}
+}
+
+class ArrayFinder {
+	ArraySorter arraySorter;
+	
+	public ArrayFinder(ArraySorter arraySorter) {
+		this.arraySorter = arraySorter;
+	}
+	
+	boolean find(int[] inarray, int elem) {
+		int[] sortedArray = arraySorter.sort(inarray);
+		boolean found = false;
+		int min = 0;
+		int max = sortedArray.length;
+		
+		while(found == false && min < max) {
+			int median = (min+max)/2;
+			if(sortedArray[median] == elem) {
+				found = true;
+			}else if(sortedArray[median] < elem) {
+				min = median + 1;
+			}else if(sortedArray[median] > elem) {
+				max = median -1;
+			}
+		}
+		return found;
+	}
+}
+
+class ArraySorterTest {
+	ArraySorter arraySorter;
+	
+	@BeforeEach
+	void init() {}
+	@AfterEach
+	void cleanup() {}
+	
+	@Test
+	void testSort() {}
+}
+
+
+class ArrayFinderTest {
+	ArrayFinder arrayFinder;
+	ArraySorter arraySorter;
+	
+	@BeforeEach
+	void init() {
+		arraySorter = new ArraySorter();
+		arrayFinder = new ArrayFinder(arraySorter);
+	}
+	
+	@Test
+	void testFind() {
+		int[] inArray = new int[] {10, 3, 53, 2, 1, 34, 2};
+		int elem = 3;
+		
+		boolean actualFound = arrayFinder.find(inArray, elem);
+		assertTrue(actualFound);
+	}
+	
+	@AfterEach
+	void cleanup() {
+		arrayFinder = null;
+		arraySorter = null;
+	}
+}
+
+In the above ArrayFinderTest, it is instantiating the ArraySorter object and wrapping inside the ArrayFinder to test the ArrayFinder class. If there is an problem/bug with ArraySorter class, it will not return the sorted array for the given input array, which will eventually causes the ArrayFinder logic to fail.
+	
+So when we conduct the testing at this stage, The ArrayFinderTest also reports as failures, because of the bug/logical error in the ArraySorter, this will leads to incorrect debugging of the ArrayFinder class.
+	
+The test report/results that are generated by the junit testing is not pointing out the right problem, which results in merely wastge of testing.
+	
+To overcome this problem we need to always isolate the classes and test as single unit only. That means while testing ArrayFinder we should not use the real object of ArraySorter class, rather we should use mock of the ArraySorter as below and use this reference in ArrayFinder.
+	
+
+// dummy classes, that doesnt have any logic apart from returning the fixed data upon calling the methods
+class ArraySorterMock extends ArraySorter {
+	int[] sort(int[] inArray) {      
+		int[] sortedArray = new int[] {1, 2, 3, 10, 21, 34, 53};
+		return sortedArray;
+	}
+}
+
+
+class ArrayFinderTest {
+	ArrayFinder arrayFinder;
+	ArraySorter arraySorter;
+	
+	@BeforeEach
+	void init() {
+		arraySorter = new ArraySorterMock();
+		arrayFinder = new ArrayFinder(arraySorter);
+	}
+	
+	@Test
+	void testFind() {
+		int[] inArray = new int[] {10, 3, 53, 2, 1, 34, 2};
+		int elem = 3;
+		
+		boolean actualFound = arrayFinder.find(inArray, elem);
+		assertTrue(actualFound);
+	}
+	
+	@AfterEach
+	void cleanup() {
+		arrayFinder = null;
+		arraySorter = null;
+	}
+}
+
+But we have to perform testing using permutations and combinations of inputs so we need to endup in creating several mock classes for ArraySorter in returning the different combinations of output for testing the ArrayFinder which takes lot of time in writing the number of mock classes.
+	
+To overcome this problem the Mocking frameworks are introduced.
+======================================================================================================================================
+Mockito
+-------
+While performing unit testing, we need to conduct it in an isolated manner which means each component should be tested independent another. The goal of unit testing is to identify the rootcause of the failure/error reported.
+	
+When we are having dependency between the classes in our application logic, while conducting the unit testing of one class, if there is a failure/logic error in another dependent class, the tests we are conducting on our class will reports as failed which is not the actual failure with our class, and these failures are caused because of the logical error within dependent class
+	
+but by looking at the test report/results one would think there are problems/failures within our class aswell, this shows up the bad test health of our application.
+	
+To identify the rootcause of the real failures always we need to test our classes isolated from another class, this can be done by mocking the dependent classes while testing our class.
+	
+The Mock objects we are creating should not contain any programming logic, rather they should have dummy implementation of original class returning the pre-defined set of values upon calling them. So that we can test our class by holding the references of these mock objects as dependents. Now if there is a failure reported by our Test class, there is a guaratee the failure is there within our class only.
+	
+Inorder to certify the code is working properly within our class, we need to test our class and their methods with all the permutations and combinations of values, for which we need to create several dependent mock classes/objects. The amount of time and efforts we need to spend on creating such a huge number of mock classes to test our application components is going to be high. Instead there are mocking frameworks are available using which we can quickly produce the mock objects without writing the mock classes. There are lot of mocking frameworks are available as below:
+1. mockito
+2. jmock
+3. easymock
+4. powermock
+etc
+
+
+What is mockito, why do we use it?
+Mockito is an opensource framework used for creating mock classes/objects ontop of the original class. It greatly reduces the efforts of writing the code for creating the mock classes for performing isolated unit testing using dependent components.
+	
+How to work with Mockito?
+There are 3 stages in creating and using mock objects 
+1. create an mock object for the dependent class you wanted to isolate from
+2. conduct the testing of our class, by using the mock object as dependent that has been created above
+3. validate the code and verify the mock objects are being called as expected or not
+
+           #1                             #2                                                #3
+			create a mock              use the mock object                      validate the test outcome and verify
+			object                  as dependent in testing our class          the mock is being used as expected or not
+
+In the older versions of the Mocktio we need to write code for initializing the mockito and create mocks by calling Mockito.mock(class) as shown below.
+JUnit4 = @RunWith
+JUnit5 = @ExtendWith
+	
+@RunWith(MockitoJUnitRunner.class)	
+class ArrayFinderTest {
+	ArraySorter arraySorter;
+	ArrayFinder arrayFinder;
+	
+	@BeforeEach
+	void init() {
+		MockitoAnnotations.initMocks(this);
+		arraySorter = Mockito.mock(ArraySorter.class);
+		
+		Mockito.when(arraySorter.sort(new int[] {10, 3, 53, 2, 1, 34, 21})).thenReturn(new int[] {1, 2, 3, 10, 21, 34, 53})
+		
+		arrayFinder = new ArrayFinder(arraySorter);
+	}
+	
+	@Test
+	void testFindElement() {
+		int[] inArray = new int[] {10, 3, 53, 2, 1, 34, 2};
+		int elem = 3;
+		
+		boolean actualFound = arrayFinder.find(inArray, elem);
+		assertTrue(actualFound);
+	}
+	
+	@AfterEach
+	void close() {
+		
+	}
+}	
+	
+What is Mockito, why do we use it?
+Mockito is an opensource framework for mocking the objects, so that we can perform unittesting by injecting the mock objects as dependents to perform isolated testing.
+	
+advantages:
+1. no need to write the mock classes manually, to perform component-level testing
+2. even we change the parameters or methodNames of the original class/interface, there is no impact on the mocks, since there are created at runtime.
+3. using Mockito we can mock for returnValue and exceptions also
+4. Verify and order check is supported
+
+
+The latest version of mockito has added support for close integrations with JUnit5 Jupiter and plent of new features are added as below.
+1. mock private methods
+2. mock final classes
+3. mock static methods
+4. supports annotations
+
+JUnit5 + Mockito
+We need to add the below dependencies to our project to use Mockito
+1. mockito-core
+2. mockito-junit-jupiter
+
+Let us try to understand how to implement the previous testcase with new mockito version using annotations.
+	
+	
+@ExtendWith(MockitoExtension.class)	
+class ArrayFinderTest {
+	@Mock
+	ArraySorter arraySorter;
+	
+	@InjectMocks
+	ArrayFinder arrayFinder;
+	
+	@BeforeEach
+	void init() {
+		when(arraySorter.sort(new int[] {10, 3, 53, 2, 1, 34, 21})).thenReturn(new int[] {1, 2, 3, 10, 21, 34, 53})
+	}
+	
+	@Test
+	void testFindElement() {
+		int[] inArray = new int[] {10, 3, 53, 2, 1, 34, 2};
+		int elem = 3;
+		
+		boolean actualFound = arrayFinder.find(inArray, elem);
+		assertTrue(actualFound);
+	}
+	
+	@AfterEach
+	void close() {
+		
+	}
+}	
+
+1. @Mock = creates an mock object for the attribute on which we have written.
+2. @InjectMocks	= It takes care of instantiating the given original class, then injects the mocked dependencies using one of three approaches
+	1. constructure based injection
+	2. setter
+	3. field
+	
+if we have mocked multiple when conditions on the mock object, but in immediate test execution if the stubbed are not being called, then mockito throws an UnnecessaryStubbingException.
+To resolve this problem there are 3 options are available
+1. identify the unused/unnecessary stubbing we have written and clean it up or remove them.
+2. we can linient() to the when() to make the stubbed method call optional
+linient().when(arraySorter.sort(new int[]{10, 1, 7})).thenReturn(new int[]{1, 7, 10});
+
+3. Instead of individual stubbed methods to be marked as linient we can apply globally using @MockitoSettings at the testcase class level
+	
+@MockitoSettings(strictness = Strictness.LENIENT)	
+@ExtendWith(MockitoExtension.class)	
+class ArrayFinderTest {
+	
+}		
+--------------------------------------------------------------------------------------------------------------------------------------
+How to mock exceptions?
+sometimes the mocked dependencies are supposed to report exceptions for a specific set of inputs, so that we can conduct exception testing on the original class, so we need to simulate the exception being reported from mock, this can be achieved using
+
+when(mockobject.method(params)).thenThrow(Exception.class);
+--------------------------------------------------------------------------------------------------------------------------------------
+	
+Working with Verify Mock
+-------------------------
+upon stubbing a mock object with expected method invocations and their outcomes, after conducting the testing using the mock object/stub we can verify whether the stubbed object methods are invoked or not by using verify api
+
+verify(mockObject).methodName(arguments);
+verify(mockObject, VerificationMode).methodName(arguments);
+
+for eg.. we can verify the sort(..) is called only once on the ArraySorter by using below verify call
+verify(arraySorter, atMostOnce()).sort(new int[]{10, 1, 7});
+--------------------------------------------------------------------------------------------------------------------------------------
+Mockito Stubbing concreate classes
+(or)
+Working with @Spy
+Through the @Spy we can mock the original objects or concrete classes itself. so when then unstubbed methods on the mock will delegates the methods on original class itself rather than failing with exception.
+	
+All the operations on the unstubbed methods are performed with original state of the object and the stubbed methods will not impact the original state of the object.
+	
+class Hop {
+	int start;
+	int end;
+	// accessors
+}	
+
+class HopComputeService{
+	int distance(Hop hop) { //mock
+		return Math.abs(hop.getEnd() - hop.getStart());
+	}
+	boolean isReverseHop(Hop hop) {// dont mock
+		return hop.getEnd() > hop.getStart();
+	}
+}
+
+class ShortestPathFinder {
+	HopComputeService hopComputeService;
+	ShortestPathFinder(HopComputeService hopComputeService) {}
+	
+	int shortestPath(List<Hop[]> routes) {
+		List<Long> routeLength = new ArrayList();
+		
+		for(int i=0;i<routes.length;i++) {
+			int length = 0;
+			Hop[] route = routes.get(i);
+			for(Hop hop : route) {
+				if(hopComputeService.isReverseHop(hop)) {
+					length += Integer.MAX;
+				}else {
+					length+= hopComputeService.distance(hop);
+				}
+			}
+			routeLength.set(i, length);
+		}
+		return Stream.of(routeLength).min();
+	}
+}
+ 
+
+@ExtendWith(MockitoExtension.class)
+public class ShortestPathServiceTest {
+    @Spy
+    HopComputeService hopComputeService;
+    @InjectMocks
+    ShortestPathService shortestPathService;
+    List<Hop[]> routes;
+    long expectedShortestPath;
+
+    @BeforeEach
+    void init() {
+        routes = Arrays.asList(new Hop[][]{
+                {new Hop(1, 3), new Hop(3, 8), new Hop(8, 5)},
+                {new Hop(1, 3), new Hop(3, 4), new Hop(4, 5)}
+        });
+        expectedShortestPath = 4;
+
+        Mockito.when(hopComputeService.distance(new Hop(1, 3))).thenReturn(2);
+        Mockito.when(hopComputeService.distance(new Hop(3, 8))).thenReturn(5);
+        Mockito.when(hopComputeService.distance(new Hop(3, 4))).thenReturn(1);
+        Mockito.when(hopComputeService.distance(new Hop(4, 5))).thenReturn(1);
+    }
+
+    @Test
+    public void shortestPathTest() {
+        Assertions.assertEquals(expectedShortestPath, shortestPathService.shortestPath(routes));
+    }
+
+}
+-------------------------------------------------------------------------------------------------------------------------------------
+How to mock the void methods?
+doNothing().when(routeVault).addHopToRoute(1, 1, 3);
+
+How to mock the static methods?
+
+class ArrayHelper {
+	public static int[] sort(int[] inArray) {
+		return sortedArray;
+	}
+}
+
+class Number {
+	
+	public int bigNumber(int[] inArray) {
+		int[] sortedArray = ArrayHelper.sort(inArray);
+		return sortedArray[sortedArray.length-1];
+	}
+}
+
+
+@ExtendWith(MockitoExtension.class)
+class NumberTest {
+	Number number;
+	
+	@BeforeEach
+	void init() {
+		number = new Number();
+	}
+	
+	@Test
+	void testBigNumber() {
+		int[] inArray = new int[]{10, 2, 3, 1,8, 5};
+		int expectedBigNumber = 10;
+		
+		try(MockedStatic<ArrayHelper> arrayHelper = Mockito.mockStatic(ArrayHelper.class)) {
+			arrayHelper.when(()-> ArrayHelper.sort(intArray)).thenReturn(new int[]{1, 2, 3, 5, 8, 10});
+			int actualBigNumber = number.findBig(inArray);
+			assertEquals(expectedBigNumber, actualBigNumber);
+		}
+	}
+}
+------------------------------------------------------------------------------------------------------------------------------------
+@Service	
+class UserService {
+	List<User> allUsers() {
+		// business logic/persistence logic
+		return users;
+	}
+}	
+
+@RestController
+@RequestMapping("/user")
+@AllArgsConstructor
+public UserController {
+	private final UserService userService;
+	
+	@GetMapping(value = "/active", MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity activeUsers() {
+		return userService.allUsers().stream().filter(user->user.isActive());
+	}
+	
+}
+	
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
+@ExtendWith(SpringExtension.class)
+class UserControllerTest {
+	@LocalServerPort
+	private int port;
+	
+	@Autowired
+	private TestRestTemplate testRestTemplate;
+	
+	@MockBean
+	private UserService userService;
+	
+	@BeforeEach
+	void init() {
+		when(userService.allUsers()).thenReturn(lst);
+	}
+	
+	@Test
+	void activeUsersTest() {
+		assertEquals(list, testRestTemplate.getForObject("http://localhost:"+port+"/user/active", new ParameterizedTypeReference({List<String>.class})));
+	}
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

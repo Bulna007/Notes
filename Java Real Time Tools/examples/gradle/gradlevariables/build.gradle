@@ -1,0 +1,17 @@
+def javaVersion="17"
+def packagingType="jar"
+
+tasks.register("build") {
+    ext {
+        buildVersion="20231210.0829"
+    }
+    doLast {
+        println "building the project with buildVersion: ${buildVersion}"
+    }
+}
+
+tasks.register("summary") {
+    doLast {
+        println "javaVersion: ${javaVersion}, packagingType: ${packagingType}"
+    }
+}

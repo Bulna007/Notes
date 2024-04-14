@@ -1,0 +1,64 @@
+class MessageWriter {
+	IMessageConverter messageConverter;
+	
+	void writeMessage(String message) {
+		String cMessage = nulll;
+		
+		// dont create and dont pull
+		cMessage = messageConverter.convert(message);
+		System.out.println(cMessage);
+	}
+	public void setMessageConverter(IMessageConverter messageConverter) {
+		this.messageConverter = messageConverter;
+	}	
+}
+
+interface IMessageConverter {
+	String convert(String message);
+}
+class HTMLMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<html><body>"+message+"</body></html>";
+	}
+}
+class PDFMessageConverterImpl implements IMessageConverter {
+	String convert(String message) {
+		return "<pdf>"+message+"</pdf>";
+	}
+}
+class Test {
+	public static void main(String[] args) {
+		MessageWriter messageWriter = new MessageWriter();
+		IMessageConverter messageConverter = new HTMLMessageConverterImpl();
+		messageWriter.setMessageConverter(messageConverter);
+		
+		messageWriter.writeMessage("Welcome to Strategy Design Pattern");
+	}
+}
+
+Factory classes are used for creating the object of another class, through the help of factories we can achieve #2 things
+1. we can hide the classname of another class in creating the object of another class
+	(or)
+without knowing the classname of another class, our class can get the object of another class
+2. factories abstracts the complexity in creating the object of another class.
+	
+
+class MessageConverterFactory {
+	public static IMessageConverter createMessageConverter(String converterType) {
+		IMessageConverter messageConverter = null;
+		
+		if(converterType.equals("html")) {
+			messageConverter = new HTMLMessageConverterImpl();
+		}else if(converterType.equals("pdf")) {
+			messageConverter = new PDFMessageConverterImpl();
+		}
+		return messageConverter;
+	}
+}	
+	
+by using the Factory class, we are able to eliminate both problems. Now the MessageWriter dont know
+1. classname of HTML|PDF message converter
+2. dont know how to create the object
+it simply goes to factory in getting the object
+
+The above process of getting the dependent objects by going to other classes of our application is called "dependency pulling". even after using factories we are not able to eliminate the coupling between the classes. Still if my messageWriter wants to switch from HTML to PDF MessageConverter we need to change the logical classname of another class inside MessageWriter. So still MessageWriter is tightly coupled through the logical classname of another class.

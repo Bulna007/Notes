@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="envvars" basedir="." default="printEnvs">
+    <property environment="env"/>
+    <target name="printEnvs">
+        <echo>${env.PATH}</echo>
+        <echo>${env.JAVA_HOME}</echo>
+    </target>
+</project>

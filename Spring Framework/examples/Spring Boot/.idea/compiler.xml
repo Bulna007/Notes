@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="travelgo" />
+        <module name="eventhandlingcore" />
+        <module name="bootjdbc" />
+        <module name="voicom-boot-starter-autoconfig" />
+        <module name="booteventhandling" />
+        <module name="bootparentimport" />
+        <module name="bootextconfig" />
+        <module name="voicom-boot-starter" />
+        <module name="bootwebwithwebcomp" />
+        <module name="commandandapplicationrunners" />
+        <module name="bootJarToWar" />
+        <module name="bootcore" />
+        <module name="call-assist" />
+        <module name="bootcp" />
+        <module name="bootparent" />
+        <module name="bootwebdatajpa" />
+        <module name="nestedbeanfactories" />
+        <module name="bootexitcode" />
+        <module name="voicom" />
+        <module name="bootprofiles" />
+        <module name="bootweb" />
+        <module name="bootcustomization" />
+        <module name="directstarterboot" />
+      </profile>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.30/f195ee86e6c896ea47a1d39defbe20eb59cd149d/lombok-1.18.30.jar" />
+        </processorPath>
+        <module name="bootgradle.app.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="bootexitcodes" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="bootJarToWar" options="-parameters" />
+      <module name="bootcp" options="-parameters" />
+      <module name="bootcustomization" options="-parameters" />
+      <module name="booteventhandling" options="-parameters" />
+      <module name="bootexitcode" options="-parameters" />
+      <module name="bootextconfig" options="-parameters" />
+      <module name="bootjdbc" options="-parameters" />
+      <module name="bootparent" options="-parameters" />
+      <module name="bootprofiles" options="-parameters" />
+      <module name="bootweb" options="-parameters" />
+      <module name="bootwebdatajpa" options="-parameters" />
+      <module name="bootwebwithwebcomp" options="-parameters" />
+      <module name="call-assist" options="-parameters" />
+      <module name="commandandapplicationrunners" options="-parameters" />
+      <module name="voicom" options="" />
+      <module name="voicom-boot-starter" options="" />
+      <module name="voicom-boot-starter-autoconfig" options="" />
+    </option>
+  </component>
+</project>

@@ -1,0 +1,1304 @@
+Javascript
+----------
+What is Javascript why do we use javascript?
+Javascript is an client-side scripting language, the web developers writes or embed javascript aspart of the HTML page. When the enduser is trying to access the web pages from the Web Server using web browser, along with HTML the javascripts gets downloaded to the client-browser, interpreted and executes locally at the client system, so due to this it is called client-side scripting language.
+
+By default the HTML pages are static in nature, we can make HTML pages dynamic like responding to user interactions and changing the behavior of the HTML elements can be done through javascript. There are lot of activities we can perform through using javascript like:
+1. changing the contents of the HTML elements.
+2. we can modify the styles of the HTML elements dynamically
+3. we can show/hide html elements on the webpage.
+-------------------------------------------------------------------------------------------------------------------------------------
+2. How to write javascript aspart of an HTML page?
+There are many browser-based client-side scripting languages are there like
+1. javascript
+2. vbscript
+3. typescript
+etc
+
+The web developer will be writing these scripting language instructions aspart of the HTML code within the HTML Page. This would be downloaded by the webbrowser, parsed and executed at the browser-level at the client-side.
+	
+But inorder for the webbrowser to differentiate between HTML tags and scripting language instructions and to execute them accordingly the w3c has introduced <script> tag in which we need to write our scripting code.
+	
+<!DOCTYPE html>
+<html>
+  <head>
+		<title>Page Title</title>
+	</head>
+	<body>
+		<h2>page heading</h2>
+		<script>
+			// write the script code here
+		</script>
+	</body>
+</html>
+
+In the above <script> tag, to identify what scripting language code we have written, we need write type attribute indicating it to the browser. Based on the type attribute browser will execute the scripting code accordingly.
+	
+<script type="text/javascript">
+// javascript code
+</script>
+
+It is optional to write type attribute, because the Web2.0 standards has standardized the defacto scripting language being used in HTML pages as javascript itself. so that in the absence of type attribute, the web browser consider the script we have written in the <script> tag as javascript only.
+	
+3. where do we need to write the javascript?
+The Cascading Stylesheet (CSS) must be written always within the head section of the HTML page, so that the elements will gets rendered with the styles that are applied. if not once the elements are renedered on the page, the styles will not be applied on them.
+	
+We can write javascript at 2 places within the HTML page. either we can write in head section or within the body of the HTML page. It is always recommended to write the javascript at the end of the body of the HTML page because of these 2 reasons:
+
+1. writing the javascript at the end of the body within the HTML page ensures all the page elements are constructed thereafter only the javascripts will gets executed, so that the script will not run into any failures resulting in undefined objects etc as shown below.
+	
+<html>
+	<head>
+		<title>javascript demonstration</title>
+		<script>
+			var para1 = document.getElementById("para1"); //undefined object error
+			para1.innerHTML("Good Evening!");
+		</script>
+	</head>
+	<body>
+		<p id="para1">
+			Paragraph1
+		</p>
+	</body>
+</html>
+	
+2. 	
+If we write the javascript at the end of the body of the page, once all the elements get constructed and rendered, then the browser will begins the execution of the javascript which gives the enduser an experience of webpage being loaded very quickly.
+-------------------------------------------------------------------------------------------------------------------------------------
+3. How many ways we can write the javascript in the HTML page?
+There are 2 ways we can write the javascript in HTML Page.
+1. embedded javascript
+2. external javascript
+
+1. embedded javascript
+we can directly write javascript code within the HTML page by writing the <script> tag inside the page itself. We can write any number of <script> tags within the page, and all of them gets executed in the top-down approach.
+			
+2. external javascript:
+instead of writing the javascript directly within the HTML page, we can write in an external ".js" file and can be included within the webpage by using <script> tag as below.
+	
+common.js
+---------
+alert("hey! external javascript");
+
+externaljs.html
+---------------
+<html>
+	<head>
+	</head>
+	<body>
+		<h2>external js</h2>
+		<script type="text/javascript" src="common.js"></script>
+	</body>
+</html>
+we can import or include any number of javascript files by writing multiple <script> tags as shown above.
+	
+It is recommended to write the javascript in external js file and include in the HTML page as there are lot of advantages:
+1. we can reuse the javascript across the HTML pages in our application, so that we can avoid duplication of the javascript code.
+2. by using the external js across the pages, the client browser downloads the external js and caches it, so that it reuse the local cached file for all the subsequent pages we browse.
+--------------------------------------------------------------------------------------------------------------------------------------
+What are the display possibilities of writing the information onto the webpage/html page using javascript program?
+There are 4 display possibilities are there in writing the output from an javascript program onto an HTML page or browser:
+1. few are used for writing the output directly onto the browser window
+2. few are used for writing the data through dialog boxes
+3. few are used for writing the data onto the browser console for debugging
+
+The javascript language has provided pre-defined or built-in object aspart of the language like
+1. document = document refers to the rendarable area of your web browser where we can display the information
+2. window = window is another pre-defined object which represents the entire webbrowser itself. using the window object we can interact with the web browser and can perform operations like
+1. maximize
+2. minimize
+3. close
+4. change the address in the browser address bar
+etc
+3. console = using the console object we can write log messages about the javascript program execution and can be used for debugging the javascript of the page.
+--------------------------------------------------------------------------------------------------------------------------------------
+1. document.write()
+it is used for directly writing the data or output onto the document of the browser. The output emitted by the write(..) method will be written based on the pageflow of the webpage.
+generally we will avoid using document.write() as it writes the text content and appears ugly on the page.
+	
+2. we can write the output or modify the contents of the container elements using element.innerHTML="text".
+here the container elements means any element that holds childs inside it for eg..
+	1. paragraph (<p>)
+	2. anchor <a>
+	3. divison <div>
+
+if we use document.write() it directly writes the output to the webbrowser. the output is always written based on the default pageflow of the page.  but if we want to write the data / output onto a specific element within the page we can use innerHTML property of the container element.
+<div id="content">
+</div>
+
+<script>
+	divElement = document.getElementById("content");
+	divElement.innerHTML = "Modified by the javascript!!";
+</script>
+
+3. using window.alert();
+alert() is a javascript function that is there aspart of the window object. it is used for displaying information in dialog windows. The alert boxes blocks the execution of the javascript code until the user clicks or acknowledge the dialogs. it is generally used for grabbing the attention of the enduser to display some important information which requires acknowledgement.
+	
+4. console.log()
+using console.log() function we can write debug messages into the console of the webbrowser, to help the developers in debugging the javascript code.
+-------------------------------------------------------------------------------------------------------------------------------------
+Javascript statements
+Every javascript statement must and should be terminated or ended with (;) semi-colon to indicate the end of the statement. We can write javascript statements with any amount of whitespaces or newlines and still they will work.
+	
+javascript variables
+--------------------
+There are 3 ways we can declare variables in javascript
+1. var keyword
+2. let
+3. const
+	
+1. using var keyword:
+we can declare a global variable within the javascript using var keyword.
+var variableName;
+(or)
+var variableName=value;
+
+var i=10; 
+var person = "williams";
+
+we can declare multiple variables also in single line using var keyword:
+var i=10,person="williams";
+
+The variable names should be declared by the following naming conventions:
+1. a variable name can container letters, digits, underscores and dollar only
+2. it should start with a letter only or can have _ or $ instead of a letter
+3. the standard convention fllowing in writing variable names is camel case
+4. keyword of javascript are not allowed to be used as variable names
+
+we can use a variable in javascript without declaring it, so declaration of an variable is not mandatory in javascript.
+a=10;
+author="james gosling";
+
+while declaring javascript variable we dont need to specify the dataType of the variable, javascript variables are variant types or dynamic dataTypes which means based on the type of the data we have assigned to the variable it javascript engine/runtime treats the variable as that type and performs relevant operations when operators are applied on them.
+	
+var a = 10;
+var b = 20;
+sum = a + b;
+as a and b variables holds number values, the + operator applied here performs arithematic operation: addition
+
+var s1 = "humpty";
+var s2 = "dumpty";
+message = s1 + s2;
+s1 and s2 holds string data so it is considered as string variables and + operation applied here concatenates 2 strings
+
+javascript supports 2 dataTypes:
+1. number
+2. string
+3. boolean
+
+var a = 20; //number type
+var person = "peter"; // string type
+while declaring a string type either we can use double quotes or single quotes aswell. We can use double/single quotes for string escape
+
+When we declare a javascript variable without assigning the value, by default the variable will be initialized with undefined. The undefined is a special type in javascript to indicate the type of the variable is unknow.
+
+var a; // undefined type
+document.write(a); // prints undefined.
+
+when we declare a variable using var keyword or without var keyword, the variable becomes global to the page and we can access the variable across all the <script> blocks within the page.
+
+index.html
+----------
+<html>
+	<head>
+		<script type="text/javascript">
+			var a = 10;
+		</script>
+	</head>
+	<body>
+		<script type="javascript">
+			document.write(a); // a will be printed as 10
+		</script>
+	</body>
+</html>
+--------------------------------------------------------------------------------------------------------------------------------------
+In javascript we can assign variable with null value. null is an special type of object in javascript indicating the variable doesnt hold any value.
+			
+var a; // undefined
+var b=null; // is assigned with null value, so its type is object type in javascript
+var s=""; // empty string
+
+a == b = will return true, even though undefined and null both are different types still "==" operator returns true. If we want to distinghiush between undefined and null type while comparing then instead of using "==" operator we need to use "===" operator
+a === b = false
+	
+We can find datatype of a javascript value using typeof(variable)	
+a = 10;
+typeof(a); = Number
+
+person = "peter";
+typeof(person) = String
+
+var b; // uninitialized
+typeof(b) = undefined
+
+var zero=null;
+typeof(zero) = object
+
+
+we can declare the javascript variable anynumber of times and will be re-initialized.
+<html lang="en">
+<head>
+    <title>Document</title>
+</head>
+<body>
+    <script>
+			var a = 10;
+			document.write(a);
+			var a = 20;
+			document.write(a);
+    </script>
+</body>
+</html>
+--------------------------------------------------------------------------------------------------------------------------------------
+Working with let keyword in declaring variables
+few things about the let keyword:
+1. let is a keyword using which we can declare variable. when we declare variable using let, it becomes block-level variable scoped to that block only
+2. we cannot redeclare the variable using let, and it gives error
+
+<script>
+		{
+		let a = 10;
+		document.write("a :"+ a);
+		}
+		{
+		document.write("a:"+a);
+		}
+</script>
+--------------------------------------------------------------------------------------------------------------------------------------
+We can declare a variable using cost keyword, so that its value becomes const or cannot be changed.
+<script type="text/javascript">
+	const a = 10;
+	a = 20;
+</script>
+
+--------------------------------------------------------------------------------------------------------------------------------------
+javascript conditional-control statements
+There are 4 conditional control statements are supported by javascript
+1. if
+2. if-else
+3. if-else-if
+4. switch
+	
+1. if condition
+if(condition) {
+	// execute the block of code
+}
+
+2. if-else condition
+if(condition) {
+	// execute the block of code
+}else {
+	// execute the block of code
+}
+
+3. if-else-if condition
+if(condition) {
+	// execute the block of code
+}else if(condition) {
+	// execute the block of code
+}else {
+	// execute the block of code
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+javascript switch statement
+For a given expression, it evaluates and picks the matching block of code for execution using switch.
+
+switch(a>b) {
+	case true:
+	case false:
+	default:		
+}
+-------------------------------------------------------------------------------------------------------------------------------------
+Javascript loop statements
+javascript supports 5 types of loop statements
+1. for
+2. for/in
+3. for/of
+4. while
+5. do/while
+	
+1. for loop
+for(initialization;condition;counter) {}
+
+2. for/in loop
+for in loop can be used for iterating over
+	a) key/value pair (javascript object) datastructures
+	b) array of values
+
+a) object key-value pair
+<script type="text/javascript">
+	var address = {"addressLine1": "12th Ave", "city": "Dawson", "state": "NJ", "zip": 9283, "country": "USA"};
+	for(let attr in address) {
+		document.write("attr : " + attr + " val : " + address[attr]);
+	}
+</script>
+
+b) iterate over arrays
+<script type="text/javascript">
+	var numbers = [10, 20, 30, 40, 50];
+	for(let number in numbers) {
+		document.write(number);
+	}
+</script>
+
+#3. for/of
+The for/of loop allows you to loop through iteratable objects like
+a) arrays
+b) string
+c) maps
+d) lists
+etc
+
+<script type="text/javascript">
+	var person = "Mike";
+	for(let ch of person) {
+		document.write(ch);
+	}
+</script>
+
+
+#4. while loop
+<script type="text/javascript">
+	var n = 10, i=0;
+	while(i<n) {
+		document.write(i);
+		i++;
+	}
+</script>
+
+#5. do-while
+<script type="text/javascript">
+	var n = 10, i=0;
+	do {
+		document.write(i);
+		i++;
+	}while(i<n);
+</script>
+-------------------------------------------------------------------------------------------------------------------------------------
+javascript functions
+functions are named block of code, that can be executed by passing parameters and returns the returnValue upon executing the code written inside it.
+	
+Purpose:	
+If we have some block of code which we want to execute at various different places within our application, rather than writing the code at different places that leads to code duplication, we can write the code inside the function and reuse it by invoking it at various different places within our program
+
+How to write a javascript function?
+syntax:-
+<script type="text/javascript">
+	function functionname() {
+	
+	}
+</script>
+
+(or)
+
+<script type="text/javascript">
+	var func = function() {
+	
+	}
+</script>
+	
+we can declare a function taking parameters as inputs, so that the callee can pass the values while calling the function. while declaring parameters we shouldnot use var or let keyword for parameters
+
+<script type="text/javascript">
+	function functionName(a, b) {
+	
+	}
+</script>
+
+(or)
+	
+along with parameters we can return returnValues as well
+<script type="text/javascript">
+	function functionName(a, b) {
+		// code
+		return returnValue;
+	}
+</script>
+
+
+Where can we write functions in HTML?
+We can write functions within the HTML page at any place, 
+Incase of syntax1 we can use the function before its declaration, where as incase of syntax2 (function pointer) it has to be written before it is invoked. It is recommended to write functions in an external javascript file and import it, so that we can reuse it in several pages of our application.
+	
+How does a function will be executed?
+When we write a block of code within the <script> tag, while loading the page the browser will execute the code inside the block automatically. whereas if we write the code inside a function block unless it is being invoked explicitly it will not gets executed. There are 3 ways we can execute a function in a HTML page:
+1. within the script block or inside another function we can invoke a function
+2. functions would be triggered based on event. In this case functions act as event handler. For eg.. when we click on a button an event will be generated and the browser or javascript engine receives the event and invokes an corresponding handler function to handle the event.
+3. functions calling by itself. for eg.. we can use a timer function to set the function to be executed periodically based on timeout interval configured.
+--------------------------------------------------------------------------------------------------------------------------------
+scope of variables in javascript functions
+variables declared inside the function using var keyword becomes local to the function and will not be accessible outside. if we declare a variable inside the function without var keyword then they become global variables.
+	
+ <script type="text/javascript">
+		function fn() {
+				var a = 10; // local variable
+				b = 20; // global variable
+				document.writeln("a in fn() :" + a);
+				document.writeln("b in fn() : " + b);
+		}
+		fn();
+		alert("b out of fn() : "+ b);
+		alert("a out of fn() : "+ a);// results in error
+</script>
+--------------------------------------------------------------------------------------------------------------------------------
+javascript objects
+In most of the programming languages we declare class representing the structure of the data we want to hold inside an object along with methods to perform operations on that data, then we create objects for the class. But when it comes to javascript we directly define javascript objects with attributes and functions inside it. So the object consists of attributes to hold the data and functions to perform operations on that data.
+	
+How to declare javascript object?
+syntax:-
+	
+var person = {
+	firstName : "Paul",
+	lastName : "J",
+	age : 12,
+	gender : "Male"
+}
+now we can access the attributes of the object using object.propertyName or object['propertyName']
+to access first name we can use : person.firstName (or) person['firstName'], the second approach is to access the attributes of an object dynamically.
+	
+	
+an object can contain functions aspart of them:
+var person = {
+	firstName : "Paul",
+	lastName : "J",
+	age: 21,
+	gender: "Male",
+	
+	fullname : function() {
+		return this.firstName + " " + this.lastName;
+	}
+}
+
+how to access the function within an object?
+person.fullname();
+
+How to change the value of an attribute?
+person.firstName="Peter";
+person['firstName'] = "Samuel";
+--------------------------------------------------------------------------------------------------------------------------------
+javascript strings
+-------------------
+sequence of set of characters put together is called a string. there are many ways we can write/create strings in javascript.
+	
+1. var str1 = "good evening";
+2. var str2 = 'good evening';
+In the above 2 cases if we use typeof operator on the variables it returns string type
+
+3. var str3 = new String("Good evening");
+in this case if we use typeof operator on the variable str3 it returns object type, dont use String constructor in creating the string, because we cannot differentiate between a string and an object
+
+var s1 = "paul";
+var s2 = new String("paul");
+
+if we apply == operator on s1 == s2, it returns true, if we use === then it returns false, because "===" operator compares underlying types rather than contents.
+	
+== is used for content comparision
+=== is used for type comparision
+
+javascript strings has few attributes and methods as well defined within them
+var str = "Great days ahead!";
+str.length = gives the length of the string. it is an attribute defined aspart of the String class.
+
+Javascript String functions
+----------------------------
+1. indexof()
+var para = "Great days ahead!! keep trying";
+para.indexof("days"); = returns the position of the substring within the given string
+
+2. lastIndexOf()
+var para = "Good old days, best future days";
+para.lastIndexOf("days"); = returns the last occurence of a substring within the given string
+
+both these above methods returns -1 if the give substring is not found.
+para.indexof(string, position);
+para.lastIndexOf(string, position);
+here we can specify the position from where it should start looking for the substring in the given string
+	
+3. search()
+The search is also used for searching for the substring in given string and returns its index position where it was found, the only different is 
+1. the search doesn takes offset (or) position
+2. supports regular expressions in searching
+
+4. in javascript we can work with substring in a given string in 2 ways
+1. slice(start, end)
+2. substring(start, end)
+	
+slice() method is used for extracting a substring from a given string, it can take both start and end index as negative values as well. given if we give negative numbers it starts calculating in reverse direction
+
+for eg.. 
+var para = "great days ahead";
+para.slice(5, -1);
+
+substring(start, end) is similar to slice() but it doesnt take negative numbers. there is an another form of substring(beginIndex), it extracts from specified index till the end;
+
+5. replace(str1, str2)
+replace() function is used for replacing a given string with a new string. The replace function will not modify the original string, rather it returns an new string by replacing it
+note:- replace method only replaces the first occurence of the string, but not all the occurences.
+	
+var para = "good friends makes the life!";
+var para2 = para.replace("friends", "wife");
+
+6. toUpperCase() and toLowerCase() functions to convert a given string into upper or lower respectively
+
+7. concat() is used for concatenating 2 given strings
+var s1 = "its better now";
+var s2 = "than never";
+var phrase = s1.concat(" ", s2); // results in its better now than never
+
+8. trim() = for removing the leading and tailing spaces of a given string
+var uglystr = "   ugly    ";
+var butified = uglystr.trim();
+
+9. charAt(position) = to extract a character at a given position of a string
+10. charCodeAt(position) = returns the utf8/16 charset encoding value of the character
+--------------------------------------------------------------------------------------------------------------------------------
+Javascript numbers
+------------------
+var a = 10; // number type
+var b = 20.2; // decimal number
+
+in javascript there are no different types of numbers like int, float, double etc everything is a number of size 64-bit length. We can apply all the arthimetic and relational operators on numbers like
+arthematic: (+, -, *, /, %)
+relational: >, <, >=, <=, !=, ==
+	
+if we apply + operator between 2 strings, it acts as concatenation operator, but if we apply between 2 numbers it works as arthematic operator. Incase if we apply the + with mixture of both, then the expression will be evaluated from left to the right and based on the types the outcome will be derived.
+	
+var loanType = "personal";
+var principleAmount = 10000;
+var tenure = 32;
+
+var s = loanType + principleAmount + tenure;
+             |       |
+             ---------
+							   |
+							 personal10000 + 32
+							     |            |
+                   --------------
+							            |
+							       personal1000032
+										 
+var s = principleAmount + tenure + loanType;
+            |               |
+						-----------------
+                    |
+							   10032           + personal
+								     |              |
+                     ----------------
+							               |
+							            10032personal
+													
+
+when we apply arithematic operators between strings and number types apart from (+) operator, it results in NaN error (Not a Number)
+var a = "good";
+var b = 20;
+var div = a/b; = NaN
+
+isNaN is a function in javascript, we can find whether a given string holds number or not using isNaN() function
+var b = "20";
+b.isNaN() = returns false
+	
+Number object has functions as well
+- parseInt("String") = converts string into number
+- parseFloat("Floating point string") = converts float value into number
+- toFixed(decimalPosition); = returns the number fixing the decimal positions
+
+var f = 12.2223;
+f.toFixed(2) = 12.22;
+
+There are constants in Number object
+Number.MAX_VALUE and Number.MIN_VALUE
+
+The frequently used javascript number functions are isNaN(), parseInt() and parseFloat()
+--------------------------------------------------------------------------------------------------------------------------------
+javascript date
+Date is an object type in javascript, we can use Date constructor to create the object
+var d = new Date(); // date object will be created with current date and time
+var d = new Date(year, month, day); 
+var d = new Date(year);
+var d = new Date(year, month);
+var d = new Date(year, month, day, hour, minutes);
+var d = new Date(year, month, day, hour, minutes, seconds);
+
+d.toString() = returns String representation of the Date object
+d.getMonth(), d.getFullYear(), d.getDay()
+-------------------------------------------------------------------------------------------------------------------------------
+Javascript Arrays	
+What are Arrays, what is the purpose of them?
+Arrays are collection of similar type of values that are stored sequentially. Arrays are also called as indexed based collections, since we access the data from the array using index positions directly
+
+purpose:-
+We can easily apply repeatitive logic on these group of values by iterating through them easily.
+	
+How to create arrays in javascript?
+There are 2 ways we can create arrays in javascript
+1. [] = square bracket notation
+2. Object notation
+
+#1. square bracket notation
+var marks = [82, 88, 91, 95, 76];
+var subjects = ["Maths", "Science", "Social", "English"];
+
+#2. Object notation
+var subjects = new Array("Maths", "Science", "Social", "English");
+
+note:- it is recommended to use square bracket notation to create an array rather than using object notation
+
+How to access the elements from the array?
+We can use index location to access the elements from the array
+marks[2] = returns 91
+	
+How to modify an element in the array?
+marks[2] = 95;
+
+In javascript arrays are object type only, so if we use typeof(array) it returns object type only. Then how to differentiate or identify the given object is an array or not?
+	
+1. The Array class/object has isArray(array) using which we can find weather given object is array or not
+2. 
+var subjects = ["Maths", "Science", "Social"];
+subjects.constructor.toString(); == Array
+
+var constructor = subjects.constructor.toString();
+if(constructor.indexof("Array") != -1) {
+	//its an array
+}
+
+3. 
+if(subjects instanceof Array) {
+	// its an array
+}
+
+How can we find the length of an array?
+subjects.length // here length is an attribute of the array
+	
+We can add the elements into an array using push() method as below
+var subjects = ["Maths", "Science", "Social"];
+subjects.push("English");
+
+instead of using push we can assign or add the value using index as well
+var subjects = ["Maths", "Science", "Social"];
+subjects[7] = "English";
+This will extend the array automatically to 8 elements which is between 2 - 7 and leaving 3-7 as empty values
+--------------------------------------------------------------------------------------------------------------------------------
+Array functions
+1. sort() = to sort the elements of an array alphabetic or number,  based on its contents
+
+var marks = [92, 85, 88, 75, 67];
+marks.sort(); // sort the elements of the array
+
+
+2. reverse() = reversing the contents of an array
+var products = ["Mobile", "Tab", "Watch"];
+var rproducts = products.reverse();
+
+3. shift() = removes the first element of the array
+var n = [93, 39, 29, 82];
+n.shift(); // removes 93
+
+4. unshift(n) = adds an given element at the begining of the array
+var n = [93, 39, 29, 82];
+n.unshift(100); // adds 100 in the zero position
+
+5. pop() = removes the elements from the end of the array
+var n = [93, 39, 29, 82];
+n.pop(); // removes 82
+
+6. delete element
+var n = [93, 39, 29, 82];
+delete n[2]; // deletes the element at position 3 and marks it as undefined. 
+the resultant array is [93, 39, undefined, 82]
+
+7. splice() = to add new elements into array we use splice
+var pets = ["dog", "cat", "rabbit"];
+pets.splice(1, 1, "cow", "goat"); = dog, cow, goat, rabbit
+           starting, numberofelements
+					 
+8. concat = concatinating 2 arrays and returns new array
+var n1 = [10, 20, 30];
+var n2 = [40, 50];
+var n3 = n1.concat(n2);
+--------------------------------------------------------------------------------------------------------------------------------
+javascript array iteration
+Javascript arrays are object type, there are various different functions are there in javascript array object to iterate and process the elements.
+	
+#1. foreach
+
+This is the old way of iterating over the elements in the array:
+<script type="text/javascript">
+	var n = [10, 20, 30, 40, 50];
+	for(var i = 0;i<n.length;i++) {
+		n[i];
+	}
+</script>
+
+through streaming api we can easily navigate through the elements of the array as below:
+
+<script type="text/javascript">
+	var n = [10, 20, 30, 40, 50];
+	n.forEach(function(elem){
+		document.writeln(elem);
+	}); 
+</script>
+
+iterate through the elements in the array, and for each element in the array invoke the function by passing the element.
+	
+another syntax:-
+n.forEach(function(element, index, array){
+	
+});	 
+
+here the function will be called for each element by passing three parameters, element for which it is calling, index position of the element in the array and the array itself.
+	
+#. map function
+map is used for mapping each element of the array into a different value.
+	(or)
+if we want to transform each element in the array into another value then we need to use map
+
+For eg.. map the marks to the grades as : >=60 = A, >=50 && <60 = B, >=35 && <50 = C, <35 = F
+
+<script type="text/javascript">
+	var marks = [68, 56, 45, 37, 30];
+	var grades = marks.map(function(element, indx, array){
+		if(element >= 60) {
+			return "A";
+		}else if(element >= 50) {
+			return "B";
+		}else if(element >= 35) {
+			return "C";
+		}else {
+			return "F";
+		}
+	});
+	document.writeln(grades);
+</script>
+
+#3. filter()
+based on the matching condition, we want to filter the elements of an array and return only the matching elements in new array
+for eg.. in a given array we want to filter only positive numbers and create into a new array.
+
+in old style of programming:
+var n = [10, 203, -98, -3, 39, 49];
+var pn = [];
+for(var i=0;i<n.length;i++) {
+	if(n[i] >=0) {
+		pn.push(n[i]);
+	}
+}
+
+by using filter() function of array we can easily achieve this:	
+var pn = n.filter(function(element) {
+	if(element >= 0) {
+		return true;
+	}else {
+		return false;
+	}
+});
+
+for eg.. if we want odd index position elements in new array
+
+var pn = n.filter(function(element, index, array) {
+	if(index%2 != 0) {
+		return true;
+	}else {
+		return false;
+	}
+});	
+	
+#4. reduce()
+its a function used for applying some formula in accumulating all the values into one single value.
+for eg.. in a given array we want to sum all the elements and return
+	
+old:	
+var n = [10, 20, 30, 40, 50];
+var sum = 0;
+for(var i=0;i<n.length;i++) {
+	sum = sum + n[i];
+}
+document.writeln(sum);
+
+streaming api:
+var n = [10, 20, 30, 40, 50];
+var sum = n.reduce(function(total, element, indx, array) {
+	return total + element;
+});
+
+#5. every()
+for every element in the array, apply the condition. if all the elements in the array meets the criteria, it return true other returns false
+	
+for eg.. check in the given array all the elements are even or not
+var n = [10, 11, 23, 36, 44];
+var flag = true;
+
+for(var i=0;i<n.length;i++) {
+	if(n[i] %2 !=0) {
+		flag = false;
+		break;
+	}
+}
+	
+var n = [10, 11, 23, 36, 44];
+var flag = n.every(function(element) {
+	return (element%n != 0);
+});
+document.writeln("all the elements are even? :"+ flag);
+
+
+#6. some()
+if atleast one element in the array passed the criteria return true, if all elements fails in matching the criteria then only return false.
+we want to find in a given array does negative numbers exists or not?
+	
+<script type="text/javascript">
+	var n = [10, 20, -29, 39, 76];
+	var hasNegativeNumers = n.some(function(elem) {
+		if(elem < 0) {
+			return true;
+		}
+		return false;
+	});
+	document.writeln("array : " + n + " has negative numbers ?: " + hasNegativeNumbers);
+</script>
+
+#7. indexOf()
+indexOf() is used for finding the index position of an element in the given array
+
+<script type="text/javascript">
+	var products = ["ball", "bat", "pen", "photo", "pin"];
+	var indx = products.indexOf("pen");
+	document.writeln("pen is at indx: "+ indx);
+</script>
+
+this returns indx as 2
+	
+#8. lastIndexOf()
+indexOf() always returns the first occurence of the element, if we want last occurence position of an element in the array using lastIndexOf()
+	
+<script type="text/javascript">
+	var products = ["ball", "bat", "pen", "photo", "pin", "ball"];
+	var indx = products.indexOf("ball");
+	document.writeln("pen is at last indx: "+ indx);
+</script>
+	
+#9. find() 
+To search an element based on criteria and returns it.
+wap program to find an element bigger than given element
+
+
+<script type="text/javascript">
+	var n = [10, 39, 49, 2, 38, 12];
+	var big = 30;
+
+	var bigNumber = n.find(function(elem){
+		if(elem > big) {
+			return true;
+		}
+		return false;
+	});
+	document.writeln("bigNumber : " +bigNumber);
+</script>
+-------------------------------------------------------------------------------------------------------------------------------
+Javascript advanced objects
+In javascript almost everything is an object
+1. Number
+2. String
+3. Date
+4. Function
+5. Array
+6. Null
+7. Object
+
+Every object contains attributes and functions aspart of it. There are many ways we can create objects in javascript let us explore them
+
+1. using object notation, {} brackets
+
+var person = {
+	firstName: "Peter",
+	lastName: "k",
+	age: 23,
+	gender: "Male"
+}
+
+var irobot = {
+	suctionPower: 6000,
+	modes: ["wet mop", "dry", "spin mop"],
+	batteryCapacity: 5000,
+	sweep : function(mode) {
+		document.writeln("sweeping with mode : " + mode);
+	}
+};
+
+In javascript there is no notion of class and creating the object of a class, we need to recreate the whole structure of an object for each object creation
+
+#2. using object constructor we can create javascript objects
+
+var irobot = new Object();
+irobot.suctionPower = 6000;
+irobot.modes = ["wet mop", "dry", "spin mop"];
+irobot.batteryCapacity = 5000;
+irobot.sweep = function(mode) {
+	document.writeln("sweeping with mode : " + mode);
+};
+
+// invoke the function
+irobot.sweep();
+
+
+#3. using function constructors
+
+var irobot = function(suctionPower, modes, batteryCapacity) {
+	this.suctionPower = suctionPower;
+	this.modes=modes;
+	this.batteryCapacity = batteryCapacity;
+	this.sweep = function(mode) {
+		document.writeln("sweeping with mode : " + mode);
+	};
+}
+
+#4. using class declaration
+
+class IRobot {
+	constructor(suctionPower, modes, batteryCapacity) { // the name of the constructor should be constructor only
+		this.suctionPower = suctionPower;
+		this.modes =modes;
+		this.batteryCapacity = batterCapacity;
+	}
+	toString() {
+		return JSON.stringify(this);
+	}
+}	
+
+var irobot = new IRobot(5000, ["wet", "dry"], 6000);
+document.writeln(irobot.toString());
+--------------------------------------------------------------------------------------------------------------------------------
+Object prototype in javascript
+
+Every javascript object has its own prototype. A prototype refers to the structure of an object. We can think of prototype as an reflection api in java
+
+We can access prototype of any object using object.prototype
+for eg.. for an Array object we can access its prototype using Array.prototype, and for a Date object we can access its protype using Date.prototype
+
+var Address = function(addressLine1, addressLine2, city, state, zip, country) {
+	this.addressLine1 = addressLine1;
+	this.addressLine2 = addressLine2;
+	this.city = city;
+	this.state = state;
+	this.zip = zip;
+	this.country = country;	
+}
+
+We can access the structure of the Address object using Address.prototype, we can add attributes or functions using the prototype reference of the object.
+	
+Address.prototype.county = "DA";
+Address.prototype.fullAddress = function() {
+	return JSON.stringify(this);
+};
+
+var address = new Address("adl1", "adl2", "ct", "st", 933, "cunty");
+address.county = "TA";
+
+document.writeln(address.fullAddress());
+--------------------------------------------------------------------------------------------------------------------------------
+HTML DOM
+DOM stands for document object model, its an programming model through which we can access the elements of the HTML page interms of objects.
+	
+All the elements/tags of the html page are expressed/represented as objects in DOM. The base object type in which all the elements are represented by the DOM is "Node". (In-short: everything is an Node type in DOM). There are several types of Nodes are there based on the tag it is representing or pointing to
+1. InputElement
+2. SelectElement
+3. DivElement
+4. TextElement
+etc
+all of these are the children of Node object in DOM.
+	
+The DOM programming model constructs the HTML page elements into In-Memory Tree representation, expressing the elements of the page as objects within the tree. The objects are represented interms of parent/child relationship based on the way the tags are nested or written in the HTML.
+	
+using DOM programming model we can perform lot of operations on the HTML page elements like
+1. we can access all the page elements of an HTML page interms of objects using DOM api
+2. we can change or manipulate attributes of these objects using DOM api
+3. we can change the style of the HTML elements using DOM api
+4. we can bind event listeners using the HTML DOM api
+5. we can modify the page structure using DOM api
+from this we can understand we can add dynamic nature to the HTML pages using DOM api
+
+
+Browser while loading the HTML page, it constructs an in-memory tree representation of the HTML elements, where each tag in the HTML document is represented as an Node of the DOM. These Nodes are constructed and represented as parent/child Nodes within the tree based on the relationship of the tags.
+	
+The root of an HTML page is document object. all the rest of the elements of the page falls as child under the document object respectively. We can access the immediate childs of the page using document object
+
+How to navigate between the elements of the HTML page using DOM?
+There are 2 access methodologies are supported by DOM api in accessing the HTML Elements as nodes in the DOM Tree
+1. Traversal Api
+2. Query Api
+
+1. Traversal Api
+DOM has provided lot of traversal methods using which we can access or traverse the elements of the HTML page using DOM tree. The elements of the HTML page are expressed as Nodes along with their relationships in the DOM Tree hierarchially.
+	
+In hierarchial relationship always it starts with one root element only, here it is Document object. All the other elements are represented as children and children of the root. So DOM has provided traversal methods to navigate or traverse between the elements based on their relationship
+
+1. firstChild
+2. childNodes
+3. nextSibling
+4. prevSibling
+5. parent
+etc
+
+
+For eg.. let us take an HTML page to understand the traversal mechanism.
+<!DOCTYPE html> <- document	
+<html> 
+	<head>
+		<title>DOM Tree</title>
+	</head>
+	<body>
+		<h2>DOM Tree</h2>
+		<script type="text/javascript">
+			var bodyElement = null;
+        var htmlElement = document.firstChild.nextSibling;
+        var htmlChildren = htmlElement.childNodes;
+        
+         htmlChildren.forEach(function(elem){
+            if(elem instanceof HTMLBodyElement) {
+                bodyElement = elem;
+            }
+        });
+        var h2Element = bodyElement.firstChild.nextSibling;
+        h2Element.innerHTML = "Hurray! Modified through DOM Api";
+		</script>
+	</body>
+</html>
+
+To work with traversal api inorder to access the page elements, one should know the structure of the page and should rely on the element positions or hierarchy in the page. if there is a change in the page elements, the logic would break leading errors. This makes it lot more complex in using the traversal apis of DOM to manipulate or access the page elements.
+	
+So instead of using Traveral apis we can use query apis for accessing and manipulating the page elements.
+#1. Finder methods to access the HTML page elements within the Tree
+The DOM api has provided #3 finder methods which are basically three ways of quering the page objects from the DOM Tree.
+1.1 id selector
+1.2 tagName or element selectors
+1.3 styleClass selectors
+
+1.1 id selector
+For each element in the HTML document we can assign an id which is unqiue from other elements/objects within the page. That means no 2 elements on page has the same id assigned.
+
+for eg..	
+<body id="body">
+	<p id="p1">para1</p>
+	<p id="p2">para2</p>
+</body>
+	
+The id acts as an identifier in accessing the element of the page directly. For all the elements in the page we dont need to bind or assign the id, because it is an additional coding efforts that delays the development, only assign the ids for the elements whom you want to access from the javascript directly for modifying or managing.
+	
+once an element has an id assigned, we can access the element using query method of the document object "getElementById('id')"	
+	
+var p1Element = document.getElementById("p1");
+
+1.2 tagName or element selectors 
+few times the ids will not work, for eg. we want to change the font or color for all the paragraphs on the page.
+	
+<body id="body">
+	<p id="p1">para1</p>
+	<p id="p2">para2</p>
+	<p id="p3">para2</p>
+	<p id="p4">para2</p>
+</body>
+
+if we are accessing the elements on the page using id selector, then for all the paragraphs on the page we need to assign unique id and should follow a pattern in naming the id. This makes it quite complex to code the HTML page instead we can use element selector
+
+based on the element or tag we can query the elements. for eg.. give me all the paragraph tags on the page as below.
+	
+var paras = document.getElementsByTagName("p");
+always getElementsByTagName("") returns Array type object with collection of all the elements of that matching tag.
+	
+var paras = document.getElementsByTagName("p");
+paras.forEach(function(para) {
+	para.style.color="red";
+	para.style.font = "Tahoma 26px";
+});
+
+3. styleClass selector
+if we want to query the elements based on a styleClass we can use styleClass selector
+
+<html>
+	<head>
+		<title>StyleClass selector</title>
+		<style>
+			.important {
+				color: red;
+				font-family: Tahoma;
+			}
+			.general {
+				color: black;
+				font-family: Tahoma;
+			}
+		</style>
+	</head>
+	<body>
+		<p class="important">important</p>
+		<p>informational</p>
+		<p>tooltip</p>
+		<p class="general">general</p>
+		<p class="general">general</p>
+		<p class="important">important</p>
+		
+		<script>
+			var importantParas = document.getElementByClassName("important");
+		</script>
+	</body>
+</html>
+
+#2. We can change the HTML elements using below properties or methods
+2.1 element.innerHTML or element.innerText = change the content of the element. 
+2.2 element.attributeName=value
+	for eg.. 
+	<input type="text" name="age" id="age"/>
+	var ageInput = document.getElementById("age");
+	ageInput.value="23";
+2.3 we can change the style properties of an element using
+		element.style.propertyName=value
+		for eg.. 
+		<div id="content"></div>
+		var contentDiv = document.getElementById("content");
+		contentDiv.style.border = "1px solid black";
+2.4 element.setAttribute("attributeName", "value"); = instead of directly modifying the attribute, we can use setAttribute(...) 		method for changing the element attributes
+
+#3. We can add or remove elements of a webpage using document object
+document.createElement("elementTag") = creates an new element
+document.removeChild(element) = removes the element
+document.appendChild(element) = adds the new child element at the last
+document.replaceChild(old, new) = replaces the old with the new element
+document.write(text) = adds the text to the page.
+-------------------------------------------------------------------------------------------------------------------------------
+HTML Events
+When an operation or action is being performed on an HTML element, those trigger events indicating the action or operation being performed on them allowing us to handle those events.
+	
+These events can be triggered by an browser or user by performing an action like
+1. An HTML Web page has finished loading
+2. An HTML Input field has been changed
+3. An HTML button was clicked
+
+when events happens we want to react for them by performing some operation. Javascript allows us to execute code when events are detected.
+	
+How to bind an event handler methods for performing an action or operation when an specific event has been published:
+<element eventType="javascript function"/>
+
+for eg..
+<button onclick="fn1(this);">Click Me</button>
+
+<script type="text/javascript">
+	function fn1(source) {
+		// here write the logic for performing operation for that event
+		
+	}
+</script>
+	
+We can pass "this" as the current reference of the object/element on which this event has been performed to the eventHandler function while calling it. So that the handle function can access the source inorder to perform the operation if required.
+	
+Within the Handler function we can access the Type of the Event being triggered on the source using this.event.
+	
+Few of the common events being used are
+onchange = An HTML element has been changed (textboxes, select)
+onclick = The user clicks on an element
+onmouseover = The user moves the mouse over the element. Generated used on table rows for changing the color of the row upon hovering the mouse pointer
+onmouseout = the user moves the mouse away from the element
+onkeydown = the user pushed a keyboard key
+onload = The browser has finished loading the web page
+--------------------------------------------------------------------------------------------------------------------------------
+HTML Form validation
+Typical validations we apply on the input controls of the jsp forms are:
+1. required
+2. validate date
+3. number type
+4. length
+5. range validations
+6. email address
+7. phonenumbers
+etc
+
+HTML5 has introduced HTML Validation concept called "Constraint Validation". These constraint validations are applied at different ways:
+1. Constraint validations are written as attributes of HTML Input controls
+2. Constraint validations can be written aspart of the css psuedo selectors
+3. HTML5 has introduced javascript dom validation api, with properties and methods using which we can apply form validations
+
+The #1 and #2 are the automatic way of enforcing validations on the form controls without writing any code.
+
+#1. Constraint Validations enforced as attributes on Form input controls
+1.1 maxLength = maximum length of the characters allowed in an input textbox
+1.2 min and max = range of values
+1.3 pattern = regular expression pattern enforcing the data format we would wanted to allow
+1.4 required = enforcing mandatory constraint
+1.5 type = type of value permitted
+
+We need to write Constraint Validation attributes beside the HTML Input controls, so that upon submitting the HTML form, the web browser or js engine will reads the constraint validation attributes we wrote for each input control and performs automatic validation. Incase if any validation errors are there, it aborts the form submission and displays the input controls with default error messages
+
+<label for="elementName">label text</label><input type="text" name="elementName" id="elementName"/>
+
+#2. Constraint Validations through css psuedo selectors
+:required = select all the input controls which are required
+:invalid = to select all the input contols on the page which are not valid
+:valid = select all the inputs which appeared valid
+:optional = which are not mandatory
+
+<style>
+ .important input:odd {
+		font-family: Tahoma;
+		font-size: 18px;
+	}
+	input:required {
+		border: "1px solid red;"		
+	}
+</style>
+
+<input type="text" name="fullname" required class="important"/>
+<input type="text" name="age" class="important"/>
+
+
+#3. javascript dom api for form validations
+If we want to customize the way the errors messages are displayed on the input controls incase of invalid, we can do that through javascript dom form validation api
+
+We can apply constraint validation attributes for an form field and we can trigger validations on these controls using Constraint validation methods.
+1. checkValidity() = return true or false based on the constraint validation attribute we wrote by applying appropriate validation.
+	
+2. setCustomValidity(message) = Sets the validationMessage property of an element
+
+
+<form action="success.html" method="post">
+		<label for="fullname">Fullname : </label><input type="text" required name="fullname" id="fullname"/><br>        
+		<p>Choose Gender</p> <label for="male">Male :</label><input type="radio" required name="gender" id="male" value="male"/> (or) 
+		<label for="female">Female :</label><input type="radio" required name="gender" id="female" value="female"/><br/>
+		<label for="dob">Date of Birth:</label><input type="date" required name="dob" id="dob"/> <br/>
+		<label for="experience">Work Experience : </label><input type="number" min="1" max="55" name="experience" id="experience"/><br/>
+		<label for="jobTitle">Job Title : </label><input type="text" name="jobTitle" required id="jobTitle"/><br/>
+		<button onclick="validateAndSubmit();">Save</button>
+</form>
+
+<script type="text/javascript">
+	function validateAndSubmit() {
+		boolean flag = true;
+		
+		const inpFullname = document.getElementById("fullname");
+		if(inpFullname.checkValidity() == false) {
+			flag = false;
+			inpFullname.validationMessage = "Fullname required";
+		}
+		const inpdob = document.getElementById("dob");
+		if(inpdob.checkValidity() == false) {
+			inpdob.validationMessage = "Please select the dob";
+			flag = false;
+		}
+		
+		if(flag == true) {
+			document.forms[0].submit();
+		}
+		return false;		
+	}
+</script>
+
+Constraint Validation DOM properties
+validity = this property returns the validity status of the element
+validationMessage = contains the message the browser will dispaly when validity is false
+willValidate = indicates whether an element will be validated or not
+
+To determine which constraint validity attributes has been failed for an element the javascript dom has introduced additional child properties for validity
+patternMismatch = true/false based on pattern attribute
+rangeOverflow = min/max
+rangeUnderflow = min/max
+stepMismatch = invalid value aspart of step
+tooLong = maxLength
+valueMissing = required
+typeMismatch = type attribute

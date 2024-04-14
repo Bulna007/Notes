@@ -1,0 +1,43 @@
+NamedParameterJdbcTemplate
+--------------------------
+The NamedParameterJdbcTemplate is another class that is provided by Spring Jdbc, which is equally same as JdbcTemplate, but instead of defining the positional parameters while writing the dynamic sql queries, we can use named parameters and subtitute these params with values using NamedParameterJdbcTemplate
+
+@Repository
+class CourseDao {
+	private final String SQL_GET_COURSENAME_BY_NO = "select course_nm from course where course_no = :courseNo";
+	private final String SQL_GET_COURSES_BY_DURATION_AND_FEE = "select course_no, course_nm, duration, fee from course where duration <= :duration and (fee between :minFee and :maxFee)";
+	private final String SQL_INSERT_COURSE = "insert into course(course_no, course_nm, duration, fee) values(:courseNo, :courseName, :duration, :fee)";
+	
+	@Autowired
+	NamedParameterJdbcTemplate npJdbcTemplate;
+	
+	public String findCourseNameByCourseNo(int courseNo) {
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("courseNo", courseNo);
+		
+		return npJdbcTemplate.queryForObject(SQL_GET_COURSENAME_BY_NO, String.class, paramMap);	
+	}
+	
+	public List<CourseBo> getCoursesByDurationAndFee(final int duration, final double minFee, final double maxFee) {
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addParameter("duration", duration);
+		paramSource.addParameter("minFee", minFee);
+		paramSource.addParameter("maxFee", maxFee);
+		return npJdbcTemplate.query(SQL_GET_COURSES_BY_DURATION_AND_FEE, paramSource, (rs, rowNum)-> {
+			CourseBo bo = new CourseBo();
+			// populate the data
+			return bo;
+		});
+	}
+	
+	public int saveCourse(CourseBo bo) {
+		BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(bo);
+		return npJdbcTemplate.update(SQL_INSERT_COURSE, paramSource);		
+	}
+}
+
+The spring jdbc has provided an interface called SqlParameterSource that we can use for substituting the values for named parameters we defined in the sql query instead of using Map
+For this interface the spring has provided 2 implementation classes
+1. MapSqlParameterSource           = it is same as defining an Map populating with keys/values of paramNames and values to be subtituted for the parameter Names defined.
+	
+2. BeanPropertySqlParameterSource

@@ -1,0 +1,100 @@
+First-Level Cache
+------------------
+First-Level cache in hibernate framework is also called as "Session" level cache. The cache will be created aspart of an Session object and will be destroyed at the end of the Session.
+	
+We create Session object per operation we wanted to perform, while creating the Session, the Cache also will be created and kept at Session level. So here the cache that is created is not at the application scope rather it is to operational scope
+
+The Session object while performing any of the operations before going to the database in fetching the data, it first goes to Session cache to verify the data is available within the Cache or not and returns the entity object directly from the Cache instead of going to the database
+
+Session session = sessionFactory.openSession(); #session with cache will be created
+Account account = session.get(Account.class, 1);
+#when we call session.get(Account.class, 1), the session object quickly goes into its cache and check for an entity object of Type Account.class with Id: 1 is available or not since it is an first access to the object it is not available in the Cache, so Session goes to database and fetches the data and stores in its local cache and returns the object.
+	
+Account account1 = session.get(Account.class, 1);	
+The subsequent access to the same object using same session object will fetches the entity object from Cache rather than going to the database
+
+How does the Cache looks like at the Session level?
+The Cache that is created by the Session is not singleton, we can create multiple objects of the cache, because we need one Cache object per one Session.
+	
+The Cache stores the data interms of key and value where the key is used as an identity of data to fetch the data back from the cache. Here while storing the entity objects we cannot use the key to the Cache as primary key value of entity objects, because the primary key is not unique across the entities. But it is unique for a Type of entity class. So the data is kept in the Cache as Map<Class, Map<Object, Object>> here we uses 2 keys for identifying the entity object uniquely
+1st level key is "classType" and 2nd level key is "id/primary key" to identify the entity object uniquely from Cache
+
+class Cache {
+	private Map<Class, Map<Object, Object>> dataMap;
+	
+	public Cache() {
+		dataMap = new HashMap<>();
+	}
+	public void put(Object id, Object entityObject) {
+		Map<Object, Object> entityMap = null;
+		
+		if(dataMap.containsKey(entityObject.getClass())) {
+			entityMap = dataMap.get(entityObject.getClass());
+		}else {
+			entityMap = new HashMap<>();
+			dataMap.put(entityObject.getClass(), entityMap);
+		}
+		entityMap.put(id, entityObject);
+	}
+	public Object get(Class<?> classType, Object id) {
+		Map<Object, Object> entityMap = null;
+		Object entityObject = null;
+		
+		if(dataMap.containsKey(classType)) {
+			entityMap = dataMap.get(classType);
+			if(entityMap.containsKey(id)) {
+				entityObject = entityMap.get(id);
+			}
+		}
+		return entityObject;
+	}
+	
+	public boolean containsKey(Class<?> classType, Object id) {
+		Map<Object, Object> entityMap = null;
+		
+		if(dataMap.containsKey(classType)) {
+			entityMap = dataMap.get(classType);
+			if(entityMap.containsKey(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+}
+Few points to memorize about first-level cache:
+1. The first-level cache is scoped to the Session scope and will be created automatically during the time of creating the object of Session and will be destroyed when we close the Session object
+2. The first-level cache is enabled automatically in hibernate application and there is no way to disable the first-level cache
+------------------------------------------------------------------------------------------
+Why does hibernate framework has introduced first-level cache, what is the purpose of it?
+The data within an application can be classified into 3 categories
+#1. static data or long-lived data
+#2. moderate data 
+#3. frequently modified data (short-lived data)
+	
+From the above classification of the data, let us understand which nature of data is good for caching, and how it has to be cached, so that we can understand the hibernate first-level cache
+
+
+#1. long-lived data (static data)
+Within an application there can be some data that seems to be constant and fixed in nature like master tables data or any data that will be populated through external files of the disk location etc. 
+	
+As this data is finite in nature and seems to be constant and fixed for the runtime of the application, we can permanently cache the data within the application during the startup of the application ifself
+
+Note:- Both moderate/short-lived data are the runtime data that is being generated through the operations carried by users of the application.
+
+#2. Moderate data
+Within an application there is some data that seems to constant and might get modified very rarely.
+For eg.. in an ecommerce website the production information once added will be modified very rarely. similary an shipping address of an user will be modified very rarely.
+
+This data is a good candidate for caching, but since it is a runtime data that is of infinite in nature, if we cache the data permanently we run into 2 problems
+1. whenever the underlying data is changed, the data that is stored in cache becomes stale data
+2. since it is runtime data and can be of inifite in nature storing such data permanently in cache will runs our application out of memory
+
+So from the above we can understand
+1. it is the data that cannot be cached during the startup of the application
+2. this data should be cached only on-demand while accessing the data from the underlying source system
+3. there should be a mechanism in the application to mark the data as stale whenever it is getting modified
+4. this data should have retention policy of a specific interval of time and eviction policy (lru, mru)
+
+
+#3. short-lived data (frequently modified data)

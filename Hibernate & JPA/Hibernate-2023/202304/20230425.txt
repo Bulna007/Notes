@@ -1,0 +1,132 @@
+How to manage transactions aspart of an Hibernate Application?
+
+Bus
+bus_no
+service_no
+bus_type
+capacity
+color
+manufacturer
+model
+price
+
+class Bus implements Serializable {
+	int busNo;
+	String serviceNo;
+	String busType;
+	int capacity;
+	String color;
+	String manufacturer;
+	String model;
+	double price;
+	// accessors
+	// equals() & hashcode()
+}
+
+Bus.hbm.xml
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping "hibernate-mapping.dtd">
+<hibernate-mapping package="com.ht.entities">
+	<class name="Bus" table="bus">
+		<id name="busNo" column="bus_no"/>
+		<property name="serviceNo" column="service_no"/>
+		<property name="busType" column="bus_type"/>
+		<property name="capacity"/>
+		<property name="color"/>
+		<property name="manufacturer"/>
+		<property name="model"/>
+		<property name="price"/>
+	</class>
+</hibernate-mapping>
+
+hibernate.cfg.xml
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE ...>
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">...</property>
+		...
+		<mapping resources="com/ht/entities/Bus.hbm.xml"/>
+	</session-factory>	
+</hibernate-configuration>
+
+class SFRegistry {
+	private static SessionFactory sessionFactory;
+	static {
+		try {
+			Configuration configuration = new Configuration().configure();
+			sessionFactory = configuration.buildSessionFactory();
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+	public static SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+	public static void closeSessionFactory() {
+		if(sessionFactory != null) {
+			sessionFactory.close();
+			sessionFactory = null;
+		}
+	}
+}
+
+class BusDao {
+	void saveBus(Bus bus) {
+		SessionFactory sessionFactory = null;
+		Session session = null;
+		
+		try {
+			sessionFactory = SFRegistry.getSessionFactory();
+			session = sessionFactory.openSession();
+			session.save(bus);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+		}
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		try {
+			Bus bus = new Bus();
+			// populate the data
+			BusDao busDao = new BusDao();
+			busDao.saveBus(bus);
+		}finally {
+			SFRegistry.closeSessionFactory();
+		}
+	}
+}
+
+#Internals
+entity object bus input asking to save to the Session object:
+1. goto the object and identify the ClassType of it as Bus class object, so that Session class can identify the table and columns into which the attributes of data should be persisted
+2. upon identifying the ClassType, the Session class goes to Mapping information, and identifies the relevant Mapping for the entity object to be persisted
+3. already the Session object has been wrapped with Connection during its creation
+4. inorder to persist the object data into database, Session class requires PreparedStatement and to create the object of PreparedStatement it requires sql query, so it goes to the Dialect object and ask to generate the sql query for storing the object of data
+String sqlQuery = dialect.getSqlForSaveObject(mappingInfo);
+5. now the Session class quickly creates the object of PreparedStatement by using sqlQuery that go generated from dialect and substitutes the parameters
+To substiute the parameters it takes the help of GenericMapper
+GenericMapper
+	- mapObjectToPreparedStatement(Object object, Class<?> entityClassType, PreparedStatement pstmt, MappingInfo);
+
+6. on the PreparedStatement object it calls executeUpdate()
+	
+class Session {
+	Connection con;
+	Map<String, MappingInfo> mappings;
+	Dialect dialect;
+	
+	void save(Object entityObject) {
+		Class<?> entityClassType = entityObject.getClass();
+		MappingInfo mappingInfo = mappings.get(entityClassType.getName());
+		String sqlQuery = dialect.getSqlForSaveObject(mappingInfo);
+		PreparedStatement pstmt = con.preparedStatement(sqlQuery);
+		GenericMapper.mapObjectToPreparedStatement(entityObject, entityClassType, pstmt, mappingInfo);
+		pstmt.executeUpdate();
+	}
+}

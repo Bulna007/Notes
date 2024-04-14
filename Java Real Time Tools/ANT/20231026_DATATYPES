@@ -1,0 +1,96 @@
+working with properties
+------------------------
+For different environments, the configurations or build parameters we wanted to use in building the application will be different. Instead of modifying the buildscript file every time while building the application in each env, we can externalize these values per env in an properties file and pass it to the build process while conducting the build in that specific env
+
+Per each environment we can define one properties file in which we declare/define variables populated with values of that env. The default file that is being used is build.properties in addition we can write 1-1 properties file per 1-1 env as shown below and can be passed or override with default properties easily.
+	
+if the build.properties file is placed under the root of the project along with build.xml, ant will automatically pickup build.properties file and uses the values we configured inside it to conduct the build.
+
+[javaproject]
+loan360
+|-src
+	|-db.properties
+|-build
+  |-classes
+	|-dist
+|-build.xml (which props to be used)
+|-build.properties (default) (#10 variables) (local dev)
+|-build-qa.properties
+|-build-uat.properties
+|-build-prod.properties	
+	
+db.properties
+-------------
+db.driverClassName=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/loan360db
+db.username=root
+db.password=welcome1
+#30 key/values
+
+#5 different configuration files
+	
+usingprops
+|-src
+|-build
+  |-classes
+|-build.properties
+|-build.xml
+
+build.properties
+----------------
+build.version=1.0.0
+db.driverClassName=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/loan360db
+db.username=root
+db.password=welcome1
+
+To import the above build.properties file values as variables in buildscript (build.xml) we need to use <property> dataType with file="path" as below
+
+build-qa.properties
+----------------
+build.version=1.0.0
+db.driverClassName=oracle.jdbc.driver.OracleDriver
+db.url=jdbc:mysql://localhost:3306/loan360db
+db.username=root
+db.password=welcome1
+
+
+build.xml
+----------
+<?xml version="1.0" encoding="utf-8"?>
+<project name="usingprops" basedir="." default="print">
+	<property file="build-qa.properties"/>
+	
+	<target name="print">
+		<echo>${db.driverClassName}</echo>
+	</target>
+</project>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

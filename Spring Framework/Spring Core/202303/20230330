@@ -1,0 +1,294 @@
+Instance Factory Method Instantiation
+--------------------------------------
+To understand instance factory method instantiation, let us study the builder design pattern
+
+Builder is an design pattern, that is used for creating the object of another class, unlike the factory class that creates the object of another class as empty when it comes to builder pattern it takes care of instantiating the object of another class with populated data.
+	
+abstract Truck {
+	int truckNo;
+	String model;
+	String manufacturer;
+	int capacity;
+	int tires;
+	double price;
+	
+	abstract void drive();
+}	
+
+class MiniTruck extends Truck {
+	void drive() {
+		sop("driving mini truck with data: " + truckNo + " , " + model + " , " + manufacturer + " , " + capacity + " , "+tires +" , " + price);
+	}
+}
+
+class TipperTruck extends Truck {
+	void drive() {
+		sop("driving tipper truck with data: " + truckNo + " , " + model + " , " + manufacturer + " , " + capacity + " , "+tires +" , " + price);
+	}
+}
+
+class TruckBuilder {
+	int truckNo;
+	String model;
+	String manufacturer;
+	int capacity;
+	int tires;
+	double price;
+	
+	public TruckBuilder(int truckNo) {
+		this.truckNo = truckNo;
+	}
+	// accessors
+	public Truck build(String truckType) {
+		Truck truck = null;
+		
+		if(truckType.equals("mini")) {
+			truck = new MiniTruck();
+		}else if(truckType.equals("tipper")) {
+			truck = new TipperTruck();
+		}
+		truck.setTruckNo(truckNo);
+		truck.setModel(model);
+		truck.setManufacturer(manufacturer);
+		truck.setCapacity(capacity);
+		truck.setTires(tires);
+		truck.setPrice(price);
+		return truck;
+	}
+	
+}
+
+how to write the builder class?
+1. with what data we wanted the object of the Truck to be created, declare them as attributes in the builder class, so that we can create the object of the builder by populating the data into those attributes asking the builder to use that data in instantiating the object of Truck
+2. within the builder declare an parameterized constructor taking the mandatory fields of values required in creating the object of Truck
+3. in addition we can have accessor methods allowing the data to be populated into builder class
+4. builder class should have an build() method that should take the responsibility of instantiating the object of the Truck by populated data and return it
+
+
+class TruckManager {
+	public Truck newTruck(String truckType) {
+		TruckBuilder truckBuilder = new TruckBuilder(1);
+		truckBuilder.setModel("Tata a736");
+		truckBuilder.setManufacturer("Tata");
+		truckBuilder.setCapacity(393);
+		truckBuilder.setTires(4);
+		truckBuilder.setPrice(244344);
+		Truck truck = truckBuilder.build(truckType);
+		return truck;
+	}
+}
+
+by using the builder pattern, we can create the object of another class with populated data, but we endup in writing multiple lines of code in instantiating the object, to avoid more number of lines of code in creating the object of another class using Builder, the Fluent Builder design pattern has been introduced.
+	
+class TruckBuilder {
+	int truckNo;
+	String model;
+	String manufacturer;
+	int capacity;
+	int tires;
+	double price;
+	
+	public TruckBuilder(int truckNo) {
+		this.truckNo = truckNo;
+	}
+	// fluent methods
+	public String model() {
+		return this.model;
+	}
+	public TruckBuilder model(String model) {
+		this.model = model;
+		return this;
+	}
+	public String manufacturer() {
+		return this.manufacturer;
+	}
+	public TruckBuilder manufacturer(String manufacturer) {
+		this.manufacturer = manufacturer;
+		return this;
+	}
+	public int capacity() {
+		return this.capacity;
+	}
+	public TruckBuilder capacity(int capacity) {
+		this.capacity = capacity;
+		return this;
+	}
+	
+	
+	public Truck build(String truckType) {
+		Truck truck = null;
+		
+		if(truckType.equals("mini")) {
+			truck = new MiniTruck();
+		}else if(truckType.equals("tipper")) {
+			truck = new TipperTruck();
+		}
+		truck.setTruckNo(truckNo);
+		truck.setModel(model);
+		truck.setManufacturer(manufacturer);
+		truck.setCapacity(capacity);
+		truck.setTires(tires);
+		truck.setPrice(price);
+		return truck;
+	}
+	
+}
+
+if we use fluent builder api, using method chaining we can create the object of Truck in one-single line, hence we can reduce the lines of code in creating the object of another class	
+Truck truck = new TruckBuilder(1).model("Tata a9383").manufacturer("Tata").capacity(3838).tires(4).price(83839).build("mini");
+
+---------------------------------------------------------------------------------------------------------------------------
+Instance factory method instantiation
+
+abstract Truck {
+	int truckNo;
+	String model;
+	String manufacturer;
+	int capacity;
+	int tires;
+	double price;
+	
+	abstract void drive();
+}	
+
+class MiniTruck extends Truck {
+	void drive() {
+		sop("driving mini truck with data: " + truckNo + " , " + model + " , " + manufacturer + " , " + capacity + " , "+tires +" , " + price);
+	}
+}
+
+class TipperTruck extends Truck {
+	void drive() {
+		sop("driving tipper truck with data: " + truckNo + " , " + model + " , " + manufacturer + " , " + capacity + " , "+tires +" , " + price);
+	}
+}
+
+class CargoManager {
+	private Truck truck;
+	
+	int dispatch(Date tripDate) {
+		truck.drive();
+		sop("dispatched a truck for the trip date: "+ tripDate);
+	}
+
+	public void setTruck(Truck truck) {
+		this.truck = truck;
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="truck" class="Truck" p:truckNo="10" p:model="tata 39" p:manufacturer="tata" p:capacity="3983" p.tires="4" p:price="383944"/>
+
+<bean id="cargoManager" class="CargoManager" p:truck-ref="truck"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
