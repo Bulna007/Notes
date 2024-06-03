@@ -1,0 +1,157 @@
+1. Instantiate the Client object
+
+How many ways we can instantiate the Client?
+2 ways using ClientBuilder as a builder or ClientBuilder as factory
+
+1.1 
+ClientBuilder builder = ClientBuilder.newBuilder();
+Client client = builder.build();
+
+1.2 
+Client client = ClientBuilder.newClient();
+
+2. create the object of WebTarget representing the resource want to access
+The Client acts as an builder for creating the object of WebTarget
+
+WebTarget webTarget = client.target("url");
+// append query parameters, matrix and path parameters if any
+
+3. To send the request we need other parts of the request, like headers, cookies and request body which needs to populated aspart of Invocation object
+So to creating the object of Invocation with all of the details the Invocation.Builder should be used.
+	
+Invocation.Builder iBuilder = webTarget.request();
+// populate headers and cookies
+
+4. create the object of Invocation with all the details above
+Invocation invocation = iBuilder.build("METHOD");
+
+Response response = invocation.invoke();
+															 
+
+
+
+name: getAvailablePlans
+Root URI: /api/plan
+Method: GET
+queryParameters: 
+		- planType:String
+Response:
+	200: application/json
+			{
+				"planType": "",
+				"availablePlans": []
+			}
+			
+api: CarApiService
+name: searchUsedCars
+Method: GET
+parameters:
+	- model: PathParam
+	- manufacturer: PathParam
+	- location: PathParam
+	- year: matrixparam
+	- area: matrixparameter
+response:
+	200: plain/text
+	
+	
+api: NetbankingApiService 
+BaseUri: /api/netbanking
+
+resource: withdrawl
+uri: /{accountNo}/{amount}/withdrawl
+method: PUT
+parameters:
+	accountNo: pathparam
+	amount: pathparam
+	plaformType: header param
+response:
+	200: text/plain
+	
+	
+	
+Api: UberCabApiService
+path: /uber
+
+resource: estimateTrip
+uri: /{source}/{destination}/estimate
+Method: GET
+parameters:
+	source: path param
+	destination: path param
+	cabType: query param
+	activeSession: cookie param
+responses:
+	200: text/plain
+----------------------------------	
+	
+Api: PolicyApiService
+Path: /policy
+Method: GET
+Uri: /new
+Body: application/json
+schema:
+{
+	"fullname": "",
+	"gender": "",
+	"mobileNo": "",
+	"emailAddress": "",
+	"planNo": "",
+	"planName" :"",
+	"tenure": ,
+	"insurredAmount": 
+}
+responses:
+	200: application/json
+	schema:
+{
+	"policyNo":"",
+	"policyHolderName":"",
+	"planName":"",
+	"tenure":,
+	"insurredAmount":,
+	"premiumAmount":,
+	"status":	
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

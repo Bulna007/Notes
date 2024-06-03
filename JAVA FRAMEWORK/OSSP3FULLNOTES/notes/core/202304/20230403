@@ -1,0 +1,104 @@
+Factory Beans
+Factory beans are factory classes that holds the instantiation logic for creating another class object as bean definition within the ioc container.
+by default ioc container instantiates the object of a bean definition using new operator or Class.forName("").newInstance(), but every class cannot be instantiated using new operator, few classes requires complex instantiation logic to be written for creating the object. Since ioc container dont know how to instantiate such classes, we wrap the complex instantiation logic inside the FactoryBean class and pass the FactoryBean class onbehalf of the actual class asking to use it for instantiating the object
+
+<bean id="connection" class="ConnectionFactoryBean"/> = ioc container will not place ConnectionFactoryBean class object as bean definition, rather it places the ConnectionFactoryBean returned object inside the ioc container as a bean definition
+<bean id="a" class="A"/> = ioc container instantiates class A and places the object in ioc container as bean definition
+
+spring has provided an interface "FactoryBean", we should write our class implementing from the FactoryBean interface and override the 3 methods
+1. getObject()
+2. getObjectType()
+3. isSingleton()
+	
+class UserAccessor implements BeanFactoryAware {
+	private BeanFactory beanFactory;
+	
+	public void showUsers() {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		con = beanFactory.getBean("connection", Connection.class); // ioc container uses FactoryBean for creating Connection
+		stmt = con.createStatement();
+		rs = stmt.executeQuery("select * from users");
+		while(rs.next()) {
+			sop(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3));
+		}
+	}
+	
+	public void setBeanFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
+}	
+	
+application-context.xml
+-----------------------
+<bean id="userAccessor" class="UserAccessor"/>
+<bean id="connection" class="java.sql.Connection"/>
+
+here we cannot configure Connection as an bean definition, since we cannot create the object of the Connection using new operator, so we need to wrap the instantiation logic for creating the object of Connection in FactoryBean class and pass it as an input to ioc container asking to use the logic for creating the object of Connection
+
+note: connection should be non-singleton, we need to create one connection per one business operation we perform on the database.
+	
+class ConnectionFactoryBean implements FactoryBean<Connection> {
+	private String driverClassname;
+	private String url;
+	private String username;
+	private String password;
+	
+	public ConnectionFactoryBean(String driverClassname, String url, String username, String password) {
+		this.driverClassname = driverClassname;
+		this.url = url;
+		this.username = username;
+		this.password = password;
+	}
+	public Object getObject() {
+		Connection connection = null;
+		Class.forName(driverClassname);
+		connection = DriverManager.getConnection(url, username, password);
+		return connection;
+	}
+	public Class<?> getObjectType() {
+		return Connection.class;
+	}
+	public boolean isSingleton() {
+		return false;
+	}
+}	
+	
+now configure ConnectionFactoryBean as an bean definition, saying ioc container use this class to instantiate the object of Connection as below.
+	
+<bean id="connection" class="ConnectionFactoryBean"/>
+factory.getBean("connection") = which class object will be returned by ioc container?
+when we call factory.getBean("connection"), ioc container looks for connection bean definition in the metadata of the ioc container, once it found the bean definition by looking at the class, it understands we passed FactoryBean class, so it uses the class for instantiating the object of another class that should be placed as bean in ioc container
+	
+FactoryBean object is created by ioc container?
+Yes, it will create the object of FactoryBean we defined and places that object also inside the ioc container with &beanId 
+factory.getBean("&connection"); = will returns ConnectionFactoryBean object
+
+GRADLE_HOME=c:\gradle-8.0.2
+PATH=%PATH%;%GRADLE_HOME%\bin
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

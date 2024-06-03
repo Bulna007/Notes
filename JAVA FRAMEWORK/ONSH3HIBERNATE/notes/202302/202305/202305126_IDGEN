@@ -1,0 +1,169 @@
+ID Generators
+-------------
+From RDBMS point of view every table doesnt requires an primary key column. A table can exist without a primary key column defined aspart of it, but if the data of that table needs to be related with another data of other table, then we need primary key to establish the relationship.
+	
+From an ORM technology framework like hibernate/jpa api inorder to manage persisting data in the RDBMS table interms of objects every object/table requires an ID. Because the Hibernate/Jpa api requires an one-to-one associate between each record to an entity object which means an object can be identified to an unique record in the table, so that we can perform save/persist or update or delete operation against the record of data using the object. In addition the Caching strategy built into the hibernate framework works ontop of the id itself so the roots of hibernate framework has been built to perform operations around the ID the primary key for every table is necessary to be managed through hibernate/jpa api.
+	
+From the above every table in the RDBMS requires an primary key or ID column. 
+How do we need to choose an ID/primary key column while creating an table?
+while choosing the ID/primary key column we should select the fields of data that holds unique data across the records within the table. Most of the time the ID column would be choosen as natural key column itself.
+	
+for eg.. let us consider a person table
+first_nm 
+last_nm
+gender
+age
+mobile_nbr
+email_address
+street_address
+city
+state
+zip
+country
+
+in the above table we can consider one of the natural fields of table first_nm or last_nm or a combination of first_nm + last_nm as primary key columns to uniquely identify the records of data so that they can participate in relationship. 
+	
+natural fields are nothing but the fields/columns created for capturing the business data of the system. while choosing an primary key column we make lot of business assumptions to consider the column as primary key column.
+For eg.. in the above case our assumption is always a combination of first_nm + last_nm is always unique.
+
+Always business entity is not static, it keeps changing and evolving over the time based on the changing requirements in market and customer preferences, so the assumptions we have made in considering the key columns in our table may not hold in future. due to which our systems cannot be scaled or be used by the people in future.
+	
+For eg.. we have customers many in number who might have same first_nm+last_nm because of geographical expansion in this case our application may not be flexible to support such customers and would leads to failure/loss of bussiness.
+	
+Based on the business change we noticed we need to redesign the data model reconsidering the primary key columns. Changing the primary key columns of a table is not easy and requires a significant amount of rework:
+1. we need to identify all the participating tables which are in relationship with our table and needs to make necessary changes within them to accomodate this change which is an rework from database 
+2. in addition the application logic has to be modified to a greater extent in considering the new primary key which involves huge amount of rework, efforts and cost in implementing the change.
+	
+So always avoid choosing natural fields of data (business data) as an primary key columns. choose surrogate keys as primary keys. Surrogate: additional fields as primary key which dont have any relationship with business/entity we are persisting
+
+person
+------
+person_no (pk) #surrogate key column
+first_nm
+last_nm
+age
+gender
+street_address
+city
+state
+zip
+country
+
+we can always can have the surrogate key column to carry unique value. It doesnt have an relevance or relationship interms of entity/business data we are persisting, so that infuture if the business assumptions are changing, there is zero impact on the surrogate column that we considered as primary key column.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

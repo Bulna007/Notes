@@ -1,0 +1,73 @@
+Spring boot devtools
+--------------------
+DevTools provides required features that helps the developers in improving their productivity in building the software applications.
+	
+How to enable the devtools for a project?
+By adding the spring-boot-devtools dependency to our project, the devtools will be enabled.
+	
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-devtools</artifactId>
+</dependency>
+
+Note:- all the features of devtools are meant for development only and should not be enabled for production usage.
+	
+The devtools will be auto-disabled by itself when we are running our application in production environment
+How does the devtools knows the application is running in production env?
+1. When we package our application as a bootJar and runs using java -jar bootapplication.jar, the devtools detects and considers our application is running in production and auto-disable byitself.
+2. When we package our application as war and deploy it on standalone server environment, then also devtools will turn-off automatically considering it as production env
+
+Features:
+1. automatic restart of the application
+during the development, the application developers modify the sourcecode and want to check the changes they made are working properly or not, for this they need to rebuild, repackage, redeploy and restart the server. even though the IDEs takes care of rebuilding, repackaging and redeploying the application into the server deployment directory automatically, we need to still restart the servers to have these modified classfiles of our application being loaded into jvm. The restart of the server takes considerable amount of time (and it depends on the application server and the size of the application), that kills huge amount of developers time in developing the application
+
+The devtools comes in rescue, it detects the change in the application classes and takes care of reloading/restarting the servers to reflect the changes automatically. There is a different in devtools performing auto-restart than we manually restarting the server.
+	
+The devtools will not restart the jvm (server), rather it identifies the modified class files of the project and quickly reloads them into the jvm memory replacing the older versions of them using hotcode redeployment, so that the changes we made gets quickly reflected without restarting.
+	
+The devtools maintains 2 different classloaders for an application to optimize the restart behavior
+1. autorestart (hotcode) classloader = our application classfiles are loaded by using autorestart classloader since those might be modified during the runtime of the application and should get reloaded.
+	
+2. permanent classloader = all the jar libraries which doesnt changes during the execution of our application are being loaded using permanent classloader
+
+Many of the times we might wanted to make changes in group of classes to get them reflected, but devtools for each change in a class, it reloads/autorestarts into jvm that causes the crash/non-comaptible changes being loaded into the jvm. instead we can have all the collective changes being re-loaded into the jvm by using reload-on-file. which means when we modify a specific file then only it reloads
+
+by default devtools will reload the application when we modified any resources under these pre-defined directories of our application
+1. classpath
+2. static/
+3. templates/
+	
+	
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

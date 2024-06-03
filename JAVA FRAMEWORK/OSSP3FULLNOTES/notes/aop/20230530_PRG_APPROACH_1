@@ -1,0 +1,77 @@
+1. Logging example
+
+class Calculator {
+	int add(int a, int b) {
+		
+		int sum = 0;
+		sum = a + b;
+		return sum;
+	}
+	int multiply(int a, int b) {
+		
+	}
+}
+
+
+class LoggingAdvice implement MethodInterceptor { #advice class
+	public Object invoke(MethodInvocation methodInvocation) { #aspect method
+		String methodName = null;
+		Object[] args = null;
+		
+		methodName = methodInvocation.getMethod().getName();
+		args = methodInvocation.getArguments();
+		
+		System.out.print("entered into " + methodName+"(");
+		for(int i=0;i<args.length;i++) {
+			if(i == 0) {
+				System.out.print(args[i]);
+				continue;
+			}
+			System.out.print("," + args[i]);
+		}
+		System.out.println(")");
+		// the cross-cutting logic we write here should be generic and should work for any of the classes of our application
+		Object retVal = methodInvocation.proceed();
+		
+		// targetClass method finished execution
+		System.out.println("exiting from " + methodName + " with returnValue : " + retVal);
+		return retVal;		
+	}
+}
+
+int sum = proxy.add(10, 20);
+
+
+#MethodInterceptor = Through which we instruct the spring aop to apply the aspect logic around the target class method/joinpoint
+inside the invoke() method we need to write cross-cutting logic that we wanted to apply on the target class methods. So inorder to perform cross-cutting logic onbehalf of the target class method that we invoked/called, the invoke() methods needs the information about the targetClass method.
+So that is the reason the invoke() method will be passed with all the runtime information about the target class method for whom it has been called like
+Method = Method information of the targetClass method being called for
+args[] = the actual argument values with which the target class method has been called
+target = using which object the targetClass method has been invoked
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+

@@ -1,0 +1,254 @@
+Kafka
+-----
+Kafka is an distributed event store and stream processing platform. It was created by LinkedIn, now it is an opensource project mainly maintained by Confluent.
+	
+It is distributed, resilient architecture that is fault tolerant. It scales Horizontally upto 100s of brokers and to millions of messages per second. High performance and latency is less than 10ms in delivering the events.	
+	
+#1. Topics and Partitions:
+Kafka Topics are categories/groups used for organizing messages. Each topic has a name that is unique across the entire Kafka Cluster. Messages are send to and read from specific Topic. Topics are partitioned, which means a topic is spread over a number of "buckets" located on different Kafka brokers. This distributed placement of the data is very important for scalability because it allows client applications to both read and write data from any brokers at the same time.
+	
+When a new event has been published to the Kafka Topic, it is appended to the end of an Partition. Incase if we have configured an Parition key the events with the same event/partition key are written to the same partition. Within the partition ordering of the messages are guaranteed.
+	
+Data is kept only for a limited time (default is two weeks) within an Topic. once the data is written to the partition/topic it cannot be changed (immutable). You can have any number of partitions per a topic as you want. 
+	
+To make the data fault-tolerant and highly-available, every topic can be replicated across the cluster, so that always multiple brokers on the cluster have the copy of the data, incase something goes wrong, the data can be served from one of the replicas. In production setting it is recommended to have 3 replicas.
+	
+#2. Producer:
+An Kafka producer is an client application that publishes/writes the events to a Kafka topic. A producer is much simpler than the consumer because it doesnt have group coordination. 
+
+Each partition in the Kafka cluster has a leader and a set of replicas among the brokers. All writes to the partition must go through the partition leader. The replicas are kept in sync by fetching from the leader. If the leader has been shuts down or fail, the next leader would be choosen from the in-sync replicas. 
+	
+Messages written to the partition leader are not immediately readable by the consumers regardless of the producer acknowledgement settings. When all in-sync replicas have acknowledged the write, then the message is considered as committed and make it available for reading.
+	
+#3. Consumer:
+Generally a consumer will be configured in a group of consumers. We can even have a single consumer to read all messages from single topic. In this case the consumer assigns all the patitions within the topic to himself, so that all the messages recieved to any partitions of the topic will be recieved by the consumer. Even though its an simple approach, this will miss the ability of scaling and loadbalancing the consumers.
+	
+Each Consumer Group is identified by a groupId, it must be unique for each group. Each consumer group has a consumer offset and commit.
+	
+#4. Brokers
+A Kafka cluster is composed of multiple brokers. A broker can be a physical server, cloud compute instance or a virtual machine that joins the Kafka cluster. Each broker is identified with its ID. Each broker contains certain topic partitions. 
+	
+After connecting to any broker, you will be connected to the entire cluster. A good number of brokers to get started is 3. Among the brokers one broker acts as leader/primary of the cluster.
+	
+If the leader shutdowns or fails then another broker within the cluster would be choose as a leader based on election process.
+--------------------------------------------------------------------------------------------------------------------------------
+How to install Kakfa?
+Kafka is distributed as an binary distribution in zip/tar files.
+
+https://kafka.apache.org/downloads
+https://downloads.apache.org/kafka/3.7.0/kafka_2.13-3.7.0.tgz
+
+upon downloading the tgz (zip) file, copy into any of the directory location like /middleware and extract it.
+	
+KAFKA_HOME=/middleware/kafka_2.13-3.7.0
+	
+How to start the kafka cluster?
+all the tools to start the kafka cluster are available under KAFKA_HOME/bin directory.
+	
+1. start the zookeeper
+be in the KAFKA_HOME directory and run the below command to start the zookeeper
+
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+2. start the kafka cluster
+run the below command to start the kafka broker
+
+bin/kafka-server-start.sh config/server.properties
+
+3. create a topic to store the events
+bin/kafka-topics.sh --create --topic topicname --bootstrap-server localhost:9092
+	
+we can describe the topic information using below command
+bin/kafka-topics.sh --describe --topic topicname --bootstrap-server localhost:9092
+	
+kafka has provided utilities for reading and writing the events to the topic.
+	
+4. write the events to the topic
+producer:
+
+bin/kafka-console-producer.sh --topic topicname --bootstrap-server localhost:9092
+message1
+message2
+until we press ctrl+c
+
+4. read the events from the topic
+consumer:
+bin/kafka-console-consumer.sh --topic topicname --bootstrap-server localhost:9092
+	
+-------------------------------------------------------------------------------------------------------------------------------
+Java Streaming Api
+------------------
+Stream API is a way to express and process collection of objects.
+
+Features:
+1. A stream is not a data structure instead it takes input from a Source (A source can be Collection, Array or I/O Channel).
+2. Stream	dont change the original datastructure, they only provide the results as per the pipelined operations
+3. Each intermediate operation is lazily executed and returns an stream as a result. hence various different intermediate operations can be pipelined. Terminal operations mark the end of the steam and the returns the results.
+	
+There are 2 types of operations are there in Streams:
+1. Intermediate operation
+2. Terminate Operation
+
+1. Intermediate operation
+a) Methods are chained together
+b) An intermediate operation transforms a stream into another stream
+c) through intermediate operations we can perform filtering, mapping, sorting etc
+
+
+Benefits:
+1. No Storage
+2. Pipeline function
+3. Laziness
+4. Can be Infinite
+5. Parallely
+6. can be created on Collections, Arrays, Files etc
+
+
+Intermediate operations
+1. map
+2. filter
+3. sorted
+5. flatmap
+6. distinct
+7. skip
+8. peek
+9. limit
+
+Terminal operations:
+1. forEach
+2. count
+3. collect
+4. anyMatch
+5. allMatch
+6. reduce
+7. findFirst
+8. min
+9. max
+10. average
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+	

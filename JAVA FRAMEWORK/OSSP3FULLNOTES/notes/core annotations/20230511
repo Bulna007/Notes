@@ -1,0 +1,94 @@
+@Autowired
+-----------
+@Autowired annotation is used for managing the dependencies between the bean definitions. In case of @Autowired annotation there is no mode of autowiring, always the dependent bean definition object is identified by matching with Type only
+
+@Autowired annotation can be written at #4 different places within an class
+1. ATTRIBUTE LEVEL
+2. CONSTRUCTOR LEVEL
+3. SETTER LEVEL
+4. ARBITARY METHOD LEVEL
+
+mode of autowiring indicates:
+1. how to identify the dependent bean object
+2. how to inject
+
+1. Incase of @Autowired annotation, always the dependent bean is identified byType only
+2. injects based on the place where we have written the annotation on
+
+class Radio {
+	private TransReceiver transReceiver;
+	
+
+	public void listen() {
+		transReciever.on();
+		sop("listening...");
+	}
+
+}
+
+class TransReceiver {
+	private String signalType;
+	private int frequency;
+	
+	public void on() {}
+	// setter
+}
+
+application-context.xml
+-----------------------
+<bean id="radio" class="Radio"/>
+
+<bean id="transReceiver" class="TransReceiver">
+	<property name="signalType" value="analog"/>
+	<property name="frequency" value="108"/>
+</bean>
+
+
+Test.java
+---------
+ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+Radio radio = context.getBean("radio", Radio.class);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

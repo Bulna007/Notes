@@ -1,0 +1,184 @@
+
+@Repository
+class CourseDao {
+	private final String SQL_GET_COURSE_INFO_BY_COURSE_NM = "select course_no, course_nm, fee from course where course_nm like ?";
+	private final String SQL_INSERT_COURSE = "insert into course(course_no, course_nm, duration, fee) values (?,?,?,?)";
+	private final String SQL_UPD_COURSE_NM_BY_COURSE_NO = "update course set course_nm = ? where course_no = ?";
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
+	public List<Map> findCoursesByCourseName(String courseName) {
+		return jdbcTemplate.queryForList(SQL_GET_COURSE_INFO_BY_COURSE_NM, courseName);
+	}
+	
+	public int saveCouse(CourseBo) {
+		return jdbcTemplate.update(SQL_INSERT_COURSE, courseBo.getCourseNo(), courseBo.getCourseName(), courseBo.getDuration(), courseBo.getFee());
+	}
+	
+	public int updateCourseName(int courseNo, String courseName) {
+		return jdbcTemplate.update(SQL_UPD_COURSE_NM_BY_COURSE_NO, courseName, courseNo);
+	}
+	
+}
+
+
+List<Map> queryForList(sql, params); = queryForList is used for querying and retrieving the data from the table in generic structure rather than object format.
+it returns List<Map> where each entry in the list represents one row in the table.
+The Map holds the data of the record where key = columnName and value = data of that column
+[
+	{courseno=1,course_nm=corejava, fee=5000},
+	{courseno=2,course_nm=advanced java, fee=6000}
+]	
+
+queryForMap:
+similar to the above we have queryForMap(sql, params) = when the sql query returns only record, and to fetch the data in generic structure use queryForMap
+
+DML operations:
+for performing insert/update/delete operations on the underlying tables, the jdbcTemplate has provided one method "update". because to insert,update,delete sql queries we need to call only one method on PreparedStatement which is executeUpdate(sql)
+-------------------------------------------------------------------------------------------------------------------------------------	
+1. how to work with auto-generated primary keys in spring jdbc
+2. pagination
+3. rollup logic (joins)
+	
+1. how to work with auto-generated primary keys in spring jdbc?
+course_no int auto_increment
+student_no int auto_increment
+
+enrollStudent(studentBo, courseNo) {
+	// insert the student into student table
+	student_course = student_no (inserted above) + course_no	
+}
+	
+
+int saveCourse(CourseBo bo) {
+	Connection con = null;
+	PreparedStatement pstmt = null;
+	
+	try {
+		Class.forName("driverClassname");
+		con = DriverManager.getConnection(url, un, pwd);
+		pstmt = con.preparedStatement("insert into course(course_nm, duration, fee) values(?,?,?)", new String[] {"course_no"});
+		pstmt.setString(1, bo.getCourseName());
+		pstmt.setInt(2, bo.getDuration());
+		pstmt.setDouble(3, bo.getFee());
+		int r = pstmt.executeUpdate();
+		
+		Map<String, Object> generatedKeys = pstmt.getGeneratedKeys();
+		int courseNo = generatedKeys.get("course_no");
+		
+		
+	}catch(SqlException e) {
+		e.printStacktrace();
+		throw e;
+	}finally {
+		// close resources
+	}
+	return courseNo;
+}
+
+
+int saveCourse(CourseBo bo) {
+	KeyHolder kh = new GeneratedKeyHolder();
+	
+	int r = jdbcTemplate.update(new PreparedStatementCreator() {
+		public PreparedStatement createPreparedStatement(Connection con) {
+			PreparedStatement pstmt = con.preparedStatement("insert into course(course_nm, duration, fee) values(?,?,?)", new String[]{"course_no"});
+			pstmt.setString(1, bo.getCourseName());
+			pstmt.setInt(2, bo.getDuration());
+			pstmt.setDouble(3, bo.getFee());
+			return pstmt;
+		}
+	}, kh);
+	
+	int courseNo= kh.getGeneratedKey("course_no");
+	return courseNo;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+
+
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,242 @@
+What is SessionFactory, what is the purpose of it?
+SessionFactory is an core objects of hibernate framework, that does 3 responsibilities
+1. maintains connection pool from the database configuration, so that it can quickly grab the connection for creating the object of Session
+2. it reads the hibernate configuration and mapping information within it as a registry, so that it can reuse the same information for wrapping in Session object while creating the Session
+3. it acts as an factory for creating the object of Session
+
+How many objects of the SessionFactory should be created within an hibernate application?
+one object of SessionFactory per one database of one application.
+if we are using multiple databases within an application:
+1. representing the tables per each database we create entity classes and relevant mappingFiles
+2. per each database we need to write hibernate configuration file with database connection information and mappingFiles inside it
+3. taking each hibernate configuration file we need to create one SessionFactory per database, so that we can grab Session object for that respective database to perform operations on them
+
+How to maintain one SessionFactory per one database within an application?
+per each business operation create one object of the Session.
+per one database of an application create one object of SessionFactory
+
+within the Dao method we need to create Session object and perform operation and close it at the end of its usage. but DAO should not close SessionFactory, it should created at the beggining of the application and should be closed at the end of the application.
+	
+class AccountDao {
+	public Account findAccount(SessionFactory sessionFactory, int accountNo) {
+		Session session = null;
+		Account account = null;
+		
+		try {
+			session = sessionFactory.openSession();
+			account = session.get(Account.class, accountNo);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+		}
+		return account;
+	}
+}	
+	
+class BranchDao {
+	public Account findAccount(SessionFactory sessionFactory, int branchNo) {
+		Session session = null;
+		Branch branch = null;
+		
+		try {
+			session = sessionFactory.openSession();
+			branch = session.get(Branch.class, branchNo);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+		}
+		return branch;
+	}
+}	
+
+class Test {
+	public static void main(String[] args) {
+		SessionFactory sessionFactory = null;
+		
+		try {
+			Configuration configuration = new Configuration().configure();
+			sessionFactory = configuration.buildSessionFactory();
+			AccountDao accountDao = new AccountDao();
+			Account account = accountDao.findAccount(sessionFactory, 10);
+		}finally {
+			if(sessionFactory != null) {
+				sessionFactory.close();
+			}
+		}
+	}
+}
+
+even though the above code maintains one single object of SessionFactory per the entire application, still it has problem. If we look at the interfaces of the DAO class, all the method signatures are written taking SessionFactory as an parameter, so that the interfaces of the DAO are tightly coupled with hibernate framework. in future if we want to get rid of Hibernate then we need to rewrite the interfaces that affects all the classes which are using that interface
+	
+class SessionFactoryRegistry {
+	private static SessionFactory sessionFactory;
+	
+	static {
+		try {
+			Configuration configuration = new Configuration().configure();
+			sessionFactory = configuration.buildSessionFactory();
+		}catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+	
+	public static SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+	
+	public static void closeSessionFactory() {
+		if(sessionFactory != null) {
+			sessionFactory.close();
+			sessionFactory = null;
+		}
+	}
+}	
+	
+class BranchDao {
+	public Account findAccount(int branchNo) {
+		SessionFactory sessionFactory = null;
+		Session session = null;
+		Branch branch = null;
+		
+		try {
+			sessionFactory = SessionFactoryRegistry.getSessionFactory();
+			session = sessionFactory.openSession();
+			branch = session.get(Branch.class, branchNo);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+		}
+		return branch;
+	}
+}		
+	
+class AccountDao {
+	public Account findAccount(int accountNo) {
+		SessionFactory sessionFactory = null;
+		Session session = null;
+		Account account = null;
+		
+		try {
+			sessionFactory = SessionFactoryRegistry.getSessionFactory();
+			session = sessionFactory.openSession();
+			account = session.get(Account.class, accountNo);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+		}
+		return account;
+	}
+}	
+	
+class Test {
+	public static void main(String[] args) {
+		
+		try {
+			AccountDao accountDao = new AccountDao();
+			Account account = accountDao.findAccount(sessionFactory, 10);
+		}finally {
+			SessionFactoryRegistry.closeSessionFactory();
+		}
+	}
+}	
+	
+In case of multiple databases we need to change the implementation of SessionFactoryRegistry
+class SessionFactoryRegistry {
+	private static Map<String, SessionFactory> sessionFactoryMap = new HashMap();
+	
+	static {
+		try {
+			Configuration configuration1 = new Configuration().configure("hibernate1.cfg.xml");
+			sessionFactory1 = configuration.buildSessionFactory();
+			
+			Configuration configuration2 = new Configuration().configure("hibernate2.cfg.xml");
+			sessionFactory2 = configuration2.buildSessionFactory();
+			
+			sessionFactoryMap.put("hr", sessionFactory1);
+			sessionFactoryMap.put("time", sessionFactory2);			
+		}catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+	
+	public static SessionFactory getSessionFactory(String db) {
+		if(sessionFactoryMap.containsKey(db) == false){
+			throw new HibernateException("SF Not found");
+		}
+		return sessionFactoryMap.get(db);
+	}
+	
+	public static void closeAllSessionFactory() {
+		sessionFactoryMap.forEach((db, sf)->{		
+			sf.closeSessionFactory();
+		});
+	}
+}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

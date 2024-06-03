@@ -1,0 +1,7 @@
+1. AUTO id generator
+we need to create an table with name: "entity_seq" inside it create a column next_hi insert within an initial value. so that AUTO generator queries the next_hi value for update, increates by 1 and returns the existing value as id
+
+For UUID Generation:
+1. declare mysql server database key columnType as "binary(16)".	
+2. declare attributeType as java.util.UUID
+

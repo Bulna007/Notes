@@ -1,0 +1,180 @@
+AfterReturning advice
+---------------------
+
+class KeyGenerator {
+	int generateKey(int len) {
+		if(len < 8 ){
+			return 0;
+		}
+		return 1;
+	}
+}
+
+class KeyValidatorAspect {
+	public void validateKey(JoinPoint jp, Object retValue) throws Throwable {
+		if((Integer) retValue <= 0) { #weak key
+			throw new Exception("Weak key generated");
+		}
+	}
+}
+
+JoinPoint = helps us in accessing the invocation information about the targetClass method, but we need returnValue returned by targetClass method aswell, this can be accessed by taking one more parameter: Object retValue
+
+application-context.xml
+-----------------------
+<bean id="keyGenerator" class="KeyGenerator"/>
+<bean id="keyValidatorAspect" class="KeyValidatorAspect"/>
+
+<aop:config>
+	<aop:pointcut id="pc1" expression="execution(* com.ara.beans.KeyGenerator.*(..))"/>
+	
+	<aop:aspect ref="keyValidatorAspect">
+		<aop:afterReturning method="validateKey" returning="retValue" pointcut-ref="pc1"/>
+	</aop:aspect>
+</aop:config>
+
+Pointcuts
+---------
+A pointcut represents the set of joinpoints on whom we want to advice the aspect logic. There are #2 types of pointcuts are there
+1. static pointcut
+2. dynamic pointcut
+spring aop + aspectj only supports static point. here we need to write the pointcut expression indicating the set of target classes and their methods on whom we want to advice the aspect. The expression we write here is called OGNL (Object Graph navigational Language) expression	
+
+while writing the pointcut expressions we need to wrap these expressions into PCDs (Pointcut designator). The PCD indicates the expression we are specifying resolves to which level of classes within the application. There are 5 types of PCD are supported by AspectJ
+
+1. execution()
+2. within()
+3. target()
+4. this()
+5. bean() = spring aop specific pcd
+
+1. execution()
+execution() is an pcd used for specifiying the pointcut expression pointing to/resolving to the methods of the target classes on whom we want to advice the aspect
+
+syntax:-
+execution(access_modifier? returnType packageName.className.methodName(argumentTypes))
+	
+execution(public int pkg1.A.*(int int))	
+execution(protected * *.*.add(..))
+	
+2. within()
+within() pcd is used for specifying the pointcut expression that points to a class(es) of a package if we want to advice all of the methods of those classes.
+	
+within(pkg1.*)	
+execution( * pkg1.*.*(..)) = #costly in creating proxy
+	
+3. target() or this()
+target() or this() both are more or less same. that indicates which specific targetClass / objectType to whom we want to advice the aspect
+advice the aspect logic on a specific classType bean definitions or ObjectType bean definitions only
+
+target(classType)
+this(objectType)
+	
+4. bean()
+bean() pcd is specific to spring aop and doesnt existing in aspectj and is used for specifiying the beanId of a specific bean definition to whom we want to advice the aspect.
+in the below example we have a1, a2 #2 bean definitions for class A, but we want to advice only for a1 bean id only not for a2
+
+bean("a1")
+		
+class A {}
+class B {}
+
+<bean id="a1" class="A"/>
+<bean id="a2" class="A"/>
+<bean id="b" class="B"/>
+
+
+we can combine multiple pointcut expressions together while writing them using
+1. && (and)
+2. || (or)
+3. ! (not operator)
+	
+for eg..	
+execution(* pkg1.A.m1(..)) or execution(* pkg1.B.m2(..))	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

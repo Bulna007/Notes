@@ -1,0 +1,244 @@
+Primitive Injection in Stereotype Annotation approach
+------------------------------------------------------
+
+// source code
+@PropertySource("classpath:values.properties")
+@Component
+class Address {
+	@Value("${streetAddress}")
+	String streetAddress;
+	@Value("${city}")
+	String city;
+	@Value("${state}")
+	String state;
+	@Value("${zip}")
+	int zip;
+	@Value("${country}")
+	String country;
+	
+	// toString()
+}
+
+values.properties
+------------------
+streetAddress=clock street
+city=hyderabad
+state=telangana
+zip=39483
+country=India
+
+Test.java
+----------
+ApplicationContext context = new AnnotationConfigApplicationContext("com.stereotypepi.annotation");
+Address address = context.getBean("address", Address.class);
+sop(address);
+--------------------------------------------------------------------------------------------------------------------------------------
+Primitive Injection in java configuration approach
+
+// no source code
+class Passport {
+	int passportNo;
+	String passportHolderName;
+	int age;
+	String gender;
+	
+	// toString()	
+}
+	
+@Configuration
+@PropertySource("classpath:values.properties")
+class JavaConfig {
+	@Autowired
+	private Environment env;
+	
+	# approach#1
+	@Bean
+	public Passport passport() {
+		Passport passport = new Passport();
+		passport.setPassportNo(Integer.parseInt(env.getProperty("passportNo")));
+		passport.setPassportHolderName(env.getProperty("passportHolderName"));
+		passport.setAge(env.getProperty("age"));
+		passport.setGender(env.getProperty("gender"));
+		
+		return passport;
+	}	
+	
+	#approach #2
+	@Bean
+	public Passport passport1(@Value("${passportNo}") int passportNo,@Value("passportHolderName") String passportHolderName, 
+														@Value("${age}") int age, @Value("${gender}") String gender) {
+		Passport passport = new Passport();
+		passport.setPassportNo(passportNo);
+		passport.setPassportHolderName(passportHolderName);
+		passport.setAge(age);
+		passport.setGender(gender);
+		return passport;
+	}
+	
+	
+}
+
+values.properties
+-----------------
+passportNo=1
+passportHolderName=Stephen
+age=20
+gender=Male
+
+Test.java
+---------
+ApplicationContext context = new AnnotationConfigApplicationContext(JavaConfig.class);
+Passport passport = context.getBean("passport", Passport.class);
+sop(passport);
+--------------------------------------------------------------------------------------------------------------------------------------
+	
+// no source code	
+class Stereo {
+	public void play() {
+		sop("playing record...");
+	}
+}	
+
+	
+@Configuration
+class JavaConfig {
+	
+	@Lazy
+	@Scope("prototype")
+	@Bean(name={"mystereo", "sonystereo"})
+	public Stereo stereo() {
+		Stereo stereo = new Stereo();
+		return stereo;
+	}
+}	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

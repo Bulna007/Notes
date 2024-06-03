@@ -1,0 +1,189 @@
+How to setup a spring boot project by using gradle build tool?
+Gradle is an another build tool, that is evolved as an alternate to maven and can be used for building any jvm based languages unlike maven. Languages like
+1. Kotlin
+2. Groovy
+3. Andriod
+4. Scala
+5. Java
+etc
+
+In gradle
+1. gradle has provided standardized directory structure for each type of project, that we need to follow in setting up the project. But it is optional and can be customized very easily unlike maven
+2. Incase of maven, it has defined standard build lifecycle with predefined phases and plugin/goals associated, that are applied in build any project. But incase of Gradle, the build activities that are applied in building the project would different from project type to another, so gradle has defined plugins for this.
+	
+The plugins in maven or completely different from Gradle.
+In Maven: A plugin is an basic building block that represents an task or an operation aspart of the build process
+In Gradle:
+An operation or a build activity is represented by an Gradle task. There are lot of pre-defined tasks are provided by Gradle
+Plugin:
+A Plugin represents conventions and tasks that needs to be applied in building a specific type of project.
+	
+For eg.. if we want to build java project we need to apply java plugin, so that
+1. standardized java project directory structure (convention) we need to follow in creating the project
+2. all the tasks that are required for building an java project like clean, compile, package, execute etc are applied by the plugin to our project.
+	
+Incase of gradle we need to write build.gradle is an buildscript file in which we need to define
+1. plugins
+2. dependencies
+3. repositories
+using which we need to build the project
+
+1. setup an java application project using gradle as below
+	1.1 create an empty project directory, for eg. bootgradle
+	
+2. goto the directory location within the command-prompt and run 
+gradle init
+upon running the gradle init, it prompts for series of questions as below.
+	
+2.1 Choose the Type of Application:
+1. Basic
+2. Application
+3. Library
+4. Plugin
+
+Choose: 2
+	
+2.3 Language
+  1: C++
+  2: Groovy
+  3: Java
+  4: Kotlin
+  5: Scala
+  6: Swift
+	
+choose: 3
+	
+Split functionality across multiple subprojects?:
+  1: no - only one application project
+  2: yes - application and library projects
+Enter selection (default: no - only one application project) [1..2] 1
+
+Select build script DSL:
+  1: Groovy
+  2: Kotlin
+Enter selection (default: Groovy) [1..2] 1
+
+Generate build using new APIs and behavior (some features may change in the next minor release)? (default: no) [yes, no]
+
+Select test framework:
+  1: JUnit 4
+  2: TestNG
+  3: Spock
+  4: JUnit Jupiter
+Enter selection (default: JUnit Jupiter) [1..4] 4	
+
+#2. upon creating the project the directory structure looks as below
+
+bootgradle
+|-app
+	|-src
+		|-main
+			|-java
+			|-resources
+		|-test
+			|-java
+			|-resources
+	|-build.gradle
+|-settings.gradle
+
+"app" is an application module that is added into the project in which we need to write our project sourcecode.
+		
+#3. Goto the build.gradle and add the below plugins and dependencies
+
+3.1 under plugins {} clouser add boot plugin, so that boot conventions and boot tasks will be applied to the project
+plugins {
+	id 'application'
+	id 'org.springframework.boot' version '3.1.5'
+}
+
+apply plugin: 'io.spring.dependency-management'
+	
+3.2 add starter dependencies under dependencies clouser
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter:3.1.5'
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = 'com.bootgradle.BootGradleApplication' #main application classname
+}
+
+This finishes setting up springboot project using gradle and we can continue working on the sourcecode of the application.
+	
+How to run the project?
+goto the root of the project directory under the terminal/command-prompt and run the below command
+
+gradle bootRun
+gradle clean build = will clean and compile the project
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

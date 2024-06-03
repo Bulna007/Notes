@@ -1,0 +1,224 @@
+How to package and distribute an java application with dependent libraries to the enduser?
+There are several ways to do that:
+
+1. distribute them as a directory 
+place the application jar and all the dependent jars of our application in one application directory. set the Class-Path attribute in the manifest.mf pointing to all the dependent jars of our application relative from app directory along with Main-Class and distribute it.
+	
+We always wanted to distribute our application by packaging into single packaged file,	but in the above case we cannot package our application into single packaged file so that we are back to the original problem of distributing an directory.
+	
+2. fat/uber jar
+package the application classes and the dependent jar classes into one single jar which is called "one-big jar" or "fat/uber jar" and distribute it to the enduser. For this we need to unpack all the dependent jars and repackage them into one single jar along with our application classes together.
+	
+dis-advantages:-
+1. identifying what are the dependent jars and their versions being used in our application is not possible
+2. It takes lot of time in packaging our application binaries since all the depenent jars needs to be unpacked and should be packaged into one single jar
+3. everytime when we want to change an dependent jar or its versions we need to bundle and redistribute the whole application
+
+The java platform has not provided any mechanism to package and distribute an java application along with dependent libraries as executable jar. 
+	
+To overcome the above problems, the spring boot has introduced boot executable jar packaging. 
+The spring boot team has come up with #2 aspects in building an boot executable jar as below:
+1. customized directory layout for the boot executable jar
+2. spring boot custom classloaders to support loading the classes based on the directory structure of boot executable jar.
+	
+#1. customized directory structure/layout of an boot executable jar
+unlike the fat or shadded or uber jar, wherein we unpack and repack all the classes into one-single jar, in boot executable jar the dependent jar files are packaged inside the application jar itself. For this spring boot has defined a different directory structure of the jar to place dependent jars along with our application classes inside it.
+	
+bootexecutable.jar
+|-META-INF
+	|-manifest.mf
+		|-Main-Class: org.springframework.boot.loader.JarLauncher
+		|-Start-Class: fqnMainClass (our application main class)
+|-org
+	|-springframework
+		|-boot
+			|-loader
+				|-Launcher.class
+				|-JarLauncher.class
+				|-WarLauncher.class
+|-BOOT-INF
+  |-classes
+		|-*.class (our application .class files are placed)
+	|-lib
+	  |-*.jar (dependent jars of our application are placed)
+			
+				
+#2. custom classloaders
+java standard classloaders dont support loading the .class files of a jar embedded inside another jar. The can only support loading the .class files of an Jar itself. To support loading the classes based on the boot executable jar directory structure and even load the .class files of a jar inside the embedded jar, the spring boot team has introduced custom classloaders of their own.
+	
+classloaders = Classloaders are the java classes, that are used for loading the bytecode of a .class file into the jvm memory.
+	
+The abstract base classloader of all the boot classloaders is
+1. Launcher.class
+From which 2 more child classloaders are derived
+2. JarLauncher.class
+3. WarLauncher.class
+	
+depends on the packaging type of our application one of these classloaders will be used for loading the classes of our application into jvm memory.
+	
+These classloaders are the java classes, that contains main() method inside them and equipped with logic for loading the application classes based on custom directory structure.
+	
+How does the spring boot executable jar works?
+since it is an executable jar we can launch the application directly using java -jar jarName.jar, upon launching the application, the jvm standard classloader picks loads all the .class files that are directly placed within the application jar. In this case all the spring loader classes are loaded into the jvm memory, then it picks the Main-Class: attribute from manifest.mf and invokes the main() method on that class.
+	
+since JarClassLoader is a custom classloader provided by spring boot with main method, the java standard classloader invokes its main() method. The JarClassLoader upon calling will loads all the classes under BOOT-INF/classes and all the .class files inside the embedded jars of BOOT-INF/lib directory into jvm memory.
+Then invokes the Start-Class: specified class in the manifest.mf, thus by launching our application.
+	
+	
+Based on the boot executable jar directory structure defined by spring boot team, the developers has to manually package their application and distribute it. Then we can distribute our java application as an single packaged distribution file with dependencies.
+The standard jar utility provided by java doesnt support packaging the application based on boot executable jar, so developer has to manually package the application into boot executable jar directory structure and it is an very difficult job
+	
+To overcome the above problem, the spring boot team has provided spring-boot-maven-plugin. 
+Maven plugin: A plugin in maven is the basic building block, that performs an action or an operation aspart of the build process. Every plugin has goals
+	
+spring-boot-maven-plugin: performs an action/operation which is packaging the application as an boot executable jar. The spring boot maven plugin has a goal "repackage"
+	
+Now within our application we need to configure spring-boot-maven-plugin to be executed by associating it to an phase of the build lifecycle. Here incase of boot plugin we associate it to package phase with goal repackage
+	
+if we are creating our spring boot project by declaring the parent as spring-boot-starter-parent we dont need to configure the boot-maven-plugin with phase/goals as those are already defined in parent. we just only need to declare the plugin to be used in our application.
+	
+	
+How does the spring-boot-maven-plugin works?
+When we run the maven build, during the package phase after maven-jar-plugin has packaged the application into jar file, the spring-boot-maven-plugin repackage goal will be invoked by the maven system.
+Now the spring-boot-maven-plugin renames the application.jar files into application.jar.original file and the creates an boot executable jar as below
+1. goes to the pom.xml and identifies all the dependencies of our application and creates BOOT-INF/lib directory and places all these dependent jars inside it
+2. takes the classes/ from target directory and places them in BOOT-INF/classes
+3. then adds the springboot classloaders into the boot jar file directly
+4. adds the META-INF/manifest.mf with Main-Class as one of the boot custom classloader either JarLauncher or WarLauncher based on packaging type of our application in pom.xml
+5. picks up the Main class of our application based on @SpringBootApplication annotation and writes it as a Start-Class and packages into the boot jar and creates it
+
+Now we can directly run the boot executable jar application using java -jar jarName.jar
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

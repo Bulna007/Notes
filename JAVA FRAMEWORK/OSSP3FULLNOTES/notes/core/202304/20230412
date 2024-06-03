@@ -1,0 +1,116 @@
+How many ways are there in working with bean lifecycle?
+There are 3 ways are there
+1. configuration approach
+2. programmatic approach
+3. annotation-driven approach (later)
+	
+class Calculator implements InitializingBean, DisposableBean {
+	int i;
+	int j;
+	int sum;
+	
+	public Calculator(int i) {
+		this.i = i;
+	}
+	public void setJ(int j) {
+		this.j = j;
+	}
+	
+	public void afterPropertiesSet() {
+		this.sum = this.i + this.j;
+	}
+	
+	public void destroy() {
+		this.i = 0;
+		this.j = 0;
+	}
+	public void init() {}
+	public void release() {}
+	
+}	
+
+application-context.xml
+-----------------------
+<bean id="calculator1" class="Calculator" c:i="10" p:j="20" init-method="init" destroy-method="release"/>
+
+
+what is a bean definition?
+A class configured with values, using which we want ioc container to instantiate the object
+
+why do we need to create multiple bean definitions?
+if we want to instantiate the objects of the class with different values, then only configure multiple bean definitions
+
+
+class Test {
+	public static void main(String[] args) {
+		BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("application-context.xml"));
+		Calculator calculator = beanFactory.getBean("calculator", Calculator.class);
+		sop(calculator);
+	}
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+Lookup Method Injection
+
+class A {
+	B b;
+	void setB(B b) {}
+}
+
+class B {
+	int i;
+	public B(int i) {}
+}
+
+application-context.xml
+-----------------------
+<bean id="b" class="B" c:i="10" scope="prototype"/> 
+#if the object of the class holds state, and the state is non-sharable we should declare the class as non-singleton (prototype)
+
+<bean id="a" class="A" p:b-ref="b"/>
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("application-context.xml"));
+A a1 = beanFactory.getBean("a", A.class);
+A a2 = beanFactory.getBean("a", A.class);
+
+is this the right way of managing the dependencies?
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

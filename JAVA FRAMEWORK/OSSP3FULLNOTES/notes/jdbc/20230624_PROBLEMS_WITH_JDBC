@@ -1,0 +1,184 @@
+Spring Jdbc
+-----------
+Spring Jdbc is an module provided by Spring Framework Team to build database applications using the Spring. There are several dis-advantages/problems in using java jdbc api to eliminate them the Spring Jdbc module has been introduced.
+	
+Problems with Java jdbc:
+1. java jdbc is an api, apis will not provide boiler-plate logic the programmer has to endup in writing the boilter-plate logic in building the application which results in writing huge number of lines of code that makes us run into maintainability problems
+
+2. managing the resources is very difficult while working with java jdbc
+The programmer has to write the code in creating the resources like Connection, Statement and ResultSet, similarly along with creating the program has to write the code for closing the resources
+
+How better we wrote the code, always we run into resource leakage issues while working with java jdbc. Excessive care must be taken care while closing the resources and should be closed in specific order. The code we write in managing the resources is complex and very huge.
+	
+3. All the exceptions in java jdbc are checked exceptions due to which we need to always sourround the code within annoying try/catch blocks while working with java jdbc
+
+What is an exception?
+Sometimes a program during execution might run into an error and terminate by itself. The possible chance of failure could be either the 
+1. logical error = due to the poor implementation of application logic, the program might run into error
+2. resource error = due to the in-availability of the resources, the program might fail during execution
+whatever the error has been encoutered, the program would result in terminating by itself.
+	
+Instead of the program terminate by itself, if it can let the program know the reason for the failure, then there is a chance of the developer to inspect the failure and modify the program, so that the program becomes robust during execution. That is where to help the developers identify/understand the failure information java has introduced exceptions.
+	
+During the execution, if program has ran into an error, the jvm will capture the information about the failure and wraps into an object called "Exception" that holds program stack details like program name, methodName, line number etc along with error and reports to the programmer, so that the programmer can inspect the failure and fix the program.
+	
+Exception: In-Short exception is an object wrapped with failure information of a program along with program execution stack details
+
+Java has provided an base exception class "Throwable" that is used for reporting the error information that has encountered while the program is under execution.
+
+
+What is exception handling?
+By using the exceptions one can see the failure information, but eventually when a failure occurs the program will be terminated. But for every failure/error we dont need to terminate the program, to help us in recovering out of the failure java has introduced exception handling. 
+	
+Exception Handling is a mechanism through which we can recover a program out of failure by providing alternate path of execution interms of writing try/catch block
+
+To help the jvm differentiate between the actual code that has to be executed and alternate path of code that needs to be executed only in the event of failure, the java has introduced try/catch constructs
+
+try {
+	// original code
+}catch(Exception e) {
+	// alternate path of code
+}
+// other lines of code
+
+by default the jvm executes the code that is written in try block, incase if there is an error during the execution of the code in try-block, the jvm captures that error interms of exception and throws it, so that the code within the catch-block begins execution as an alternate path of code.
+	
+once the catch block finishes the execute, the code continues to execute without terminating the program, which is called "exception handling".
+	
+But every error may not be recoverable, upon encountering few types of errors, the program needs to be terminated, but for few types of errors we can provide alternate path of execution by writing catch block and could continue to execute the program normally. So to differentiate the errors between recoverable and non-recoverable java has introduced #2 types of exceptions which are
+
+1. checked exceptions = checked exceptions are the exceptions for which the program can provide alternate path of code in recovering the program from the failure.
+	
+All the checked exceptions in java are decended from Exception class for whom the parent is Throwable
+	
+2. un-checked exceptions = unchecked exceptions are typically used for reporting the errors, that are not-recoverable most of the time. upon encountering these exceptions programmer may not be able to provider alternate path of code in continuing the execution of the program.
+	
+Both of these exceptions arises only at runtime, because exception is about reporting/represeting failure information of a program during execution
+
+For all the un-checked exceptions the parent is RuntimeException for whom the parent is Throwable
+
+          Throwable
+					    |
+   --------------------------
+	 |                        |
+Exception             RuntimeException
+(all the childs of    (all the childs of this are un-checked)
+of this are 
+checked (recoverable) 
+exceptions)
+
+
+
+class AccountService {
+	public double getBalance(String accountNo) {
+		// select * from account where account_no = ?
+		if(rs.next()) {
+			double balance  = rs.getFloat("balance");
+			return balance;
+		} else { // failure anticipation
+			throw new AccountNotFoundException("no account found with given accountno");		// recoverable (checked exception)
+		}
+		
+		return 0;
+	}
+}
+
+class AccountStatement {
+	public void showBalance(String accountNo) {
+			AccountService accountService = new AccountService();
+			double balance = accountService.getBalance(accountNo);
+			sop(balance);				
+	}
+}
+
+javac AccountStatement.java = write try/catch block
+
+
+
+
+double balance = as.getBalance("a001");
+
+a return value returned by a method is considered as successful execution
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,236 @@
+account (table)
+account_no
+account_holder_nm
+account_type
+ifsc_code
+balance
+
+#1 entity class
+1.1 the entity class must and should have a default constructor
+1.2 for all the attributes defined, we need to have accessor methods
+1.3 it is recommended to write the entity class by implementing from Serializable interface
+1.4 it is recommended to override equals() and hashCode() for every entity class
+	
+class Account implements Serializable {
+	private int accountNo;
+	private String accountHolderName;
+	private String accountType;
+	private String ifscCode;
+	private double balance;
+	// accessor
+	// equals() and hashCode()
+}	
+
+#2. hibernate mapping file
+few things to be considered while writing the mapping file
+1. The mapping file should be written with the same name as the className
+2. it should be placed within the same package of the entity class
+3. it is recommended to write the name of the mappingFile with extension .hbm.xml to differentiate the other xml files from mapping xml file used by hibernate
+
+Account.hbm.xml
+---------------
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping SYSTEM "location.dtd">
+<hibernate-mapping>
+	<class name="com.feh.entities.Account" table="account">
+		<id name="accountNo" column="account_no"/>
+		<property name="accountHolderName" column="account_holder_nm"/>
+		<property name="accountType" column="account_type"/>
+		<property name="ifscCode" column="ifsc_code"/>
+		<property name="balance" column="balance"/>
+	</class>
+</hibernate-mapping>
+
+
+#3. hibernate configuration file
+hibernate configuration holds the information about the database along with all the entity class mappingFiles listed here indicating these are all the entity class that should be managed by hibernate
+Few things to be memorized while writing the hibernate configuration file
+1. The hibernate configuration file should be written with the name as hibernate.cfg.xml only and here the .cfg.xml indicates its an configuration file
+2. The hibernate configuration file should be placed directly under the classpath of the project only (/resources directory)
+	
+hibernate.cfg.xml
+-----------------
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM "location.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/hibdb</property>
+		<property name="hibernate.connection.username">root</property>
+		<property name="hibernate.connection.password">welcome1</property>
+		
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+		<property name="hibernate.show_sql">true</property>
+		
+		<mapping file="com/feh/entities/Account.hbm.xml"/>		
+		<mapping file="com/feh/entities/Branch.hbm.xml"/>		
+	</session-factory>
+</hibernate-configuration>
+	
+1 record of data from the database table
+
+class AccountAccessor {
+	Account findAccount(int accountNo) {
+		Connection con = ConnectionManager.newConnection();
+		PreparedStatement psmt = con.preparedStatement("select * from account where account_no = ?");
+		pstmt.setInt(1, accountNo);
+		ResultSet rs = pstmt.executeQuery();
+		if(rs.next()) {
+			Branch entityObject = (Branch) genericMapper.mapResultSetRecordToObject(rs, Branch.class);
+		}
+		return account;
+	}
+}
+
+class BranchAccessor {
+	Branch findBranch(int branchNo) {
+		Connection con = ConnectionManager.newConnection();
+		PreparedStatement psmt = con.preparedStatement("select * from branch where branch_no = ?");
+		pstmt.setInt(1, accountNo);
+		ResultSet rs = pstmt.executeQuery();
+		if(rs.next()) {
+			Branch entityObject = (Branch) genericMapper.mapResultSetRecordToObject(rs, Branch.class);
+		}
+		return branch;
+	}
+}
+
+// hibernate framework
+class Session {
+	Connection con;
+	
+	public T get(Object id, Class<T> entityClass) {
+		// for the entity class, it identifies the mapping information by searching through list of mappingFiles we configured in hibernate.cfg.xml
+		// after identifying the mapping information, the session needs sql query for fetching the record of data
+		// it goes to dialect and passes the mapping information of the entity class asking him to generate the sql query
+		PreparedStatement pstmt = con.preparedStatement(sql);
+		ResultSet rs = pstmt.setInt(1, id);
+		if(rs.next()) {
+			Object entityObject = genericMapper.mapResultSetRecordToObject(rs, entityClass);
+		}
+		return entityObject;
+	}
+	
+}
+
+session.get(1, Account.class);
+session.get(1, Branch.class);
+
+class Test {
+	public static void main(String[] args) {
+		Configuration configuration = new Configuration().configure(); // hibernate.cfg.xml
+		SessionFactory sessionFactory = configuration.buildSessionFactory();
+		Session session = sessionFactory.openSession();
+		
+		Account account = session.get(1, Account.class);
+		Branch branch = session.get(10, Branch.class);
+		
+		session.close();
+		sessionFactory.close();
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

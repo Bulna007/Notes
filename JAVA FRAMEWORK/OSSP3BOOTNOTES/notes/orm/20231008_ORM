@@ -1,0 +1,76 @@
+Spring ORM
+----------
+Spring ORM is an module that is provided by spring framework in integrating spring with ORM technology frameworks like Hibernate or Jpa etc
+While working with ORM technologies like Hibernate/Jpa api even though those are frameworks we need to still write considerable amount of code which seems to be boiler-plate logic in managing the jpa/hibernate components as below.
+
+1. per one database we need to create on object of EntityManagerFactory/SessionFactory
+programmer has to write the logic for managing to create only one object of EntityManagerFactory or SessionFactory in our application.
+	
+2. Session/EntityManager
+Per each operation, we need to write the code for creating the object of Session and closing the Session object at the end of the operation.
+	
+3. We need to write Transaction management logic in begin, commit or rollback the transaction across all the service classes and methods in our application
+	
+Instead of we writing the boiler-plate logic in performing the persistence operations using jpa/hibernate, spring has provided ORM module.
+	
+Spring ORM has provided integration with both
+1. hibernate
+2. jpa
+but spring with hibernate integration has been deprecated and right now we have only spring + jpa intergation is available
+
+How to integrate spring with jpa api?
+1. Spring ORM has provided an class called JpaTemplate that has relevant methods for performing persistence operations 
+	1.1 persist
+	1.2 merge
+	1.3 find
+	1.4 remove
+	etc
+
+JpaTemplate internally talks to the Jpa api classes like EntityManager in performing the persistence operation.
+	
+jpaTemplate.persist(object);
+
+persistence.xml
+<persistence-unit name="">
+</persistence-unit>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

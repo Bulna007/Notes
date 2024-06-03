@@ -1,0 +1,185 @@
+How to customize the maven build tool?
+1. during the first build of the project on a machine, maven by default	creates the local maven repository at $USER_HOME/.m2 directory 
+2. always maven by default goes to maven central repository to download the dependencies if those are not available in local maven repository for building the application
+
+how can we change the local maven repository location and how do we specify the remote repository from which the maven should lookup for dependencies instead of always from maven central repository?
+This is what customizing the maven build tool. The default behavior of the maven can be changed by creating an settings.xml under $USER_HOME/m2/settings.xml in which we can write configuration customizing the default behaviour of the maven.
+	
+$USER_HOME/.m2/
+	|-settings.xml
+	
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <localRepository/>
+  <interactiveMode/>
+  <offline/>
+  <pluginGroups/>
+  <servers/>
+  <mirrors/>
+  <proxies/>
+  <profiles/>
+  <activeProfiles/>
+</settings>
+
+
+1. <localRepository> = here we can specify a different directoryLocation than the default $USER_HOME/.m2/ to be used as local maven repository.
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <localRepository>d:/local/.m2/</localRepository>
+</settings>
+
+2. interactiveMode = possible are true/false. the maven cli commands would by default prompts for user inputs for few actions like create an project out of an archetype etc. if we want to turn of the user inputs while running these commands we can use interactiveMode=false
+	
+3. offline = true/false indicates whether to reach the maven central or remote repository or not during the builds
+
+4. proxies = used for configuring the proxy servers in an office/corporate network environment
+<proxies>
+	<proxy>
+		<id>myproxy</id>
+		<active>true</active>
+		<protocol>http</protocol>
+		<host>proxy.somewhere.com</host>
+		<port>8080</port>
+		<username>proxyuser</username>
+		<password>somepassword</password>
+		<nonProxyHosts>*.google.com|ibiblio.org</nonProxyHosts>
+	</proxy>
+</proxies>
+
+5. profiles
+profiles are used for configuring multiple profiles that can be switched easily when we are working in multiple different environments.
+
+<profiles>
+	<profile>
+		<id>office</id>
+		<activation>
+        <activeByDefault>false</activeByDefault>
+		</activation>
+		<repositories>
+        <repository>
+          <id>codehausSnapshots</id>
+          <name>Codehaus Snapshots</name>
+          <releases>
+            <enabled>false</enabled>
+            <updatePolicy>always</updatePolicy>
+            <checksumPolicy>warn</checksumPolicy>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+            <checksumPolicy>fail</checksumPolicy>
+          </snapshots>
+          <url>http://snapshots.maven.codehaus.org/maven2</url>
+          <layout>default</layout>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>myPluginRepo</id>
+          <name>My Plugins repo</name>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <url>https://maven-central-eu....com/maven2/</url>
+        </pluginRepository>
+      </pluginRepositories>
+	</profile>
+	<profile>
+		<id>home</id>
+		<activation>
+        <activeByDefault>false</activeByDefault>
+		</activation>
+	</profile>
+	<activeProfiles>
+    <activeProfile>office</activeProfile>
+  </activeProfiles>
+</profiles>
+--------------------------------------------------------------------------------------------------------------------------------------------
+Transitive dependencies
+-----------------------
+
+project
+|-src
+  |-main
+	  |-java
+		|-resources
+|-pom.xml
+  |-dependencies
+	  |-dependency: apache-poi:2.0.1
+
+
+apache-poi-2.0.1.jar
+apache-poi-2.0.1.pom
+|-groupId
+|-artifactId
+|-version
+|-dependencies (optional)
+  |-commons-beanutils-1.9.4.jar
+	|-commons-logging-1.2.jar
+	|-commons-io-2.15.0.jar
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

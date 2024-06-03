@@ -1,0 +1,98 @@
+How many ways of creating the ioc container are there?
+There are 2 ways of creating the ioc container are there
+1. BeanFactory
+2. ApplicationContext
+
+ApplicationContext = is an interface, that is a mirror of BeanFactory. For the ApplicationContext interface, there are multiple implementations are there similar to BeanFactory
+1. ClassPathXmlApplicationContext   = Xml configuration based ApplicationContext implementation looks for bean configuration file under classpath
+
+2. FileSystemXmlApplicationContext  = Xml configuration based ApplicationContext implementation looks for bean configuration file under from any directory location on the machine
+
+3. AnnotationConfigApplicationContext = instead of reading xml bean configuration, it reads the bean configuration from annotations
+
+application-context.xml
+-----------------------
+<bean id="truck" class="Truck"/>
+<bean id="tank" class="Tank"/>
+<bean id="toolbox" class="Toolbox"/>
+
+> ApplicationContext context = new ClasspathXmlApplicationContext("com/bpp/common/application-context.xml");
+
+
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/bpp/common/application-context.xml"));
+
+
+
+
+What is the difference between creating ioc container using BeanFactory vs ApplicationContext?
+                     BeanFactory                                       	       ApplicationContext
+--------------------------------------------------------------------------------------------------------------------------------------
+1. BeanFactory is an lazy initializer, at the time of creating  |1. ApplicationContext is an eager initializer at the time of 
+the ioc container, it only loads the bean configuration and     |creating the ioc container itself, along with loading the bean 
+places it as an in-memory metadata within the ioc container,    |configuration into the in-memory metadata, it instantiates the 
+but it will not instantiates the objects of the bean definitions|objects for the bean definition which are scoped to be "singleton".
+unless requested.                                               |
+	                                                              |
+Truck truck = beanFactory.getBean("truck", Truck.class);        | 
+then only the object for that bean definition will created      |
+
+There is a debate between The BeanFactory (lazy initialization)	vs ApplicationContext (eager initialization)
+From the above we can understand, BeanFactory since it instantiates the objects for the bean definitions only on-demand, there is an optimization in utilizing the jvm memory whereas incase of ApplicationContext, it instantiates objects for all the bean definitions we declared before their usage, there is an huge wastage of jvm memory. So we might assume BeanFactory is better than ApplicationContext
+
+But in reality ApplicationContext is more recommended to be used than BeanFactory let us try to understand
+1. Incase of BeanFactory, as the objects of the bean definitions are instantiated during runtime when we requested, there is always a chance that our application might run into runtime exception while creating the object of a bean definition (due to mis-configuration issues) and result in abnormal termination of the application, leaving the application in in-consistent state
+
+whereas In case of ApplicationContext, since all the objects for the BeanDefinitions are instantiated during the time of creating the ioc container (startup), there is no chance of running into runtime exceptions while creating the objects of the bean definitions due to mis-configuration issues in the middle of the application, thus making the application works smoothly
+
+In case if we have any Bean Definitions whose chances of using them in the application at runtime are very less, we can mark them to be delayed in instantiating even while using ApplicationContext by using an attribtue lazy="true" on the bean definition as below.
+	
+<bean id="tank" class="Tank" lazy="true"/>
+The above bean definition will be crated by the ApplicationContext only when requested
+
+2. BeanFactory doesnt support internationalization       | ApplicationContext supports internationalization
+3. BeanFactory doesnt support event processing/publishing| ApplicationContext supports event-handling/processing/publishing
+
+4. Incase of BeanFactory we need to manually register      | Incase of ApplicationContext, we just need to declare BeanPostProcessor 
+BeanFactoryPostProcessor and BeanPostProcessors to the ioc | and BeanFactoryPostProcessors as bean definitions, the ApplicationContext
+container                                                  | during the time of instantiating the bean definitions objects will first
+                                                             in-place identifies these class types and registers them with the ioc 
+BeanFactory beanFactory = new XmlBeanFactory                 container automatically. so we dont need to manually register them.
+         (new ClassPathResource("a-c.xml"));
+// manually
+BeanFactoryPostProcessor bfpp = beanFactory.getBean("bfpp");
+bfpp.postProccessBeanFactory(beanFactory);
+
+BeanPostProcessor bpp = beanFactory.getBean("bpp");
+beanFactory.addBeanPostProcessor(bpp);
+
+
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

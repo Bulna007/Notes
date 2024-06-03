@@ -1,0 +1,415 @@
+1. get vs load
+2. first-level cache
+3. id generators / composite primary keys
+4. hibernate tools
+5. dml operations / entity object lifecycle
+--------------------------------------------------------------------------------------------------------------------------------------
+get vs load
+
+How to query single object of data from the database using hibernate framework?
+To fetch an object of data from the database we need query the data against the primary key column of the table. Hibernate has provided to api methods aspart of Session class, for querying an object of data against the pk of the table which are 
+1. get(Class classType, Object id) and 
+2. load(Class classType, Object id)
+	
+class Passenger {
+	int passengerNo;
+	String fullname;
+	int age;
+	String gender;
+	String mobileNo;
+	String emailAddress;
+	
+	// accessors
+	// equals & hashCode
+	// toString
+}
+
+
+Passenger.hbm.xml
+-----------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.gl.entities">
+	<class name="Passenger" table="passenger">
+		<id name="passengerNo" column="passenger_no"/>
+		<property name="fullname"/>
+		<property name="age"/>
+		<property name="gender"/>
+		<property name="mobileNo" column="mobile_no"/>
+		<property name="emailAddress" column="email_address"/>
+	</class>
+</hibernate-mapping>
+
+hibernate.cfg.xml
+------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+		...
+		<property name="show_sql">true</property>
+		<mapping file="com/gl/entities/Passenger.hbm.xml"/>
+	</session-factory>
+</hibernate-configuration>
+
+
+Test.java
+----------
+Configuration configuration = new Configuration().configure();
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+Session session = sessionFactory.openSession();
+
+try {
+	Passenger passenger = session.get(Passenger.class, 1);
+	sop(passenger);
+	
+	Passenger passenger1 = session.load(Passenger.class, 1);
+	
+}finally {
+	// close session
+	// close sessionFactory
+}
+
+From the above we can see both get(Class, Object) and load(Class, Object) are used for querying an single object of data from database, then why 2 methods for the same purpose, what is the difference between them?
+	
+#get	
+The get(Class, Object) method supports eager loading, upon calling the get(Class, Object) for fetching an object from the database, it quickly goes to the database table, query for the data with the pk and populates the record of data into the corresponding entity object
+
+Passenger passenger = session.get(Passenger.class, 1); // goes to the database table based on mapping information query the record against primary key and returns object of data
+
+#load
+whereas when we use load(Class, Object), it supports lazy loading, upon calling the load(Class, Object) it never queries the data from the underlying data table rather it returns an proxy object ontop of the entity class by populating the primary key column value into the proxy.
+Passenger passenger = session.load(Passenger.class, 1); // it will not query the data from database, rather just creates an proxy object on Passenger class and returns the proxy object to us
+
+
+when we tried accessing the data using the proxy object, then the data will be fetched/queried from the database table and will be returned to us          (proxy)
+String passengerName = passenger.getPassengerName(); // then it goes to the database fetches the record of data and returns the value to us
+since the data is fetched only when requested, the load(Class, Object) is said to be supporting lazy loading
+
+
+What is proxy class, what is the purpose of it?
+Proxy is an design pattern. Proxies are surrogates or substitutes of the original class, they look alike as an original and provides the actual functionality of the original class without modifying or altering the original outcome.
+The client always thinks the proxy as original and works with proxy, where inturn proxy talks to the original in serving the actual functionality
+	
+Why do we need to use proxy?
+We wanted to add additional functionality ontop of the real/original class for eg.. security or caching. But implementing these additional functionalities directly on the original/real class is not recommended because:
+1. The additional functionality we wanted to add could be common and may have to apply across various classes within our application. implementing it directly on the original class will leads to duplication across all the classes
+2. different clients wants to apply different additional functionalities or for few clients they dont want to apply any additional functionality at all, insuch case adding the additional functionality directly within the class will impacts all the clients. So we need to create several implementation classes with different additional functionalities applied for different clients which leads to duplication of the functionality
+
+How to address the above problem?
+That is where proxy design pattern comes to rescue us
+
+class FundsTransferService {
+	public String neftTransfer(String fromAccount, String toAccount, double balance, String remarks) {
+		// business logic for transferring the funds
+		return txno;
+	}
+}
+
+In the above class we want to add additional functionality called security, instead of modifying the original/real class lets add the security through proxy class as below
+	
+class SecureFundsTransferService extends FundsTransferService {
+	private FundsTransferService fundsTransferService;
+	
+	public SecuredFundsTransferService() {
+		fundsTransferService = new FundsTransferService();
+	}
+	
+	public String neftTransfer(String fromAccount, String toAccount, double balance, String remarks) {
+		// check for security, if passed
+		String txno = fundsTransfer.neftTransfer(fromAccount, toAccount, balance, remarks);
+		return txno;
+	}	
+}
+
+class MobileApplication {
+	public static void main(String[] args) {
+		FundsTransferService fundsTransferService = new SecuredFundsTransferService();
+		String txNo = fundsTransferService.neftTransfer("frm1", "to1", 1000, "barrowings");
+	}
+}
+
+class NetbankingApplication {
+	public static void main(String[] args) {
+		FundsTransferService fundsTransferService = new FundsTransferService();
+		
+	}
+}
+
+Passenger passenger = session.load(Passenger.class, 1);
+upon calling the session.load(Class, Object), it internally creates an runtime proxy class within the jvm memory using jdkproxy libraries in which it wraps the logic for querying and fetching the data from the database. Let us try to imagine the proxy looks like as below
+Notes:
+1. always the proxy class object is created by the session.load(..) by populating the primary key column value into it, so that when we requested the data by calling the any accessor methods, it uses the pk value for querying the relevent record of data from table
+
+
+class Passenger$JDKProxy extends Passenger {
+	private Passenger passenger;
+	private boolean loaded;
+	
+	// always proxy are created by populating the primary key column value
+	public Passenger$JDKProxy(Object pk) {
+		passenger = new Passenger();
+		passenger.setPassengerNo(pk);
+		loaded = false;
+	}
+	
+	public String getPassengerName() {
+		loadData();	
+		return passenger.getPassengerName();
+	}
+	public int getAge() {
+		loadData();
+		return passenger.getAge();
+	}
+	public void setPassengerName(String passengerName) {
+		loadData();
+		passenger.setPassengerName(passengerName);
+	}
+	public void setAge(int age) {
+		loadData();
+		passenger.setAge(age);
+	}	
+	private void loadData() {
+		if(!loaded) {
+			// goes to the database queries the passenger table with passenger.passengerNo and fetches the record of data
+			populates the data into passenger attribute
+			loaded = true;
+		}	
+	}	
+}
+
+Passenger proxy = session.load(Passenger.class, 1);
+proxy.getPassengerName(); = it goes to database and fetches the passengerName
+proxy.getAge(); 
+
+What is the difference between get(..) and the load(..)?
+1.
+session.get(Class, Object) supports eager loading, it always goes to the underlying database, queries/fetches the data and populates into entity object and returns
+
+session.load(Class, Object) supports lazy loading, it will not by default goes to the database in querying the data, rather it creates an runtime proxy object ontop of the original class wrapping primary key value inside it and returns the proxy object.
+The proxy class object contains logic for fetching the data from the database. So upon calling any of the accessor methods other than pk attribute, it goes to the database queries and fetches the data and returns to us
+
+2. 
+session.get(Class, Object): when we call Session.get(Class, Object id), if the corresponding record of data with the primary key value is not found, the get(..) returns null
+	
+	Passenger passenger = session.get(Passenger.class, 1);
+if there is no record with passengerNo = 1 exists in the database, then the get(..) methods returns null
+	
+session.load(Class, Object): since the load(..) will never goes to the database by default, in querying the data, it dont know whether a record exist in the database or not. it always returns proxy of the entity object populated with primary key value.
+
+so when we tried accessing the data by calling the accessor method on the entity object, then the proxy throws an exception ObjectNotFoundException if the corresponding record doesnt exist
+
+Passenger passenger = session.load(Passenger.class, 1);
+if the record with passenger_no =1 doesnt exist also still the load(..) method returns the proxy class object only
+	
+but when we tried accessing the data using the proxy by calling the accessor methods like
+	passenger.getPassengerName(); then it throws the ObjectNotFoundException
+	
+	
+why does the accessor methods of the proxy are throwing an exception, when the corresponding record doesnt exists, why can they return null?
+if the accessor method is returning null incase of the record doesnt exists, we cannot differentiate whether the column value of the record is null or the underlying record doesnt exists, so incase of record doesnt exists it throws exception indicating the same.
+	
+3. 
+get(Class, Object) always works as eager loading only whereas load(Class, Object) by default works as lazy loading but we can turnoff the lazy loading incase of load and can make it work as get(..) itself by using lazy=false on entity class mapping
+	
+	<class name="Passenger" table="passenger" lazy="false">
+		<id name="passengerNo" column="passenger_no"/>
+	</class>
+	
+4. 
+get(Class, Object) always works as eager loading only irrespective of the class is final or non-final
+where as in case of load(Class, Object), if the entity class is final, it cannot create an proxy on the entity class so automatically it works as get(..) itself and returns the original entity class by pre-populating the data
+
+		
+final class Passenger implements Serializable {
+	int passengerNo;
+	String passengerName;
+	int age;
+	String gender;
+	// accessor
+}		
+
+<hibernate-mapping package="com.gl.entities">
+	<class name="Passenger" table="passenger">
+		<id name="passengerNo" column="passenger_no"/>
+		<property name="passengerName" column="passenger_nm"/>
+		...
+	</class>
+</hibernate-mapping>
+
+
+Passenger passenger = session.load(Passenger.class, 1); // returns proxy object
+
+incase of the entity class is final as well, we can still make it work as lazy loading by proxying the entity class through interface
+	
+interface IPassenger {
+	int getPassengerNo();
+	void setPassengerNo(int passengerNo);
+	String getPassengerName();
+	void setPassengerName(String passengerName);
+	int getAge();
+	void setAge(int age);
+}	
+
+final class Passenger implements IPassenger {
+	int passengerNo;
+	String passengerName;
+	int age;
+	String gender;
+	// override accessor methods
+}
+
+<hibernate-mapping package="com.gl.entities">
+	<class name="Passenger" table="passenger" proxied="IPassenger">
+		<id name="passengerNo" column="passenger_no"/>
+		<property name="passengerName" column="passenger_nm"/>
+		...
+	</class>
+</hibernate-mapping>
+
+IPassenger passenger = session.load(IPassenger.class, 1);
+now session.load(..) creates the proxy ontop of the interface, rather than the entity class, thus supports lazy loading
+
+5. 
+always while using the load(Class, Object), it is recommended to sourround the code around try/catch block to avoid running into runtime exception and terminates the application in case the underlying record doesnt exist.
+	
+if we are sure about the underlying record exists in the database we can use it directly or else adviced to place the code in try catch block to avoid exception
+try {
+	proxy  = session.load(Class, object id);
+	proxy.get...(); // throws exception and terminates the application
+
+}catch(ObjectNotFoundException e) {
+	// handle it
+}
+
+
+object = session.get(Class, Object id);
+if(object == null) {
+	// do this
+}else {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

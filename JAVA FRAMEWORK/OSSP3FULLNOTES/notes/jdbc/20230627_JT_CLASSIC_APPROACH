@@ -1,0 +1,123 @@
+1. JdbcTemplate approach
+There are 2 approaches are there inturn while working with JdbcTemplate
+1.1 Classic Approach = resembles the java jdbc api programming
+1.2 Query-based Approach = it is the modern way of working with spring jdbc in performing database operations, here we completely eliminate boiler-plate logic
+
+irrespective of any of these approaches there is some common/infrastructure code we need to write in every spring jdbc application as below.
+	
+class StudentDao {
+	private JdbcTemplate jdbcTemplate;
+	
+	public StudentDao(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
+	
+}	
+
+JdbcTemplate inorder to perform the database operation, it requires Connection as an input. So we need to configure DataSource object with database information and inject it as an input to the JdbcTemplate, so that JdbcTemplate can grab the Connection from the DataSource whenever needed to perform operation
+
+javax.sql.DataSource = A DataSource object represents a pool of Connections to a specific database. is an interface provided aspart of jee api. The JEE Application Servers (like weblogic, websphere, Glassfish Server etc) has provided implementations for the DataSource interface.
+	
+Looks like to work with Spring jdbc we need Application Server support, since the DataSource implementation is provided aspart of the ApplicationServer. But there are third-party standalone implementations are also available for DataSource interface like
+	
+1. Proxool
+2. Dbcp
+3. Hikari
+4. C3P0
+etc
+
+These vendors has provided their own implementations for the DataSource interface, that can be directly used and configured for our application.
+	
+Additionally Spring Jdbc also has provided their own implementation of DataSource interface which is "DriverManagerDataSource", that can be directly configured to be used as an DataSource implementation object in our application
+
+Note: DriverManagerDataSource is not an fully implemented DataSource Connection Pool and should be used only for development purpose only.
+	
+application-context.xml
+-----------------------
+
+<bean id="dataSource" class="DriverManagerDataSource">
+	<property name="driverClassname" value="com.mysql.cj.jdbc.Driver"/>
+	<property name="url" value="jdbc:mysql://localhost:3306/sdb"/>
+	<property name="username" value="root"/>
+	<property name="password" value="welcome1"/>
+</bean>
+
+<bean id="jdbcTemplate" class="JdbcTemplate">
+	<property name="dataSource" ref="dataSource"/>
+</bean>
+
+<bean id="studentDao" class="StudentDao">
+	<constructor-arg ref="jdbcTemplate"/>
+</bean>
+
+1. Classic Approach
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

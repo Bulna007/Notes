@@ -1,0 +1,196 @@
+Pointcut
+--------
+Pointcut is used for advicing the aspect on a specific set of joinpoints of the target class.
+	
+class Calculator {
+	int add(int a, int b) {
+		sop("in add()");
+		return a + b;
+	}
+	int substract(int a, int b) {
+		sop("in substract()");
+		return b-a;
+	}
+	int multiply(int a, int b) {
+		sop("in multiply()");
+		return a * b;
+	}
+}	
+
+class LoggingAdvice implements MethodInterceptor {
+	public Object invoke(MethodInvocation invocation) {
+		String methodName = null;
+		Object[] args = null;
+		
+		methodName = invocation.getMethod().getName();
+		args = invocation.getArguments();
+		if(methodName.equals("add") || methodName.equals("multiply")) {
+			sop("entered into " + methodName+"(" + args[0]+","+args[1]+")");
+			Object ret = invocation.proceed();		
+			sop("exiting from " + methodName + " with ret: "+ ret);	
+		}else {
+			ret = invocation.proceed();
+		}
+		
+		return ret;
+	}
+}
+
+Test.java
+----------
+ProxyFactory pf = new ProxyFactory();
+pf.setTarget(new Calculator());
+pf.addAdvice(new LoggingAdvice());
+
+Calculator proxy  = (Calculator) pf.getProxy();
+
+int sum = proxy.add(10, 20);
+int sub = proxy.substract(10, 20);
+
+
+In the above code, we are able to apply the cross-cutting logic on few of the joinpoints of the targetClass, by adding an conditional check in advice class without using pointcut, but this is not recommended because:
+1. here the aspect will be adviced on all the joinpoints of the targetClass irrespective of we want to apply the aspect or not
+2. for each call to the target class method, always the control enters into advice method, here we are making an additional conditional check for not to apply the aspect logic which is uncessary overhead and runs into performance problems
+
+instead of adding an conditional checks in the advice class, it is recommended to use Pointcuts that optimizes advicing the aspect logic on target Class
+There are 2 types of points are supported by spring aop
+1. static pointcut
+2. dynamic pointcut
+From the above we can easily understand pointcuts helps us in advicing the aspect logic on specific set of joinpoints of the targetClass.
+	
+1. static pointcut
+static pointcut is used for advicing the aspect over a fixed list of joinpoints of the target class.
+	
+spring aop has provided an base interface called
+interface Pointcut {}
+for which #2 abstract implementations and several concrete implementations are provided:
+1. StaticMethodMatcherPointcut
+2. DynamicMethodMatcherPointcut
+
+
+if we want to create an static pointcut, we need to write our class extending from StaticMethodMatcherPointcut and specify the list of joinpoints on whom we want to apply the aspect logic
+	
+	
+class LoggingStaticPointcut	extends StaticMethodMatcherPointcut {
+	public boolean matches(Method method, Class<?> classType) {
+		if(classType.isAssignableForm(Calculator.class)) {
+			if(method.getName().equals("add") || method.getName().equals("substract")) {
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+How does Weaving Process happens in AOP?
+Advisor = combines an advice with pointcut, indicating the advice should be applied based on this pointcut only. Now to ProxyFactory add advisor rather than advice directly.
+	
+ProxyFactory goes to each method of the Target class, and takes the method information and pass it as an input to Advisor asking whether the joinpoint should be adviced or not, if yes using which advice.
+The advisor invokes the Pointcut asking to evaluate and return true/false, based on that the proxyFactory advices the method aspart of the Proxy class
+	
+Advisor = interface for which we have an concreate implementation class	is provided by Spring Aop itself "DefaultPointcutAdvisor"
+	
+ProxyFactory pf = new ProxyFactory();
+pf.setTarget(new Calculator());
+pf.addAdvisor(new DefaultPointcutAdvisor(new LoggingAdvice(), new LoggingPointcut()));
+
+Calculator proxy = (Calculator) pf.getProxy();
+int sum = proxy.add(10, 20);
+
+Dynamic Pointcut
+In case of Dynamic pointcut, the aspect logic should be adviced or not will not be decided at the time of generating the proxy, rather it would be decided only at runtime while invoking the targetClass methods using proxy. because the pointcut we write is an dynamic pointcut that evaluates the method based on runtime parameters with which we invoke the targetClass method
+
+class LoggingDynamicMethodMatcherPointcut extends DynamicMethodMatcherPointcut {
+	public boolean matches(Method method, Object[] args, Object targetClass) {
+		boolean flag = false;
+		
+		if(targetClass.isAssignableForm(Calculator.class)) {
+			if(method.getName().equals("add") || method.getName().equals("substract")) {
+				if((Integer) args[0] > 100 && (Integer) args[1] > 100) {
+					flag = true;
+				}
+			}
+		}		
+		return flag;
+	}
+}
+
+	
+	
+	
+Sunday
+Spring Framework
+Morning: 8:00 am - 9:30 am
+Evening: 6:00 pm - 7:00 pm
+
+Saturday:
+Hibernate Framework: 7:00 pm - 8:00 pm [regular time]
+Devops: 6:00 pm - 7:00 pm
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

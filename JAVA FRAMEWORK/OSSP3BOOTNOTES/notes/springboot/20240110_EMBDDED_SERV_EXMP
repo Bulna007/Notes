@@ -1,0 +1,45 @@
+When we are developing spring boot webmvc application we need to add spring-boot-starter-webmvc as an dependency in our project. Upon adding webmvc boot starter as a dependency, it transitively adds the embedded servlet container into our project. By default the spring-boot-starter-webmvc pulls the embedded tomcat server as an transitive dependency and adds to our project.
+	
+We dont need to write any code for registering, deploying and running our application on the embedded servlet container, upon calling SpringApplication.run(BootApplication.class, args) it takes care of internally deploying and running our application on the embedded servlet	container.
+	
+Spring boot supports 4 embedded servlet containers currently
+1. tomcat (default)
+2. jetty
+3. undertow
+4. netty (reactive stack) (spring webflux)
+	
+Inorder to understand how does spring boot internally takes care of deploying and running the webmvc application on the servlet container, let us explore ourself in building an web application and running on the embedded servlet container out of a main method.
+	
+	
+Representing the context root of our application we need to create an StandardContext object in the tomcat server as below.
+Tomcat tomcat = new Tomcat(8080);
+StandardContext context = (StandardContext) tomcat.addWebApp("/travelgo", new File("src/main/webapp").getAbsolutePath());
+
+With this we added an WebApplication into the tomcat server register with the contextroot as "/travelgo", now to this application we need to define directory set of resources like ROOT directory, CLASSES dir etc
+
+WebResourceRoot directory = new StandardRoot(context);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

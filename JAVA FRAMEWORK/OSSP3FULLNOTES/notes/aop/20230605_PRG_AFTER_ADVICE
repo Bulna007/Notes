@@ -1,0 +1,82 @@
+AfterReturning Advice
+---------------------
+if we want to apply cross-cutting logic ontop of the target class method, upon target class method completed execution successfully, and after returning the returnValue, before the returnValue is returned to the Callee we can execute the cross cutting using AfterReturning Advice
+
+why do we want to apply the cross-cutting logic after completing the execution of target class method?
+the returnValue of the targetClass method acts as an input for my cross-cutting logic, so we need apply the cross-cutting after completing the execution only
+
+
+encryption key: algorithms
+RSA
+SHA
+MD5
+length: 8/16/32/64/128
+	
+assumption:
+>= 1 = strong key
+<= 0 = weak key
+the below program sometimes generates strong key other times weak key
+
+note: the advice method will be executed only when the target class method completed execution successfully and returning the returnValue.
+	
+class KeyGenerator {
+	int generateKey(int len) {	
+		
+		if(len > 8) {
+			return 1;
+		}
+		return 0;
+	}
+}
+#key validation logic
+
+class KeyValidatorAdvice implements AfterReturningAdvice {
+	public void afterReturning(Object retValue, Method method, Object[] args, Object proxy) {
+		//#no use of modifying the parameters, because already targetClass method finished execution		
+		//# already the Target class method finished execution, so there is no way to control the execution of targetClass method or abort the execution of targetClass method
+		#I can see the returnValue returned by the targetClass method, but we cannot modify and return the modified returnValue, because almost the targetClass method computed and returned it.
+		but I can stop returning the returnValue of the targetClass method to the callee by throwing exception.
+		
+		if((Integer) retValue <= 0) { // weak key
+			throw new Exception("Weak key generated");
+		}	
+		#once the advice method completed execution, automatically the original returnValue returned by the targetClass method will be returned to the callee
+	}
+}
+	
+Test.java
+---------
+ProxyFactory pf = new ProxyFactory();
+pf.setTarget(new KeyGenerator());
+pf.addAdvice(new KeyValidatorAdvice());
+
+KeyGenerator proxy = (KeyGenerator) pf.getProxy();
+int key = proxy.generateKey(8);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

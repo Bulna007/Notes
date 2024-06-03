@@ -1,0 +1,110 @@
+give all the courses that are in course table
+
+class CourseDao {
+	private final SQL_GET_COURSES = "select course_no, course_nm, duration, fee from course";
+	
+	private JdbcTemplate jdbcTemplate;	
+	public CourseDao(JdbcTemplate jdbcTemplate) {}
+	
+	public List<CourseBo> getCourses() {
+		return jdbcTemplate.execute(new GetAllCoursesStatementCallback());
+	}
+
+	private final GetAllCoursesStatementCallback implements StatementCallback<List<CourseBo>> {
+		public List<CourseBo> doInStatement(Statement stmt) {
+			ResultSet rs = null;
+			
+			rs = stmt.executeQuery(SQL_GET_COURSES);
+			while(rs.next()) {
+				// wrap into list objects
+			}
+			return courses;
+		}
+	}	
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+JdbcTemplate
+- execute(PreparedStatementCreator, PreparedStatementCallback) = dynamic sql queries with substitution parameters
+- execute(sql, PreparedStatementCallback) = static sql queries 
+- execute(StatementCallback) = static sql queries
+- execute(CallableStatementCreator, CallableStatementCallback) = stored procedure with parameters
+- execute(String procedureName, CallableStatementCallback) = stored procedure without parameters
+- execute(ConnectionCallback) = one or more queries to be executed together to perform an operation
+- void execute(sql) = DDL queries
+	
+
+JdbcTemplate
+query approach
+---------------
+In JdbcTemplate, there are #2 types of methods are there
+- execute(..) = which is being called as "Classic Approach" by us. here we write code for creating statements and executing the queries
+
+- queryXXX() = this is the modern programming with spring jdbc, here we dont create any of the java jdbc core objects, we only supply sql queries (with substitution parameters if any). and write code for gathering the results, rest of all the code is taken care by Spring JdbcTemplate.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

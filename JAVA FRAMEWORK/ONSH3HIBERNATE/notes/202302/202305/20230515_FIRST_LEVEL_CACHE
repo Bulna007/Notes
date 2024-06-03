@@ -1,0 +1,285 @@
+-----------------
+What is Caching, why do we need it?
+Caching is an technic through which we store the data temporarily within the memory, so that we can reuse the data quickly without the need of retrieving the data from the source system.
+Here the source system can be:
+1. database from where the data is queried from
+2. File on the filesystem of the computer
+3. Remote Application from where we access the data by making an network call
+etc
+
+grocery_store
+products
+product_no
+product_name
+category_nm
+manufacturer
+price
+
+class Product {
+	int productNo;
+	String productName;
+	String category;
+	String manufacturer;
+	double price;
+	// accessors
+}
+
+@WebServlet(urlPatterns={"/getProducts"})
+class GetProductsByCategoryServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		List<Product> products = null;
+		ProductDao productDao = new ProductDao(); // not recommended to invoke dao from the Servlet
+		String category = httpReq.getParameter("cateory");
+		
+		products = productDao.getProducts(category);
+		httpReq.setAttribute("products", products);
+		httpReq.getRequestDispatcher("/products.jsp").forward(httpReq, httpResp);						
+	}
+}
+
+class ProductDao {
+	List<Product> getProducts(String category) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		List<Product> products = null;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd);
+			pstmt = con.preparedStatement("select * from product where category_nm = ? order by product_nm asc LIMIT 0 and 10");
+			pstmt.setString(1, category);
+			rs = pstmt.executeQuery();
+			products = new ArrayList();
+			while(rs.next()) {
+				product = new Product();
+				// wrap the resultset into product object
+				products.add(product);
+			}					
+		}catch(SqlException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}finally {
+			//close all the resources
+		}
+		return products;
+	}
+}
+
+In the above code, for each request from the enduser, browsing the products based on category we are querying the data from the database table and returning the data to the jsp page to render. In a typical grocery store application, the list products of a specific category would be same and might change very rarely. not only that the product information for given productName or productNo would be same for most of the time
+
+In this case for each request for browsing the products based on category or accessing the details of a product based on productCode if we repeatedly query the data from the database in rendering the data, we run into several problems
+1. The unnecessary roundtrips between the application and database would be high, due to which the network congession will increase and degrades the req/resp times over the network
+2. Bandwidth consumption in repeatedly sending the same data would be high
+3. The database server will be overloaded with repeatedly executing the same queries in fetching the same data
+
+If the underlying data seems to be not changing within the source system we should avoid repeatedly accessing the data from the source system by implementing caching
+
+Cache: is a technic or mechanism of storing the data temporarily within the memory so that it can be reused across all the classes within the application.
+While storing the data inthe cache we need associate each data with an unique identifier which is also called as "key" so that we can access the data back using the key
+
+class Cache {
+	private static Cache instance;
+	private Map<String, Object> dataMap;
+	
+	private Cache() {
+		dataMap = new ConcurrentHashMap();
+	}
+	public static synchronized Cache getInstance() {
+		if(instance == null) {
+			instance = new Cache();
+		}
+		return instance;
+	}
+	public void put(String key, Object value) {
+		dataMap.put(key, value);
+	}
+	public Object get(String key) {
+		return dataMap.get(key);		
+	}
+	public boolean containsKey(String key) {
+		return dataMap.containsKey(key);
+	}
+}
+
+
+@WebServlet(urlPatterns={"/getProducts"})
+class GetProductsByCategoryServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		List<Product> products = null;
+		Cache cache = null;
+		ProductDao productDao = new ProductDao(); // not recommended to invoke dao from the Servlet
+		String category = httpReq.getParameter("cateory");
+		
+		cache = Cache.getInstance();
+		if(cache.containsKey("products$"+category)) {
+			products = (List<Products>) cache.get("products$"+category);
+		}else {
+			products = productDao.getProducts(category);
+			cache.put("products$"+category, products);
+		}
+				
+		httpReq.setAttribute("products", products);
+		httpReq.getRequestDispatcher("/products.jsp").forward(httpReq, httpResp);						
+	}
+}
+
+-------------------------------------------------------------------------------------------------------------------------------------
+	
+@WebServlet(urlPatterns={"/product"})	
+class GetProductServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		int productCode = 0;
+		ProductDao productDao = null;
+		Product product = null;
+		
+		productDao = new ProductDao();
+		productCode = Integer.parseInt(httpReq.getParameter("productCode"));
+		product = productDao.getProduct(productCode);
+		
+		httpReq.setAttribute("product", product);
+		httpReq.getRequestDispatcher("/product-details.jsp").forward(httpReq, httpResp);
+	}
+}
+
+class ProductDao {
+	public Product getProduct(int productNo) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Product product = null;
+		Cache cache = null;
+		try {
+			cache = Cache.getInstance();
+			if(cache.containsKey("product$"+productNo)) {
+				product = cache.get("product$"+productNo);
+			}else {
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				con = DriverManager.getConnection(url, un, pwd);
+				pstmt = con.preparedStatement("select * from product where product_no = ?");
+				pstmt.setInt(1, productNo);
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					product = new Product();
+					// wrap the resultSet record into product object
+					cache.put("product$"+productNo, product);
+				}
+			}			
+		}catch(Exception e) {}
+		return product;
+	}
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

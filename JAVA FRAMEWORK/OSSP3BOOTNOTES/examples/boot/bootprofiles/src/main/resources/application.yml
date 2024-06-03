@@ -1,0 +1,30 @@
+---
+spring:
+  profiles:
+    active:
+      - dev
+db:
+  type: RDBMS
+...
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+db:
+  driverClassName: com.mysql.cj.jdbc.Driver
+  url: jdbc:mysql://localhost:3306/db
+  username: root
+  password: welcome1
+...
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+db:
+  driverClassName: oracle.jdbc.driver.OracleDriver
+  url: jdbc:oracle:thin:@localhost:1521:xe
+  username: root
+  password: welcome394
+...

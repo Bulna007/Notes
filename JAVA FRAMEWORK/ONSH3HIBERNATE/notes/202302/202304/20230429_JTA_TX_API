@@ -1,0 +1,175 @@
+How many types of transactions are there?
+There are 2 types of transactions are there
+1. local transactions = java jdbc api supports managing local transactions
+2. global transactions = we cannot manage global transactions using java jdbc api, the java platform has provided jta api to manage global transactions
+
+From the above we can understand there are 2 different apis are provided in java platform for managing the transactions 
+1. jdbc api = local tx
+2. jta api = global tx
+
+if an application wants to move from one transaction management mechanism to another, we need to rewrite the entire application logic from migrating from one to another, this leads to huge maintainance rework and redevelopment cost and time as well.
+	
+To overcome the above problem in managing the transactions hibernate has provided an unified transaction management api which is hibernate transaction
+
+
+To support both local / global transactions and help us in easily switching between them the hibernate has provided an interface called Transaction
+	
+	
+interface Transaction {
+	void commit();
+	void rollback();
+	// other methods, ignored for simplicity
+}	
+
+The hibernate has provided 2 implementations for the Transaction interface for local and global for eg..
+Local Transactions assume it has provided:
+
+class JdbcResourceLocalTransactionImpl implements Transaction {
+	// wraps with Connection
+}
+
+class JtaTransactionManagerImpl implements Transaction {
+	// we need to write lookup logic in connecting the jndi registry
+	// grab the userTransaction object
+	// wrap into this class
+}
+
+our application class talks to these implementations using the Transaction interface variable so that we can easily switch between local to global or viceversa
+
+class JdbcResourceLocalTransactionFactory implements TransactionFactory {
+	public Transaction getTransaction() {}
+}
+
+class JtaTransactionManagerFactory implements TransactionFactory {
+	public Transaction getTransaction() {
+		// goto jndi registry
+		// grab userTransaction
+		// wrap into JtaTransactionManagerImpl(userTransaction)
+		return jtaTransaction;
+	}
+}
+
+To grab the userTransaction object from jndiregistry of the application server, the TransactionManagerFactory requires the jndi registry information like
+1. jndiregistry url
+2. provider class
+3. username
+4. password
+
+these details should be specified in hibernate.cfg.xml
+
+The TransactionFactory implementation class will instantiate the appropriate implementation of transaction interface by wrapping either Connection or UserTransaction object into it
+	
+class AccountDao {
+	public void saveAccount(Account account){
+		SessionFactory sessionFactory = null;
+		Session session = null;
+		Transaction transaction = null;
+		boolean flag = false;
+		
+		try {
+			sessionFactory = SFRegistry.getSessionFactory();
+			session = sessionFactory.openSession();
+			
+			// jndi lookup logic
+			// grab the userTransaction
+			transaction = session.getTransaction();
+			transaction.beginTransaction();
+			
+			session.save(account);
+			flag = true;
+		
+		}catch(HibernateException e) {
+			flag = false;
+		}finally {
+			if(transaction != null ) {
+				if(flag) {
+					transaction.commit();
+				}else {
+					transaction.rollback();
+				}
+			}
+		}
+	}
+}
+to switch from Local to global or viceverse we need to change the TransactionFactory implementation class in java code, instead we can write the implementation classname in hibernate.cfg.xml
+
+<property name="transaction_class">jta</property> (if this property is omitted, then the default value is: jdbc)
+	
+class TransactionFactoryFactory {
+	// read the TransactionFactory implementation classname from hibernate.cfg.xml
+	and create the object of TransactionFactory implementation
+}	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

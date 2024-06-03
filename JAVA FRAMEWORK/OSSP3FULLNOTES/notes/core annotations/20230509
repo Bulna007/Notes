@@ -1,0 +1,283 @@
+How to work with annotations aspart of the Spring Framework?
+The support of working with annotations aspart of the Spring Framework has been added from spring 2.5+ onwards, and the spring has added incrementally the support of working with annotations
+
+1. @Required
+by default the setter injection properties are optional to be injected for an bean definition, the ioc container instantiates the object of the target bean even the dependent properties are not injected. but somtimes we want to mandate the setter injection properties aswell, unless the setter properties are provided/configured with their dependencies we dont want ioc container to instantiate the object of Target, this can be achieved using @Required annotation
+
+class EMail {
+	String subject;
+	String body;
+	MailAddress from;
+	MailAddress to;
+	
+	public void setSubject(String subject) {}
+	@Required
+	public void setBody(String body) {}
+	@Required
+	public void setFrom(MailAddress from) {}
+	@Required
+	public void setTo(MailAddress to) {}	
+}
+
+class MailAddress {
+	String emailId;
+	String domain;
+	
+	public void setEmailId(String emailId) {}
+	public void setDomain(String domain) {}
+}
+
+application-context.xml
+-----------------------
+<bean id="email" class="EMail">
+	<property name="subject" value="test mail"/>
+	<property name="body" value="test to @Required annotation"/>
+</bean>
+
+<context:annotation-config/>
+
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("application-context.xml"));
+EMail email = beanFactory.getBean("email", EMail.class);
+sop(email);
+
+ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+EMail email = context.getBean("email", EMail.class);
+sop(email);
+
+Annotations can be written at #5 places within an class
+1. Class level
+2. Attribute Level
+3. Method Level
+4. Constructor Level
+5. Parameter/Arguments Level	
+depends on the place where we want to bind the configuration in a give class, we attach the annotation to that specific place/level. The annotation author designates/defines an annotation can be applied at what places based on the nature of usage
+
+@Required annotation = is used for enforcing or mandating the setter injected properties for a bean definition, so it has to be written on the corresponding setter, indicating the ioc container which setter injection is mandatory
+
+How does annotations works in Spring framework?
+-----------------------------------------------	
+The annotations are not integral part or not planned from initial release of the spring framework, the ioc container has not been designed to work with or around annotations. Later versions of the spring framework has added the support of annotations, so to enhance the capability of the ioc container and add additional functionality the spring developers has choosen the path of PostProcessors
+Annotations in spring framework works based on BeanPostProcessor and BeanFactoryPostProcessor.
+	
+For eg.. incase of @Required annotation, for across all the bean definitions that are instantiated by the ioc container, we need to perform a common post processing.
+after instantiating the object of a bean definition, after performing the dependency injection, before the bean is placed in the ioc container, we want to check whether the attributes annotated with corresponding setters with @Required are configured and injected with dependencies or not, this can be done easily by writing an BeanPostProcessor
+
+There are #2 common myths interms of annotations exists in market for spring framework
+1. BeanFactory doesnt support annotations, we need to mandatorily creating ioc container using ApplicationContext to work with annotations
+2. By default annotations will not work, we need to enable annotations in spring framework asking the ioc container to read annotations using
+<context:annotation-config/> tag
+
+Let us answer each of the above myths
+1.
+The Spring Framework has provided BeanFactoryPostProcessor or BeanPostProcessor for each annotation depends on the nature/type of the annotation.
+For an @Required annotation, the spring has provided RequiredAnnotationBeanPostProcessor, same way for @Autowired annotation the spring has provided AutowiredAnnotationBeanPostProcessor
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class A {
+	int i;
+	@Required
+	public void setI(int i) {}
+}
+
+application-context.xml
+------------------------
+<bean id="a" class="A">
+</bean>
+<context:annotation-config/>
+
+Test.java
+---------
+//BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("a-c.xml"));
+ApplicationContext context = new ClassPathXmlApplicationContext("a-c.xml");
+A a = context.getBean("a", A.class);
+
+Myths:
+1. BeanFactory doesnt support annotations
+2. ioc container by default will not see annotations, we need to enable them or ask ioc container to read the configuration written interms of annotation
+
+How does annotations works in spring framework?
+From the initial version of spring framework there is no support of annotations, later on from spring 2.x onwards the support of annotations are added aspart of the Spring Framework, through BeanPostProcessors and BeanFactoryPostProcessors. Depends on the type or nature of the annotation spring framework has defined an relevant BeanPostProcessor or BeanFactoryPostProcessor through which the annotation will work
+
+For eg..
+@Required = RequiredAnnotationBeanPostProcessor
+@Autowired = AutowiredAnnotationBeanPostProcessor
+similarly for a bunch of annotations like
+@Resource
+@PostConstruct
+@PreDestroy
+etc, the spring framework has written CommonAnnotationBeanPostProcessor
+
+
+
+when we are using an annotation, we need to identify the relevant BeanPostProcessor or BeanFactoryPostProcessor and configure and register with the ioc container manually
+
+application-context.xml
+-----------------------
+<bean id="email" class="EMail"/>
+<bean class="RequiredAnnotationBeanPostProcessor"/> 
+
+we can replace the above beanpostprocessor with
+<context:annotation-config/>
+
+
+Test.java
+---------
+ApplicationContext context = new ClassPathXmlApplicationContext("a-c.xml");
+EMail email = context.getBean("email", EMail.class);
+
+here the @Required annotation works, because when we declare an BPP or BFPP as a bean definition within the ioc container, incase of ApplicationContext those will gets registered automatically with the ioc container
+
+
+From the above we learnt for each annotation, we need to identify relevant postprocessor and configure it as bean in ioc container, so working with annotations becomes complex in spring framework
+1. to use Annotations in spring we need to know what are BeanPostProcessors and BeanFactoryPostProcessors
+2. how to configure them to register with ioc container
+3. for which annotation, what postprocessors are defined by spring framework, we should read the documentation to use them
+
+To help us in quickly working with Annotations in spring framework and abstract the complexities from the developers spring has introduced a short tag <context:annotation-config/>
+
+if we enable, <context:annotation-config/> tag, internally spring framework will configures the PostProcessors as bean definitions within the ioc container automatically, so we dont need to know which annotation, what postprocessor to be used.
+	
+does ioc container knows annotations works based on post processors? and which postprocessors are needed to use annotations does it know?
+if ioc container knows, why it can automatically enable the postprocessors, why is it forcing us to write the <context:annotation-config/> tag to enable them?
+to switch between xml configuration and annotation, the ioc container has provided this tag.
+	
+	
+application-context.xml
+-----------------------
+<bean id="email" class="EMail"/>
+<bean id="rabpp" class="RequiredAnnotationBeanPostProcessor"/>
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("a-c.xml"));
+BeanPostProcessor bpp = beanFactory.getBean("rabpp", BeanPostProcessor.class);
+((ConfigurableListableBeanFactory) beanFactory).addBeanPostProcessor(bpp);
+
+EMail email = beanFactory.getBean("email", EMail.class);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

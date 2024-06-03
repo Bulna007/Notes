@@ -1,0 +1,51 @@
+atena member service application
+
+class PlanService {
+	List<String> findPlans(int zipCode, int age, String gender, int copay, boolean cashless, boolean outPatientCoverage) {
+		// complex conditional expressions in evaluating the inputs and compiles the list of plans
+		// #500 - 1000 lines of code
+		return plans;
+	}
+}
+
+#bug = 95% of the time, the above code works properly without any problems, but for the %5 of chances, with few combination of inputs, the findPlans() of PlanService is failing in returning the response and goes infinite (long time), they system gets timeout
+
+jack: a new member in the team joined: known issue findPlans
+subramanyam: manager
+
+
+everytime when people are trying to work on it, the system is failing badly and behaving worse than existing that is causing the loss
+#sprint
+#100 classes are getting modified aspart of different userstories
+
+	
+	
+findPlans = has been modified to fix the issue (passing) -> production (cost incurred: breaking), since it is failing we need to rollback to previous state thus loosing the whole work that has been performed within that sprint
+
+#99 classes + 1 class (old one) = i need to make changes in other 99 classes to make it compatible with 1 class (old code) = the cost of putting back the old system in place is very high
+
+jack = fix it
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

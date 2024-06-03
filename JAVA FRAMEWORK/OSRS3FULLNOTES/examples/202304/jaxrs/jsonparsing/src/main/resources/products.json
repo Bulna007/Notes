@@ -1,0 +1,20 @@
+[
+  {
+    "productCode": "p383",
+    "productName": "Product1",
+    "quantity": 10,
+    "price": 93
+  },
+  {
+    "productCode": "p3843",
+    "productName": "Product2",
+    "quantity": 10,
+    "price": 93
+  },
+  {
+    "productCode": "p3835",
+    "productName": "Product3",
+    "quantity": 10,
+    "price": 93
+  }
+]

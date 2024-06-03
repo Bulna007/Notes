@@ -1,0 +1,777 @@
+Spring Cloud Gateway
+--------------------
+There are several cross-cutting aspects are there in designing an distributed solution (microservices) like:
+1. security
+2. routing
+3. http logging
+4. request tracing
+5. caching
+etc
+
+These are all the common requirements that has to be applied for each microservice we are building, in addition from the client aspect allowing him to access the microservice we need to able to implement
+1. discovery
+2. loadbalancing
+
+implementing such common aspects in each microservice application becomes quite tedious job, so to manage such common aspects we need api gateway.
+	
+	
+The api gateway acts as an single-entrypoint or gateway in receiving the requests into our system, no matter the client has send the request for which microservice of our business system, it always be received and routed through api gateway only. As every request is routed through one entrypoint, before forwarding the requests to the corresponding microservice application we can apply common aspects like
+1. security
+2. logging
+3. tracing
+4. caching
+etc
+
+There are lot of third-party vendors provided different libraries for implementing the api gateway for an microservice application
+1. Netflix Zuul
+2. ApiGee
+3. Kong
+4. Startum
+5. AWS ApiGateway
+
+In addition to the above the spring cloud has provided their own gateway which is spring-cloud-gateway built on reactive stack.
+	
+The spring cloud gateway supports or offers 3 features:
+1. routing
+2. transformation
+3. security through spring security module
+--------------------------------------------------------------------------------------------------------------------------------
+Architecture of Spring Cloud Gateway
+------------------------------------
+In Spring cloud gateway to route the incoming request to an backend service we need to define route configuration. There are several route configurations being defined in cloud gateway to route requests to various different backend services
+
+Each route contains 3 main parts of it
+1. Path      = The incoming request should be matched against this Path to identify the route
+2. Predicate = conditions to be applied while picking up route
+3. Filters   = pre/post processing to be applied for that request before/after the request is being routed to the backend service
+
+There are 2 major components are there in Spring Cloud Gateway
+1. Gateway Handler Mapping
+2. Gateway Web Handler
+
+1. Gateway Handler Mapping 
+The Gateway Handler Mapping holds all the route configurations within it. Upon receiving the request, the Gateway Handler Mapping tries to evaluate the request matches with which route configuration among the available routes by applying Path and Predicate.
+	
+once the Route has been identified, the Gateway Handler mapping creates an FilterChain object populating all the filters that are specified aspart of the route to be applied/executed before dispatching the request to the Proxied Service
+
+2. Gateway Web Handler
+The Gateway Handler Mapping upon constructing the FilterChain object populated with Filters and ProxyFilter, it hand-overs it to the Web Handler asking to take the responsibility of executing all the filters on way during the request/response while dispatching the requested to the Proxied Service, so the Web Handler does the job of executing FilterChain
+
+How to work with Spring Cloud Gateway?
+Spring Cloud Gateway is an Proxy service often used aspart of Microservice applications. It centralizes the requests in single entrypoint and routes them to the proper downstream services.
+
+There are 3 main components are there in Spring Cloud Gateway
+1. Route
+2. Predicates
+3. Filters
+
+1. Route
+Per each Microservice to be exposed and make it accessible to the client application we need to define an appropriate Route configuration enabling the gateway to receive the request onbehalf of the Microservice and route it. These mappings the developer writes in routing the incoming request to the appropriate downstream service is called "Route Configurations" or even "Gateway Mappings".
+	
+2. Predicates	
+We can bind conditions called "Predicates" indicating when does the route should be choose or used for routing the request to the downstream service. The spring cloud gateway supports various different types of predicates as below
+2.1 before time predicate
+2.2 after time predicate
+2.3 between time predicate
+2.4 Cookie Predicate
+2.5 Header Predicate
+2.6 Host Predicate
+2.7 Path Predicate
+2.8 Query Predicate
+2.9 Weight Predicate
+These are all the built-in predicate types provided by the spring cloud gateway that can be attached to the route configurations based on which the routes are matched at runtime.
+	
+3. Filters
+Aspart of routing the requests and dispatching the response based on the route to the downstream service we may want to apply additional pre/post processing logic this can be done using Filters. Few of the pre/post processing logics that are common applied are 
+1. Adding Request Headers
+2. Adding Response Headers
+3. Removing the Request Header
+4. Removing an Response Header
+5. Rewrite Path
+6. Map RequestHeader
+7. Prefix Path
+8. Modifying the Request
+9. Modifying the Response
+etc
+performing such common activities can be done through Filters.
+	
+The Spring Cloud Gateway has provided pre-defined Filters for performing common operations on the request/response as below
+1. LoadBalancer Filter
+2. Service Discovery
+3. CircuitBreaker Filter
+4. Modifying Request/Response Headers
+5. Mapping Request Headers
+6. Rewrite URL
+8. Adding Query Parameters
+
+There are 2 approaches of working with spring cloud gateway are there
+1. Through configuration approach
+2. Programmatic api approach
+In real-time people prefer using Configuration approach to maintain and modify the route configurations easily
+
+#1. Through Configuration Approach
+
+1. create an spring boot starter project with starter dependencies: spring-cloud-starter-gateway
+2. create boot application class
+	
+@SpringBootApplication	
+class SuzkiGatewayApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(SuzkiGatewayApplication.class, args);
+	}
+}	
+
+upon adding spring-boot-starter-gateway, the auto-configurations takes care of configuring all the necessary gateway components like
+1. Gateway HandlerMapping
+2. Gateway Web Handler
+etc
+
+all that we need to care about is writing the route configurations with predicates and filters configured.
+
+application.yml
+----------------
+server:
+  port: 9099
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: distributor network route
+				  uri: http://localhost:8080/
+					predicates:
+            - Path="/distributor-network/**"
+					filters:
+            - RewritePath=/(?<segment>/?.*), $\{segment}
+							
+							
+Gateway URL:	
+http://localhost:9099/distributor-network/distributor/D001	
+
+How to work with programmatic approach in Spring Cloud Gateway?
+Instead of writing the route configurations aspart of the YAML file we are going to define it aspart of the Configuration itself. The Spring cloud gateway has provided bunch of classes for doing this
+	1. Route
+	2. Predicate
+	3. GatewayFilter
+	
+There are several implementations of Predicate, GatewayFilters are provided by Spring Cloud Gateway itself. So inorder to route the traffic to the microservice application we need write the code for constructing the Route object by populating the respective implementations of predicate and filters
+
+creating these objects manually and populating or wiring up them is very complex, so spring cloud gateway has provided an Builder class called RouteLocatorBuilder. By using the fluent builder api we can quickly construct these object and populate into Route.
+	
+RouteLocatorBuilder is instantiated by AutoConfiguration class, so that we can directly use it for populating the route configurations into it.
+	
+@SpringBootApplication	
+public class SuzkiGatewayApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(SuzkiGatewayApplication.class, args);
+	}
+	
+	@Bean
+	public RouteLocator routeLocator(RouteLocatorBuilder builder) {
+		return builder.routes()
+			.route("distributor-network", r-> r.path("/distributor-network/**")
+						 	.filters(f -> f.rewritePath("/distributor-network/?(?<segment>.*), /$\{segment}"))
+							.circuitBreaker(c -> c.setName("distributor-network-cb"))
+							.uri("lb:http://distributor-service"))
+			.build();
+	}
+}	
+--------------------------------------------------------------------------------------------------------------------------------There are lot of inbuilt predicated and Gateway Filters are provided by spring cloud gateway.
+Predicates:
+1. AfterRoute
+2. BeforeRoute
+3. BetweenRoute
+4. CookieRoute
+5. HeaderRoute
+6. HostRoute
+7. MethodRoute
+8. PathRoute
+9. QueryRoute
+10. RemoteAddressRoute
+11. WeightRoute
+
+1. Method Route Predicate
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: distributor-network
+				  uri: lb:http://distributor-network
+					predicates:
+            - Path="/distributor-network/**"
+						- Method=GET
+					filters:
+            - RewritePath /distributor-network(?<segment>/?.*), $\{segment}
+
+2. Query Route Predicate
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: distributor-network
+				  uri: lb:http://distributor-network
+					predicates:
+            - Path="/distributor-network/**"
+						- Query=env, dev
+					filters:
+            - RewritePath /distributor-network(?<segment>/?.*), $\{segment}
+	
+		
+3. Header Route Predicate
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: distributor-network
+				  uri: lb:http://distributor-network
+					predicates:
+            - Path="/distributor-network/**"
+						- Header=env, dev
+					filters:
+            - RewritePath /distributor-network(?<segment>/?.*), $\{segment}
+
+	
+2. Filters
+Filters are used for performing pre/post processing logic on the request that can be commonly applied across all or group of routes of the Gateway. The Spring Cloud Gateway has provided built-in filters that can be used for modifying request/response while processing.
+	
+1. AddRequestHeader GatewayFilter
+2. AddResponseHeader
+3. CircuitBreaker
+4. FallbackHeaders
+5. MapRequestHeader
+8. PrefixPath
+9. PreserveHostHeader
+10. RequestRateLimiter
+11. RedirectTo
+12. RemoveRequestHeader
+13. RewritePath
+14. RewriteLocation
+15. SetResponseHeader
+16. SetStatus
+17. StripPrefix
+
+
+1. AddRequest Header
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: distributor-network
+				  uri: lb:http://distributor-network
+					predicates:
+            - Path="/distributor-network/**"
+					filters:
+            - RewritePath /distributor-network(?<segment>/?.*), $\{segment}
+            - AddRequestHeader referrer, gateway
+--------------------------------------------------------------------------------------------------------------------------------
+Custom Gateway Filters
+-----------------------
+The Spring Cloud Gateway has provided lot of built-in / predefined filters that can be used for applying pre/post processing logic before/after the request has been proxied to the Microservice application. But the predefined filters provided by cloud gateway may not be sufficient for all the usecases like
+
+1. we want to check for security upon receiving the request, before the request is being propagated or forwarded to the backend microservice
+2. we want to append an trace id to the request before forwarding the request to the backend service
+3. we want to implement caching of the response, so that we can reuse the response in subsequent requests 
+
+For performing such functionalities, we need to write our own Filters and plugin into the Spring cloud gateway.
+	
+How to work with creating our own Filters to apply pre/post processing logic?
+There are 3 types of Filters are available for preforming pre/post processing logic
+1. WebFilter
+WebFilter is not part of cloud gateway, rather it is an Filter that is being used aspart of WebFlux applications.
+	
+2. GlobalFilter
+If we want to apply common pre/post processing logic for every request that is proxied through the cloud gateway then we need to use GlobalFilter
+
+3. GatewayFilter
+If we want to apply the pre/post processing logic only to a specific routes that are being configured aspart of the Route configurations in Spring Cloud Gateway, then we need to use GatewayFilter
+
+1. GlobalFilter
+The Spring Cloud Gateway has provided an interface "GlobalFilter".
+	
+interface GlobalFilter {
+	Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain);
+}
+
+
+We need to write our own implementation class implementing GlobalFilter and write pre/post processing logic aspart of it.
+	
+
+@Component
+@Sl4J
+class RequestResponseLoggingGlobalFilter implements GlobalFilter {
+	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+		Mono<Void> response = null;
+		
+		log.info("received request with URI: {}", exchange.getRequest().getPath());
+		
+		response = chain.filter(exchange); // pass to the next filter or Target
+		
+		log.info("request path: {} completed execution with status code: {}", exchange.getRequest().getPath(), exchange.getResponse().getStatusCode());
+	}
+}
+--------------------------------------------------------------------------------------------------------------------------------
+2. Gateway Filter
+The Gateway Filters are specific to the Route on which we have attached them, and would be executed only for that route we defined. We want to associate GatewayFilter for each route with different configuration than the other Route
+
+For eg..
+A CircuitBreakerGatewayFilter can be associated at different routes in the spring cloud gateway. But for some routes we want to apply CircuitBreakerGatewayFilter with "slow" configuration and for other routes we want to apply the CircuitBreakerGatewayFilter with "fast" configuration depends on the nature of the backend microservice
+
+So from this we can understand, the object of the GatewayFilter whould be created per Route level not at Global level. The ioc container should create the object of the GatewayFilter we configured for the that given route only and associate to it.
+	
+When we configure a GatewayFilter for a route, we bind configuration aspart of the GatewayFilter with which the filter should be executed. Up on receiving the request, the GatewayHandlerMapping has to identify the GatewayFilters associated to the route that has been matched for that request based on predicates. then it should instantiate the object of the GatewayFilters associated to that route by passing the configuration of the filter and populate the filter aspart of the GatewayFilterChain
+
+For each GatewayFilter we have written we need to provide one GatewayFilterFactory that takes the Gateway Configuration and instantiates and returns the object of respective GatewayFilter implementation.
+	
+let us write our own gateway filter in adding request header while forwarding to the downstream service
+
+#1.
+class RequestHeaderConfig {
+	private String name;
+	private String value;
+	//accessors
+}
+
+
+#2. GatewayFilter
+
+class CustomAddRequestGatewayFilter implements GatewayFilter {
+	private RequestHeaderConfig headerConfig;
+	
+	public CustomAddRequestGatewayFilter(RequestHeaderConfig headerConfig) {
+		this.headerConfig = headerConfig;
+	}
+	
+	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+		Mono<Void> response = null;
+		
+		exchange.getRequest().addRequestHeader(headerConfig.getName(), headerConfig.getValue());
+		response = chain.filter(exchange);
+		return response;
+	}
+}
+
+#3. GatewayFilterFactory
+
+@Component
+class CustomAddRequestGatewayFilterFactory extends AbstractGatewayFilterFactory<RequestHeaderConfig> {
+	public CustomAddRequestGatewayFilterFactory() {
+		super(RequestHeaderConfig.class);
+	}
+	
+	public GatewayFilter apply(RequestHeaderConfig config) {
+		CustomAddRequestGatewayFilter filter = new CustomAddRequestGatewayFilter(config);
+		return filter;
+	}
+	
+}
+
+spring:
+  cloud:
+    gateway:
+      routes: [GatewayHandlerMapping]
+        - id: distributor-network
+				  uri: lb:http://distributor-network
+					predicates:
+            - Path="/distributor-network/**"
+					filters:
+            - RewritePath /distributor-network(?<segment>/?.*), $\{segment}
+            - CustomAddRequest referrer, gateway
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

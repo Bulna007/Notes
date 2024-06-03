@@ -1,0 +1,338 @@
+SecurityContext = is an class provided by the jaxrs api, which is another Context Object that can be injected as an parameter into the Resource method. Using the SecurityContext object we can programmatically access the information about the user who has been accessing the Resource class
+	
+Principle userPrinciple = SecurityContext.getUserPrincipal();
+Principle is an class from java.security using which we can access the information about the authenticated user.
+	
+SecurityContext.isUserInRole("role") = to check whether the user who is trying to access the resource poses the respective role or not or either based on the role we can customize the processing logic
+--------------------------------------------------------------------------------------------------------------------------------------
+Communication Stateless:
+Priciple: one of the core principle of restful services is "Communication Stateless".
+	
+The HTTP Protocol is stateless protocol, which means each interaction from an user would be considered as an new user only. So it doesnt memorizes the previous state of the user interactions / client interactions.
+
+In an typical application development, we might need to memorize the state of the client (means the previous interactions by the client to the application), since http is an stateless protocol as described above inorder to memorize the state of the client the web servers has introduced Http Session management mechanism.
+	
+Through http session management, the application creates an http session object on the web server per each user of the application, so that the users data/interactions can be stored on the respective session object of the user on the server. So that the application can memorize the client state.
+	
+From the above the state(data) of the users	is stored on the Server, so that it can be reused by the application for future interactions.
+	
+With Http Session management we end up in scalability issues as described below:
+if the more the users are accessing the application, the number of http session objects being created on the server would be more and eventually the amount of data that is stored in each of the user session objects grows over the time. That results in huge utilization of jvm memory.
+
+For eg.. we have an 2 core cpu/2gb ram machine on which our application/web server is running. Ideally with 2 core cpu the server should be able to accomodate #1000 users requests in parallel.
+But since the server is storing the state of the users on the Web Server, with few number of users requests lets say may be an 100 the server jvm memory might have been full, due to which the server will not be able to accomodate more users requests, thus failing in scaling the application to handle large users even though we have cpu.
+	
+Hence: from the above we can understand, if the applications/web servers are storing the state of the users, then we quickly run out of memory resources and would not be able to scale or accomodate more users to access the application.
+	
+In case of the server will not memorize/maintain the state of the client on the server-side, then how can we have the state of the client/user being used in the application?
+	
+So instead of server storing/keeping track of the client/user state, let the user by themself maintain their state locally on the client-side and pass the state as an input to the server for each interaction with the server. So that the application can use the state that is supplied by the client in performing the operation.
+Since the server is not keeping track of the state of the users, we have plenty of computing/memory resources available, so that we can accomodate more number of users in accessing the application
+
+In previous generations thick client applications (for eg.. applications build using vb etc) the client applications by themself keep track of the user data at the client-side and would be used for performing the operations at the client-side.
+	
+upon moving to thin-browser based web applications, the state of the client has been moved to the server, because in early adoption of internet the bandwidth speeds in transferring the data over the network is very low, due to which if the client is transferring the data to the server for each interaction, the performance of the application will be very slow.
+	
+To address this problem, the state of the client has been moved to the server-side itself.
+	
+In todays world, we have huge/high-capacity internet lines with gigs of data transfer speeds are available, so there should not be any more concern about transferring the data from client to the server, so its time to move back to memorizing and maintaining the state of the client at the client-side rather than at the server side.
+	
+That is where "communication stateless" principle holds!
+
+
+Communication Stateless principle  = In the world of restful services there is no state management on the server, thus making them completely stateless, hence scalability can be achieved.
+-------------------------------------------------------------------------------------------------------------------------------------
+Caching
+To scale up the application we can use Caching mechanism in restful services.
+	
+How do we implement caching the in restful services?
+Candidate of Cache:
+If the state of the resource is seems to be static or moderately modified, it is always a good candidate for caching, even for a frequently modified resources also sometimes we can cache, given the rate at which the resource is being accessed is more than the interval or frequency at which it is being modified.
+	
+we can implement cache within the restful resource (server-side caching).	upon receiving the request, the resource byitself can look for the data is available in the Cache and can serve it right from the cache avoiding performing business logic and persistence logic in computing the request, thus can save huge amount of cpu and hits to the database in processing the request, thus helps in scaling the application.
+	
+but this solution has quite a number of problems:
+even though the state of the resource doesnt change, the client would endup in sending multiple network requests in querying the data from the resource due to which
+	1. the network traffic would be still high to the resource class, thus increasing the latency of the request/response
+	2. we endup in transferring the same data across the network between the client/server thus increasing the consumption of bandwidth of the network
+to overcome the above problem in avoiding the roundtrips between the client and server, instead of caching the data at the server-side it is recommended to cache the data right at the client-side.
+		
+even though caching at the client-side has solved many of the problems we discussed above, it still has its own problems:
+per each client, the server would receive the request and would endup in putting huge load on the server, to overcome this problem the cnd proxy/servers introduced, that sits between the clients and the webserver/resource, that intermediately caches the data and returns the response from the cache without hitting the webserver/resource
+
+So to have the data being Cached at the client or cdn proxies the apis/server should be responsible for indicating/asking the clients to cache the data.
+	
+How to pass such information indicating the data/response should be cached by client/cdn servers at their end?
+That is where HTTP Protocol comes into picture. 
+HTTP protocol has provided necessary standards/semantics in communicating the information pertaining to how long the data should be cached by the client applications at their end.
+	
+The HTTP protocol has defined standard http headers through which the server can express/asks the clients to cache the response that is returned by the server. In addition the http protocol has provided necessary standards for revalidating the stale data before using it by the client as well.
+	
+#1. 
+In http 1.0 protocol version it has provided an Http Header called expires that holds the date/time in future indicating to the client how long the client should cache the data and use it. The server aspart of the response should embbed this header asking the client to cache the data at the client side.
+	
+expires: 2023-08-16 01:00:00 IST
+
+Now in the resource class along with dispatching the response we need to include the expires header aspart of the response asking the client to cache the data.
+	
+@Path("/product")
+class ProductApiService {
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{productNo}/details")
+	public Response getProduct(@PathParam("productNo") String productNo) {
+		// query the data from database
+		ResponseBuilder builder = Response.ok(Entity.json(product));
+		LocalDate expiresDate = LocalDate.of(2023, 08, 16, 01, 00);
+		builder.expires(expiresDate);
+		Response response = builder.build();
+		
+		return response;
+	}
+}	
+
+In http1.1 protocol, the expries header has been deprecated in favor of Cache-Control header which is more powerful than expires.
+	
+Cache-Control header is introduced aspart of http 1.1 protocol. unlike the expries header the Cache-Control specifies how long the client should cache the data at the client side. In addition the Cache-Control header as multiple directives through which we express various things related to how to Cache the data as well.
+	
+Cache-Control: directive1, directive2, directive3
+where each directive holds an key/value information, and there are lot of pre-defined directives specified by http protocol indicating the way the data should be cached.
+	
+1. max-age = indicates how long the data should be cached by the client
+2. s-maxage = indicates how long the cdn-proxy should cache the data
+3. no-cache = The client/cdn proxies should not cache the data
+4. no-store = dont store the data at the client-side
+5. no-transform  = dont apply any compression or size reduction technics
+6. must-revalidate = before using the data from the Cache, validate whether the data has been changed or not
+7. private = the data should be cached by the client only and cdn proxy should not cache this response
+8. public = anyone either client or the cdn proxy can cache the data
+etc
+
+few directives doesnt have value
+
+Now within our resource class instead of adding expries header we need to add Cache-Control header aspart of the response asking the client to cache the data.
+The jaxrs api has provided convinient class CacheControl using which we can build the CacheControl header directives and attach to the response object while returning.
+	
+	
+@Path("/product")
+class ProductApiService {
+	private Map<String, Product> productDb;
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response newProduct(Product product) {
+		
+	}
+	
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void updateProduct(Product product) {
+		
+	}
+	
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{productNo}/details")
+	public Response getProduct(@PathParam("productNo") String productNo) {
+		// query the data from database
+		ResponseBuilder builder = Response.ok(Entity.json(product));
+		CacheControl cc = new CacheControl();
+		cc.setMaxAge(1000);
+		cc.setMustRevalidate(false);
+		builder = builder.cacheControl(cc);
+					
+		Response response = builder.build();		
+		return response;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

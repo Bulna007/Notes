@@ -1,0 +1,12 @@
+package com.kartinventory;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+public class KartInventoryMgmtApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(KartInventoryMgmtApplication.class, args);
+    }
+}

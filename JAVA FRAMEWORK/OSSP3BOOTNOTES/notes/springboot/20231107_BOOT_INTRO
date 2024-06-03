@@ -1,0 +1,134 @@
+spring boot is an module provided by the spring developers aspart of the spring framework to address the non-functional requirements in building an application using spring framework
+
+What do we mean by non-functional requirements?
+There are lot of non-functional requirements are there in building an application using spring framework, one of such aspect is:
+Spring Framework provides lot of boiler-plate logic in quickly building the application, inorder to use or make spring framework work for our application, we need to pour lot of configuration information pertaining to our application to the spring framework, which means we need to fine tune the framework components so that those can be used in building our application
+
+This aspect makes most of the developers find it very complex to learn or understand, use the spring framework in building the application because we need to know which components are provided by the framework and what their dependencies are inorder to use them. so the developers has to spend lot of time in configuring the framework components and most of the code that is written in configuring the framework seems to be fuss code, means it doesnt have any meaning interms of functionality.
+	
+
+To overcome the above problem in configuring the framework components, the spring boot has been introduced. The spring boot is an module that eliminates most of the fuss logic that needs to written in configuring the framework components for our application. All that we need to do is just supply the values with which we wanted the framework components to be configured, so that spring boot takes care of configuring the framework components for our application with the values we supplied and makes them available for us to use.
+Thus reduces the overall time and complexity in building an spring framework application when we use spring boot
+
+There are 6 features are there in spring boot that helps us in building an spring framework based application very quickly
+1. Auto configurations
+2. Starter dependencies
+3. actuator endpoints
+4. devtools
+5. embedded servlet containers
+6. spring boot cli
+
+1. Auto configurations
+Spring Framework has provided lot of api classes with rich set of functionality build into them, but to use these components in building the application, we need to configure them as bean definitions within our application. For eg.. while working with spring jdbc we need to use JdbcTemplate class to perform database operations. But JdbcTemplate internally requires other Spring Framework components as dependencies like DataSource and PlatformTransactionManager
+
+Even though we dont use DataSource and PlatformTransactionManager within our application directly, we still need to configure them as bean definitions within our application so that we can use JdbcTemplate in our application. It would make lot of sense in configuration a class in our application when we are direclty using it in our application. But here even though we dont use DataSource and PlatformTransactionManager directly, rather these would be used by other spring framework components internally still we need to configure them in our application this makes most of the developers find it very complex in understanding and using the framework
+
+These framework components are designed and developed by spring framework developers, so the framework developers knows the details of these classes and the attributes that should be configured for using these classes are known to spring developers, then why dont the framework developers by themself enable these classes/components as bean definitions
+That is where auto-configurations are brought into picture aspart of spring boot
+
+The Auto Configurations takes care of configuring the spring framework components as bean definitions within our application, given we need to supply the values with which those components should be configured.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

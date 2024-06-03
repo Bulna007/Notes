@@ -1,0 +1,6 @@
+Lookup method injection
+-----------------------
+before learning lookup method injection, first let us explore why do we need it and when to use it? To understand that let us first explore How to make objects thread-safe in java?
+	
+	
+	

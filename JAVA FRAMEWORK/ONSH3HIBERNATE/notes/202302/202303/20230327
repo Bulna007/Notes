@@ -1,0 +1,116 @@
+How many types of relationships can be established between the tables in RDBMS?
+There are 3 types of relationships can be represented
+1. one-to-one
+2. one-to-many / many-to-one
+3. many-to-many
+
+
+1. one-to-one
+A record in one table is in relationship with only one record in another table then the 2 tables are said to be in one-to-one relationship
+There are 2 ways we can represent one-to-one relationship between the tables
+1. direct one-to-one
+2. one-to-many as one-to-one
+
+2. one-to-many as one-to-one
+We establish one-to-one relationship between the tables/entities as one-to-many as one-to-one under the below circumstances
+1. both the entities/tables has their own independent existence
+For eg.. a Locker entity can exists without an Account and an Account can exist without a Locker and both of these entities has their independent identity as well.
+A Locker is identified through LockerNo, and an Account is identified by AccountNo
+since each of these tables has their independent existence and individual identities, the only way to establish relationship is either one of the side primary key should be written as foreign key in another table. By writing one table primary key as foreign key in another table, then the tables will be into one-to-many relationship between them.
+So to make the relationship act as one-to-one we need to make the foreign key as "unique", so that the tables will be into one-to-one relationship even though they are in one-to-many
+
+2. both the enties has their own idependent identity
+For e.g.. we have Product and Warranty entities, where a product can exist without Warranty, but a warranty cannot exist without a Product. But Warranty entity has to have its own independent identity called "WarrantyNo" through which a customer claims for warranty on the product.
+	
+Since both the entities has their own identity based on business requirement, the only way to establish relationship is writing primary key of one table as foreign key in another table, there by which the tables will be in one-to-many relationship, so inorder to make them one-to-one we need to mark the foreign key as unique
+
+2. direct one-to-one
+we establish direct one-to-one relationship between 2 tables/entities when:
+1. one entity always exists when there is an existence of the parent/other entity. which means one entity doesnt have existence when the other doesnt exist
+2. the dependent entity doesnt require an separate identity
+
+for eg.. we have 2 entities bill and itemized_bill, here itemized_bill doesnt exist unless we have bill, in addition itemized_bill doesnt require a separate identity, customers would access the itemized_bill of a bill using bill_no itself, in such case we can establish direct one-to-one relationship between the entities by taking primary key bill_no of bill table as a foriegn key in itemized_bill and make it as primary key as well.
+	
+in-short: primary key of a table is written as primary key and foriegn key in another table, then the tables are said to be direct one-to-one relationship
+
+
+3. Many-To-Many
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

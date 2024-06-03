@@ -1,0 +1,182 @@
+Table per Subclass:
+
+How do we create database tables for the entity classes within the inheritance hierarchy?
+For the superclass we create one table, and per each subclass within the inheritance hierarchy we need to create one table with subclass attributes participating in relationship with the superclass table
+
+How to perform persistence operation on the underlying tables?
+1. SAVE/PERSIST:
+	1.1 Subclass
+	How to persist the data for a given Subclass in the hierarchy?
+	Representing inherited attributes of data within the Subclass, insert a record into the superclass table. pick the primary of the inserted record as a foreign key and primary key into the Subclass table add a new record with subclass attributes. So that all the data of the subclass is persisted in joined relationship between superclass and subclass tables
+	
+	1.2 Superclass
+	For the superclass object directly store the record into the corresponding superclass table
+	
+2. GET/FETCH:
+	2.1 Subclass
+	How to fetch/get the object of data for a subclass?
+	The record is said to be belonging to that subclass, if it exists in superclass table and in the corresponding subclass table as well. So to fetch the data for a subclass we need to perform innerjoin between those 2 tables, so that we can return the data as Subclass object
+	MedicalInsurancePlan mip = session.get(MedicalInsurancePlan.class, 2);
+
+select ip.*, mip.* from insurance_plan ip inner join medical_insurance_plan mip on ip.plan_no = mip.medical_insurance_plan_no where ip.plan_no = ?
+	
+	2.2 Superclass
+	How to fetch the data for a Superclass object?
+	Looks like we can query the data directly by going to the Superclass represented table for fetching the data for a super class object.
+	InsurancePlan ip = session.get(InsurancePlan.class, 1);
+
+	we can fetch the InsurancePlan object data with planNo=1 by querying the data directly from insurance_plan table
+	select ip.* from insurance_plan ip where ip.plan_no = ?
+	
+	but when it comes to inheritance hierarchy of classes, we should support accessing any of the subclass objects via the superclass reference type
+	for eg.. an MedicalInsurancePlan object can also be access interms of InsurancePlan type as below.
+		InsurancePlan ip = session.get(InsurancePlan.class, 2);
+
+here planNo=2 record belongs to MedicalInsurancePlan, when we query via InsurancePlan referenceType, hibernate/we should identify the record belongs to which entity class in the hierarchy and should return appropriate entity class object rather than return InsurancePlan classType object
+
+So for an superclass referenceType if we are always querying the data from superclass represented table, how do we know the record we are querying is related to which subclass?
+	
+	
+InsurancePlan.class, 1 = InsurancePlan object (only exists in insurance_plan)
+InsurancePlan.class, 2 = MedicalInsurancePlan object (both insurance_plan & medical_insurance_plan)
+InsurancePlan.class, 3 = AccidentalInsurancePlan object (both insurance_plan & accidental_insurance_plan)
+	
+From the above it looks like when we are accessing the data for an superclass referenceType we should query the data from all the tables of the hierarchy and should return corresponding object based on which tables the record is found
+So we need to query the data from all the tables using left outer join on superclass table with subclass tables, so that atleast we get the record of superclass table if exists
+
+select ip.*, mip.*, aip.*, case
+	when mip.medical_insurance_plan_no <> null then '1'
+	when aip.accidental_insurance_plan_no <> null then '2'
+	when ip.plan_no <> null then '0'
+	end classType
+	from insurance_plan ip left outer join medical_insurance_plan mip on ip.plan_no = mip.plan_no left outer join accidental_insurance_plan aip on ip.plan_no = aip.plan_no where ip.plan_no = ?
+	
+	
+InsurancePlan.hbm.xml
+---------------------
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping package="com.tpsc.entities">
+	<class name="InsurancePlan" table="insurance_plan">
+		<id name="planNo" column="plan_no">
+			<generator class="identity"/>
+		</id>
+		<property name="planName" column="plan_nm"/>
+		<property name="tenure"/>
+		<property name="premiumAmount" column="premium_amt"/>
+		<property name="insurredAmount" column="insurred_amt"/>
+		<property name="status"/>
+	</class>
+</hibernate-mapping>
+
+MedicalInsurancePlan.hbm.xml
+----------------------------
+<?xml version="1.0" encoding="utf-8"?>	
+<hibernate-mapping package="com.tpsc.entities">
+	<joined-subclass name="MedicalInsurancePlan" extends="InsurancePlan" table="medical_insurance_plan">
+		<key column="medical_insurance_plan_no"/> #we are specifying the joinColumn(fk)
+		<property name="copay"/>
+		<property name="coverageType" column="coverage_type"/>
+	</joined-subclass>
+</hibernate-mapping>
+	
+<joined-subclass> = with this tag we are telling strategy of inheritance, it indicates the hibernate the tables for the subclass are created in joined relationship with superclass table
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

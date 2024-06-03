@@ -1,0 +1,240 @@
+1. how to package an java application as an executable jar in ant buildscript?
+
+hire
+|-src
+	|-com
+	  |-hire
+			|-run
+				|-Launcher.java
+|-build
+  |-classes
+	|-dist
+|-build.properties
+|-build.xml
+	
+package com.hire.run;
+public class Launcher {
+	public static void main(String[] args) {
+		System.out.println("Launching hire engine...");
+	}
+}
+
+build.properties
+----------------
+src.dir=src
+build.dir=build
+classes.dir=${build.dir}${file.separator}classes
+dist.dir=${build.dir}${file.separator}dist
+
+build.xml
+----------
+<?xml version="1.0" encoding="utf-8"?>
+<project name="hire" basedir="." default="init">
+	<property file="build.properties"/>
+	
+	<target name="clean">
+		<delete dir="${classes.dir}"/>
+		<delete dir="${dist.dir}"/>
+		<delete dir="${build.dir}"/>
+	</target>
+	<target name="createdirs">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${classes.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+	</target>
+	<target name="compile">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}"/>
+	</target>
+	<target name="package">
+		<jar destfile="${dist.dir}${file.separator}${ant.project.name}.jar" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="com.hire.run.Launcher"></attribute>
+			</manifest>
+		</jar>
+	</target>
+</project>
+
+2. build an java project with ext libraries and database (db.properties) using ant buildscript?
+college360
+|-src
+	|-db.properties
+	|-com
+		|-college
+			|-dao
+				|-StudentDao.java
+			|-dto
+				|-StudentDto.java
+			|-helper
+				|-ConnectionHelper.java
+			|-main
+				|-Run.java
+|-lib
+	|-mysql-connector-j-8.2.0.jar
+|-build
+  |-classes
+		|-db.properties (replaced tokens)
+		|-com
+			|-college
+				|-**
+					|-*.class
+	|-dist
+		|-college360.jar
+		|-lib
+			|-mysql-connector-j-8.2.0.jar
+|-build.properties
+|-build.xml
+
+	
+db.properties
+--------------
+db.driverClassName=#{driverClassName}
+db.url=#{url}
+db.username=#{username}
+db.password=#{password}
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to build an web application using ant?
+An web application should be packaged into an war file, so that it can be deployed into the servlet container
+
+how does the structure of the warfile looks like?
+	
+project.war (webroot)
+|-html
+|-css
+|-js
+|-images
+|-fonts
+|-icons
+|-WEB-INF
+	|-classes
+		|-*.class
+	|-lib
+		|-*.jar
+	|-web.xml
+	
+<war> = task
+
+war tasks knows the structure of a file which means what directory should be created inside the war file and how to package them into war. We only need to specify which files should be placed inside which directories of the war file to the war task
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to package an java web application as an war file to deploy on servlet container (tomcat)?
+
+project directory structure
+----------------------------
+
+dhlservices
+|-src
+	|-com
+		|-dhls
+			|-servlet
+				|-HealthCheckServlet.java
+|-WebContent (static resource)
+	|-index.jsp
+	|-WEB-INF
+		|-lib
+			|-*.jar
+		|-web.xml
+|-build
+	|-classes
+		|-*.class
+	|-dist
+		|-dhlservices.war
+		
+		
+structure of war
+----------------
+dhlservices.war
+|-html
+|-css
+|-js
+|-images/icons/fonts
+|-WEB-INF
+	|-classes
+	|-lib
+	|-web.xml
+	
+Ant has provided an war task using which we can package the application as an war. The War task knows what directories must be created inside the war file, we just need to tell which contents of our project should be places in which directories of the war file
+
+#1. To build the above project first we need to compile the sourcecode of our application by adding the libraries into the classpath.
+#2. we need to specify which directories of the war what contents must be placed.
+		WebContent/ --> .war (directly)
+			|-*.html
+			|-*.css
+			|-*.js
+			|-*.images
+		WebContent/WEB-INF/lib --> WEB-INF/lib
+			|-*.jar
+			
+		build/classes --> WEB-INF/classes
+		  |-*.class
+				
+		WebContent/WEB-INF/web.xml -> WEB-INF/
+				
+			
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

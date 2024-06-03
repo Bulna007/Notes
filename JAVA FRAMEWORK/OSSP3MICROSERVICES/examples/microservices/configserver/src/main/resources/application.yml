@@ -1,0 +1,15 @@
+server:
+  port: 9099
+
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: "https://techsriman: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@github.com/techsriman/suzkiconfigrepo.git"
+          default-label: master
+          #refresh-rate: 60
+  security:
+    user:
+      name: configadm
+      password: config#$01

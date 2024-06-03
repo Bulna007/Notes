@@ -1,0 +1,256 @@
+What is Reactive programming?
+Reactive programming is an programming paradigm where the focus is on developing asynchronous and non-blocking applications in a event-driven form.
+	
+1. Asynchronous and non-blocking
+Asynchronous execution is a way of executing the code without the top-down flow of code. In a synchronous way of executing the code, if there is an blocking call for eg.. calling a database or a third-party api, the flow of execution is blocked. But in the non-blocking and asynchronous way the execution flow will not be blocked. In asynchronous programming we use Futures and callbacks for acheving this.
+	
+2. Event/Message driven stream data flow
+In reactive programming, data will flow like a stream, there will be an event and a response message to that event. In java it is similar to java streams which is introduced aspart of 1.8. In the traditional way when we get the data from datasource like a database, all the data will be fetched at once. In an event-driven stream, the data will be fetched one by one and it will be fetched as an event to the consumer.
+	
+3. Functional style code
+In Java, we write lambda expressions for functional programming. In reactive programming we mostly use Lambda expressions style of coding only
+
+4. Back pressure
+In reactive streams when a reactive application (Consumer) is consuming the data from the Publisher (Producer). The producer application continously produces and publishes the data as stream. Sometimes the consumer application cannot process the data at the speed at which the producer is publishing. In such case the consumer can notify the producer to slow down the data publishing.
+-------------------------------------------------------------------------------------------------------------------------------
+
+Principles of Reactive Programming
+At the core reactive programming lies the Reactive Manifesto, it has five key principles:
+1. Responsiveness = means the system should responds in a timely manner
+2. Resilience     = is about the system staying responsive despite of failures
+3. Scalability    = indicates how the ssytem remains responsive in the event of varying workloads
+4. Message-driven = the data is exchanged as streams or events.
+5. Transparency   = location transparency in the application
+
+The programs that are built based on reactive manifesto meets these principles.
+------------------------------------------------------------------------------------------------------------------------------Benefits of Reactive Programming
+1. Responsiveness
+Reactive systems can efficiently handle asynchronous operations without blocking the main thread, ensuring your application remains smooth and interactive
+
+2. Scalability
+These systems are highly scalable and capable of handling large number of concurrent users and events. This makes them ideal for applications with many large clients or IOT devices generating the data
+
+3. Error handling
+Reactive programming simplifies error handling by providing clear mechanisms for dealing with exceptions and failure scenarios, resuling in more robust and fault-tolerant solutions.
+	
+4. Composability	
+Reactive programming promotes composability, allowing us to build complex data processing flows by composing simple, reusable functions and operators.
+	
+Drawbacks of Reactive Programming:
+While reactive programming offers several advantages, it has its own set of challenges as well:
+1. Learning Curve: Transitioning to reactive programming may require developers to learn new concepts and paradigms of programming. This could be challenging initially
+
+2. Debugging Complexity Debugging reactive code is more complex like Multi-Threading. Because the flow of execution is non-linear. So proper tools and technics are required
+
+3. Resource Management: Managing resources like memory and thread pools in reactive stack requires careful consideration to avoid resource leakage and inefficiencies
+--------------------------------------------------------------------------------------------------------------------------------
+The Reactive Streaming API
+A reactive library is nothing but the implementation of Reactive Specification / Manifesto / interfaces. 
+Reactive programming in Java is primarily built on the foundation of Reactive Streams API. 
+	
+The core interfaces of Reactive programming are:
+
+1. Publisher: A Publisher represents source of data or a data producer.
+
+public interface Publisher<T> {
+	void subscribe(Subscriber <? super t> S);
+}
+
+2. Subscriber: A consumer of data that subscribers to a Publisher
+This interface has four methods
+2.1 onSubscribe = This method will be called by the publisher when subscribing to the Subscriber object
+2.2 onNext      = This method will be called when the next data will be published to the Subscriber
+2.3 onError     = This method will be called when exception arises while publishing data to the Subscriber
+2.4 onComplete  = method will be called after the successful completion of data publishing to the subcriber
+
+interface Subscriber<T> {
+  void onSubscribe(Subscription s);
+	void onNext(T t);
+	void onError(Throwable t);
+	void onComplete();
+}
+
+3. Subscription
+This interface represents the relationship between a Publisher and a Subscriber, allowing the Subscriber to request data and manage its consumption. It has 2 methods. The Subscription object will be created when the user Subscribers to the Publisher. The Publisher will pass the Subscription object to the Subscriber by calling onSubscribe() method on the Subscriber
+
+interface Subscription {
+	public void request(long n);
+	public void cancel();
+}
+
+4. Processor
+This is an interface that is extended by both Publisher and Subscriber interfaces. This interface is not very common but will be used to process the logic of the subscribing and publishing workflow
+	
+public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {}
+
+Working with these low-level api interfaces in implementing an reactive application is quite difficult, so there are lot vendors provided Reactive Libraries that can be used for building the reactive applications as below:
+1. RxJava
+2. Project Reactor
+3. Flow Class in JDK9
+
+Reactive streams in spring-boot have been developed based on project reactor.
+	
+Spring WebFlux
+---------------
+The Spring WebFlux has provided 2 basic components inorder build reactive programs.
+	1. Mono
+	2. Flux
+	
+1. Mono = Mono always publishes or produces only one item
+2. Flux = Flux always publishes or produces N no of items
+
+Flux
+1. just
+2. fromIteratable
+3. map
+4. flatMap
+5. block
+6. parallel
+7. concat
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings
+	xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
+	version="1.0">
+	<package>com.jpaorm.entities</package>
+	<entity class="InsurancePlan">
+		<table name="insurance_plan" />
+		<attributes>
+			<id name="planNo">
+				<column name="plan_no" />
+			</id>
+			<basic name="planName">
+				<column name="plan_nm" />
+			</basic>
+			<basic name="planType">
+				<column name="plan_type" />
+			</basic>
+			<basic name="minTenure">
+				<column name="min_tenure" />
+			</basic>
+			<basic name="minAge">
+				<column name="min_age" />
+			</basic>
+			<basic name="minInsurredAmount">
+				<column name="min_insurred_amt" />
+			</basic>
+			<basic name="maturityBonusPercentage">
+				<column name="maturity_bonus_percentage" />
+			</basic>
+		</attributes>
+	</entity>
+</entity-mappings>

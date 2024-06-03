@@ -1,0 +1,108 @@
+Struts Framework used for building web applications in java language. We can build web applications using Servlet/Jsp technology, but we endup in writing lot of boiler-plate logic in building the applications using Servlet/Jsp, to avoid it the Struts Framework has been introduced.
+1. Request Wrapping
+2. data validation & form handling
+
+#1. Dao
+Dao stands for data access object. all the persistency logic of our application should be written only aspart of dao class of our application. in another way, the dao class is used for performing persistence operations within the application.
+
+Why do we need to write persistence logic within the dao class only?
+There are several reasons in writing the persistence logic within the dao class, let us explore/understand:
+1. if we switch from one persistence storage system to another persistence storage system like from RDBMS database to File System or an RDBMS database to NO-SQL database, then we need to rewrite the persistence logic of our application
+2. if we switch from one persistence storage vendor to another persistence storage vendor like oracle database to mysql database even though the persistence system has not been changed, due to the change vendor, still we need to modify the persistence logic of our application
+3. if the format in which we are storing the data within the persistence storage system has been changed for eg..
+	3.1 lets say we are storing the data in RDBMS Tables, if the structure of the table has been changed or column names/dataTypes has been changed
+	3.2 or in a file based persistency if the format of the data being stored has been changed from xml to json
+	in all above cases we need to modify the persistence logic of our application
+4. if the persistency technology we are using in performing the operations has been changed for eg.. 
+	4.1 while performing the operations on the RDBMS database using jdbc has been changed to hibernate/jpa or spring jdbc
+	4.2 while storing the json data in file using javax json api to jackson api
+	then we need to rewrite the entire persistence logic in our application
+	
+give if the persistence logic has been write across all the classes of our application, then any changes described above in persistency aspects will not only impacts the persistence logic it impacts all the other types of logic like business logic and presentation-tier logic that is written in other components of our application, which makes the entire application re-write.
+	
+instead write the persistence logic separately within the Dao class only, so that any change in the persistence layer of the application will only affects the dao of our application and will not impacts any other components of our application.
+	
+In other way we can say
+1. Dao protects or shields the other classes of our application from any changes that takes place within the persistence layer of our application
+2. it abstracts the persistence-tier of our application from other components.
+	
+hence the maintainbility of the application becomes very easy with the help of Dao class
+	
+	
+How many Daos we write within an application?
+There will be multiple daos in an application. These daos are written based on
+1. per a group of related tables, to have their persistence operations to be together we write one dao
+
+or else
+2. per each table we can write one dao in the application (least prefferred)
+-----------------------------------------------------------------------------------------------------------------------------------	
+#2. Business Delegate
+There are 3 responsibilities performed by the business delegate of our application.
+	
+2.1 action -> dao (directly)	
+	if the action class is directly invoking the dao asking him to perform the persistence operation, then action class will be exposed to the persistence layer of the application, which means
+	all the persistence-tier exceptions/error information is directly reported to action class, so that action will be exposed to it. in future if there is a change in the persistence layer, it not only affects the dao, but it effects even the action class/presentation-tier components our application.
+	That inccurs huge amount of rework or maintaince in the application.	
+
+To overcome this problem the persistence-tier specific exceptions should not be propagated to presentation-tier components. but dao will not perform any operation apart from persistence-tier aspect, so we need business delegate.
+		
+How does the exceptions are translated and reported with in an Application?
+There are many ways to do this and it purely depends on the type of the application we are building. broadly we can divide the applications into #2 types from the exception translation point of view
+1. technical applications      = A product/framework/library/api/tool that is being used by other developers in building their own software systems/products. such applications are called technical applications which are used by technical users.
+
+oracle sql developer tool = it is an database client software used for connecting to the oracle database, so that developers/testers etc can use that tool to work on database. while using the tool, the user is trying to connect to the database by entering wrong un/pwd, now the application (sql developer tool) runs into exception so for this exception sql developer should display error message to the end user using that tool
+This error that is reported by these technical tools should be reporting underlying technical error itself rather than business friendly error.
+
+2. business-user applications
+These are the general purpose applications used by the end-users who are non-technical, in such case the errors encountered within the application should not be reported as technical errors, rather those should be reported in a business-friendly error message format only.
+		
+
+
+How do you handle exceptions aspart of your application?
+	
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

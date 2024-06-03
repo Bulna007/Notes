@@ -1,0 +1,123 @@
+Spring WebMvc
+-------------
+Spring WebMvc is an module provided by spring developers to support developing web application using Spring Framework. We can build web applications in java using servlet/jsp or struts framework, but each of them has their own limitations or drawbacks.
+	
+1. Servlet / Jsp
+Servlet/Jsp are apis, apis will not provide boiler-plate logic, developers by themself has to build boiler-plate logic in building the applications, So if we are building web application using servlet/jsp we endup in writing lot of boiler-plate logic, which eventually takes more time, cost and maintainance in using the application
+
+2. Structs Framework
+Even though Struts is an Framework that provides boiler-plate logic in quickly building the web applications, but it has its own limitations. We cannot build end-to-end applications using Struts Framework, it supports building only Web Application aspects of an application, it has not provided support for building business/persistence tier/layers of the application
+
+To overcome the problems with above 2 technologies, the Spring Framework has provided Spring Web Mvc Module.
+	
+What is boiler-plate logic?
+Boiler-plate logic is the code that we need to repeatedly write across the projects we built, inorder to accomplish the functionality. In-short can be called as redundant across the applications we develop
+
+We can consider jdbc api as an example in understanding the boiler-plate logic. Let us say we want to execute an select sql query for fetching employees in emp table, 
+
+
+Connection con = null;
+Statement stmt = null;
+ResultSet rs  = null;
+
+try {
+	Class.forName("driverClassname");
+	con = DriverManager.getConnection(url, un, pwd);
+	stmt = con.createStatement();
+	rs = stmt.executeQuery("select * from emp");
+	while(rs.next()) {
+		// collect the data
+	}
+}catch(SqlException | ClassNotFoundException e) {
+	e.printStacktrace();
+}finally {
+	if(stmt != null) {
+		stmt.close();
+	}
+	if(con != null) {
+		con.close();
+	}
+}
+	
+	
+if we look at the above code, inorder to execute an sql query we need to
+1. load driver
+2. create connection
+3. create statement
+4. execute query using statement
+5. iterate over resultset
+6. close resources
+that whould be written for executing any sql query of any project across, which means the boiler-plate logic
+
+If we are implementing the boiler-plate logic in our application to accomplish the functionality we run into lot of problems:
+1. we endup in writing lot of lines of code due to which
+	1.1 we need more number of resources
+	1.2 more resources more cost of development
+	1.3 lot of time required for developing the application
+	1.4 more code, introduces more bugs
+	1.5 more testing time required since we have more code
+thus doesnt support rapid application development.
+		
+The Spring Framework has provided Spring MVC Module that eliminates writing boiler-plate logic in building web applications in java platform.
+		
+Let us understand, what is the common or boiler-plate logic we write while building an web application using servlet/jsp, so that we can understand how it can be eliminated while working with spring mvc.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

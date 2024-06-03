@@ -1,0 +1,148 @@
+
+class BusDao {
+	void saveBus(Bus bus) {
+		SessionFactory sessionFactory = null;
+		Session session = null;
+		try {
+			sessionFactory = SFRegistry.getSessionFactory();
+			session = sessionFactory.openSession();
+			session.save(bus);
+		}finally {
+			if(session != null) {
+				session.close();
+			}
+		}		
+	}
+}
+
+To perform DML operations like save, update or delete we need transactionality in hibernate framework
+What is transactions, how to work with transactions?
+Transactions is an unit of work, where all the operations that are performed under it should be either comitted completed or rollback complete is called "Transaction"
+	
+How to manage transactions while working with java jdbc application?
+
+class Ticket {
+	int tripNo;
+	int ticketNo;
+	String passengerName;
+	int age;
+	String gender;
+	String mobileNo;
+	String emailAddress;
+	// accessor
+}	
+	
+class TripDao {
+	public void saveTickets(List<Ticket> tickets) throws Exception {
+		Connection con = null;
+		PreparedStatement selectTripPstmt = null;
+		PreparedStatement updateTripPstmt = null;
+		PreparedStatement ticketPstmt = null;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd);
+			selectTripPstmt = con.preparedStatement("select t.available_tickets from trip where trip_no = ?");
+			selectTripPstmt.setInt(1, tickets.get(0).getTripNo());
+			ResultSet rs = selectTripPstmt.executeQuery();
+			if(rs.next()) {
+				int availableTickets = rs.getInt(1);
+			}
+			availableTickets = availableTickets - tickets.getSize();
+			updateTripPstmt = con.preparedStatement("update trip set available_tickets = ? where trip_no = ?");
+			updateTripPstmt.setInt(1, availableTickets);
+			updateTripPstmt.setInt(2, tickets.get(0).getTripNo());
+			updateTripPstmt.executeUpdate();
+			
+			ticketPstmt = con.preparedStatement("insert into ticket(trip_no, ticket_no, passenger_nm, age, gender, mobile_no, email_address) values(?,?,?,?,?,?,?,?)");
+			for(Ticket ticket : tickets) {
+				// substitute parameters for each ticket object into pstmt
+				ticketPstmt.executeUpdate();
+			}			
+		}catch(ClassNotFoundException | SqlException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			if(selectTripPstmt != null) {
+				selectTripPstmt.close();
+			}
+			if(updateTripPstmt != null) {
+				updateTripPstmt.close();
+			}
+			if(ticketPstmt != null) {
+				ticketPstmt.close();
+			}
+			if(con != null) {
+				con.close();
+			}
+		}
+	}
+}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

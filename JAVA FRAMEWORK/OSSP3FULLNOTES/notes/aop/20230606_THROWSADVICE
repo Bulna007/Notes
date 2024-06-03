@@ -1,0 +1,204 @@
+ThrowsAdvice
+-------------
+If we want to perform crossing-cutting logic onbehalf of the target class method, only when the target class method is throwing an exception, then we need to use "Throws Advice"
+a very common usecase of using ThrowsAdvice is "global exception logging".
+	
+	
+class A {
+	int m1() {
+		try {
+		// a piece of code running into AIOBException
+		}catch(AIOBException e) {
+			logger.error(e); // just for logging the exception we are writing catch-block even we dont have alternate path of execution
+			throw e;
+		}
+	}
+}	
+
+across all the classes within our application in each method, we need to write try/catch block just for catch the exception and log it even though we dont have alternate path of execution, this leads to unnecessary try/catch block being written everywhere
+Instead of it we can use ThrowsAdvice. Whichever the class in our application throws/reports an exception, all those exceptions can be centrally received within ThrowsAdvice and we can apply cross-cutting logic based on the exception type easily.
+	
+class Thrower {
+	int willThrow(int i) {
+		if(i<=0) {
+			throw new IllegalArgumentException("invalid i");
+		}
+		return i;
+	}
+}
+
+class GlobalExceptionLoggingAdvice implements ThrowsAdvice {
+	public void afterThrowing(Throwable t) {
+		System.out.println("throwing : " + t.getMessage());
+	}
+}
+
+proxy.willThrow(-10);
+
+
+ThrowsAdvice is an marker interface and we dont need to override any methods inside the advice class. This interface has been provided to just identify the class as Advice class only.
+
+1. Why is it a marker interface?
+if the ThrowsAdvice interface has defined an standard method taking base exceptionType: Throwable as a parameter then we run into several problems:
+	1.1 for any class of any exception, the ThrowsAdvice will be invoked in our application, but we may not want to apply the cross-cutting logic for all the classes of all the exceptions
+	1.2 different types exceptions, we want to apply different cross-cutting logic, this cannot be accomplishable with one single-method written in advice class
+hence ThrowsAdvice has been made as marker interface
+		
+2. in which method we need to write aspect logic inside the advice class, if there is no interface method provided?
+the spring aop has provided standard signature of the method in which we need to write the cross-cutting logic inside the advice class
+	
+methodName: afterThrowing that takes exceptionType as parameter for which we want to perform cross-cutting logic
+
+public void afterThrowing(NullPointerException e) {
+	// cross cutting logic
+}
+public void afterThrowing(IllegalArgumentException e) {
+	// different cross-cutting logic
+}	
+	
+in this way for each type of Exception we can write one afterThrowing method inside the advice class, to perform different cross-cutting logics. if the ExceptionType we have defined is a superclass Type, then all the sub-class exceptions also are resolved to the superclass Type.
+-------------------------------------------------------------------------------------------------------------------------------------------	
+There is one more signature is also supported, that can be used for receiving the information about the targetClass method who has reported that exception
+
+public void afterThrowing(Exception e, Method method, Object[] args, Object target) {} = The advantage is we can extract more information about the targetClass method who has reported that exception.
+	
+if we write #2 methods with both signatures of same exception, the max parameter will be called
+public void afterThrowing(IllegalArgumentException e) {
+	// different cross-cutting logic
+}	
+public void afterThrowing(IllegalArgumentException e, Method method, Object[] args, Object target) { @maxparameters
+	// different cross-cutting logic
+}	
+-------------------------------------------------------------------------------------------------------------------------------------------
+within the advice class if we have both parent ExceptionType and exceptionType parameter afterThrowing(..) methods always it picks the matching exceptionType only, if not found then only the parent exceptiontype method will be called.
+
+public void afterThrowing(Throwable t) {
+	// different cross-cutting logic
+}	
+
+public void afterThrowing(IllegalArgumentException e) {
+	// different cross-cutting logic
+}	
+--------------------------------------------------------------------------------------------------------------------------------------------
+Flow of execution:
+1. The advice method will be called only when the Target class method has thrown an exception and there is an matching afterThrowing(..) within the Advice class taking appropriate parameter / parent exceptionType
+2. within the Advice method we can access the information about the Target class method which has thrown the exception if we are writing @2 signature afterthrowing method
+public void afterThrowing(Exception e, Method method, Object[] args, Object target) {}
+	2.1 we can see the parameters, but there is no use of modifying them, since the targetClass method has already finished execution
+	2.2 there is no way to control the execution of targetClass method, because already the target class method finished execution and ran into an exception
+	2.3 we cannot see the returnValue of the targetClass method, because the targetClass method has ran into exception
+3. can I atleast see the exception that is reported/thrown by the target class method inside the advice method?
+Yes, the advice method has been passed with parameter of exception thrown by the targetClass method.
+Note:
+1. ThrowsAdvice method is not meant for catching the exception and providing alternate path of execution, we need to handle the exception in the targetClass method by writing try/catch block. here in the advice method, we perform cross-cutting logic for the exception reported by targetClass method.
+once the advice method finished execution, automatically the exception will be propagated to callee. so here we cannot stop, catch the exception
+
+but we can throw a different exception than the exception reported by the target class method to the callee
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,180 @@
+How many states in which an entity object could exists in Hibernate/Jpa api?
+There are 3 different states in which an entity object could exists
+1. Transient state
+2. Persistent state
+3. Detached state
+
+1. Transient state
+If there is no record exists within the database table representing the entity object, and it is not associated aspart of any active session, then the entity object is said to be in Transient state
+
+when we create a new entity object with non-existing identity or empty then then entity object is said to be Transient state
+
+Account account = new Account();
+// populate all the data into the above entity object, apart from id property (because id generators will generate)
+Then the above entity object is in Transient state
+
+2. Persistent state
+If there exists an record in the database table representing that entity object, and it is associated aspart of an active session, then it is said to be in Persistent state. 
+
+If the entity object is in persistent state means, any changes that takes place ontop of the object would be tracked by the Session object and would be persisted automatically at end of the transaction. We dont need to manually call saveOrUpdate() or update() operations ontop of the entity object
+
+2.1
+1. get(Class, id)
+2. load(Class, id)
+we can directly bring an entity object into persistent state
+
+2.2
+or else we can move an Transient state entity object into persistent state by using
+1. save(Object)
+2. persist(Object)
+3. saveOrUpdate(Object)
+	
+2.3 We can move an Persistent state entity object into Transient state by using
+1. delete(object)
+2. remove(object)
+	
+3. Detached state
+if there exists an record representing that entity object within the database table, but the object is not associated aspart of an active session, then the object is said to be in Detached state
+
+3.1 We can move an persistent state entity object into detached state by using
+1. session.close();
+2. session.evict(Object);
+3. session.clear();
+
+3.2 We can move an detached state entity object into persistent state:
+1. update(Object);
+2. saveOrUpdate(Object)
+3. merge(Object)
+--------------------------------------------------------------------------------------------------------------------------------------
+50% - hibernate framework/jpa api = realtime: 0%
+
+duration: 45 days
+Mappings [spring datajpa, spring hibernate or jpa integration]
+1. Inheritance Mapping model
+2. Association Mapping model
+	1. fetch types
+	2. cascade options
+	3. inverse
+	4. n+1 problem
+
+HQL Queries (Join queries)
+Criteria Api (Interview perspective)	
+Hibernate 2nd Level cache
+--------------------------------------------------------------------------------------------------------------------------------------
+Relationship Mappings
+
+person
+person_no (pk)  person_nm   age   gender   mobile_nbr  email_address
+
+address
+address_no (pk)  address_line1   address_line2  city  state   zip   country   person_no (fk)
+
+
+1. one-to-one
+	1.1 direct one-to-one  = the primary key of the parent table is written as primary key and foreign key in the child table, then the tables are said to be in direct one-to-one relationship
+	in-short: pk of our table is pk and fk in another table, then the tables are said to be in direct one-to-one relationship
+	
+	1.2 one-to-many as one-to-one = both the entities has independent existence and has their own identities, in such case to represent one-to-one relationship between the entities we use one-to-many as one-to-one
+	pk of our table is written as fk in another table, and to make it one-to-one we need to make the fk as unique then the tables are said to be in one-to-many as one-to-one
+	
+2. one-to-many / many-to-one
+	pk of our table is written as fk in another table, then the tables are said to be in one-to-many relationship
+	
+3. many-to-many 
+	both the tables pk are written as foreign keys in third-table and make that foreign keys as composite primary keys then the tables are said to be many-to-many relationship
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

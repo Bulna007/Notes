@@ -1,0 +1,150 @@
+Java Automatic Parameter Type conversion
+The jaxrs runtime upon receiving the request, it would be able to extract the data from the request and inject into the parameters of the Resource Method by performing an Type conversion automatically, given if the parameterTypes are qualified for automatic type conversion rules, that are defined as below.
+	1. all the primitive dataTypes can be declared as parameterTypes for the Resource method, so that those are qualified for automatic type conversion. 
+	2. we can declare classType also as parameterTypes for the resource method, given the classTypes follow the below rules
+		2.1 Single-argument String parameter constructor must be there (or)
+		2.2 static valueOf(String) that returns the same class object as an return value (or)
+		2.3 static fromString(String) and returns the same class object as an return value
+	then the class would be qualified for automatic type conversion of the jaxrs runtime
+	3. Collection class as an parameterType of the resource method, given the collection generic should be either primitive or objectType given those objects follow automatic type conversion rules
+	
+	
+Custom Parameter Converter
+--------------------------
+Incase if the parameterType that we declared aspart of the Resource method doesnt qualifies for java automatic parameter type conversion rules, the jaxrs runtime would fail in invoking the resource method, so we need to provide our own Custom Parameter Type converter
+
+// no source
+class AccountNo {
+	String branchCode;
+	String accountType;
+	String uniqueNumber;
+	
+	// accessors
+}
+
+assumptions:
+12 characters in length
+5 - division (zones/divisions)
+2 - type "SA", "CC", "LA"
+5 = uniqueNumber
+
+
+@Path("/account")
+class AccountApiService {
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/{accountNo}/balance")
+	public double getBalance(@PathParam("accountNo") AccountNo accountNo) {
+		return 393;
+	}
+}
+
+here the jaxrs runtime will not be able to extract the path parameter from the URI and inject into Resource Method AccountNo parameter, since the classType doesnt qualifies for java automatic parameterType conversion rules. And we cannot add an String arg-constructor, valueOf(String) or fromString(String), because we dont have sourcecode of the class.
+	
+Since jaxrs runtime dont know how to construct the object out of the parameter value, we need to write our logic for constructing the object out of the parameter value, since it our logic has to be called/used by the jaxrs runtime we need to write this class based on the standard interface provided by jaxrs api
+	
+interface ParamConverter<T> {
+	T fromString(String s);
+	String toString(T t);
+}
+
+we need to write our own custom parameter converter class for converting String value into our object type by implementing from ParamConverter interface
+	
+class AccountNoParamConverter implements ParamConverter<AccountNo> {
+	public AccountNo fromString(String param) {
+		AccountNo accountNo = new AccountNo();
+		accountNo.setZone(param.substring(0, 5));
+		accountNo.setType(param.substring(5, 7));
+		accountNo.setUniqueNumber(param.substring(7,12));
+		return accountNo;
+	}
+	
+	public String toString(AccountNo accountNo) {
+		return accountNo.getZone()+accountNo.getType()+accountNo.getUniqueNumber();
+	}
+}	
+
+There could be multiple ParamConverters written in an application, the jaxrs runtime dont know which ParamConverter to be used for converting into which classType, so the programmer has to write ParamConverterProvider, that provides information about the ParamConverter to be used for a specific classType.
+	
+The jaxrs api has provided an pre-defined interface that should be used in writing Param converter provider
+	
+interface ParamConverterProvider {
+	public ParamConverter getConverter(Class<?> classType, Type genericType, Annotation[] annotations) {
+		// write the logic for identifying the ParamConverter to be used for that ClassType when the parameter is written with those annotations
+		// create the object of the ParamConverter
+		return paramConverter;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

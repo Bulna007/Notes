@@ -1,0 +1,104 @@
+What is AOP? What is the purpose of it?
+AOP stands for Aspect oriented programming, AOP is meant for managing in applying the cross-cutting logic across various classes within our application.
+There are 7	principles are there
+1. Aspect
+2. Advice
+3. Joinpoint
+4. Pointcut
+5. Target
+6. Weaving
+7. Proxy
+
+1. Aspect
+The piece of code (secondary logic), that we wanted to apply across several classes within our application is called "Aspect".
+The piece of code that we wanted to advice ontop of the target class joinpoints is called "Aspect".
+	
+	
+2. Advice
+How we wanted to apply the aspect logic / piece of code ontop of the primary business logic is indicated through "Advice".
+	(or)
+Advice is the way through which we let the aop understand how the aspect should be executed along with primary business logic
+There are 4 types of advices are there
+1. Before Advice
+2. After Advice
+3. Before/After Advice (Around Advice)
+4. Throws Advice (when the primary logic runs into an exception)
+	
+Advice indicates how we want to apply the aspect logic ontop of the target class joinpoints
+	
+	
+3. Joinpoint
+joinpoints are the possible places within an application where we can apply the aspect logic 
+(or)
+all the possible places where we can apply the aspect logic are called joinpoints;	
+in spring aop: the only joinpoint type that is support is : Method
+
+The possible places within the Target class, where we can advice the aspect are called "Joinpoints"
+	
+
+4. Pointcut
+collection of joinpoints on whom we are applying the aspect logic is called "pointcut".
+Collection of joinpoints on whom we are advicing the aspect are called "pointcut"
+	
+	
+5. Target
+The class or the component on whom we want to apply the aspect logic is called "Target".
+	(or)
+on whom we are applying the aspect logic is called the Target
+The class on whom we are advicing the aspect is called "Target".
+
+6. Weaving
+The process of combining the aspect logic with the target class joinpoints is called "Weaving"
+The process of combining the aspect advice with target class joinpoints in producing the proxy is called "Weaving".
+	
+	
+7. Proxy
+Proxy is nothing but putting together the aspect logic with the primary logic to make them execute together is called "Proxy".
+Always the result out of weaving process is "proxy".
+proxy contains combined logic of aspect + primary business logic, so that they execute together
+
+Proxy is an combination of aspect advice with target class.
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	

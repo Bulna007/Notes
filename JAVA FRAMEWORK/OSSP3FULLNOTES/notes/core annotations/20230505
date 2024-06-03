@@ -1,0 +1,106 @@
+What are annotations, what is the purpose of them?
+in core applications many of the times, we write classes, we take care of instantiating/using/maintaining the classes by our own. but when it comes to building enterprise applications, we need to endup in writing lot of infrastructure/boiler-plate logic in building the application
+
+For eg.. while building an web application, if we are not using any jee / servlet api we need to endup in writing logic of infrastructure logic in
+1. receiving the request
+2. extracing the data that is being passed through the request
+3. and logic for writing the data back to the client in-response over the network
+The above code is not specific to one component of our application, rather we need to write across all the classes within our application in dealing with request/response handling over the network, thus increasing the complexity, cost and time required for building the application
+
+To eliminate the above challenges and help us in quickly building the applications aspart of java platform the sun microsystems introduced jee api/servlet api and many third-party vendors provided frameworks as well. Now the infrastructure/boiler-plate logic is wrapper	in the underlying containers or runtime engines
+
+Now the network aspects of receiving the request, extracting the data and passing it to our classes, taking the response data and writing it back to the client from our classes will be done by the underlying containers/runtime engines. In such case the underlying containers/runtime engines should take the responsibility of instantiating, invoking and managing our application classes.
+	
+How does the underlying platform/container knows the details of our classes to be instantiated, invoked or managed?
+describing the information about our application classes, we need to provide configuration information about our classes to the underlying containers, that is where the need for configuration has been arised
+
+How to define the configuration information describing the information about our classes to the frameworks or containers or runtime engines?
+That is where the XML-based configuration files are introduced.
+	
+Annotations are the alternate means of providing the configuration information describing the information about the classes to the underlying containers, runtimes or frameworks. Annotations are directly written aspart of the sourcecode of an java class describing the details of the class
+	
+The information we write describing the details of a class is called "metadata". since we are writing the metadata information directly within the sourcecode of the java class, the annotations are even called "sourcecode metadata".
+	
+when we can define the configuration information pertaining to the classes in an xml, what is the need of introducing annotations as an alternate to the xml?
+There are many of the people who are against to writing/using xml in describing the info about classes in java platform from day one, because of difficulties and challenges in working with xml, let us understand them
+1. XML is too verbosed, more than the actual data we endup in writing xml tags sourrounding the actual information describing it, that makes many of the people often find difficult to use it and memorize it and even takes more time in writing the xml
+
+2. Most of the time the tags we write describing the details of class are quite lengthy, and should be written in the same case of their usage and even should remember the order of these tags in writing that makes people very complex to use xml
+
+3. xml is not an integral part of java, it is by its own the data interchange standard that doesnt have any resemblence with java language interms of syntaxes or semantics of its usage, so most of the java developers often find very complex to understand completely a new language XML that is no way related to java in describing the details of java classes in XML
+
+
+
+class WebServlet extends HttpServlet {}
+
+<servlet>
+	<servlet-class>WebServlet</servlet-class>
+	<servlet-name>webservlet</servlet-name>
+	
+</servlet>
+<servlet-mapping>
+	<servlet-name>webservlet</servlet-name>
+	<url-pattern>/web</url-pattern>
+</servlet-mapping>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+

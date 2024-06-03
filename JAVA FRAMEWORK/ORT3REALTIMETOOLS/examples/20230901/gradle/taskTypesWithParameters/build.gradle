@@ -1,0 +1,23 @@
+defaultTasks "endMessage"
+
+abstract class MessageTask extends DefaultTask {
+    @Input
+    abstract Property<String> getMessage()
+
+    MessageTask() {
+        message.convention("default message")
+    }
+    @TaskAction
+    def print() {
+        println message.get()
+    }
+}
+
+tasks.register("initMessage", MessageTask) {
+    message = "gradle build begins...."
+}
+
+tasks.register("endMessage", MessageTask) {
+    dependsOn "initMessage"
+    message = "gradle build ends...."
+}

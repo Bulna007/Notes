@@ -1,0 +1,566 @@
+What is Circuit Breaker?
+Circuit breaker is one of the integration-tier design pattern, it is used for protecting the client applications against the slow/un-responsive remote services.
+	
+The Circuit breaker is not something that belongs to Spring Framework or something that is only applied in microservices technology. It is an independent design pattern of its own and can be applied anywhere when an client application is trying to access an remote service (the remote service can be rmi, ejb, soap, rest)
+	
+Whenever an client application is trying to access an remote service, due to various different reasons the remote service could be un-responsive or might be slow in serving the requests. The remote service could be
+1. serving heavy requests due to high traffic
+2. running into low system resources
+3. it might be accessing another remote system which seems to be slow 
+
+At this point of time if the client application is allowed to access the remote slow-running service, it creates lot of problems at the client application:
+1. The client application would be sending the requests to the un-responsive remote service waiting for response from the remote application for longer amount of time which would block lot of threads at the client application and results in consume huge system resources at the client-side
+
+2. due to longer waiting time, the requests at the client application would result in timeout exceptions after holding the system resources for longer amount time
+
+3. during this time while the requests at the client application are waiting for the response from the remote application, if the requests to the client application increases, then more number of threads would be spawned by the client application which are consuming heavy system resources and leads to thread starvation and crash of the application
+
+4. The post effect of accessing the un-responsive remote application not only affects the client application, it shows an cascading affect on the other clients who are access the client application aswell
+
+5. if more and more number of client applications are sending the request to the un-responsive remote application, this could result in huge load on the remote application as well, that will not let the remote application give a chance of recovery and eventually leads to the crash of the remote application as well.
+	
+How to solve this problem?
+We need to implement Circuit breaker design pattern as below:
+
+Whenever the client application has detected an remote service is un-responsive and taking more amount of time in returning the response than stipulated interval of time (response timeout), the client application immediately has to cut the chord of the current request and increment the failure count.
+	
+If the failureCount at the client application has reached to a Threshold, then all the subsequent requests from the client application to the remote service should be terminated locally without spawing a thread or connection to the remote service. After certain interval of time again the client application can allow the requests to the remote service conditionally. This whole process of monitoring and allowing the requests in controlled way to the remote application is called "Circuit Breaker".
+	
+How to implement Circuit breaker?	
+	
+class DistributorNetworkServiceInvoker {
+	private RestTemplate restTemplate;
+	
+	public DistributorDto getDistributor(String distributorCode) {
+		DistributorDto dto = null;
+		String resourceUri = "http://localhost:8080/distributor/{distributorCode}";
+		Map<String, Object> uriVariables = new HashMap();
+		uriVariables.put("distributorCode", distributorCode);
+		String url = UriComponentBuilder.fromUriString(resourceUri).uriVariables(uriVariables).build().toString();
+		int failureCount = 0;
+		boolean open = false;
+		int failureThreshold = 3;
+		int openSeconds = 1;
+		
+		try { #1, #2, #3f, #4, #5, #30
+			if(open==true) {
+				long ct = Calendar.getInstance().getTimeInMilliSeconds();
+				if((ct - openTimeInMs)/1000 > openSeconds) {
+					open = false;
+					failureCount =0;
+				}
+			}	
+		
+			if(failureCount < failureThreshold) {
+				dto = restTemplate.getForObject(url, DistributorDto.class);	
+			}else {
+				if(open==false) {
+					open = true;
+					openTimeInMs = Calendar.getInstance().getTimeInMilliSeconds();
+				}
+			}
+			
+			if(open) {
+				throw new CircuitBreakerException();
+			}
+			
+		}catch(Throwable t) {
+			failureCount++;
+		}
+		
+		return dto;		
+	}
+}	
+
+In the above code while invoking the remote endpoint, we sourrounded it around the circuit breaker logic, in this way within our client application we might access several remote endpoints, across all those places whereever we are accessing the remote endpoint we need sourround the code within the circuit breaker logic that leads to
+1. duplicate code written across all the places
+2. the invocation logic becomes complex to understand
+How to avoid these problems?
+	
+
+interface Invocation {
+	Object invoke();
+}	
+
+class CircuitBreaker {
+	int failureCount;
+	int failureThreshold;
+	int openIntervalSeconds;
+	int openStateTime;
+	boolean open = false;
+	
+	public Object invoke(Invocation invocation) {
+		Object response = null;
+		
+		try {
+			if(open == true) {
+				long ct = Calendar.getInstance().getTimeInMilliseconds();
+				if(ct - openStateTime > openIntervalSeconds) {
+					open = false;
+					failureCount = 0;
+				}
+			}
+			if(failureCount < failureThreshold) {
+				return invocation.invoke();
+			}else {
+				if(open == false) {
+					open = true;
+					openStateTime = Calendar.getInstance().getTimeInMilliSeconds();
+				}
+			}
+			if(open) {
+				throw new CircuitBreakerException();
+			}
+		}catch(Throwable t) {
+			failureCount++;
+			throw t;
+		}
+	}
+	
+}
+
+class DistributorNetworkServiceInvoker {
+	private CircuitBreaker cb;
+	
+	public DistributorDto getDistributor(String distributorCode) {
+		DistributorDto dto = null;
+		
+		return cb.invoke(() -> {
+				String resourceUri = "http://localhost:8080/distributor/{distributorCode}";
+				Map<String, Object> uriVariables = new HashMap();
+				uriVariables.put("distributorCode", distributorCode);
+				String url = UriComponentBuilder.fromUriString(resourceUri).uriVariables(uriVariables).build().toString();
+		
+				dto = restTemplate.getForObject(url, DistributorDto.class);	
+		    return dto;		
+			}
+		});
+		
+		
+		return dto;		
+	}
+	
+	public List<DistributorDto> getAllDistributors() {
+		List<DistributorDto> dtos = null;
+		
+		return cb.invoke(() -> {
+				String resourceUri = "http://localhost:8080/distributors";
+				String url = UriComponentBuilder.fromUriString(resourceUri).build().toString();
+		
+				dto = restTemplate.getForObject(url, List.class);	
+		    return dto;		
+			}
+		});
+	}
+}		
+-------------------------------------------------------------------------------------------------------------------------------
+Spring Cloud Circuit Breaker
+We can write our own code as shown above in implementing the Circuit Breaker design pattern for our application, instead there are lot of third-party vendors provided different libraries in using Circuit Breaker aspart of an application
+1. Netflix Hystrix
+2. Resilience4J
+3. Sentinel
+4. Spring Retry
+
+For eg.. if we are using Netflix Hystrix Circuit Breaker Hystrix library, then CircuitBreaker components will be provided aspart of the Hystrix library itself
+
+class HystrixCircuitBreaker {
+	T run(Invocation invocation) {
+		// circuit breaker logic
+		invocation.invoke();
+		
+	}
+}
+
+class DistributorServiceInvoker {
+	@Autowired
+	HystrixCircuitBreaker hystrixCircuitBreaker;
+	@Autowired
+	RestTemplate restTemplate;
+	
+	public DistributorDto getDistributor(String distributorCode) {
+		return hystrixCircuitBreaker.run(()-> {
+			// UrlComponentBuilder builder = ...
+			return restTemplate.getForObject(..);
+		});
+	}	
+}
+
+@SpringBootApplication
+class CBApplication {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(CBApplication.class, args);
+		...
+	}
+	
+	@Bean
+	public HystrixCircuitBreaker hystrixCircuitBreaker() {
+		HystrixCircuitBreaker cb = new HystrixCircuitBreaker();
+		// populate configuration
+		return cb;
+	}
+}
+
+In the above code we are using Hystrix third-party library in implementing Circuit Breaker functionality, our code is wrapped inside the Hystrix api classes. In future if we want to switch from Hystrix to Resilience4J third-party library, we need to goto each component of our application whereever we are using CircuitBreaker functionality and rewrite using Resilience4J api, which seems to huge effort and takes lot of time.
+	
+Instead of working with individual	libraries in implementing CircuitBreaker functionality we can use Spring Cloud Circuit breaker that acts as an wrapper in working with multiple third-party Circuit breaker libraries.
+	
+The spring cloud circuit breaker has defined an interface with multiple implementations each per vendor. In each per vendor implementation it holds the object of the vendor CircuitBreaker in which our logic would be executed.
+	
+interface CircuitBreaker {
+	<T> T run(Supplier<T> s);
+	<T> T run(Supplier<T> s, Function<Throwable, T> fallback);
+}	
+
+class SpringResilience4JCircuitBreaker implements CircuitBreaker {
+	// holds the object of Resilience4JCircuitBreaker
+	io.github.resilience4j.circuitbreaker.CircuitBreaker rcb;
+	
+}
+
+Now within our application components we hold the interface implementation object using which we invoke our rest/http endpoints. So we need to instantiate the SpringCloud CircuitBreaker implementation objects by wrapping vendor implementation object inside them.
+	
+To instantiate vendor specific CircuitBreaker implementation object that Spring cloud has provided, the Spring team has adopted abstract factory design pattern.
+	
+abstract class CircuitBreakerFactory {
+	CircuitBreaker create(String id);
+}	
+
+For each vendor implementation they have provided an implementation of Abstract factory class. The implementation factory takes care of instantiating the vendor api class and wraps that into SpringCloud CircuitBreaker implementation class
+	
+class Resilience4JCircuitBreakerFactory extends CircuitBreakerFactory {
+  CircuitBreaker create(String id) {
+		// create the object of vendor class Resilience4JCircuitBreaker and wrap into
+    // SpringCloudResilience4JCircuitBreaker class
+    return scr4jcb;
+  }
+}
+
+The factories always takes care of creating the objects of other classes with default values populated within them. So here also each vendor implementation factory takes care of instantiating the CircuitBreaker implementation object with default configurations. So all that we need to do is to just call create() method on the CircuitBreakerFactory to get the object of the CircuitBreaker as shown below
+
+CircuitBreakerFactory cbf = new Resilience4JCircuitBreakerFactory();
+CircuitBreaker cb = cbf.create("default");
+
+So from the above we can understand we need to instantiate the vendor factory implementation class and then call create() method to get the object of vendor CircuitBreaker
+
+since we add spring-cloud-starter-resilience4j-circuitbreaker, the autoconfiguration classes takes care of instantiating the vendor implementation factory and places it as an bean in the ioc container
+
+So in our client components we can directly inject CircuitBreakerFactory object and invoke create method to get the CircuitBreaker object
+
+@Component
+class DistributorNetworkServiceInvoker {
+  @Autowired
+  private CircuitBreakerFactory circuitBreakerFactory;
+	
+	public DistributorDto getDistributor(String distributorCode) {
+		CircuitBreaker cb = circuitBreakerFactory.create("default");
+		return cb.run(()-> {
+			// write the endpoint invocation logic
+		});
+	}
+}
+
+In future if we wanted to switch from one vendor implementation to another, we just only need to change the starter dependency within our project, there is no impact on the code.
+	
+	
+The CircuitBreakerFactory will instantiate the object of CircuitBreaker with default configuration, but we wanted to create the object of CircuitBreaker with our own configuration values populated into them like
+1. timeoutSeconds
+2. failureThreshold
+3. open-interval
+4. half-open
+etc
+
+There are different remote services/applications we wanted to access from client application, each of these remote services or applications are different in nature. Few of them are slow running and few of them are quicker in response. So we cannot use one CircuitBreaker object with default configuration invoking different remote services or applications
+
+but always CircuitBreakerFactory instantiates the object of CircuitBreaker with default configuration, but we need different CircuitBreaker objects with different configurations, so we need to tell to CircuitBreakerFactory create the object of CircuitBreaker with these configurations supplied.
+	
+How to instantiate different CircuitBreaker objects with different Configurations using the help of CircuitBreakerFactory?
+The Spring cloud has provided CircuitBreakerConfiguration class. Into this class we need to populate the configuration information and pass it as an input to the CircuitBreakerFactory asking to creating the object of CircuitBreaker
+	
+There are multiple third-party vendor CircuitBreaker libraries are there and they provide different set of features of their own, so obviously the configuration pertaining to these vendors would be different, so one single CircuitBreakerConfiguration class cannot hold or represent configurations of various vendors.
+	
+So Spring cloud has provided one CircuitBreakerConfiguration class per one vendor, so based on the vendor we are working with we need to instantiate the appropriate vendor Configuration class, populate the configuration using which create the object of vendor CircuitBreaker by taking the help of CircuitBreakerFactory
+
+From the above we understood:
+1. instantiate the vendor specific CircuitBreakerConfiguration object, populate the relevant configurations 
+2. create the object of vendor specific CircuitBreakerFactory and pass the above CircuitBreakerConfiguration asking him to instantiate the vendor specific CircuitBreaker object
+
+creating the object of CircuitBreakerConfiguration and populate the configuration into it seems to be tedious job, because we have to write lot of code in populating the configuration, so spring cloud has provided ConfigBuilder classes per each vendor Configuration class to help us in quickly creating the object of Configuration class
+	
+Resilience4JConfigBuilder builder = new Resilience4JConfigBuilder("slow");
+// populate all the configuration information into the builder
+Resilience4JConfiguration configuration  = builder.build();
+
+
+There are several classes within our client application in which we wanted to invoke different microservices, so all over the classes in our application we need to write the code for
+	1. creating ConfigBuilder and populate the Configuration into it
+	2. using the builder creating the object of CircuitBreakerConfiguration
+	3. Pass the Configuration object as an input to CircuitBreakerFactory asking him to create the object of CircuitBreaker
+	
+so that we endup in writing the samecode across several classes within the client application in repeatedly creating the object of CircuitBreaker using the same configuration that leads to duplication of code.
+	
+How to solve this problem in reusing the Configurations in creating the object of CircuitBreaker in our application?
+The CircuitBreakerFactory uses the CircuitBreakerConfiguration in creating the object of CircuitBreaker. Let us populate all the different CircuitBreakerConfigurations which we wanted to use for creating the CircuitBreaker object for invoking different remote services in CircuitBreakerFactory itself with an id for each configuration
+
+class CircuitBreakerFactory {
+	Map<String, CircuitBreakerConfiguration> configurations;
+
+	
+	CircuitBreaker create(String id);
+}
+
+In-short: store different remote service related CircuitBreakerConfigurations in CircuitBreakerFactory itself.
+	
+So that while creating the object of CircuitBreaker	we just need to ask CircuitBreakerFactory to create the object with that specific configuration by referring its id
+
+CircuitBreaker cb = CircuitBreakerFactory.create("id");
+
+The CircuitBreakerFactory is instantiated by the spring cloud circuitbreaker auto-configuration classes, and populates the default configuration into it. 
+	
+Then how to customize the CircuitBreakerFactory that is created by auto-configurations and populate our own Configurations into it at the time of creating object of CircuitBreakerFactory?
+That is where spring boot has introduced Customizer interfaces.
+	
+interface Customizer<T> {
+	void customize(T t);
+}	
+
+here T is the object that is instantiated by the auto-configuration class.
+	
+@Bean		
+class CircuitBreakerFactoryCustomizer	implements Customizer<Resilience4JCircuitBreakerFactory> {
+	public void customize(Resilience4JCircuitBreakerFactory factory) {
+		// populate vendor specific configuration into this factory
+	}
+}
+
+What configuration do we need to populate into CircuitBreakerFactory?
+It purely depends on the third-party vendor library we are using. There are different third-party libraries are available like
+1. Hystrix
+2. Resilience4J
+3. Sentinal
+etc
+
+out of the third-party libraries available, resilience4j is very popular. Let us explore the configuration options we have for Resilience4J
+
+#1. CircuitBreakerConfiguration - we can configure various threshold limits 
+1. OPEN          = requests are not allowed to the remote service
+2. HALF_OPEN     = in HALF_OPEN state only certain number of requests are allowed to the remote service, and if those are failing, then it immediately returns to OPEN state
+3. CLOSED        = requests are allowed to the remote service
+
+1. failureRateThreshold = default(30) = using this configuration property we can configure the failure rate threshold in percentage
+2. slowCallRateThreshold = 100 when the percentage of slow calls is equal or greater than the threshold value, the circuit should transistion to open state
+3. slowCallDurationThreshold = 60000 (ms) = if the calls are taking more than the threshold, then it is considered as slow
+4. permitNumberOfCallsInHalfOpenState = 10 
+5. maxWaitDurationInHalfOpenState = 0 [ms] - wait in openstate until the permitted calls completed execution
+6. slidingWindowType = COUNT_BASED / TIME_BASED
+
+#2 RateLimiter = RateLimiter helps us in limiting the number of requests to the remote service
+#3 TimeLimiter = How long the client has to wait for a response from remote service
+#4 BulkHeadProvider = Number of Concurrent requests to be allowed to the remote service can be managed using BulkHeadProvider
+#5 Retry = Incase of failure the spring retry automatically retries the requests
+
+The Resilience4J project was built from the motivation of Hystrix, so it can be considered as next version of Hystrix. All these configurations should be populated into Resilience4JCircuitBreakerConfiguration object using the help of Resilience4JConfigBuiler
+
+class Resilience4JConfigBuiler {
+	String id;
+	CircuitBreakerConfiguration circuitBreakerConfiguration;
+	TimeLimiterConfig timelimiterConfig;
+	RateLimiterConfig rateLimiterConfig;
+	Retry retry;
+	BulkHeadProvider bulkHeadProvider;
+	
+	Resilience4JCircuitBreakerConfiguration build();
+}
+--------------------------------------------------------------------------------------------------------------------------------
+
+@Component
+class Resilience4JCircuitBreakerFactoryCustomizer implements Customizer<Resilience4JCircuitBreakerFactory> {
+	public void customize(Resilience4JCircuitBreakerFactory factory) {
+	
+	}
+}
+
+class Resilience4JCircuitBreakerFactory {
+  Map<String, Consumer<Resilience4JConfigBuilder>> configMap;
+	
+	void configure(Consumer, id1);
+}
+
+Consumer() {
+	void apply(Resilience4JConfigBuilder builder) {
+
+	}
+}, "id1"
+
+	factory.create("id1");
+// logic for puopulating configuration
+
+
+
+
+Configuration
+
+interface Consumer<T> {
+	void accept(T t);
+}
+--------------------------------------------------------------------------------------------------------------------------------
+Spring Cloud Gateway
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

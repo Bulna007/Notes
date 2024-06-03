@@ -1,0 +1,243 @@
+There are people in favor with xml and wanted to avoid annotations to be introduced in java platform because of the limitations or dis-advantages that annotations brings.
+problems:	
+1. annotations doesnt support pojofied application development
+2. there will be conflicting roles arises between developer and deployer because of using annotations
+
+Sun Microsystems has provided mitigations in overcoming the above 2 problems reported
+
+1. annotations doesnt support pojo-fied application development
+when we use xml for describing the information about a class, our classes remains as pojo classes, whereas when we use annotations for configuring the information about our classes our classes loose the pojo nature
+for eg.. while working with spring framework, to make an class as bean definition we need to configure the class as bean definition in spring bean configuration file 
+	
+class Task {}
+application-context.xml
+<bean id="task" class="Task"/>
+
+the Task class above remains as pojo class as we have not implemented or extended or used any spring framework classes/interfaces within our Task class to make it as bean definition.
+	
+but whereas if we use annotations to make the above class as a bean, then we need to write annotation ontop of Task class that is provided by spring framework
+
+@Component	
+class Task {}
+
+with this the above class looses the pojo nature because without spring framework dependencies under the classpath, we cannot run the class anymore
+	
+Let us understand how does sun microsystems has addressed the above problem:
+
+@Retention(RetentionPolicy.SOURCE|COMPILE|RUNTIME)
+@Target(ElementType.ATTRIBUTE)
+interface @WebServlet {}
+
+The Retention is introduced by the Sun Microsystems to mitigate the problem we run into while using annotations. using the Retention policy we can control the scope or lifetime of an annotation
+
+1. SOURCE
+if the annotation has been defined with RetentionPolicy as source, it indicates the presence of the annotation will be to the source only and the compiler or the jvm runtime will not be able to see the annotation
+the annotation will be included into the bytecode of the class file upon compilation. compiler ignores it
+
+@Override = is one of the example of SOURCE retention policy annotation
+These SOURCE retention policy annotations are only documentation assistors or sourcecode assistors that helps the developers to easily understand the code
+
+2. COMPILE
+the annotations with RetentionPolicy as COMPILE are visible to the java compiler , but these will not be included aspart of the bytecode during execution. The JVM will not be able to read these annotations at runtime
+
+While working with lombok library we annotation the classes using @setter, @getter, @data etc, these annotations are COMPILE retention policy annotations. during the compilation, these vendors ships tools that works along with the java compiler
+These tools are called java annotation processors
+
+@setter
+@getter
+class Truck {
+	private String color;	
+}
+
+during the compilation of the above class, the annotation processors of the lombok library works in-conjuction with java compiler and generates the setters/getters for all the attributes in the bytecode by removing the annotations in the bytecode
+
+here the above class is pojo class only, because without the lombok annotations we can run our class
+	
+
+3. RUNTIME
+these annotations with RetentionPolicy as RUNTIME are included and shipped within the bytecode of the java class and the presence of them can be read during runtime within the java program.
+so if we annotate our classes with RUNTIME retention policy annotations, our classes loose pojo-nature
+
+Now its the job of the library/framework vendor to produce annotations with relevant retention policy, but not always the annotations make the application classes loose pojo-nature
+--------------------------------------------------------------------------------------------------------------------------------------
+2. there is an conflicting roles arises between jee developers and jee deployers because of using annotations
+jee developer = is the who develops the application based on the requirement, and he has minimal or no knowledge about how the application has been deployed on the production env
+
+jee deployer = the jee deployer is the bigger role than an architect of an application, he knows all the components and their architecture of the application and how it has to be tunned to be deployed in the production server env
+
+always the xml configuration overrides the annotations
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

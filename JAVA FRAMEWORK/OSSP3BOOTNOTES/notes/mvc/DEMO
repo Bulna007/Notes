@@ -1,0 +1,344 @@
+Java Framework Package [15k]
+1. Spring Framework with Spring Boot [6 months] + [1 month : spring boot] [8k] [Spring MVC Module + Spring Boot]
+2. Hibernate / Jpa Api [3-4 months] [6k] [15 days]
+3. Restful Services [3 - 4 months] [5k] [20 days]
+4. Microservices [1 month] [3k]
+--------------------------------------------------------------------------------------------------------------------
+Not part of Framework package
+	
+5. Java Realtime Tools [3k] [45 days - 60 days] [new batch starts in : 15 days] [8:00 pm - 9:00 pm]
+	1. Ant
+	2. Maven
+	3. Gradle
+	4. JUnit
+	5. Mockito
+	6. Log4j/Sl4j
+	7. Sonarcube
+	8. SVN
+	9. Git
+	
+6. Java Design Patterns [3k] [duration: 45 days]	[tentatively: 1 month]
+7. Java Realtime project batch [Microservices platform] [new batch starts in: 45 days] [8k]
+
+8. Devops With AWS [12k] [duration: 9 months] 
+topic: virtualization 
+
+9. AWS Cloudplatform [new batch starts in: 20 days] [6k] [duration: 75 days] [8:00 AM - 9:00 AM]
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Spring Boot and Microservices
+
+pre-requisite: 
+---------------
+1. Core Java
+2. Jee
+3. Spring Framework
+		3.1 Spring Core (including annotations)
+		3.2 Aop (optional)
+		3.3 Spring Jdbc (optional)
+		3.4 Spring Transactions
+4. Hibernate/Jpa (required for datajpa)
+5. Restful Services (required for microservices) 
+	
+Fresher/no-knowledge on Spring Framework: (if dont qualify for the above pre-requisite)
+No, please wait for new Framework batch. starts: September, 2023 . timings for new batch:
+	Spring Framework: [6:00 am -7:00 am]
+	Hibernate: [8:00 am - 9:00 am]
+	Restful Services: [7:00 pm - 8:00 pm]
+	
+I am qualified for pre-requisite: can I join full framework package: Yes, in current batch continue Spring Boot & Microservices. In next batch continue remaining courses.
+	
+Course Topics/Contents:
+Spring Framework: version: 6 [Xml-based configuration & Annotation(preferrence)] and Spring Boot (Annotation) : 3.x
+
+Spring Boot:
+1. Spring Mvc (annotation) [15 - 20 days]
+2. Spring Restful Services (how to develop/integrate restful services using spring framework)	[3/4 days]
+8. Spring Security + OAuth2 [5/7 days]
+3. Spring ORM [2 days]
+4. Spring DataJpa [5/7 days]
+5. Spring Boot [30 days - 45 days]
+6. Spring WebFlux (Spring Reactive) [15 - 20 days]
+	
+----------------------------------------	
+Spring Microservices [30-45 days]
+7. Microservices
+9. Spring Cloud
+
+
+Timings: 7:00 AM IST - 8:00 AM IST [Saturday: (regular) & Sunday: morning/evening [Flexible]]
+Fee:
+Spring Boot: 8k
+Spring Boot + Microservices: 10k
+Microservices: 3k
+Duration: 4 months (+- 15days)
+	
+Daily: Running Notes will provided on weekly basis including examples [No/Copy no paste, all the examples will be explained from scratch]
+
+Strictly: No recordings will be provided, students are not permitted to record the sessions, if we found any student recording the sessions, the admission will cancelled without fee refund.
+
+For any reasons: if you cannot attend the course, you must/should apply break by writing an email to (durgasoftonlinetraining@gmail.com). if not we consider you have finished the course and will not allow you again
+
+The sessions will be highly interactive, would expect the people to answer the questions during the session, please be prepared for it.
+-------------------------------------------------------------------------------------------------------------------------------------
+	
+1. Spring mvc
+1.1 MVC Flow and Internal components
+1.2 Front Controller design pattern
+1.3 Dispatcher Servlet
+	1.3.1 Configuration approach
+	1.3.2 Programmatic Approach [WebApplicationInitializer, AbstractDispatcherServletInitializer]
+1.4 Controllers 
+1.5 View Resolvers
+1.6 Handler Mappings
+1.7 Handler Interceptors
+1.8 View [pdf/xls]
+1.9 Field formatters
+1.10 Message Converters
+1.11 Validator
+1.12 Spring Mvc + Java Bean Validation Api
+1.13 Internationalization 
+
+2. Spring ORM
+	Spring + Jpa 
+
+3. Spring DataJpa
+3.1 What is DataJpa, why is it introduced?
+3.2 How does runtime proxies works, why we need them?
+3.3 How does DataJpa internally works?
+3.4 Repositories, types of Repositories [CURDRepository/JpaRepository]
+3.5 JpaQueries
+3.5 Projections
+
+4. Spring Boot
+4.1 Introduction to Spring Boot
+4.2 Features Spring Boot
+	1. Auto Configurations
+	2. Starter Dependencies
+	3. Actuator 
+	4. DevTools
+	5. Embedded Servlet Containers
+4.3 Spring Boot Application, how does it works internally
+4.4 @ConfigurationProperties
+4.5 Spring Boot Profiles
+4.6 Spring Boot Listeners
+4.7 SpringApplicationInitializer 
+4.8 CommandLineRunners & ApplicationRunners
+4.9 Spring Boot MVC
+	4.9.1 How does embedded servlet containers works in an web application
+	4.9.2 Internal flow of spring mvc application while working with spring boot
+	4.9.2 Customizing the embedded servlet containers (configuration/programmatically)
+4.10 Spring Boot Banner
+	4.10.1 customizing spring boot banner (configuration/programmatically)
+4.11 SpringApplicationBuilder
+4.12 Spring Boot BootExecutableJar and BootExecutableWar
+4.13 Spring ExitCode
+		4.13.1 ExitCodeEvent
+		4.13.2 ExitCodeGenerator
+		4.13.3 ExitCode Listener
+4.14 Actuator Endpoints, how to enable them and use
+4.15 DevTools
+4.16 Working with Custom AutoConfigurations and Starter Dependencies in spring boot
+
+5. Spring WebFlux
+5.1 Introduction to Reactive world
+5.2 Project Reactor
+5.3 Reactive Api
+	1. Publisher
+	2. Subscriber
+	3. Processor
+	4. BackPressure
+5.5 WebFlux
+	1. Mono
+	2. Flux
+	
+6. Spring Security
+6.1 How to implement security for an web application?
+	6.1.2 custom security
+	6.1.2 jee security
+6.2 spring security architecture
+6.3 apply security to spring mvc applications
+	6.3.1 configuration
+	6.3.2 programmatic/annotation 
+	6.3.3 basic authentication
+	6.3.4 form-based authentication (custom login/logout pages)
+	6.3.5 database integration
+6.4 spring security OAuth2 (restful/microservices services)
+	
+
+Microservices
+
+6. Spring Cloud
+	1. Cloud Config Server
+	2. Cloud Config Client
+	
+7. Microservices
+7.1 What are microservices?
+	1. Microservices vs Monolithic application
+7.2 How do we implement microservices on different stack (only architectural).
+	1. Java stack
+	2. devops (devops stack) (if possible I will demonstrate an example on kubernetes stack as well)
+7.3 Eureka Server (Service Discovery Registry)	
+7.4 Spring Cloud Loadbalancer 
+7.5 Feign Client
+7.6 Spring CircuitBreaker (Hystrix old) (Resilience4J)
+7.7 Spring Cloudgateway 
+7.8 Microservices design patterns (theory)
+	1. Api gateway
+	2. CQRS 
+	3. Service Modularity
+		1. Service per responsibility
+		2. Service per database
+		3. Service per usecase
+	4. Saga (one example) (Transaction)
+		1. Choreography Saga
+		2. Archestrator Saga
+7.9 Kafka 
+	1. Building Microservice application for asynchronous communication for exchanging messages.
+		
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+		
+		
+		
+		
+		
+		
+		
+
+
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

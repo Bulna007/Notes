@@ -1,0 +1,105 @@
+How many ways we can map an inheritance relationship between the entity classes into the table model?
+There are 3 ways we can map an inheritance relationship into table model
+1. Table per class hierarchy / SINGLE_TABLE
+2. Table per subclass / JOINED
+3. Table per concrete class / TABLE_PER_CLASS
+
+What are the advantages and dis-advantages of each of them?
+1. Table per class hierarchy / SINGLE_TABLE
+For all the entity classes within the hierarchy are stored/persisted aspart of single table
+
+advantage:-
+	1. easy to understand/implement
+	2. no join queries in fetching the subclass / superclass objects, so the performance is very good
+	
+dis-advantage:-
+	1. de-normalized tables
+	2. would endup in storing NULL values while persisting the superclass objects or any of the subclass objects thus resulting in huge amount of memory wastage
+	
+	
+2. Table per subclass / JOINED
+per each subclass in the hierarchy create an table with joined relationship with the superclass table
+
+advantage:-
+	1. fully normalized tables
+	2. the changes across the entity classes in the hierarchy are isolated, which means a change in superclass would not effect any of the other subclass tables in the hierarchy, similary a change in one subclass would not affect either the superclass/other subclass tables.
+
+dis-advantage:-
+	1. while querying the data for a subclass, we need to inner join the data between subclass and superclass table that results in costly operation
+	2. while persisting the data for a subclass, we need to perform #2 insert operations that results more writes to the database for persisting the entities
+	3. when it comes to querying the data for a superclass, to support polymorphic retrieval of the data, we need to query the data from all the tables in the hierarchy using left outer join that results in huge cost in fetching the data
+	
+From the above, we can understand the reads/write operations would be costly when it comes to Table per subclass/JOINED and is not recommended especially for
+	1. volumes data
+	2. more polymorphic access in the application
+	
+3. Table per concrete class / TABLE_PER_CLASS
+per each concrete class within the hierarchy we need to create a separate table.
+	
+advantages:-
+	1. pretty straight in mapping the classes into tables, that makes it easy to understand
+	2. no join queries in fetching the data for any of the entity classes thus results in higher performance
+	
+dis-advantages:-
+	1. partly de-normalized tables
+	2. a change in the superclass like adding an attribute or removing any attributes or any structural change in the class would effect all the tables in the hierarchy
+--------------------------------------------------------------------------------------------------------------------------------------
+		
+Object/Relational Impedance Mismatch
+------------------------------------
+The object model, the data between the objects are related with each other by inter-connecting the objects/underlying classes through associations or inheritance
+
+But when it comes to relational database tables, always they express the data interms of tabular model only, we cannot write one table inside the another to express/represent the relationship. The only way we can model the relationship between the tables is through primary keys and foreign keys, this way of constructing the relationships between the data across the tables is called "Transitive Closure".
+		
+So while mapping these object models into the relational models, the exibhit conceptual problems in mapping these #2 worlds, which are called "Impedance mismatch".
+	
+These mismatches are divided into #5 problems as below.
+	1. Granularity Problem
+	2. Subtypes / Inheritance Problem
+	3. Identity
+	4. Association
+	5. Data Navigation Problem
+
+if we can address the above problems we can accomplish ORM
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

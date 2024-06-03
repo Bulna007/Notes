@@ -1,0 +1,109 @@
+How to work with Pagination?
+	
+@Repository	
+class StudentDao {
+	private final String SQL_GET_STUDENTS_SORT_BY_STUDENT_NM = "select * from student order by student_nm";
+	
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
+	
+	public List<StudentBo> getAllStudentsByPagination(int pageNo, int pageSize) {
+		return jdbcTemplate.query(SQL_GET_STUDENTS_SORT_BY_STUDENT_NM, (rs)-> {
+			int startIndex = 0;
+			int endIndex = 0;
+			int rowNum = 1;
+			List<StudentBo> students = new ArrayList();
+			
+			startIndex = (pageSize * (pageNo-1)) + 1;
+			endIndex = pageSize * pageNo;
+			
+			while(rs.next() && rowNum <= endIndex) {
+				if(rowNum >= startIndex) {
+					studentBo = new StudentBo();
+					//populate the record into object
+					students.add(studentBo);
+				}	
+				rowNum++;
+			}
+			return students;	
+		});		
+	}
+}	
+--------------------------------------------------------------------------------------------------------------------------------------
+2. NamedParameterJdbcTemplate
+NamedParameterJdbcTemplate is same as JdbcTemplate only. In this class also we have same api methods that are part of JdbcTemplate.
+1. execute(..)
+2. queryXXX(...)
+	
+but while working with JdbcTemplate, we use positional parameters while dealing with dynamic sql queries. The problem with positional parameters is while passing the substitution values we need to make excessive care in mapping the parameter values to the order of the questions.
+	
+There is an high chance where we might pass the values incorrectly that could result in
+1. either error
+2. wrong data being inserted into the database table
+
+To over the problem with JdbcTemplate positional parameters, the Spring jdbc has provided NamedParameterJdbcTemplate.
+	
+The name of the class itself tells you we are going to define NamedParameters in the dynamic sql queries instead of positional parameters and substitutes those namedparameters with values using NamedParameterJdbcTemplate
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

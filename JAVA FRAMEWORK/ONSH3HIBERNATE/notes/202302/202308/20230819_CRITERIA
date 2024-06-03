@@ -1,0 +1,245 @@
+Criteria Api
+-------------
+What is Criteria Api?
+Instead of writing an HQL/JPQL queries to query the data from database tables while working with Hibernate/Jpa, we can construct these queries using Criteria Api
+
+There are several advantages of using Criteria Api over HQL/JPQL queries:
+1. The HQL/JPQL queries that we construct are not Type-Safe, if there is an syntax/semantic error in the HQL/JPQL queries interms of query clauses or while referring to Entity classes and attributes those are not being identified during compilation-time since those are written in String. Whereas incase of Criteria Api the queries are constructed through Classes and Methods of those classes, since the code is being compiled during compilation time we can easily identify the errors in the queries without running the application.
+2. The programmer dont need to have the knowledge of sql queries and their syntaxes in writing the Criteria api.
+3. Always the Criteria Api will generate SQL Queries with joins in optimized manner.	
+
+	
+From Hibernate 5 onwards the Hibernate Criteria Api has been deprecated/removed in support of Jpa 2.1 Criteria Api. In Jpa 2.1 Criteria Api, to support building type-safe queries they introduced MetaModel based Criteria Programming. So in favor of Jpa Criteria Api hibernate has removed Hibernate Criteria Api
+
+In every sql query we need to build 3 parts:
+select * from table where condition;
+       |     |          |
+projection	fromClause	CriteriaClause		 
+
+
+1. from Clause = indicates from which table we wanted to query the data from?
+2. criteria Clause = criteria Clause refers to the where condition we build the query. Here we tell the filter conditions based on which we want to query the data
+3. projection Clause = what data we want to fetch from the database table
+
+so we can build an sql query with all the #3 clauses or the simplest way of querying the data from table is just by using from clause.
+				 
+How to construct the simplest query using Criteria?
+1. Jpa api has provided an class called "CriteriaQuery" that represents an query we wanted to construct and execute. upon creating an CriteriaQuery object it doesnt have those #3 parts in it. After the object we need to define those 3 clauses into it.
+	
+2. To construct the Clauses into the CriteriaQuery object, the Jpa has provided another class called "CriteriaBuilder", using this class we can build all the 3 parts of the query and attach to the CriteriaQuery
+
+
+EntityManagerFactory emfFactory = EMFRegistry.getEntityManagerFactory();
+EntityManager em = emfFactory.createEntityManager();
+
+CriteriaBuilder cb = em.getCriteriaBuilder();
+
+
+CriteriaQuery<Product> cq = cb.createQuery(Product.class);
+here we didnt specified the from Clause. we only told the genericType of the output that is produced by the query upon executing it. in the above code we havent constructed the 3 parts of the query that are required for executing
+
+Root<Product> root = cq.from(Product.class); // we attached from Clause
+cq.select(root);
+
+TypedQuery<Product> typedQuery = em.createQuery(cq);
+List<Product> products = typedQuery.getResultList();
+
+
+1. select one column only from records of table
+get all the productNames based on category
+
+
+CriteriaBuilder cb = em.getCriteriaBuilder();
+CriteriaQuery<String> cq = cb.createQuery(String.class);
+
+Root<Product> root = cq.from(Product.class); #from
+cq.select(root); // fetch all the columns in each record 
+cq.select(root.get("productName")); #select
+cq.where(cb.like("category", category)); #where
+
+
+select productName from Product where category like 'electronics';
+
+
+CriteriaBuilder = acts as an builder for creating the implementation objects of Criterion interface	
+Criterion <interface>
+|-GreaterThanCriterion(column, value)
+|-LikeCriterion(column, value)
+
+
+#groupBy clause
+get the count of products based on category
+
+select count(p), p.category from Product p group by p.category;
+
+CriteriaQuery<Object[]> cq = em.createQuery(Object[].class);
+Root root = cq.from(Product.class);
+
+cq.multiselect(cb.count(root.get("productNo")), root.get("category")).groupBy(root.get("category"));
+#fetch the count of products based on groupBy(category);
+
+CriteriaQuery<String> cq = cb.createQuery(String.class);
+Root<Product> root = cq.from(Product.class);
+
+cq.select(root.get("productName"));
+cq.where(cb.like("category", category));
+
+TypedQuery<String> tq = session.createQuery(cq);
+List<String> products = tq.getResultList();
+
+The above Criteria query is not type-safe, if there are typos in attributeNames those are not reported during compile-time, since we are referring them as string literals. To overcome this problem and to build Type-safe queries while working with Criteria Api, jpa has introduced JPAMetaModel for Entity classes.
+	
+describing the details of the entity class, developer has to define/write an Jpa Meta model class for each entity.
+	
+@Entity
+@Table(name="product")
+class Product {
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="product_no")
+	int productNo;
+	@Column(name="product_nm")
+	String productName;
+	String description;
+	String category;
+	double price;
+	// accessors
+}	
+
+@StaticMetamodel(Product.class)
+class Product_ {
+	public static volatile SingularAttribute<Product, String> productNo;
+	public static volatile SingularAttribute<Product, String> productName;
+	public static volatile SingularAttribute<Product, String> description;
+	public static volatile SingularAttribute<Product, String> category;
+	public static volatile SingularAttribute<Product, Double> price;
+		
+	public static final String PRODUCT_NO = "productNo";
+	public static final String PRODUCT_NAME = "productName";
+	public static final String DESCRIPTION = "description";
+	public static final String CATEGORY = "category";
+	public static final double PRICE = "price";
+}
+
+CriteriaQuery<String> cq = cb.createQuery(String.class);
+Root<Product> root = cq.from(Product.class);
+cq.select(root.get(Product_.PRODUCT_NAME));
+cq.where(cb.like(root.get(Product_.CATEGORY, category)));
+
+instead of we writing these JpaMetamodel classes for each entity manually we can enable JPAMetaModelEntityProcessor, the reads the jpa annotated entity classes and generates the corresponding Metamodel class for each entity. We can enable this annotation processor in maven compiler plugin as shown below.
+	
+<plugin>
+	<artifactId>maven-compiler-plugin</artifactId>
+	<version>3.8.0</version>
+	<configuration>
+		<compilerArguments>
+			<processor>org.hibernate.jpamodelgen.JpaMetaModelEntityProcessor</processor>
+		</compilerArguments>
+	</configuration>
+</plugin>
+
+
+Join queries in Criteria
+get all the products that are reviewed by 'alex' = explicit join
+get all the reviews for the product of category 'electronics' = implicit join
+
+
+CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+CriteriaQuery<Product> cq = cb.createQuery(Product.class);
+
+Root<Product> root = cq.from(Product.class);
+cq.select(root);
+
+Join<Product, Review> join = root.join(Product_.REVIEWS);
+cq.where(cb.like(join.get(Review_.POSTED_BY), postedBy));
+
+TypedQuery<Product> tq = entityManager.createQuery(cq);
+tq.getResultList();
+
+	
+	select p from Product p inner join p.reviews r where r.postedBy = ?
+		
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+

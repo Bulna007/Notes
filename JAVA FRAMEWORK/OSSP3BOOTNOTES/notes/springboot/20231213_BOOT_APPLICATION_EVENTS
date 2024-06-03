@@ -1,0 +1,50 @@
+Spring Boot ApplicationEvents and ApplicationListener
+------------------------------------------------------
+What will happens when invoke SpringApplication.run(BootApplication.class, args)? 
+1. creates an empty env object
+2. detects and loads the external application configuration into the env object
+3. prints boot banner
+4. identifies the WebApplicationType and instantiates appropriate ioc container
+		WebApplicationType=WEB; AnnotationConfigServletWebServerApplicationContext
+		WebApplicationType=REACTIVE; AnnotationConfigReactiveWebServerApplicationContext
+		WebApplicationType=NONE; AnnotationConfigApplicationContext		
+5. instantiates and registers the spring factories
+6. invokes the ApplicationListener
+7. prepareContext
+8. refreshContext
+9. invokes CommandLineRunners and ApplicationRunners to perform one-time initialization operation during the startup of the application
+10. publishes events and invokes the listeners during the above stages
+
+ApplicationContext context = SpringApplication.run(BootApplication.class, args);
+// program
+
+upon invoking SpringApplication.run(BootApplication.class, args), the control will be transferred to the run(...) of the SpringApplication class, which takes care of perform several activities in bringing up the spring boot application. There are around 9 different activities will be performed by SpringApplication class, run(...) method. After completing these activities it returns the ApplicationContext (ioc) container to us, enabling us to perform operations aspart of our application
+
+But during the time of bringing up the spring boot application, if we want to perform customizations like adding our own actions or activities between the stages of the boot strapping, it can be done by using SpringBoot ApplicationEvents and ApplicationListeners.
+	
+The SpringApplication at each stage of booting up the spring boot application, representing the stage it creates an appropriate Event object wrapping data inside it	and publishes it. It checks for an Listener class registered for receiving the type of event, and if available invokes it by passing the event. so that we can perform additional operations by writing our own Listener class.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

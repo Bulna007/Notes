@@ -1,0 +1,203 @@
+2. Form Handling
+
+class AddDoctorServlet extends HttpServlet {
+  public void service(HttpServletRequest httpReq, HttpServletResponse httpResp) {
+		List<String> errors = null;
+		
+    DoctorForm form = new DoctorForm();
+    RequestWrapper wrapper = new RequestWrapper();
+    form =wrapper.wrap(httpReq, "DoctorForm");
+		
+		errors = new ArrayList();
+
+    if(form.getFullname() == null || form.getFullname().trim().length() == 0) {
+			errors.add("fullname is required");			
+		}
+		
+		if(form.getDob() == null) {
+			errors.add("dob is required");
+		}
+		if(form.getExperience() < 0 ){ 
+			errors.add("experience must be zero or positive integer only");			
+		}
+		if(errors.size() > 0) {
+			httpReq.setAttribute("errors", errors);
+			RequestDispatcher dispatcher = httpReq.getRequestDispatcher("/error.jsp").forward(httpReq, httpResp);
+			return;
+		}
+
+    doctorService.addDoctor(form);
+    // forward the request to success page
+  }
+}
+
+errors.jsp
+----------
+<body>
+	<h3>validation errors</h3>
+	<c:forEach items="${errors}" var="error">
+		<p>${error}</p>
+	</c:forEach>
+</body>
+
+
+1. it is recommended to display the validation errors in the same source page/form from which the request has been send from, so that enduser can easily see the errors and can refill the data in sending the request quickly
+
+
+
+class AddDoctorServlet extends HttpServlet {
+  public void service(HttpServletRequest httpReq, HttpServletResponse httpResp) {
+		List<String> errors = null;
+		Validator validator = null;
+		
+    DoctorForm form = new DoctorForm();
+    RequestWrapper wrapper = new RequestWrapper();
+    form =wrapper.wrap(httpReq, "DoctorForm");
+		
+		validator = new DoctorFormValidator();
+		errors = validator.validate(form);
+		
+		if(errors.size() > 0) {
+			httpReq.setAttribute("errors", errors);
+			httpReq.setAttribute("doctorForm", form);
+			RequestDispatcher dispatcher = httpReq.getRequestDispatcher("/add-doctor.jsp").forward(httpReq, httpResp);
+			return;
+		}
+
+    doctorService.addDoctor(form);
+    // forward the request to success page
+  }
+}
+
+add-doctor.jsp
+----------------
+<html>
+	<head>
+		<title>add doctor</title>
+	</head>
+	<body>
+		<h2>Add Doctor</h2>
+		
+//		<c:if test="${errors not eq null}">
+//			<c:forEach items="${errors}" var="error">
+//				<p>${error}</p>
+//			</c:forEach>
+//		<c:if>
+		<form:errors name="errors"/>
+		
+		<form action="/addDoctor" method="post">
+			<c:choose>
+				<c:when test="${doctorForm not eq null}">
+					fullname: <input type="text" name="fullname" value="${doctorForm.fullname}"/>
+					dob: <input type="text" name="dob" value="${doctorForm.dob}"/>
+
+					gender: Male <input type="radio" name="gender" value="Male" checked="checked"/> or 
+									Female:  <input type="radio" name="gender" value="Female"/>
+
+					qualification: <input type="text" name="gender" value="${doctorForm.qualification}"/>
+					specialization: <input type="text" name="gender" value="${doctorForm.specialization}"/>
+					experience : <input type="text" name="gender" value="${doctorForm.experience}"/>
+					mobileNo: <input type="text" name="gender" value="${doctorForm.mobileNo}"/>
+					emailAddress: <input type="text" name="gender" value="${doctorForm.emailAddress}"/>
+					city: <input type="text" name="gender" value="${doctorForm.city}"/>
+					state: <input type="text" name="gender" value="${doctorForm.state}"/>
+					zip: <input type="text" name="gender" value="${doctorForm.zip}"/>
+					country: <input type="text" name="gender" value="${doctorForm.country}"/>
+				</c:when>
+				<c:otherwise>
+					fullname: <input type="text" name="fullname" />
+					dob: <input type="text" name="dob" />
+
+					gender: Male <input type="radio" name="gender" value="Male" checked="checked"/> or 
+									Female:  <input type="radio" name="gender" value="Female"/>
+
+					qualification: <input type="text" name="gender" />
+					specialization: <input type="text" name="gender" />
+					experience : <input type="text" name="gender" />
+					mobileNo: <input type="text" name="gender" />
+					emailAddress: <input type="text" name="gender" />
+					city: <input type="text" name="gender" />
+					state: <input type="text" name="gender" />
+					zip: <input type="text" name="gender" />
+					country: <input type="text" name="gender" />
+				</c:otherwise>
+			</c:choose>
+			
+			<input type="submit" value="add doctor"/>
+		</form>
+	</body>	
+</html>
+
+
+
+interface Validator {
+	List<String> validate(Object form);
+}
+
+class DoctorFormValidator implements Validator {
+	List<String> validate(Object form) {
+		List<String> errors = null;
+		
+		errors = new ArrayList();
+
+    if(form.getFullname() == null || form.getFullname().trim().length() == 0) {
+			errors.add("fullname is required");			
+		}
+		
+		if(form.getDob() == null) {
+			errors.add("dob is required");
+		}
+		if(form.getExperience() < 0 ){ 
+			errors.add("experience must be zero or positive integer only");			
+		}
+		return errors;
+	}
+}
+
+
+tag library
+<form:errors name="errors"/>
+
+class ErrorsTag implements Tag {
+	public void doStartTag(HttpRequest request, HttpResponse response) {
+		// errors
+	}
+}
+
+<form:text name="fullname"/>
+class TextBoxTag implements Tag {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

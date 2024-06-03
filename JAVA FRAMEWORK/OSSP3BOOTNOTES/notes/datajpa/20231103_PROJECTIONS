@@ -1,0 +1,284 @@
+Working with projections
+------------------------
+
+interface TripRepository extends JpaRepository <Trip, Integer> {
+	List<Trip> findByDaysGreaterThanEqual(int days);
+}
+
+By default the methods of the repository interface returns List of entity objects populating all the columns of the data into entire entity object. But sometimes we wanted to query few columns of data from the table rather than all of the columns, this can be done through Projections
+
+In an typical sql query there are 3 parts are there
+
+select   *    from    table where column=value
+         |     |                  |
+		project  from clause         criteria
+		
+projection indicates what columns of data we wanted to retrieve or select from the records of the table. By default the repository methods fetches the entire record of data and populates into entity object. If we dont wanted entire columns of data to be selected from the table we need to use projections
+
+There are 3 types of projections supported by datajpa
+1. interface-based projection
+   1.1 closed projection
+	 1.2 open projection
+2. class-based projection
+3. dynamic projection
+
+
+1. interface-based projection
+We define an interface declared with getter methods corresponding to the attributes of the entity class we want to fetch. Instead of returning List<Entity> as a returnType in the repository methods, we return List<Interface>. The datajpa at runtime creates an proxy object and populates only those subset of columns of data into these objects and returns to us
+
+There are 2 types of interface-based projections are there
+
+1.1 closed projection
+In closed-projection we declare the getter methods corresponding to the attributes of the entity class we wanted to fetch or query as shown below.
+	
+@Entity
+@Table(name="trip")
+class Trip {
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int tripNo;
+	private String tripName;
+	private int days;
+	private String source;
+	private String destination;
+	private double tripCost;
+	private LocalDate startDate;
+	private LocalDate endDate;
+	
+	// accessors
+}	
+
+interface TripSummary {
+	int getTripNo();
+	String getTripName();
+	double getTripCost();
+}
+
+interface TripRepository extends JpaRepository {
+	List<TripSummary> findByDays(int days);
+}
+
+dis-advantage:
+since the datajpa creates an proxy ontop of the interface we defined in querying, populating to return the data, it impacts the performance of the application
+
+1.2 open projection
+-------------------
+Incase of open projection instead of declaring the getter methods matching with entity class attributeNames, we can declare any random names that seems to more meaningful based on the context of the usage. But we need to bind these getter methods with the corresponding attributes of the entity class using @Value(expression) as shown below.
+	
+interface TripSchedule {
+	int getTripNo();
+	@Value("#{target.tripName}")
+	String getTourName();
+	@Value("#{target.startDate}")
+	LocalDate getPlannedStartDate();
+	@Value("#{target.endDate}")
+	LocalDate getApproximateEndDate();	
+}
+
+note: here the target points to the entity object we are referring to access the data from
+dis-advantage: since the getters are resolved to the attribtues by evaluating the condition at runtime, it always fetches all the columns of data from the database
+
+To overcome the problems with interface-based projection, the class-based project is introduced.
+	
+2. class-based projection
+instead of writing an interface for choosing the attributes of data, we write class itself declared with attributes to be selected.
+	
+class TripSummary {
+	int tripNo;
+	String tripName;
+	Double tripCost;
+	
+	public TripSummary(int tripNo, String tripName, Double tripCost) {}
+	// getter methods
+}
+
+here we should not have setter methods since this class has been created for read-only or retrieving the data from database.
+	
+3. Dynamic Projection
+----------------------
+Incase of dynamic projection, what data we wanted to query out of the repository method is choosen dynamically while calling the methods itself as below.
+
+interface TripSummary {
+	int getTripNo();
+	String getTripName();
+	double getTripCost();
+}
+
+interface TripSchedule {
+	int getTripNo();
+	String getTripName();
+	LocalDate getStartDate();
+	LocalDate getEndDate();	
+}
+	
+interface TripRepository extends JpaRepository<Trip, Integer> {
+	<T> T findByTripNameLike(String tripName, Class<T> classType);
+}
+	
+List<TripSummary> trips = tripRepository.findByTripName("Holiday", TripSummary.class);
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+@EnableJpaRepositories(basePackages="com.datajpa.repositories")	
+in that above package if we have #10 interfaces, then the ioc container creates #10 proxy objects for those interfaces and places them as beans in the ioc container.
+	
+but in few cases we dont want few of the interfaces to be created with proxy and place them as beans in the ioc container, this can be dont by writing @NoRepositoryBean annotation on those interfaces for whom we dont want ioc container to create proxy
+
+@NoRepositoryBean
+interface TripRepository extends JpaRepository {}
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,136 @@
+class PlanService {
+	public List<String> findPlans(int zipCode, int age, String gender, int copay, boolean outpatientCoverage, boolean outOfNetworkCoverage) {
+		// it goes through the permutations and combination of inputs and identifies the plans that are suitable for you	
+		List<String> plans = Arrays.asList(new String[] {"oldplan001", "oldplan002"});
+		return plans;
+	}
+}
+
+
+majority of the times like 95% cases, it is returning the accurate output, but 5% of the times, the findPlans is going infinite and getting timeout in returning plan recommendations
+
+even though is an known problem: we dont want to fix it, because every attempt in fixing it is leaving the system completely broken that incurrs:
+1. cost of fixing the problem, that resulted in breaking the system finally
+2. cost incurred in reverting the system to the previous state which is considered very high just for redoing the same thing
+
+problem: here the biggest problem is the cost incurred in putting back the existing system
+
+How to address the above problem:
+1. will not modify one-single line of code in existing class or a method, but replace the method with new implementation logic without overriding using method replacement
+2. if the new implementation failed, I dont have to do anything to revert my system, because existing code is in-place already just i will drop method replacement
+
+How to replace an existing method within a class using Method replacment of Spring framework?
+
+1. for each method we want to replace, write an Replacer class
+	
+class FindPlansMethodReplacer	implements MethodReplacer {
+	public Object reimplement(Method method, Object[] args, Object target) {
+		int zipCode = 0;
+		int age = 0;
+		String gender = null;
+		int copay = 0;
+		boolean outpatientCoverage = false;
+		boolean outOfNetworkCoverage = false;
+		
+		// conditional check to see whether we are being called for right method to be replaced
+		if(method.getName().equals("findPlans")) {
+			zipCode = (Integer) args[0];
+			age = (Integer) args[1];
+			gender = (String) args[2];
+			copay = (Integer) args[3];
+			outpatientCoverage = (Boolean) args[4];
+			outOfNetworkCoverage = (Boolean) args[5];
+			
+			// write new implementation logic to replace the original method for finding plans
+			List<String> plans = Arrays.asList(new String[]{"plan001", "plan002", "plan003"});
+			return plans;
+		}else {
+			throw MethodNotSupportedException("cannot replace method");
+		}					
+	}
+}
+
+since the reimplement is supposed to replace the original method with the new/better functionality, it should have the information about the original method invocation, and should support return the return value that is expected to be returned by the original method. Then only we can say reimplement is replacing the original method
+
+So the reimplement() is passed with the parameters describing the original method invocation
+Method = represents the original method call being replaced
+Object[] args = original parameters we passed in calling the method
+Object target = object using which we called the original method
+
+Object (return) = the return value that should be supposed to be returned by original method, now should be returned by reimplement method to act as an replacment
+
+application-context.xml
+-----------------------
+<bean id="findPlansMethodReplacer" class="FindPlansMethodReplacer" />
+
+<bean id="planService" class="PlanService">
+	<replaced-method name="findPlans" replacer="findPlansMethodReplacer" />
+</bean>
+
+Test.java
+----------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/mr/common/application-context.xml"));
+PlanService planService= beanFactory.getBean("planService", PlanService.class);
+List<String> plans = planService.findPlans(30283, 23, "Female", 10, true, true);
+plans.forEach(System.out::println);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

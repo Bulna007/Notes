@@ -1,0 +1,112 @@
+How to build spring jdbc application, in reading/storing the data into database tables?
+
+package com.bjdbc.bo;
+class AccountBo {
+	int accountNo;
+	String accountHolderName;
+	String accountType;
+	String ifscCode;
+	double balance;
+	// accessors
+}
+
+package com.bjdbc.dao;
+@Repository
+class AccountDao {
+	private final String SQL_GET_ALL_ACCOUNTS = "select account_no, account_holder_nm, account_type, ifsc_code, balance from account";
+	
+	@Autowire
+	private JdbcTemplate jdbcTemplate;
+	
+	public List<AccountBo> findAll() {
+		return jdbcTemplate.query(SQL_GET_ALL_ACCOUNTS, (rs, rowNum)-> {
+			AccountBo bo = new AccountBo();
+			bo.setAccountNo(rs.getInt(1));
+			bo.setAccountHolderName(rs.getString(2));
+			// map all the columns into attributes
+			return bo;
+		});
+	}
+}
+
+package com.bjdbc.service;
+@Service
+class AccountService {
+	@Autowire
+	private AccountDao accountDao;
+	
+	@Transactional(readOnly = true)
+	public List<AccountDto> getAllAccounts() {
+		return accountDao.findAll().map(bo -> {}).collect(Collectors.toList());
+	}
+}
+
+
+db.properties
+-------------
+db.driverClassName=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/hibdb
+db.username=root
+db.password=welcome1
+
+
+@Configuration
+@ComponentScan(basePackages = "com.bjdbc.dao")
+@PropertySource("classpath:db.properties")	
+class PersistenceConfig {
+	
+	@Bean
+	public DataSource dataSource(@Value("${db.driverClassName}") String driverClassName, 
+															 @Value("${db.url}") String url, 
+															 @Value("${db.username}") String username, 
+															 @Value("${db.password}") String password) {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource(url, username, password);
+		dataSource.setDriverClassName(driverClassName);
+		return dataSource;
+	}
+	
+	@Bean
+	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+		return new JdbcTemplate(dataSource);
+	}
+	
+	@Bean
+	public PlatformTransactionManager transactionManager(DataSource dataSource) {
+		return new DataSourceTransactionManager(dataSource);
+	} 
+}
+
+@Configuration
+@Import(PersistenceConfig.class)
+@ComponentScan(basePackages = "com.bjdbc.service")
+@EnableTransactionManagement
+public class RootConfig {
+	
+}
+
+
+class Test {
+	public static void main(String[] args) {
+		ApplicationContext context = new AnnotationConfigApplicationContext(RootConfig.class);
+		AccountService accountService = context.getBean("accountService", AccountService.class);
+		accountService.getAllAccounts().forEach(System.out::println);
+	}	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

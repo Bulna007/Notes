@@ -1,0 +1,266 @@
+class Ticket {
+	int tripNo;
+	int ticketNo;
+	String passengerName;
+	int age;
+	String gender;
+	String mobileNo;
+	String emailAddress;
+	// accessor
+}	
+	
+class TripDao {
+	public void saveTickets(List<Ticket> tickets) throws Exception {
+		boolean flag = false; // operation is not successful
+		Connection con = null;
+		PreparedStatement selectTripPstmt = null;
+		PreparedStatement updateTripPstmt = null;
+		PreparedStatement ticketPstmt = null;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url, un, pwd); // autocommit = true
+			con.setAutoCommit(false);
+			
+			selectTripPstmt = con.preparedStatement("select t.available_tickets from trip where trip_no = ?");
+			selectTripPstmt.setInt(1, tickets.get(0).getTripNo()); //availableTickets = 20
+			ResultSet rs = selectTripPstmt.executeQuery();
+			if(rs.next()) {
+				int availableTickets = rs.getInt(1);
+			}
+			availableTickets = availableTickets - tickets.getSize();
+			updateTripPstmt = con.preparedStatement("update trip set available_tickets = ? where trip_no = ?");
+			updateTripPstmt.setInt(1, availableTickets);
+			updateTripPstmt.setInt(2, tickets.get(0).getTripNo());
+			updateTripPstmt.executeUpdate(); // the update operation will be kept in buffer and will not be committed
+			
+			ticketPstmt = con.preparedStatement("insert into ticket(trip_no, ticket_no, passenger_nm, age, gender, mobile_no, email_address) values(?,?,?,?,?,?,?,?)");
+			for(Ticket ticket : tickets) {
+				// substitute parameters for each ticket object into pstmt
+				ticketPstmt.executeUpdate(); 
+			}			
+			flag = true;
+		}catch(ClassNotFoundException | SqlException e) {
+			flag = false;
+			e.printStackTrace();
+			throw e;
+		}finally {
+			try {
+				if(con != null) {
+					if(flag == true) {
+						con.commit();
+					}else {
+						con.rollback();
+					}
+				}
+			}catch(SqlException e) {}
+			// managing the resources in jdbc application
+			try {
+				if(selectTripPstmt != null) {
+					selectTripPstmt.close();
+				}
+			}catch(SqlException e) {}
+			try {
+				if(updateTripPstmt != null) {
+					updateTripPstmt.close();
+				}
+			}catch(SqlException e) {}	
+			try {
+				if(ticketPstmt != null) {
+					ticketPstmt.close();
+				}
+			}catch(SqlException e) {}	
+			try {
+				if(con != null) {
+					con.close();
+				}
+			}catch(SqlException e) {}	
+		}
+	}
+}	
+
+In the above code we are not applying the transactions because upon creating the Connection using DriverManager.getConnection(url, un, pwd);
+
+Connection con = DriverManager.getConnection(url, un, pwd);
+the Connection object would be created by default by setting autocomit = true, means everytime when we perform DML operation using the Connection object (like insert, update, delete etc) the operation would be commited automatically, due to this while inserting into Ticket table if there is failure, even then also the trip table would be updated and commited in the above example.
+	
+How to manage transactions in jdbc application?
+1. upon creating the Connection object, immediately set the autocommit = false	
+this means when we perform DML operation, the insert/update/delete will not be commited onto the database table and is kept in buffer until we explicitly call con.commit();
+
+2. always commit or rollback the Connection within the finally block only
+--------------------------------------------------------------------------------------------------------------------------------------
+How many types of Transactions are there?
+There are 2 types of transactions are there
+1. local transactions
+within the transactional boundary we will issue a commit or rollback on one-single transactional participating resource, which is called local transactions
+
+2. global or (XA) or distributed transactions
+within the transactional boundary there are multiple global transactional participating resources are there on whom we issue a commit or rollback at one shot is called "global transactions"
+	
+Can we manage global transactions using jdbc api?
+1. hrDatabase = employee (table)
+2. payrollDatabase = payroll (table)
+	
+class EmployeeDao {
+	public void newEmployee(Employee employee, Payroll payroll) throw Exception {
+		boolean flag = false;
+		Connection hrCon = null;
+		Connection payrollCon = null;
+		PreparedStatement empPstmt = null;
+		PreparedStatement payrollStmt = null;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			hrCon = DriverManager.getConnection(hrUrl, hrUn, hrPwd);
+			payrollCon = DriverManager.getConnection(payrollUrl, payrollUn, payrollPwd);
+			hrCon.setAutoCommit(false);
+			payrollCon.setAutoCommit(false);
+			
+			empPstmt = hrCon.preparedStatement("insert into emp(emp_no, emp_name, age, gender, mobile_no, email_address) values(?,?,?,?,?,?)");
+			// substitute the params
+			empPstmt.executeUpdate();
+			
+			payrollPstmt = payrollCon.preparedStatement("insert into payroll(payroll_no, annual_salary, ta, da, ...) values (?,?,?,?,?,?)");
+			// substitute the params
+			payrollPstmt.executeUpdate();
+			
+			flag = true;
+		}catch(ClassNotFoundException | SqlException e) {
+			flag = false;
+			e.printStackTrace();
+			throw e;
+		}finally {
+			try {
+				if(hrCon != null) {
+					if(flag == true) {
+						hrCon.commit();
+					}else {
+						hrCon.rollback();
+					}				
+				}
+			}catch(Exception e) {
+				flag = false;
+			}
+			try {
+				if(payrollCon != null) {
+					if(flag == true){
+						payrollCon.commit();
+					}else {
+						payrollCon.rollback();
+					}
+				}
+			}catch(Exception e) {}
+			// wrap try and catch for each close statements
+			if(empPstmt != null) {
+				empPstmt.close();
+			}
+			if(payrollPstmt != null) {
+				payrollPstmt.close();
+			}
+			if(hrCon != null) {
+				hrCon.close();
+			}
+			if(payrollCon != null) {
+				payrollCon.close();
+			}
+		}
+	}
+}	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

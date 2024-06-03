@@ -1,0 +1,53 @@
+aop
+aop stands for aspect oriented programming. 
+within our application, always we are going to write #2 types of logic
+
+1. primary business logic
+primary business logic is the code that has to be mandatorily written aspart of the application to fulfill the requirement of the system we are developing. without this logic, the core functionality of the application doesnt exist
+
+2. secondary logic
+secondary logic is the helper logic that always works with primary business logic in enhancing the functionality of the system, but the secondary logic is optional to be exist within the application. with/without the secondary logic the core system functionality can be fulfilled. such piece of the code written in the application is called "secondary logic"
+
+the secondary logic is something that we wanted to apply across several classes within the application to enhance the functionality most of the time. since it is written across several components within the application, it is also called as "cross-cutting logic"	
+	
+How does the primary business logic and secondary (cross-cutting logic) is written within the application?
+Most of the time we write primary business logic intermingled with secondary logic in such a way both cannot be separated easily. since the secondary logic seems to be optional and without it also the application can exists, in future if we want to get rid of the secondary logic we cannot easily separate from the application
+
+1. we need to go through each class within the application to identify which is primary business logic and secondary logic to seperate them.
+2. it would not be so easy to seperate secondary logic from primary business logic of the application, and many of the times we might have to rewrite the code within the component.
+	
+its not just we need to modify the code in one class or oneplace within the application we need to modify across several classes within the application which requires huge amount of
+	1. rework
+	2. cost
+	3. testing
+is there any way we can easily seperate primary logic from secondary logic of our application?
+That is where AOP has been introduced.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

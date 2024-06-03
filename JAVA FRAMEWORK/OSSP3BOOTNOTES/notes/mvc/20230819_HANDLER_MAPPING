@@ -1,0 +1,126 @@
+HandlerMapping
+What are Handler Mapping, why do we need to use them?
+HandlerMapping is an spring mvc component used for mapping an request to the corresponding controller class to whom the request should handovered for processing.
+	
+HandlerMapping is the component through which we can plugin/customize the way we want to map an request to the Controller. Let say if the spring mvc has not provided HandlerMapping component. Then the DispatcherServlet upon receiving the request would identify an Controller based on an fixed mechanism like match request url to the controller url etc
+
+Instead with HandlerMapping the decision making of which Controller to be used for processing the request is not made by DispatcherServlet, instead it always goes to HandlerMapping, so we can plugin our own implementation for HandlerMapping to map the request to an Controller
+
+HandlerMapping: is the component through which we can customize the way we want to map a request to the controller.
+
+Spring mvc has provided an standard interface "HandlerMapping" as below
+
+interface HandlerMapping {
+	HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception
+}
+we need to write our own HandlerMapping class by implementing from HandlerMapping interface and provide our own logic for mapping an request to the Controller.
+	
+Instead of we writing our own HandlerMapping implementation, since every application needs an HandlerMapping component, spring framework develpers has written several concreate implementation classes of HandlerMapping interface that suites for most of the requirements and provided to us.
+	
+HandlerMapping
+Programmatic api based HandlerMapping
+-------------------------------------
+1. SimpleUrlHandlerMapping
+2. BeanNameUrlHandlerMapping
+3. ControllerClassNameHandlerMapping (removed)
+4. ControllerBeanNameHandlerMapping (removed)
+
+The 3 & 4 are deprecated and removed from Spring 5
+
+Annotation-Drive programming HandlerMapping
+-------------------------------------------
+5. DefaultAnnotationHandlerMapping (removed in Spring 5 and replaced with RequestMappingHandlerMapping)
+6. RequestMappingHandlerMapping
+--------------------------------------------------------------------------------------------------------------------------------------
+1. SimpleUrlHandlerMapping
+The name itself tells us its an URL handler mapping which means the incoming request URL will be taken as an input in identifying the controller class. The developer has to configure the SimpleUrlHandlerMapping by populating into a property called Mappings of properties type
+
+in to which the key as =URL and value as Controller Bean id to whom the request should be forwarded
+
+SimpleUrlHandlerMapping
+|-mappings
+	|-url=controllerId
+	
+There are advantages of using SimpleUrlHandlerMapping as defined below:
+1. all the request URLs and the corresponding controllers to which those are mapped can be identified at one place
+2. for a given controller we can map with multiple url patterns easily using SimpleUrlHandlerMapping
+
+<bean id="homeController" class="ViewHomeController"/>
+
+<bean class="SimpleUrlHandlerMapping">
+	<property name="mappings">
+		<props>
+			<prop key="/home.htm">homeController</prop>
+			<prop key="/index.htm">homeController</prop>
+		</props>
+	</property>
+</bean>
+
+2. BeanNameUrlHandlerMapping
+Again its an one more URL handler mapping, that takes the request URL as an input to identify the controller class. The BeanNameUrlHandlerMapping takes the requestURL as an input and identifies the controller by matching with requestURL with beanName of the controller, which is similar to mapping an request to an Servlet by ServletContainer.
+
+<bean name="/home.htm" class="ViewHomeController"/>
+
+In an spring mvc application, if we have not defined any HandlerMapping the default HandlerMapping configured by the spring mvc is "BeanNameUrlHandlerMapping"
+	
+note: WebApplicationContext = is an special implementation of ApplicationContext, that takes care of instantiating the default implementations of Spring MVC components like HandlerMapping, ViewResolvers, ThemeResolvers, LocalResolvers etc in case if we have not defined them explicitly in our application
+
+
+In an Spring Mvc application we can configure multiple HandlerMappings as well. Incase if we defined Multiple HandlerMappings there works as Chain HandlerMappings.
+	
+Multiple HandlerMappings
+--------------------------	
+<bean class="SimpleUrlHandlerMapping">
+	<property name="mappings">
+		<props>
+			<prop key="/index.htm">indexController</prop>
+		</props>
+	</property>
+</bean>
+<bean class="BeanNameUrlHandlerMapping"/>
+
+<bean name="/home.htm" class="ViewHomeController"/>
+
+
+/index.htm = DispatcherServlet goes to SimpleUrlHandlerMapping to identify the Controller. since index.htm is available in SimpleUrlHandlerMapping it picks the Controller for processing the request, ignoring BeanNameUrlHandlerMapping
+
+/home.htm = DispatcherServlet goes to SimpleUrlHandlerMapping, since /home.htm is not found, it goes to BeanNameUrlHandlerMapping asking to map to an controller. Since BeanNameUrlHandlerMapping identifies the request to the Controller beanName it uses that controller to process the request.
+	
+Incase if both HandlerMappings fails in identifying the Controller, an HTTP 404 will be reported to the client.
+	
+	
+ViewResolvers
+--------------
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

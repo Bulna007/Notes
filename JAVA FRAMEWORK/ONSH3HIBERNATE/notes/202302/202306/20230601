@@ -1,0 +1,96 @@
+How many types of ID Generators are supported by Hibernate framework/Jpa api?
+There are 4 types of ID generators are supported
+1. AUTO
+its an default ID generated when we annotate an ID property with @GeneratedValue and has not specified any strategy
+it works based on the primary key column dataType and database:
+	1.1 if the pk columnType: integer
+		1.1.1 and if underlying database supports identity or auto-increment columns then it works as IDENTITY generator
+		1.1.2 and if the underlying database supports sequences, then it works as SEQUENCE generator
+		1.1.3 else it works as TABLE generator
+	1.2 if the pk columnType: String
+		and the attribute has been declared as UUID type, then it works as UUID generator
+		
+2. SEQUENCE
+SEQUENCE generator works for databases like oracle the supports Sequences. it increments the underlying database sequence fetches the next_val generated with which the data will be inserted into the database table.
+	
+3. IDENTITY
+IDENTITY generator works for database that supports IDENTITY/AUTO-INCREMENT column types.
+	
+4. TABLE
+if the underlying database doesnt support any of the SEQUENCE/IDENTITY generators, then we should use TABLE generator. The TABLE ID Generator works based on an database table
+In the database it creates an table with the name specified with #2 columns defined in it. These column names also can be choosen by us. per each entity classType it creates a record in the table with pk_column_nm as fixed for the entityType and the value being incremented sequentially whenever requested.
+	
+when we are trying to perform a save()/persist() of an entity object, the Table Generator queries for update (RECORD LEVEL LOCKING if the database supports) the pk_column_val from the table based on pk_column_nm_val and increments by 1 and updates the record and returns as an pk value to be used in inserting the current record/object into database table.
+
+unique_keys
+key_nm     key_val     
+product_no       2
+manufacturer_no  10	
+
+select pk_column_val from unique_keys where pk_column_nm = 'manufacturer_no';
+
+@Entity
+@Table(name="product")
+class Product {
+	@Id
+	@Column(name="product_no")
+	
+	@TableGenerator(name="tg1", table="unique_keys", pkColumnName="key_nm", valueColumnName="key_val", pkColumnNameValue="product_no")
+	@GeneratedValue(strategy=GenerationType.TABLE, generator="tg1")
+	int productNo;
+	@Column(name="product_nm")
+	String productName;
+	
+}
+
+There are few drawbacks with Table Generator.
+1. if the database doesnt support QUERY FOR UPDATE, then there is a chance of having duplicate keys being generated within an Concurrent/multi-threaded/Clustered environment
+2. The performance of the application is degraded because of QUERY FOR UPDATE which acquires a ROW level locking. 
+
+we cannot use Table generator with hbm.xml based mapping, because it is jpa only generator, so we can use orm.xml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

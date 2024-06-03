@@ -1,0 +1,149 @@
+3. import spring-boot-starter-parent pom dependencies
+In maven we can create a project by declaring only one project as parent, in an organization environment we might have an organization parent project defined with dependencies/plugin configurations which we need to use it as a parent in creating the projects within the organization. Insuch case creating our project with parent as spring-boot-starter-parent is not possible so we need to use import pom dependencies approach
+
+
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId/>
+	<artifactId/>
+	<version/>
+	<packaging/>
+	
+	<dependencyManagement>
+		<dependencies>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-parent</artifactId>
+			<version>3.1.5</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependencies>
+	</dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.1.5</version>
+				<executions>
+					<execution>
+						<phase>package</execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to setup a spring boot application by using gradle build tool?
+gradle is an another build tool which acts as an alternate to the maven in building java projects. There are few short-falls with maven build tool, to overcome them the gradle has been introduced.
+	
+short-falls with maven:
+1. maven strictly enforces conventions inorder to build the projects. For eg.. unless we create the project based on standardized directory layout the project cannot be build by maven.
+2. plugins are the only way through which we can accomplish build step or build activity, so customizing the build process is very difficult since we need to create our own plugins
+
+To overcome the above problems with maven, the gradle build tool has been introduced.
+gradle:
+1. gradle has defined standardized directory structure in creating the projects, but it is optional to be followed, and incase if we have created the project with a different directory structure, will we can customize the gradle to build our project easily
+2. different projects requires different build activities to be applied, so the concept of build lifecycle of maven doesnt applies in gradle. instead gradle has provided plugins 
+each plugin
+	2.1 enforces conventions
+	2.2 tasks to be applied in build the project
+	
+There are various types of plugins defined by gradle like
+1. java plugin
+2. java application plugin
+etc
+so if we apply java plugin then we need to 
+1. create the project based on the conventions or directory layout defined by java plugin
+2. the java plugin applies predefined or standard tasks (like compile, package etc) in building the java project
+So now based on the type of the project we are developing we need to choose an appropriate plugin in building the project using gradle.
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

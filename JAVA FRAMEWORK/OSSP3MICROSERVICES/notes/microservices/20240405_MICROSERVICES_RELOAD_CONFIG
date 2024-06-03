@@ -1,0 +1,115 @@
+How to reload the configuration changes from the ConfigServer in a Microservice application?
+The purpose of ConfigServer is to centralize and distribute the configuration across the different instances of the microservices running across the cluster, so that any change in the configuration doesnt affect the microservice application, which means any change in the configuration doesnt require to rebuild, repackage and redeploy the instances of the microservices.
+	
+How to propagate the configuration changes across the microservice applications?
+#1. ConfigServer
+Where there is a change in Configuration files of ConfigRepo (git repository), the ConfigServer performs a fetch to check for latest commits and pulls and reloads the configuration per each request/query for configuration. or We can even configure an refresh-rate so that periodically the configuration will be pulled from the ConfigRepo and reloads it. so we dont need to restart the ConfigServer when there is a change in Configuration files of the Config Repository.
+	
+#2 Microservice Application
+The Microservice application during the bootstrapping would pull the Configuration from the ConfigServer and loads into the env object with which the ioc container would be created. There after any changes that takes place in the ConfigRepo pertaining to Microservice Application, the application will not be aware of those changes and would not attempt to reload them, so the changes would not be reflected automatically.
+	
+So whenever there is a change in the microservice configuration in ConfigRepo, we need to explicitly notify the microservice application indicating there is a change in the configuration, pull and reload the components of the application
+
+How can we notify the microservice application about the change in the Configuration?
+The spring boot actuator has provided an refresh endpoint, that we can use for trigerring and notifying a microservice application about the change in configuration asking it to reload
+By default refresh endpoint is disabled and not exposed, we need to enable and expose it in microservice application to notify the configuration changes as below
+
+management:
+  endpoint:
+    refresh:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - refresh
+
+upon exposing the refresh endpoint we need to send an HTTP POST request to the endpoint http://host:port/actuator/refresh
+asking to reload the Configuration from ConfigServer
+
+When we send an refresh request, the Microservice application will not be restarted, rather the bootstrap context will reload the configuration from the ConfigServer and the bean definitions will be reloaded within the ioc container itself, which is a kind of in-memory refresh
+
+since there are many bean definitions in the ioc container, reload them is a great penalty and equals to restarting the whole application. Instead we can tell the ioc container, what beans of the application should be reloaded or refreshed with latest configuration by using @Refresh annotation on the bean definitions
+
+For the bean definitions for whom we are injecting the configuration values using @ConfigurationProperties, we dont need to write @Refresh annotation, those are automatically marked for reload/refresh
+--------------------------------------------------------------------------------------------------------------------------------
+Discovery Server/Registry
+-------------------------
+While working with Microservices, the enterprise large-scale complex business system is borken down into smaller microservices and are distribtued and scatted across the nodes of the cluster. Not all the nodes are running all the microservices of the System, different nodes are running different microservices, so the client application inorder to access an microservice he should know which nodes the microservice application he wanted to access is running.
+	
+Unfortunately the client dont have this information with him, to help the client locate and access the microservice application from the nodes of the cluster we need Discovery Server/registry
+
+There are several third-party vendors offered different discovery registries/servers as below
+1. Netflix Eureka
+2. Hashicorp Consul
+3. Apache Zookeeper
+out of the above discovery servers, the Netflix Eureka is very popularly used in the market.
+
+Irrespective of the discovery server we are using above, all these discovery servers should provide few features in registering and discovering the servers as below:
+1. A Discovery Server should expose an registration endpoint, so that each microservice during their bootup can register themself by publishing their information to the DiscoveryServer to make them discoverable
+2. The Discovery Server should support heartbeats in monitoring the service availability. Each microservice should be able to periodically send heatbeat information letting their health/liveness of the services to the Discovery Server. For any reason if a microservice failed in sending the heartbeats to the DiscoveryServer within stipulated time, the DiscoveryServer should consider the microservice as failed/unavailable and should deregister the instance from the registry
+3. If the Discovery Server went down, the whole cluster/services becomes un-available. To support High-Availability the Discovery Server should support master/slave architecture.
+4. Multiple instances of the microservice will be running across different nodes of the cluster for High-availability. The Discovery Server should not identify them as 2 different microservices rather it should register them as 2 instances/replicas of the same microservice so that it can distribute their details to the client applications when requested.	
+	
+Based on the above requirements an DiscoveryServer should be build for every microservice application, since it is an common requirement, rather than we building it many third-parties build and distributed the Discovery servers as listed above
+
+All these discovery servers are built in java platform and has exposed HTTP/REST Endpoints, so they need to be configured and deployed on Servlet Container itself.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

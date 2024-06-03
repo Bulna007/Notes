@@ -1,0 +1,64 @@
+There are 6 features are there in spring boot
+1. auto-configurations
+2. starter dependencies
+3. actuator endpoints
+4. devtools
+5. embedded servlet containers
+6. springboot cli
+
+1. auto-configurations
+auto-configurations takes care of configuring spring framework components as bean definitions based on opinionated view, so that the developers dont have to write the code for configuring the framework components as bean definitions within the application
+
+2. starter dependencies
+For each type of technology that we use in developing the application with spring framework, the spring boot team has defined an starter dependency, which is nothing but an maven artifact declared with transitive dependencies as spring modules based on the technology along with third-party libraries as dependencies within them. So that inorder to develop an application of a specific technology using spring boot we just need to add the relevant starter which pulls all the required dependencies of compatible versions, thus giving us an jumpstart experience in developing spring framework application
+
+3. actuator endpoints
+right from the development to production grade deployable application can be built by using actuator endpoints. These are the pre-built components built for managing, monitoring the application in the production env, which can be directly packaged/shipped along within our application to get it ready to be deployed in production env.
+	
+4. devtools
+-----------
+devtools provides all the tools required for the developers in quickly developing the application. For example during the development of the application the developers debugs the application and modifies the code for fixing the issues they have encoutered. Inorder to reflect these changes that are made, the developers has to restart the servers which kills the developers time in developing the application.
+	
+Instead we can take the help of devtools, without the need to restarting/redeploying the application onto the server, the devtools takes care of reloading the modified classfiles of the application into the jvm memory reflecting these changes quickly, so that in no time the develpers can verify and proceed for further development of the application
+
+In this way several features/tools are provided by devtools in helping in quickly developing the application
+
+5. embedded servlet containers
+-------------------------------
+
+6. springboot cli
+
+
+class Controller {
+
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

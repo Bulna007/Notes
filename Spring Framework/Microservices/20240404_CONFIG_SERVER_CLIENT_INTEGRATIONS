@@ -1,5 +1,5 @@
 How to secure the access to the Cloud ConfigServer?
-The configuration pertaining to an application is confidential or private to the application and should not be exposed and made it publicly accessible. We can enforce authentication in pulling the configuration from the ConfigServer by enablishing spring security basic authentication
+The configuration pertaining to an application is confidential or private to the application and should not be exposed and made it publicly accessible. We can enforce authentication in pulling the configuration from the ConfigServer by enabling spring security basic authentication
 
 add spring-boot-starter-security dependency into the pom.xml of our project. upon adding spring-boot-starter-security dependency the spring security components will be auto-configured through spring boot echo system and it generates a default username: user and password as random password onto the console using which we can authenticate in accessing the configuration
 

@@ -1,0 +1,110 @@
+Session = intelligent object that knows how to perform persistence operations on the underlying database, through the help of Session we eliminate writing boiler-plate logic in performing the persistence operations. The Session requires Connection, Dialect and Mapping Information for performing the persistence operations
+
+#1.
+What is Configuration, what is the purpose of it?
+Configuration:
+Configuration class acts as an builder for creating the object of the SessionFactory, the Configuration class object holds the hibernate configuration and hibernate mapping information within it using which it creates the object of SessionFactory, since it creates the object of SessionFactory with populated configuration inside it, it is called builder for creating SessionFactory.
+	
+
+Configuration configuration = new Configuration(); // creates the object of the configuration as empty
+configuration = configuration.configure(); 
+configure(): method directly goes to the classpath of the application and looks for hibernate.cfg.xml, if it is not found, it throws an exception terminating the application. if found reads the configuration information inside along with mappings and creates one more object of Configuration and returns to us.
+	
+#2. SessionFactory
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+while creating the object of the SessionFactory, it reads the Configuration Information and Mapping Information from the Configuration object using that it creates an (internal) Connection pool to optimize creating the object of Session, because for every new object of the Session, it needs to wrap a new Connection object inside it.
+along with that it instantiates the object of Dialect and holds inside for reusing it while creating the object of Session. In addition it loads the Mapping information and holds withit so that it can reuse the mapping while creating the object of Session
+So, there are 3 responsibilities the SessionFactory is performing
+
+1. SessionFactory acts as an Factory for creating the object of Session
+2. it holds the ConnectionPool in optimizing the performance in grabbing an Connection to instantiate the object of Session
+3. it acts as registry/repository in storing the Dialect and Mapping Information, so that it can reuse in creating the object of Session
+
+From the above we can understand we need to create only one object of the SessionFactory per application/per database, avoid creating multiple objects of the SessionFactory since it is recreates the Connection Pool and reloads the configuration and Mapping information for each new object which is not required.
+	
+So the best practise is to create the object of SessionFactory at the start of the application and close it at the end of the application.
+	
+How many objects of Session and SessionFactory should be created within an application?
+1. per one operation = one Session object, at the end of the operation we need to close the Session object
+2. per one application/database = one SessionFactory object, at the end of the application we need to close the SessionFactory object
+
+
+How to maintain one object of the SessionFactory within our application?
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

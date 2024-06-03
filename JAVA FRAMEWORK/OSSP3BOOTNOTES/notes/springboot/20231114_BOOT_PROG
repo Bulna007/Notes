@@ -1,0 +1,372 @@
+There are 6 features are there in Spring Boot
+1. Auto Configurations
+2. Starter Dependencies
+3. Actuator Endpoints
+4. DevTools
+5. Embedded ServletContainers
+6. SpringBoot CLI
+
+1. Auto Configurations
+Auto-Configurations takescare of quickly configuring the spring framework components as bean definitions with default values based on opinionated view. If the requirements are diverging from defaults, with minimal efforts by passing values as input we can fine tune the components to work for our application
+
+2. Starter Dependencies
+These are the maven artifacts declared with transitive dependencies as spring framework modules with third-party libraries, that can be quickly used for setting up the spring framework project
+
+3. Actuator Endpoints
+These are pre-built endpoints shipped by the spring boot team, which can be embedded aspart of our application, using which we can have development to producation grade deployable application can be built with no efforts
+
+4. DevTools
+All the tools required for quickly developing the application are provided aspart of the DevTools.
+	
+5. Embedded Servlet Containers
+While working with spring boot in building an web application, we dont need to setup/configure an standalone servlet container instead we the spring boot takescare of deploying and hosting the application aspart of the embedded servlet container that is shipped along with the code itself.
+	
+6. SpringBoot CLI
+quickly prototyping the application can be done using spring boot CLI
+--------------------------------------------------------------------------------------------------------------------------------------------
+How to develop an spring framework application using spring boot?
+#1. create an project
+Even though it is not mandatory to use an build tool for creating/developing an project while working with spring boot, to get best out of using spring boot, it is high recommended to use one of the build tools available like
+1. ant + ivy 
+2. maven
+3. gradle
+
+lets create an project using maven build tool with the below command:
+$HOME/workspace:
+
+mvn archetype:generate -DgroupId=boot.org -DartifactId=bootcore -Dversion=1.0.0 -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4
+	
+with the above command, the maven creates an standard maven java project.
+	
+#2. Now we need to add the required dependencies in developing the project and building with spring framework. Below are the dependencies that we need to add in pom.xml for developing with spring framework + core module
+2.1 spring-core
+2.2 spring-context
+2.3 spring-context-support
+2.4 spring-beans
+third-party libraries like
+2.5 commons-beans
+2.6 commons-logging
+etc
+
+based on the type of the project/technologies we want to use in developing, we need to identify which spring modules and what are their third-party library dependencies along with their versions to be added to the project. it takes lot of time in identifying the right set of dependencies along with compatible versions in setting up the project.
+	
+To overcome this problem, spring boot team has provided spring boot starter dependencies. For developing an spring core application, the spring boot team has provided a starter dependency called "spring-boot-starter" that needs to be added as dependency in our pom.xml as below
+
+pom.xml
+-------
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+	<groupId>boot.org</groupId>
+	<artifactId>bootcore</artifactId>
+	<version>1.0.0</version>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<version>3.1.5</version>
+		</dependency>
+	</dependencies>
+</project>
+
+by adding the spring-boot-starter as dependency in our project, it pulls all the basic spring core modules and their third-party libraries into the project with their compatible versions as well. So creating an spring boot project would become very quick
+
+#3. write your application components inorder to develop the application, but use an recommended package standard as below
+We write our own application components in building the application like
+	1. beans
+	2. dao/repositories
+	3. controllers
+	4. services
+etc
+
+but it is always recommended to have an base package for your application under which all these components must be placed for eg.. in our project we can have the components being organized into packages as below
+
+com.bootcore (basepackage)
+	  |-beans
+		|-controllers
+		|-service
+		|-repositories
+	etc
+
+let us write an bean class into which we inject the values 
+	
+package com.bootcore.beans;
+@Component
+class LoanApplication {
+	@Value("${applicantName}")
+	String applicantName;
+	@Value("${age}")
+	int age;
+	@Value("${dob}")
+	String dob;
+	@Value("${gender}")
+	String gender;
+	@Value("${occupation}")
+	String occupation;
+	@Value("${annualGrossSalary}")
+	double annualGrossSalary;
+	@Value("${loanType}")
+	String loanType;
+	@Value("${tenure}")
+	int tenure;
+	@Value("${principleAmount}")
+	double principleAmount;
+	
+	// setters & getters
+}	
+	
+@Component
+class CreditReport {
+	@Autowired
+	LoanApplication loanApplication;
+	@Value("${cibilScore}")
+	int cibilScore;
+	@Value("${description}")
+	String description;
+	
+	// accessors
+}
+
+inorder to inject the values into the above attributes of the classes, we need to write an properties file as below
+appValues.properties
+--------------------
+applicantName=joe
+age=23
+gender=male
+occupation=Software Engineer
+annualGrossSalary=600000
+loanType=Personal
+tenure=36
+principleAmount=200000
+cibilScore=650
+description=qualified
+
+so load the above properties file properties into environment object of ioc container by writing @PropertySource annotation on an configuration class.
+
+@Configuration
+@PropertySource("classpath:appValues.properties")
+class JavaConfig {
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

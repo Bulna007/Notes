@@ -1,0 +1,92 @@
+Spring Jdbc
+------------
+Spring jdbc is an module, used for building database applications aspart of the spring framework. There are lot of advantages of building the applications using spring jdbc over java jdbc api
+
+Problems with java jdbc api
+---------------------------
+1. java jdbc is an api, apis will not provide boiler-plate logic in building the applications. The developer has to write lot of code repeatitively in perform database operations through the application like
+	1.1 creating the connection
+	1.2 statement
+	1.2 extracting the resultset 
+etc
+so we endup in writing huge amount of code while working with java jdbc, due to which we run into maintainability problems
+
+2. managing the resources are very difficult.
+The developer has to write the code for opening the resources like Connection, Statement etc and has write the code for closing them aswell. How better we wrote the code in managing the resources, always we run into resource leakage issues while working with java jdbc api
+
+Each resource should be closed in a specific order as ResultSet, Statement, Connection, and individual resource should be kept intheir own try/catch block while closing
+
+try {
+	// load the driver
+}catch(SqlException | ClassNotFoundException e) {
+	
+}finally {
+	try {
+		if(rs != null) {
+			rs.close();
+		}
+	}catch(SqlException e) {}
+	try {
+		if(stmt != null) {
+			stmt.close();
+		}
+	}catch(SqlException e) {}
+	try {
+		if(con != null) {
+			con.close();
+		}
+	}catch(SqlException e) {}
+}
+
+From the above code we can understand we need to endup in writing huge lines of code in managing the resources
+
+3. While working with java jdbc api, we endup in wrapping the code within annoying try/catch blocks that makes the code difficult to read and maintain.
+	
+	
+What is an exception?
+exception is an object wrapped with failure information that has been caused during the execution of the program due to which the program has been terminated. by looking at the exception information, the programmer can easily understand the root cause of the failure and can make necessary changes in the application logic, so that the program becomes robust in execution and can improve the quality of code/application.
+	
+before java, languages like c, cobol, pascal or c++ there is no concept of exceptions, if a program ran into an error during execution it would terminate abnormally leaving not information regarding that failure. 
+	
+Java language has introduced the concept of Exceptions, so that any java program during the execution has ran into an error, the jvm captures the error information and wraps into an exception object and throws it, so that the program got a chance to look at that error information interms of exception.
+	
+exception = reporting the failures
+exception handling = managing the failures
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,530 @@
+depends-on
+----------
+
+@WebServlet("/loanEnquiry")
+class LoanEnquiryServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+    Properties props = new Properties();
+		double ri = 0.0;
+		String applicantName = httpReq.getParameter("applicantName");
+		String mobileNo = httpReq.getParameter("mobileNo");
+		String emailAddress = httpReq.getParameter("emailAddress");
+		double principleAmount = Double.parseDouble(httpReq.getParameter("principleAmount"));
+		int tenure = Integer.parseInt(httpReq.getParameter("tenure"));
+		String city = httpReq.getParameter("city");
+    String loanType = httpReq.getParameter("loanType");
+		...
+
+		props.load(this.getClass().getClassLoader().getResourceAsStream(“cityri.properties”);      
+		if(props.containsKey(city) == false) {
+			throw new ServletException(“city is not supported”);
+		}
+		ri = Double.parseDouble(props.getProperty(city));
+		double interestAmount = (principleAmount * tenure * ri)/100;
+		double repaymentAmount = principleAmount + interestAmount;
+		double processingFee = principleAmount * 10 / 100;
+
+		// bind all these values into request scope
+    // forward to loan-estimate.jsp
+	}
+}
+								 
+cityri.properties
+-----------------
+hyderabad=10.1
+banglore=10.25
+chennai=11
+new delhi=10.15
+gurgoan=10.56
+pune=11.12
+							 
+								 
+In the above program we endup in repeatedly reading the cityri.properties file for each request even thought the rate of interest for a given city will not change, thus leading to performance problem. To overcome this problem we need to use Cache
+							 
+class Cache {
+	private static Cache instance;
+	private Map<String, Object> dataMap;
+	
+	private Cache() {
+		dataMap = new ConcurrentHashMap<>();	
+	}
+	
+	public static synchronized getInstance() {
+		if(instance == null) {
+			instance = new Cache();
+		}
+		return instance;
+	}
+	
+	public void put(String key, Object val) {
+		dataMap.put(key, val);
+	}
+	
+	public Object get(String key) {
+		return dataMap.get(key);
+	}
+	
+	public boolean containsKey(String key) {
+		return dataMap.containsKey(key);	
+	}	
+}							 
+							 
+							 
+@WebServlet("/loanEnquiry")
+class LoanEnquiryServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+    Properties props = new Properties();
+		Cache cache = Cache.getInstance();
+		
+		double ri = 0.0;
+		String applicantName = httpReq.getParameter("applicantName");
+		String mobileNo = httpReq.getParameter("mobileNo");
+		String emailAddress = httpReq.getParameter("emailAddress");
+		double principleAmount = Double.parseDouble(httpReq.getParameter("principleAmount"));
+		int tenure = Integer.parseInt(httpReq.getParameter("tenure"));
+		String city = httpReq.getParameter("city");
+    String loanType = httpReq.getParameter("loanType");
+		...
+			
+		if(cache.containsKey("cityri") == true) {
+			props = (Properties) cache.get("cityri");
+		}	else {
+			props.load(this.getClass().getClassLoader().getResourceAsStream(“cityri.properties”);      
+			cache.put("cityri", props);					 
+		}
+		
+		if(props.containsKey(city) == false) {
+			throw new ServletException(“city is not supported”);
+		}
+		ri = Double.parseDouble(props.getProperty(city));
+		double interestAmount = (principleAmount * tenure * ri)/100;
+		double repaymentAmount = principleAmount + interestAmount;
+		double processingFee = principleAmount * 10 / 100;
+
+		// bind all these values into request scope
+    // forward to loan-estimate.jsp
+	}
+}							 
+							 
+							 
+@WebServlet("/loanApproval")
+class LoanApprovalServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		Cache cache = null;
+		Properties props = null;
+		
+		cache = Cache.getInstance();
+		if(cache.containsKey("cityri")==true) {
+			props = (Properties) cache.get("cityri");
+		}else {
+			props = new Properties();
+			props.load(this.getClass().getClassLoader().getResourceAsStream("cityri.properties"));
+			cache.put("cityri", props);
+		}
+		
+	}
+}								 
+								 
+The characterisitics of the data we wanted to cache are
+1. well-know data								 
+2. static data will not grow
+3. and is limited in size
+								 
+such data should be cached during the startup of the application itself
+								 
+since everyone uses the data from the Cache, while creating the object of the Cache we can load the data into the Cache class
+								 
+								 
+class Cache {
+	private static Cache instance;
+	private Map<String, Object> dataMap;
+	
+	private Cache() {
+		dataMap = new ConcurrentHashMap<>();
+		initialize();
+	}
+	
+	public void initialize() {
+		// load the data into the Cache
+		Properties props = new Properties();
+		props.load(this.getClass().getClassLoader().getResourceAsStream("cityri.properties"));
+		
+		
+		
+		put("cityri", props);
+	}
+	
+	public static synchronized getInstance() {
+		if(instance == null) {
+			instance = new Cache();
+		}
+		return instance;
+	}
+	
+	public void put(String key, Object val) {
+		dataMap.put(key, val);
+	}
+	
+	public Object get(String key) {
+		return dataMap.get(key);
+	}
+	
+	public boolean containsKey(String key) {
+		return dataMap.containsKey(key);	
+	}	
+}									 
+								 
+With this change, we dont need to write the code in loading the data into Cache in each class of our application
+@WebServlet("/loanEnquiry")
+class LoanEnquiryServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+    Properties props = new Properties();
+		
+		Cache cache = Cache.getInstance(); // the data will be loaded while instantiating the cache
+		
+		double ri = 0.0;
+		String applicantName = httpReq.getParameter("applicantName");
+		String mobileNo = httpReq.getParameter("mobileNo");
+		String emailAddress = httpReq.getParameter("emailAddress");
+		double principleAmount = Double.parseDouble(httpReq.getParameter("principleAmount"));
+		int tenure = Integer.parseInt(httpReq.getParameter("tenure"));
+		String city = httpReq.getParameter("city");
+    String loanType = httpReq.getParameter("loanType");
+		...
+			
+		
+		props = (Properties) cache.get("cityri");
+		if(props.containsKey(city) == false) {
+			throw new ServletException(“city is not supported”);
+		}
+		ri = Double.parseDouble(props.getProperty(city));
+		double interestAmount = (principleAmount * tenure * ri)/100;
+		double repaymentAmount = principleAmount + interestAmount;
+		double processingFee = principleAmount * 10 / 100;
+
+		// bind all these values into request scope
+    // forward to loan-estimate.jsp
+	}
+}									 
+								 
+In the above implementation of Cache we have problems:
+Cache is primarily meant for storing the data and distributing the data to all the classes within the application, it should not be responsible for loading the data, if the data loading logic has been written inside the cache
+1. we endup in writing lot of code in loading the data from several sources
+2. the cache will exposed to the underlying source systems
+
+the cache should be always agnostic to the source from where data is coming from, so let us not write the code for loading the data into Cache inside the Cache itself
+								 
+
+#CacheManager
+-------------								 
+let us use CacheManager for loading the data into Cache
+								 
+class Cache {
+	private static Cache instance;
+	private Map<String, Object> dataMap;
+	
+	private Cache() {
+		dataMap = new ConcurrentHashMap<>();
+	}
+	
+	public void load(Map<String, Object> dataMap) {
+		this.dataMap.putAll(dataMap);
+	}
+	
+	public static synchronized getInstance() {
+		if(instance == null) {
+			instance = new Cache();
+		}
+		return instance;
+	}
+	
+	public void put(String key, Object val) {
+		dataMap.put(key, val);
+	}
+	
+	public Object get(String key) {
+		return dataMap.get(key);
+	}
+	
+	public boolean containsKey(String key) {
+		return dataMap.containsKey(key);	
+	}	
+}									 
+The CacheManager is responsible for querying, aggregating and massaging the data by reading from several source systems and load the data into the Cache
+								 
+class CacheManager {
+	private Cache cache;
+	
+	public CacheManager(Cache cache) {
+		Map<String, Object> dataMap = null;
+		
+		dataMap = new HashMap<>();
+		
+		Properties props = new Properties();
+		props.load(this.getClass().getClassLoader().getResourceAsStream("cityri.properties"));
+		dataMap.put("cityri", props);
+		
+		// cities
+		write jdbc logic in query city_id, city_nm from cities table
+		List<City> cities = //
+		dataMap.put("cities", cities);
+		
+		cache.load(dataMap);
+	}
+}								 
+								 
+In the above implementation of CacheManager, again we end up writing code for reading the data from several sources and loading into Cache, which is complex and difficult to maintain Instead the logic for loading the data from each source should be dedicated to Accessor
+	
+interface IAccessor {
+	String getKey();
+	Object getData();
+}								 
+								 
+
+class CityRiPropsAccessorImpl implements IAccessor {
+	private String key;
+	public CityRiPropsAccessorImpl(String key) {
+		this.key = key;
+	}
+	public String getKey() {
+		return key;
+	}
+	public Object getData() {
+		Properties props = new Properties();
+		props.load(this.getClass().getClassLoader().getResourceAsStream("cityri.properties"));
+		return props;
+	}	
+}		
+
+class CitiesDbAccessorImpl implements IAccessor {
+	private String key;
+	public CitiesDbAccessorImpl() {
+		key = "cities";
+	}
+	public String getKey() {
+		return key;
+	}
+	public Object getData() {
+		List<City> cities = new ArrayList();
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		Connection con = DriverManager.getConnection(url, un, pwd);
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("select city_id, city_nm from cities");
+		while(rs.next()) {
+			cities.add(new City(rs.getInt(1), rs.getString(2)));
+		}
+		return cities;
+	}
+}								 
+						
+class CacheManager {
+	private List<IAccessor> accessors;
+	private Cache cache;
+	
+	public CacheManager(Cache cache, List<IAccessor> accessors) {
+		this.cache = cache;
+		this.accessors = accessors;
+		Map<String, Object> dataMap = new HashMap();
+		
+		for(IAccessor accessor : accessors) {
+			dataMap.put(accessor.getKey(), accessor.getData());
+		}
+		this.cache.load(dataMap);
+	}
+}								 
+-------------------------------------------------------------------------------------------------------------------------------------
+								 
+class LoanEnquiryManager {
+	private Cache cache;
+	
+	public LoanEnquiryManager(Cache cache) throws Exception {
+		this.cache = cache;
+	}
+	
+	public void enquire(double principleAmount, int tenure, String city) {
+		double ri = 0.0;
+		double interestAmount = 0.0;
+		double totalRepaymentAmount = 0.0;
+		Properties props = null;
+		
+		props = cache.get("cityri");
+		if(props == null || props.containsKey(city) == false) {
+			throw new Exception(“city is not supported”);
+		}
+		ri = Double.parseDouble(props.getProperty(city));
+		double interestAmount = (principleAmount * tenure * ri)/100;
+		double repaymentAmount = principleAmount + interestAmount;
+		double processingFee = principleAmount * 10 / 100;
+		// print all the values
+	}
+}								 
+
+application-context.xml
+-----------------------
+<bean id="cityRiAccessor" class="CityRiPropsAccessorImpl">
+	<constructor-arg value="cityri"/>
+</bean>								 
+
+<bean id="cache" class="Cache" factory-method="getInstance"/>								 
+								 
+<bean id="cacheManager" class="CacheManager">
+	<constructor-arg ref="cache"/>
+	<constructor-arg>
+		<list>
+			<ref bean="cityRiAccessor"/>
+		</list>
+	</constructor-arg>
+</bean>								 
+
+<bean id="loanEnquiryManager" class="LoanEnquiryManager" depends-on="cacheManager">
+  <constructor-arg ref="cache"/>								 	
+</bean>								 
+								 
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("a-c.xml"));
+LoanEnquiryManager lem = beanFactory.getBean("loanEnquiryManager", LoanEnquiryManager.class);
+lem.enquire(100000, 32, "hyderabad");								 
+								 
+								 
+								 
+
+								 
+								 
+								 
+								 
+								 
+
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+							 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 

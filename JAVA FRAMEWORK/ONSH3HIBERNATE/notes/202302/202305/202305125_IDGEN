@@ -1,0 +1,10 @@
+How to remove an object of data from the Cache?
+	
+evict:
+session has provided an method called evict(Object entityObject) that takes entity object that we wanted to remove from Session cache, so that the consequitive retrieval of the object hits the database rather than returning the data from cache
+
+the other way is using clear();
+session.clear();
+unlike the evict(object) method that takes object and removes that specific object from Cache, the clear() removes or empties all the data in the Session cache.
+	
+	

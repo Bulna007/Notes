@@ -1,0 +1,311 @@
+OpenFeign
+----------
+Spring Cloud OpenFeign is an declarative rest client library used for accessing the microservices without writing the client code aspart of the application. There are lot of features are available in openfeign that makes it more powerful and highly customizable as well
+1. it is an declarative client library, we are only going to write interface with methods annotated with spring rest annotations describing the service we wanted to access, without writing the code
+2. The Feign client is highly customizable through various different components like
+  1. encoders/decoders
+	2. loggers
+	3. loadbalancer
+	4. feign builder
+	
+In our client applications while accessing the microservice or rest/http endpoints, we endup in repeatedly writing the same code across the invoker components in accessing the various different endpoints
+Lets say we are invoking an microservice which is having below characteristics:
+1. HTTP Method: GET
+2. PathVariables as an input
+The way we need to write the code for any microservice of this characteristic of request/response would be same across. Instead of duplicating the code across all the invoker class for accessing the endpoints/microservices we can have one common Invoker class as below.
+	
+// generic invoker class that can invoke any microservice based on the given inputs	
+class HttpInvoker {
+	private RestTemplate restTemplate;
+	
+	// method for invoking/accessing an rest endpoint with uriVariables based on the given inputs
+	public Object invokeGet(String endpointURL, Map<String, Object> uriVariables, Class<?> responseType) {
+		ResponseEntity<?> responseEntity = null;
+		String endpointUrl = UriComponentBuilder.fromUriString(endpointURL)
+			                  .uriVariables(uriVariables)
+			                  .build().toString();
+		responseEntity = restTemplate.queryForEntity(endpointUrl, responseType);
+		if(responseEntity.getStatusCode() == 200) {
+			return responseEntity.getBody();
+		}
+		throw exception;
+	}
+	
+	public Object invokeGet(String endpointURL, Map<String, Object> uriVariables, Map<String, String> queryParams, Class<?> responseType) {
+		ResponseEntity<?> responseEntity = null;
+		UriComponentBuilder builder = UriComponentBuilder.fromUriString(endpointURL);
+		
+		queryParams.stream().forEach((k, v)-> {
+			builder.queryParam(k, v);	
+		});
+		String endpointUrl = builder.build(uriVariables);
+		
+		responseEntity = restTemplate.queryForEntity(endpointUrl, responseType);
+		if(responseEntity.getStatusCode() == 200) {
+			return responseEntity.getBody();
+		}
+		throw exception;
+	}
+	
+	public Object invokePost(String endpointURL, Map<String, Object> pathVariables, Map<String, String> queryParams, Object entity, Class<?> responseType) {
+		ResponseEntity<?> responseEntity = null;
+		UriComponentBuilder builder = UriComponentBuilder.fromUriString(endpointURL);
+		
+		queryParams.stream().forEach((k, v)-> {
+			builder.queryParam(k, v);	
+		});
+		String endpointUrl = builder.build(uriVariables);
+		responseEntity = restTemplate.postForEntity(endpointUrl, entity, responseType);
+		if(responseEntity.getStatusCode() == 200) {
+			return responseEntity.getBody();
+		}
+		throw exception;
+	}
+}	
+	
+class DistributorServiceInvoker {
+	private HttpInvoker httpInvoker;
+	
+	public DistributorDto getDistributor(String distributorCode) {
+		Map<String, Object> uriVariables = new HashMap<>();
+		uriVariables.put("distributorCode", distributorCode);
+		return httpInvoker.invokeGet("http//distributor-network/distributor/{distributorCode}", uriVariables, DistributorDto.class);
+	}
+}	
+
+class InventoryManagementServiceInvoker {
+	private HttpInvoker httpInvoker;
+	
+	public Product getProduct(String modelNo) {
+		Map<String, Object> uriVariables = new HashMap<>();
+		uriVariables.put("modelNo", modelNo);
+		return httpInvoker.invokeGet("http//inventory-mgmt/inventory/{modelNo}", uriVariables, ProductDto.class);
+	}
+}
+
+From the above we can understand, in each invoker/client class that invokes the http/rest endpoint we need to write the logic for cooking up the data and pass it as an input to the (Generic) HttpInvoker class asking him to invoke the actual endpoint. 
+	
+Even though we are able to avoid duplication of code with above approach of using (Generic) HttpInvoker, across the client classes we are still duplicating the functionality in preparing and passing the data to the HttpInvoker asking to invoke the endpoints 
+
+How to avoid writing the redudant logic or functionality in preparing the data and invoking the HttpInvoker class?
+1. Representing the Http Endpoint we want to access let us define an interface
+	
+interface DistributorService {
+	DistributorDto getDistributor(String distributorCode);
+}	
+
+interface InventoryManagementService {
+	ProductDto getProduct(String modelNo);
+}
+
+
+2. Let us describe what endpoint should be invoked with what parameters of data being passed when we invoke the methods of the above instances in a configuration file
+
+endpoints-config.xml
+----------------------
+<httpClients>
+	<httpClient interface="DistributorService" baseURI="http://distributor-network/distributor">
+	  <httEndpoint name="getDistributor" httpMethod="GET" subResourceUri="/{distributorCode}" responseType="DistributorDto">
+			<parameter name="distributorCode" type="UriVariable"/>			
+		</httpEndpoint>
+	</httpClient>
+	<httpClient interface="InventoryManagementService" baseURI="http://inventory-mgmt/product">
+		<httpEndpoint name="getProduct" httpMethod="GET" subResourceUri="/{modelNo}" responseType="ProductDto">
+			<parameter name="modelNo" type="UriVariable"/>
+		</httpEndpoint>
+	</httpClient>
+</httpClients>
+
+
+Whenever we invoke the methods on the interface, there should be some one who reads the endpoints-configuration file and gathers the information about the http/rest endpoint that should be invoked based on the method we call the interface and invoke the respective Endpoint
+	
+For eg.. we can write one class as below:
+
+@Component
+class HttpConfigInvocationAdvice implements MethodInterceptor {
+	@Autowired
+	private HttpInvoker httpInvoker;
+	
+	public Object invoke(MethodInvocation methodInvocation) {
+		String methodName = null;
+		Object[] args = null;
+		Class targetClass = null;
+		
+		methodName = methodInvocation.getMethod().getName();
+		args = methodInvocation.getArgs();
+		targetClass = methodInvocation.getTarget();
+		
+		// read the endpoints-config.xml
+		identity HttpClient config based on targetClass (interfaceName) and identity the HttpEndpoint based on methodName
+		from this derive endpointURL that should be invoked
+		identity what data should be send aspart of the request using parameter definitions
+			
+		if(httpEndpoint.hasUriVariables()) {
+			uriVariables = new HashMap<String, Object>();
+			for(int i=0;i < httpEndpoint.getUriVariables().length();i++) {
+				uriVariables.put(httpEndpoint.getUriVariables()[i].name, args[i]);
+			}
+		}	
+		return httpInvoker.invokeGet(endpointURL, uriVariables, responeType);		
+	}
+}
+	
+From the above we can understand, if we want to invoke 10 rest endpoints, all that we need to do is write #10 interface with configuration/metadata defining what endpoint should be invoked, so that whenever we advice the HttpClientInvocationAdvice on these interface and create the proxy
+	
+Upon calling the methods on the proxy, the underlying Advice will be taking care of reading the configuration associated to that interface method and perform relevant logic in invoking the endpoints
+	
+Instead of we writing the HttpInvoker and HttpClientInvocationAdvice in reading the associate interface method and its configuration in invoking the endpoint the openfeign client api has provided these componets, so that for each endpoint we want to invoke we need to write just write
+1. interface
+2. configuration associated to that interface describing which http/rest endpoint to be invoked 
+
+writing an XML-based configuration is very difficult, and instead the same information can be defined interms of annotations for simplified programming, so openfeign client api supports using spring mvc or rest annotations describing the endpoint to be invoked.
+	
+For eg.. if we want to invoke DistributorService we can write the interface with annotations as below
+	
+@FeignClient(url="http://localhost:8081/distributor")	
+interface DistributorService {
+	@GetMapping(value="/{distributorCode}", produces={MediaType.APPLICATION_JSON_VALUE})
+	DistributorDto getDistributor(@PathVariable("distributorCode") String distributorCode);
+}
+
+@SpringBootApplication
+@EnableFeignClients
+class FeignBootApplication {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(FeignBootApplication.class, args);
+		
+		DistributorService distributorService = context.getBean(DistributorService.class);
+		DistributorDto dto = distributorService.getDistributor("D001");
+		sout(dto);
+	}
+}
+
+The openfeign 3.x supports discovery client and loadbalancing as well, we need to add okhttp library to support this.
+	
+<dependency>
+    <groupId>io.github.openfeign</groupId>
+    <artifactId>feign-okhttp</artifactId>
+    <version>13.2.1</version>
+</dependency>
+
+To support discovery client we need to provide configuration related to eureka server
+1.
+eureka:
+  client:
+    register-with-eureka: false
+		fetch-registry: true
+		service-url:
+      defaultZone: http://localhost:9091, http://locahost:9092
+feign:
+  okhttp:
+    enabled: true
+			
+2. on the SpringBoot Application class we need to @EnableDiscoveryClient
+3. in @FeignClient annotation of the interface use service-name in the name instead of url: host:port
+
+@FeignClient(name="DISTRIBUTOR-NETWORK")	
+interface DistributorService {
+	@GetMapping(value="/{distributorCode}", produces={MediaType.APPLICATION_JSON_VALUE})
+	DistributorDto getDistributor(@PathVariable("distributorCode") String distributorCode);
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

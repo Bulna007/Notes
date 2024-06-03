@@ -1,0 +1,93 @@
+sourcecode management repositories
+----------------------------------
+The developers inorder to develop an software aplication, chooses an programming language of choice that suites based on the nature of the application. He/She develops the programs using the programming language instructions in building the application, the programming instructions written by the developer are called sourcecode of the project
+
+aspart of an application the developers has build several sourcecode programs that has to be put together and reused across in building and running the software application.
+There would be an team of developers who would be working together in building the software application
+
+How can multiple developers can colloborate in building an application?
+each developer in the team produces the sourcecode, that might have to be used by the other developers within the team and end of the day the several sourcecode programs written by all the developers in the team has to be merged together and should be executed to serve the final functionality of the system, then how can different developers works individual producing their sourcecode can be collobarated/integrated together to execute.
+	
+That is where sourcecode management repository systems comes into picture
+
+Without having an sourcecode management repository, how can the developers can collaboratively work in developing the software application?
+There are several ways of accomplishing it
+#1. central server shared directory location
+Setup an central server machine on which create an shared directory that has access to all the developers across the team. Individual developers works on their local workstation and collborates the sourcecode and distributes it from shared network directory location as below.
+	
+1. setup the initial project by lead/architecture or an member of the team and place the project within the network directory location which is called "goldcopy"
+2. daily the developers has to take the sourcecode of the project from the network directory location before beginging their development, and place it on their local workstation which is called "workingcopy"
+3. now developers can work on their local copy of the source code independent from other developers
+4. end of the day all the developers has to come together and integrate their individual sourcecode produced into an final copy and place it onto the network shared directory location as below
+	4.1 each developer has to maintain the changeset information keeping track of which programs/files are new, modified and deleted
+	4.2 now all the developers has to bring their sourcecode and changeset on to one developers machine and has to build the final copy as below
+		1. if an sourcecode/program has been produced newly by a developer, it can placed in final copy directly
+		2. if the sourcecode/program is existing and has not been modified by any developer from the goldcopy then also it can be directly placed in final copy
+		3. if a sourcecode/program has been modified by multiple developers aspart of their working copy, then all the developers who are invovled in the changed program/file has to sit together and discuss about their changes and merge into one single sourcecode/program file and place it in the final copy
+5. now validate the colloborated code of the final copy and place it onto the network directory location, making this as "goldcopy"		
+			
+all the developers of the team has to follow the same process to support collaborative application development
+
+
+There are lot of drawbacks or dis-advantages in collaborating the sourcecode through network shared directory location
+1. each developer has to mandatorily maintain the changeset of the files he/she is going create newly or modify or delete during the development. Maintaining the changeset is very difficult and most of the time developers tend to ignore keeping track of it that leads to corrupted or lost changes
+2. most of the time the developer may not be able to complete their development at the end of the day and might have partial or half-cooked code left in their workingcopy. The workingcopy changes may not be in an compilable state and cannot be shared with other members of the team.
+3. if the changes are delayed in integrating, then the changeset growsup and would become difficult in colloborating the code
+4. endof the day all the developers has to sit together and compare their changesets in building the final copy which is going to take huge amount of time, out of the development time on daily basis atleast 20% of the development time would be wasted for each developer in collborating the code
+5. upon making the final copy, the developer has to validate those changes which would adds up the retesting cost in certifying the code that is colloborated.
+6. always there is a chance where the code of individual developer might be lost due to improper changeset maintained.
+7. there is no security in protecting the sourcecode from the network shared directory location since any developer can do any operation on the sourcecode.
+
+From the above we can understand, maintaining and distributing the sourcecode from network shared directory location seems to be in-secured and difficult so to overcome the above problem people has moved to FileServer approach
+
+#2. File Servers approach
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

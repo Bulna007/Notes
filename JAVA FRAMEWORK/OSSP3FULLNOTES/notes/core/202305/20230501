@@ -1,0 +1,334 @@
+class AccountDao {
+	private ConnectionFactory connectionFactory;
+	
+	public AccountDao(ConnectionFactory connectionFactory) {
+		this.connectionFactory = connectionFactory;
+	}
+	
+	public void saveAccount(Account account) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = connectionFactory.newConnection();
+			
+			
+		}catch(ClassNotFoundException | SqlException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			// close the resources
+		}
+	}
+}
+
+class ConnectionFactory {
+	private String driverClassname;
+	private String url;
+	private String username;
+	private String password;
+	
+	public ConnectionFactory(String driverClassname, String url, String username, String password) {
+		this.driverClassname =driverClassname;
+		this.url = url;
+		this.username= username;
+		this.password=  password;
+	}
+	
+	public Connection newConnection() {
+		Connection con = null;
+		Class.forName(driverClassname);
+		con = DriverManager.getConnection(url, username, password);
+		con.setAutoCommit(false);
+		return con;
+	}
+}
+
+application-context.xml
+------------------------
+<bean id="connectionFactory" class="ConnectionFactory">
+	<constructor-arg value="com.mysql.cj.jdbc.Driver"/>
+	<constructor-arg value="jdbc:mysql://localhost:3306/db"/>
+	<constructor-arg value="root"/>
+	<constructor-arg value="welcome1"/>
+</bean>
+
+<bean id="accountDao" class="AccountDao" c:connectionFactory-ref="connectionFactory"/>
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/bfpp/common/application-context.xml"));
+AccountDao accountDao = beanFactory.getBean("accountDao", AccountDao.class);
+// use it
+
+How to deploy the application across the various environments?
+The deployer is responsible for deploying the application across various environments, to deploy the application he/she has to conduct the below activities
+1. pull the sourcecode from the sourcecode management repositories
+2. identify the dependent libraries that are required for building the application, download them manually and add them to the classpath of the application
+3. modify the configurations files of the application pertaining to the environment on which we want to deploy the application
+4. compile the project into bytecode
+5. package the application into jar/war/ear standard
+6. deploy the application onto the respective server environment and start the server
+
+There are lot of difficulties involved in deploying the application:
+1. deployer dont know which dependencies are required of what versions in building the application
+2. downloading these dependencies manually is a time taking process and might leads to errors as well in in-correctly downloading them
+3. identifying the configuration changes to be made within the application files is difficult
+	3.1 there could be lot of files within the sourcecode of the program, identify the right configuration file to make the changes is very difficult
+	3.2 within the configuration file, there can be lot of configurations, which place and what needs to be changed is difficult to understand
+	3.3. since the deployer is not aware of the technology (xml, json, yml etc) he may not be sure about the changes he is making is syntactically correct or wrong this leads to broken application deployed in the env
+4. The application might comprises of multiple modules with inter-dependency between them, the deployer has to understand the order in which those has to be build and deployed which is tedious job
+5. carrying all these operations manually and repeatedly may results in error, leads to failed in delivery of the application
+6. if something goes wrong the deployer may not understand what went wrong and may have to start from scratch that leads to huge wastage of time
+
+To overcome the above problems the java has introduced build tools like ANT, MAVEN, GRADLE etc
+since the developer is the person who knows how to build the application, he/she has to be responsible for writing build instructions in building, packaging and deploying the software application
+Now the deployer will pull the code from sourcecode repositories and run the build tools in building/packaging and deploying the application onto the target environment
+
+but still the deployer has to manually change the configuration files before building the application, this could result in the same problem we discussed above
+So replacing these configuration files needs to be automated through the build tools, now within the application write the configuration files with tokens/placeholders as below
+
+application-context.xml
+------------------------
+<bean id="connectionFactory" class="ConnectionFactory">
+	<constructor-arg value="${db.driverClassname}"/>
+	<constructor-arg value="${db.url}"/>
+	<constructor-arg value="${db.username}"/>
+	<constructor-arg value="${db.password}"/>
+</bean>
+
+<bean id="accountDao" class="AccountDao" c:connectionFactory-ref="connectionFactory"/>
+
+externalize these tokens into an single properties file under the root of the project
+app.properties
+db.driverClassname=
+db.url=
+db.username=
+db.password=
+	
+write the relevant build script logic that takes the keys from app.properties and searches for the tokens ${} with those keys in the application configuration files like .xml, .json, .yaml and replaces them with the actual values being configured for those keys in properties file
+
+once the configuration files are modified with actual values, then the builds tool will compile, package and deploy the application.
+	
+The deployer inorder to build/deploy the application
+1. pull the sourcecode
+2. change app.properties file (single file)
+	2.1 easy to modify
+	2.2 no chance of syntax errors
+3. run the build tool
+
+From the above we can understand we are modifying the physical configuration files of the application before building and deploying the application, this has many problems:
+
+1. the sourcecode of the configuration files has tokens rather than values, during the development since the developers will no rely on build tools for deploying the application, rather they use ides so they need to manually change these tokens into values for running the application locally this could result into lot of problems
+	1.1 the developer might commit/push the configuration files without tokens mistakenly that will fail in building the application and deploying across other environments
+	1.2 to eliminate the problem we need to maintain 2 copies of the files, one for local env (without tokens), another for build tools (with tokens), this leads to huge maintainance and inconsistency
+2. if something has been wrongly modified in the properties file and build, to update the configuration values again, the deployer has to checkout the whole code of the program from sourcecode management repository to begin from scratch this leads to huge wastage of time
+
+instead update the in-memory metadata of the ioc container with the actual values by using bean factory post processor
+There are lot of places we can use BFPP
+1. instead of relying on build tools in changing the configurations we can use BeanFactoryPostProcessor
+2. there could be passwords written in encrypted form in the configuration files, that can be replaced with decrypted passwords at runtime within the in-memory metadata of the ioc container before instantiating the objects with that configuration using BeanFactoryPostProcessor
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

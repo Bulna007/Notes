@@ -1,0 +1,85 @@
+Table per subclass using Annotations
+-------------------------------------
+Table per subclass in hibernate is equal to JOINED in jpa.
+	
+@Entity
+@Table(name="insurance_plan")
+@Inheritance(strategy=InheritanceType.JOINED)
+class InsurancePlan implements Serializable {
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="plan_no")
+	protected int planNo;
+	@Column(name="plan_nm")
+	protected String planName;
+	protected int tenure;
+	@Column(name="premium_amt")
+	protected double premiumAmount;
+	@Column(name="insurred_amt")
+	protected double insurredAmount;
+	protected String status;
+	
+	// accessors
+}
+
+@Entity
+@Table(name="medical_insurance_plan")
+@PrimaryKeyJoinColumn(name="medical_insurance_plan_no")
+class MedicalInusurancePlan extends InsurancePlan {
+	int copay;
+	@Column(name="coverage_type")
+	String coverageType;
+	// accessors
+}
+
+@Entity
+@Table(name="accidental_insurance_plan")
+@PrimaryKeyJoinColumn(name="accidental_insurance_plan_no")
+class AccidentalInsurancePlan extends InsurancePlan {
+	@Column(name="disability_coverage_percentage")
+	int disabilityCoveragePercentage;
+	@Column(name="international_coverage")
+	boolean internationalCoverage;
+	
+	// accessors
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+Table per concrete class
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+

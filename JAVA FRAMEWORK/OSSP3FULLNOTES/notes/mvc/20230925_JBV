@@ -1,0 +1,262 @@
+Java Bean Validation
+---------------------
+Java Bean Validation api (JSR 380), it is well-knows as bean validation 2.0 api
+For any type of application whether it is
+	1. standalone application
+	2. distribute web application
+	3. integration-tier application (soap/restful services)
+always we get the data as an input from the enduser interms of objects. Before using the data to perform operations/persisting we need to validate the data.
+	
+Unless the data that is supplied is valid we will not be able to perform the business operationg using the data or even we cannot store the data into our system.
+How can we write the code for validating the data in our application and report the validation errors to the user?
+	
+class Customer {
+	String firstName;
+	String lastName;
+	int age;
+	String gender;
+	String mobileNo;
+	String emailAddress;
+	// accessors
+}
+
+Now inorder to validate the data that is binded to the Customer object we need write an validator class and write validation logic in validating the data that is binded to the attributes of the class object and collect the validation errors and report as below.
+	
+	
+class CustomerValidator {
+	Map<String, List<String>> validate(Customer customer) {
+		Map<String, List<String>> errors = null;
+		List<String> fieldErrors = null;
+		
+		errors = new HashMap<String, List<String>>();
+		
+		if(customer.getFirstName() == null || customer.getFirstName().trim().length == 0) {
+			addFieldError("firstName", "firstName is blank");
+		}
+		if(customer.getLastName() == null || customer.getLastName().trim().length == 0) {
+			addFieldError("lastName", "lastName is blank");
+		}
+		// all the attributes we need to write validation logic and capture them as errors
+		return errors;
+	}
+	
+	private void addFieldError(String fieldName, String error) {
+		if(errors.containsKey(fieldName)) {
+			fieldErrors = errors.get(fieldName);
+		}else {
+			fieldErrors = new ArrayList();
+		}	
+		errors.put(fieldName, error);
+	}
+}	
+
+It looks like in every application we need to write Validator class in which we need to write field validation logic to validate the data binded to these attributes and capture them as errors.
+By looking at the above code we can easily understand the code for validating the bean object attributes seems to be redundant because for most the times we perform similar type of validations on the attributes like
+	1. attribute is blank
+	2. number range 
+	3. dates between or past or future
+	4. MinLength and MaxLength
+	5. Email Address
+	6. Phone Number
+	7. Password
+	etc
+
+So we endup in repeatedly writing the same validation logic for validating the fields across the applications and applying these validation logic and capturing these errors in validator classes also is repeated.
+
+Instead of we writing this repeative logic in implementing the validations across the applications, the java programming language has provided an api called "Java Bean Validation" api.
+	
+Java Bean Validation is an API. APIs are always partial and we need implementations to work with an api. The JBoss has provided implementation for Java Bean Validation api which is hibernate-validator implementation.
+	
+Even though the name of the implementation resembles Hibernate Framework, it has nothing to do with Hibernate at all, it is just an independent implementation library that is provided by Jboss for java bean validation api.
+	
+The java bean validator api has provided rich set of api classes to support validating an java object as below.
+	1. To orchestrate the validation logic to be applied on the fields of the bean object they have provided a class called "Validator"
+	2. To report the validation errors of each field in the bean object they have provided "ConstraintViolation".
+	3. To support applying different types of validations on each Field they provided Constraint Annotations that defines what type of validation logic/rule to be applied on each field.
+		
+Validator:
+The Validator class has Set<ConstraintViolation> validate(Object). 
+Now we need to pass the bean object as an input by calling validate() method on the Validator class, that validates the fields/attributes of the object we supplied and reports the failures as Set<ConstraintViolation>
+
+The Validator class dont know what validation contraints to be applied on the fields/attributes of the object we supplied. So the programmer has to write constraints on these attributes to indicate the validations to be applied
+
+For the most common type of validation constraints, the java bean validation api has provided predefined ConstraintValidator class that has logic for validating an Field/Attribute with specific type of validation logic. Each ConstraintValidator has been associated with ConstraintAnnotation indicating What ConstraintValidator to be used for validating the Field/Attribute.
+	
+Now programmer has to write the ConstraintAnnotations indicating what validations needs to be applied for each field/attribute of the java bean class. then pass it as an input to Validator class
+	
+The Validator class reads these annotations identifies for each field what ConstraintValidator to be applied in validating the field and captures the validation errors for these fields in ConstraintViolation class and reports as Set<ConstraintViolation> to the program.
+	
+There are lot of pre-defined ConstraintValidators with ConstraintAnnotations to be used in enforcing the validation logic as below.
+1. @Digits(integer=, fractional=)
+2. @Email
+3. @Max(value=)
+4. @Min(value=)
+5. @NotBlank = checks for given string is not null and trim length is non-zero
+6. @NotEmpty = object is null or not
+7. @Null
+8. @NotNull
+9. @Pattern(regex="")
+10. @Size(min, max)
+11. @Negative
+12. @Postive
+13. @NegativeOrZero
+14. @Future
+15. @FutureOrPresent
+16. @PastorPresent
+	
+In addition to the above the hibernate validator implementation has provided more constraint validator annotations for applying more validations as below
+1. @CreditCardNumber
+2. @Currency(value=)
+3. @ISBN
+4. @Length(min, max)
+5. @Range(min, max)
+	
+	
+1. Per each type of validation, the java bean validation api has provided an ConstraintValidator encapsulated with relevant validation logic to be applied on the given value/attribute. 
+	
+2. Each ConstraintValidator is associated with an ConstraintAnnotation, using which we can tell what validation should be applied on which file of an java bean object
+
+3.  Validator class, that has orchestration logic in reading the ConstraintAnnotations on the bean attributes and executes the corresponding ConstraintValidator and captures the ConstraintViolations and returns 
+
+4. ConstraintViolation = An ConstraintViolation represents an field error / attribute error of an java bean
+
+class Customer {
+	@NotBlank(message="firstName cannot be blank")
+	private String firstName;
+	@NotBlank(message="lastName cannot be blank")
+	private String lastName;
+	@Min(value=1, message="age should be between 1 to 100")
+	@Max(value=100, message="age should be between 1 to 100")
+	private int age;
+	@NotBlank
+	@Pattern(regex="Male|Female")
+	private String gender;
+	@NotBlank
+	@MaxLength(value=10)
+	@MinLength(value=10)
+	private String mobileNo;
+	@Email(message="email address is not valid")
+	private String emailAddress;	
+	// accessors
+}
+
+Customer customer = new Customer();
+// populate the data into the object
+
+Validator is an class provided by java bean validation api, so it is an interface so we need implementation of the Validator interface to instantiate.
+The implementation vendors (jboss bean validator implementation) provides implementation class for the Validator interface. We dont know what is implementation class provided by the jboss hibernate validator implementation
+	
+So we need to use an Factory class which is ValidatorFactory.
+ValidatorFactory is also an class provided by Java Bean Validator api, so it is an Abstract Factory class, so to identify the implementation of the Factory the Validation class has been provided.
+	
+ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+Validator validator = validatorFactory.getValidator();
+Set<ConstraintViolation> violations = validator.validate(customer);
+
+for(ContraintViolation violation : violations) {
+	sop(violation.getMessage());
+}
+
+
+ConstraintValidator = ProductNo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

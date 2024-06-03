@@ -1,0 +1,7 @@
+Test.java
+Configuration configuration = new Configuration().configure();
+SessionFactory sessionFactory = configuration.buildSessionFactory();
+
+Session session = sessionFactory.openSession();
+Account account = (Account) session.get(19, Account.class);
+

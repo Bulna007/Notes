@@ -1,0 +1,104 @@
+Method Before Advice
+--------------------
+
+class LoanManager {
+	public boolean approveLoan(long loanApplicationNo) {
+		// verify the loan eligibility and either approve/reject it				
+		return true;
+	}
+}
+
+class SecurityAdvice implements MethodBeforeAdvice {
+	void before(Method method, Object[] args, Object proxy) {
+		SecurityManager securityManager = SecurityManager.getInstance();
+		
+		if(securityManager.authenticate() == false) {
+			throw new IllegalAccessException("invalid un/pwd");
+		}
+		
+	}
+}
+
+class UsernamePasswordToken {
+	private String username;
+	private String password;
+	// accessor methods
+}
+
+class SecurityManager {
+	private static SecurityManager instance;
+	private ThreadLocal<UsernamePasswordToken> threadLocal;
+	
+	private SecurityManager() {
+		threadLocal = new ThreadLocal();
+	}
+	
+	public static SecurityManager getInstance() {
+		if(instance == null) {
+			instance = new SecurityManager();
+		}
+		return instance;
+	}
+	public void login(String username, String password) {
+		UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+		threadLocal.set(token);
+	}
+	public void logout() {
+		threadLocal.set(null);
+	}
+	
+	public boolean authenticate() {
+		UsernamePasswordToken token = null;
+		
+		token = threadLocal.get();
+		if(token != null) {
+			if(token.getUsername().equals("bob") && token.getPassword().equals("welcome1")) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+1. #login (username/password) = store the credentials
+2. invoke approveLoan () = then the system has to validate the credentails that are stored for that user, before allowing to access the target Method
+
+Test.java
+---------
+ProxyFactory pf = new ProxyFactory();
+pf.setTarget(new LoanManager());
+pf.addAdvice(new SecurityAdvice());
+LoanManager proxy = (LoanManager) pf.getProxy();
+
+SecurityManager securityManager = SecurityManager.getInstance();
+securityManager.login("un1", "pwd1");
+boolean approveLoan = proxy.approveLoan(93893);
+securityManager.logout();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

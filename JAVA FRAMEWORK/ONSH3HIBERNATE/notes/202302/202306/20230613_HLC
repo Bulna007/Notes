@@ -1,0 +1,208 @@
+1. void update(entityObject)
+There are 2 ways we can update an entity object
+1.1 partial update
+1.2 full-update
+
+2. void delete(entityObject)
+delete is used for deleting an existing record of data from the underlying database table.
+There are 2 ways of deleting an entity object are there
+
+1. safe-delete
+In order to delete the entity object, first fetch the existing entity object of that primary key value you want to delete
+ServiceRequest serviceRequest = session.get(ServiceRequest.class, 10);
+if(serviceRequest != null) { // to ensure the corresponding record exists in the database
+	session.delete(serviceRequest);
+}
+
+when we call delete method on the Session object, it executes an delete sql query on the underlying table against the primary key column value as below.
+delete from service_request where service_req_no = 10
+	
+2. unsafe-delete
+Instead of fetching an existing entity object, we can create an empty entity object by populating the id property value we wanted to delete and pass it as an input to delete() method.
+	
+ServiceRequest serviceRequest = new ServiceRequest();
+serviceRequest.setServiceRequestNo(10);
+session.delete(serviceRequest);
+
+In this approach if we are sure that the underlying record exists with that id, we need to choose this approach.
+	
+note: delete() has been marked as deprecated in Hibernate6 infavor of remove(entityObject) from jpa api
+-------------------------------------------------------------------------------------------------------------------------------------------
+3. void merge(entityObject)
+if there is an entityObject associated within the active session. under the same active session if the user tries to call the update method with a new entity object populated with the same id of the existing object that is part of the active session. the hibernate sesion.update() method throws an exception NonUniqueObjectFoundException not allowing the user to override the existing object changes with the new
+	
+to let the hibernate forcibily override the existing object with the new one supplied we need to use merge(entityObject)	
+
+try {
+	sessionFactory = SFRegistry.getSessionFactory();
+	session = sessionFactory.openSession();
+	#within the current active session, we fetched an entity object with an identity
+		
+	ServiceRequest serviceRequest = session.get(ServiceRequest.class, 2);
+	#The session.get() method fetches the record of data from database table against the pk value interms of object and stores the object in session-level cache and returns to us
+	serviceRequest.setProblem("Address Change");
+	session.update(serviceRequest);
+	
+		
+	// are you querying the existing record and updating or looks like you are overlapping the existing data 	
+	ServiceRequest serviceRequest1 = new ServiceRequest();
+	serviceRequest1.setServiceRequestNo(2);
+	// populated all of the data into this object
+	session.update(serviceRequest1); 
+	#session.update(entityObject) method throws NonUniqueObjectFoundException, not allowing the user to update the data
+		
+	session.merge(serviceRequest1);
+	#replace the existing session-cached object with the new object provided and update the record
+}	
+	
+usecase:
+we generally face this issue while performing an partial update
+
+void updateServiceRequest(ServiceRequest serviceRequest1) {
+	try {
+		sessionFactory = SFRegistry.getSessionFactory();
+		session = sessionFactory.openSession();
+		ServiceRequest serviceRequest = session.get(ServiceRequest.class, serviceRequest1.getServiceRequestNo());
+		
+		serviceRequest1.setRaisedDate(serviceRequest.getRaisedDate());
+		serviceRequest1.setCustomerName(serviceRequest.getCustomerName());
+		serviceRequest1.setMobileNo(serviceRequest.getMobileNo());
+		//
+		session.update(serviceRequest1);		#run into Non-Unique Object Found exception
+		
+	}
+}
+There are #2 ways to solve this problem
+1. instead of calling update on new object, populate the data into the entity object associated with the session and call update method
+2. use merge()
+	
+save()
+saveOrUpdate() -- deprecated = persist()
+	
+update() -- deprecated = merge()
+	
+delete() -- deprecated = remove()
+---------------------------------------------------------------------------------------------------------------------------------------------
+working with dynamic-insert and dynamic-update
+
+dynamic-update:
+
+ServiceRequest serviceRequest = session.get(ServiceRequest.class, 3);
+serviceRequest.setRequestType("Account");
+serviceRequest.setProblem("Address Change");
+session.update(serviceRequest);
+
+by default when we call the update() method on an entityObject, it will updates all the fields/columns of data of that record in the underlying database, because update() method dont know which fields were modified.
+	
+LoanApplication application = session.get(LoanApplication.class, 3984);
+application.setIssuedAmount(383844);
+sesion.update(application);
+
+incase if we have enabled auditing to record the changes happened in the underlying database tables/data, then an update unnecessarily captures all the changes even the fields are not modified producing huge junk data.
+	
+insuch case to only update the fields of data that are modified in that entity object we need to enable dynamic-update=true on that entity at mapping level
+
+ServiceRequest.hbm.xml
+<hibernate-mapping>
+	<class name="ServiceRequest" table="service_request" dynamic-update="true" dynamic-insert="true">
+	</class>
+</hibernate-mapping>
+
+incase if we have enabled dynamic-update="true", hibernate during update operation queries the existing record and compares which fields are modified/changed and generates an sql query only with those columns and updates them
+note: dont use dynamic-update unless needed because we run into performance problems
+
+
+dynamic-insert:
+in a table we might have few nullable columns and few non-nullable columns. when we pass an entityObject with nullable column fields as empty and ask hibernate to insert the data.
+	
+ServiceRequest serviceRequest1 = new ServiceRequest();
+serviceRequest1.setServiceRequestNo(2);
+serviceRequest1.setRequestType("Account");
+serviceRequest1.setProblem("Address Change");
+serviceRequest1.setMobileNo(serviceRequest.getMobileNo());
+serviceRequest1.setRaisedDate(serviceRequest.getRaisedDate());
+serviceRequest1.setStatus(serviceRequest.getStatus());	
+session.persist(serviceRequest1);
+
+the hibernate generates the sql query will all the columns including the null fields and executes insert operation. instead hibernate can ignore passing null values to those columns of nullable nature that can be done using dynamic-insert
+
+insert into service_request(service_req_no, request_type, problem, mobile_no, email_address, raised_dt, status) values(?,?,?,?,?,?,?,?);
+
+insert into service_request(service_req_no, request_type, problem, mobile_no, raised_dt, status) values(?,?,?,?,?,?,?);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

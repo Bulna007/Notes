@@ -1,0 +1,56 @@
+What are the advantages of using embedded servlet containers?
+The embedded servlet containers are nothing but, the server vendors aspart of the sourcecode of the servers, they build, package and distribute the servers as libraries. So that these can be included as dependencies in our project and use them.
+advantages:-
+1. The containers are shipped aspart of the code itself, so we dont need to download, install and configure them to use.
+2. In an traditional application deployments, we need to manually perform necessary configurations required ontop of the container to deploy the applications like
+	1. connection pool configurations
+	2. jms resources
+	3. security
+	etc
+unless these resources or configurations are applied on the containers, we cannot deploy the application. since these configurations are performed manually on the servers, it could lead to
+	1. human errors
+	2. lot of time needed for performing these configurations
+	3. should be applied repeatedly across the envs 
+whereas while working with embedded containers, since the servers are shipped aspart of the code, the configurations required to be applied on these servers are also driven through code itself, due to which we can avoid manually configurations on the server that eliminates all the problems above.
+	
+3. easy to adopt ci/cd of an application 
+While adopting the ci/cd pipeline, we need to write lot of code in building and running the application on the target environment.
+upon provisioning the infrastructure, the devops engineers has to write the code using software configuration management tools like ansible, puppet or chef etc for installing and configuring the application servers/servlet containers on the target environment. Along with that they need to take care of patching, upgrading, backup/restore of these server environments regularly.
+This is an laborious process and takes huge amount of time for adopting and implementing the pipeline automation
+
+Instead if we ship our application aspart of embedded servlet containers, all that it needs to run the application is just the infrastructure, once the application has been build into binary it is self-service, which means everything that is needed to run the application is contained in itself, so that we just to run the application to begin execution. Now the efforts of achieving CI/CD is pretty less when compared with standalone container env
+
+4. The Embedded servlet containers fully supports development and delivery of microservices based applications.
+In a microservice based application, each microservice should be build out of its own sourcecode, as an independent project, that should be loosely-coupled and independently deployable (each microservice should be running in its own container).	
+	
+If our application comprises of 8 microservice modules, then we need atleast 8 physical server computers. on each physical server computer we should be able to deploy and run atleast #2 microservices. So if we have to run #16 instances of the our microservices we need to setup #2 container envs per each machine.
+	
+To install, configure and deploy microservices independently on each of these machines in a standalone container env, the amount of code we need to write in achieving the automation delivery these microservices is very complex and difficult to manage.
+	
+Instead if we use embebdded servlet container envs, since the containers are shipped aspart of the code itself, we can have the application being delivered quickly.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	

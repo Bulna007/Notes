@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/our-mission.htm">ourMission</prop>
+            </props>
+        </property>
+    </bean>
+    <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+
+    <bean id="ourMission" class="com.vrw.controller.OurMissionController"/>
+    <bean name="/contactus.htm" class="com.vrw.controller.ContactUsController"/>
+
+
+
+    <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
+    <bean id="om" class="org.springframework.web.servlet.view.JstlView">
+        <property name="url" value="/WEB-INF/jsp/our-mission.jsp"/>
+    </bean>
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+<!--    <bean id="contact-us" class="org.springframework.web.servlet.view.JstlView">-->
+<!--        <property name="url" value="/WEB-INF/jsp/contact-us.jsp"/>-->
+<!--    </bean>-->
+
+    <!--<bean class="org.springframework.web.servlet.view.XmlViewResolver">
+        <property name="location" value="/WEB-INF/views-beans.xml"/>
+    </bean>-->
+
+    <!--<bean class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+        <property name="basename" value="views"/>
+    </bean>-->
+<!--    <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">-->
+<!--        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>-->
+<!--        <property name="prefix" value="/WEB-INF/jsp/"/>-->
+<!--        <property name="suffix" value=".jsp"/>-->
+<!--    </bean>-->
+</beans>

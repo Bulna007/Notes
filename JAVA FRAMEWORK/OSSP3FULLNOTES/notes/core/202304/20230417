@@ -1,0 +1,276 @@
+Lookup Method Injection
+------------------------
+
+class Worker {
+	private String data;
+	
+	public void setData(String data) {
+		this.data = data;
+	}
+	public void execute() {
+		sop("processing the data : "+ data);
+	}
+}
+
+class Container implements BeanFactoryAware {
+	void receiveRequest(String data) {
+		Worker worker = null;
+		
+		worker = beanFactory.getBean("worker", Worker.class);
+		worker.setData(data);
+		worker.execute();
+	}
+	
+	public void setBeanFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="container" class="Container"/>
+<bean id="worker" class="Worker" scope="prototype"/>
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/lmi/common/application-context.xml"));
+Container container = beanFactory.getBean("container", Container.class);
+
+container.receiveRequest("data1");
+container.receiveRequest("data2");
+container.receiveRequest("data3");
+
+Note (interview questions) :-
+1. when should we avoid dependency injection?
+2. what happens when we injection a prototype bean into an singleton class?
+
+In the above example our Container class is implementing from BeanFactoryAware interface and we are using BeanFactory object within the Container class in pulling the object of Worker thus making our application classes tightly coupled with Spring Framework. so we loose non-invasive ness
+
+1. let us try to reduce the impact
+There could be lot of places within the Container class where we are pulling the object of Worker by using BeanFactory, instead of making the entire code tightly coupled let us write the code for pulling the Worker in one method and use it in all places within the class whereever we want to pull
+	
+	
+abstract class Container /*implements BeanFactoryAware*/ {
+	//BeanFactory beanFactory;
+	
+	void receiveRequest(String data) {
+		Worker worker = null;
+		
+		worker = lookupWorker();
+		worker.setData(data);
+		worker.execute();
+	}
+	
+	void receiveAsyncRequest(String data) {
+		worker = lookupWorker();
+		worker.setData(data);
+		worker.execute();
+	}
+	
+	/*public void setBeanFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}*/
+	
+	abstract public Worker lookupWorker();
+}
+
+here only one method lookWorker() is tightly coupled with spring framework, and rest of the code within my class is not referring an
+of the spring framework classes. In future if we want to decouple our application from spring framework we only need to provide new implementation in lookWorker() method only.
+	
+even now also we have coupling exists, because we are writing the code inside the lookWorker() method for getting/looking up for the object from ioc container.
+Now instead of we writing the logic inside the lookup***(){} within our class, we can let the ioc container implement the logic for that method in our class, so that we dont write lookup logic thus our class will become loosely coupled.
+	
+How does ioc container knows it has implement lookup logic for a method within our class?
+we need to define the method we wanted ioc container to implement lookup logic for getting the reference of a bean definition, so that ioc container will implement the logic for our method, looks like ioc container is injecting a method in our class for lookup up an object from the ioc container, so it is called lookupMethodInjection
+
+<bean id="worker" class="Worker" scope="prototype"/>
+
+<bean id="container" class="Container">
+	<lookup-method name="lookupWorker" bean="worker"/>
+</bean>
+	
+Note:
+Can we configure Abstract classes as bean definitions?
+Yes, but only in one case, for lookupMethod injection
+
+How ioc container is injecting the lookMethod into our class?
+
+Container container = beanFactory.getBean("container", Container.class);
+
+The ioc container uses runtime bytecode generation libraries (like cglib and asm proxies) and creates an new proxy class extending from the Target class we specified in which it overrides the look-method we configured and generates the logic for returning the bean definition we specified as bean=""
+	
+class Container$Proxy extends Container implements BeanFactoryAware {
+	BeanFactory beanFactory;
+	public Worker lookupWorker() {
+		Worker worker = beanFactory.getBean("worker", Worker.class);
+		return worker;
+	}
+	void setBeanFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
+}
+now ioc container instantiates the object of proxy and places as a bean definition with id = "container" within the ioc container.
+so when we call Container container = beanFactory.getBean("container", Container.class); will returns proxy or sub-class object of the Container.
+	
+container.receiveRequest("data1");
+
+Note: the class in which we wrote lookup method should not be an final class and even the the lookup method should not be final
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

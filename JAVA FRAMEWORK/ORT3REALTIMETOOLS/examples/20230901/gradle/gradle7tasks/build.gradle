@@ -1,0 +1,29 @@
+tasks.register("copy") {
+    group = "ext"
+    description = "copy task"
+    doLast {
+        println "copying the sourceFiles to destination/ directory"
+    }
+}
+
+tasks.register("clean")
+tasks.named("clean") {
+    group = "ext"
+    description = "clean task for deleting the generated directories"
+    doLast {
+        println "cleaning the target/ directories"
+    }
+}
+
+def mkdir = tasks.register("mkdir") {
+    group = "ext"
+    description = "mkdir task to create new directory"
+    ext.directoryName = ""
+    doLast {
+        println "creating the directory : ${directoryName}"
+    }
+}
+
+mkdir.configure {
+    directoryName = "gradleprojects"
+}

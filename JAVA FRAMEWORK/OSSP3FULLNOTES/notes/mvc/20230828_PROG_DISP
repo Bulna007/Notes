@@ -1,0 +1,341 @@
+How to bootstrap spring webmvc application without web.xml?
+from servlet 3.x api, the web.xml is not mandatory to be written in an java web application, in favor of annotations
+For configuring the web application components the servlet 3.x specification and ServletContainer that supports 3.x api annotations are introduced
+
+Inorder configure an Servlet within an application without web.xml we can do the below:
+
+@WebServlet(name="orderHistoryServlet", urlPatterns={"/orderHistory"}, 
+						initParameters = {@InitParam(name="", value="")})
+class OrderHistoryServlet extends HttpServlet {
+	public void service(HttpServletRequest httpReq, HttpServletResponse httpResp) {}
+}
+
+similarly for filters and listeners the respective annotations are provided as below
+1. @WebFilter
+2. @Listener
+
+annotations are written directly aspart of the sourcecode of the java classes, but how about the classes that doesnt have sourcecode?
+for eg.. a framework like spring mvc has provided DispatcherServlet as an servlet component, now we need to configure that Servlet in our application without web.xml, how can we do this?
+	
+To help us in configuring these kind of web application components (with no sourcecode) in our application, the Servlet 3.x+ api has provided programmatic apis for configuring them as web application components in our application
+
+How to configure web application components programmatically in our web application?
+	
+1. When does an web application will be marked as ready to be accessed by the ServletContainer?
+upon deploying the application, and	start the servlet container, the servlet container performs below actions/activities inorder to startup our application and mark it as ready for accessing.
+	1.1 in unpacks the application into an exploded directory structure
+	1.2 then goes to the deployment descriptor web.xml of our application, and checks for well-formness and validating , if the web.xml is not well-formed or valid, it throws exception and marks the deployment/startup of our application as failed
+	1.3 if it is valid, then it creates ServletContext object
+	1.4 it reads the entire metadata in the web.xml and loads into ServletContext object of our application
+	1.5 along with xml metadata, we might write metadata information about our web application components interms of annotations, those annotations also will be parsed and loaded as metadata into ServletContext object
+	1.6 after loading the entire web application components metadata into ServletContext object, then the Servlet Container publishes the ServletContextEvent
+	1.7 then checks to see if we have registered any ServletContextListener in our application, if exists invokes contextInitialized(ServletContextEvent event) method to perform one time initialization activity for our application, before any of the WebApplication components of our application are instantiated
+	1.8 once the ServletContextListener finished execution, it goes to the metadata searching for the WebApplication components which are marked with load-on-startup value, if exists instantiates all of those components in order of load-on-startup and performs lifecycle management methods
+	1.9 once the lifecycle methods are been executed successfuly, then the application will be marked as deployed/ready for accessing and the servlet container would start accepting the requests for the components of the application
+	
+
+From the above, we can understand the ServletContainer always looks for the a request to be mapped to the components of our application by looking into ServletContext only irrespective of how we have configured them, is it in xml or annotations. one place where all the components can be lookedup in our application is ServletContext only
+
+
+since we cannot write web.xml or annotations, somehow, someway we need to place our configuration information about our components into ServletContext object programmatically, so that ServletContainer can lookup the configuration in ServletContext upon receiving the request to serve our component for that request
+
+If we have to place the metadata info about our component in ServletContext, when should we place?
+immediately after the ServletContext object has been created, after the metadata has been loaded into the ServletContext, before the ServletContainer instantiates any of the web application components of our application	we should be able to add/register the metadata information about our components into the ServletContext object.
+	
+So that the entire web application components information is available in ServletContext like
+1. xml
+2. annotations
+3. programmatic
+
+so with consolidated configuration, the ServletContainer can perform instantiation/initialization activity to mark the application as ready for accessing.
+	
+
+How can register the information/metadata of the web component into the ServletContext during the time of deployment of the application?
+if we look at our previous discussion, we can understand the ServletContainer is invoking ServletContextListener#contextInitialized(ServletContextEvent) method after the ServletContext object has been created, and after metadata (xml/annotations) has been loaded into ServletContext and before instantiating the web application components.
+	
+So looks like the best place where we can write the code for programmatically register our web application components is through ServletContextListener
+
+The ServletContextListener way of registering the web application components programmatically into ServletContext of our application has few limitations:
+1. Usually the ServletContextListener implementation class to register the framework/third-party libraries provided web application components will be written by Frameworks itself and package it and ships as an jar dependency. So in our application we add the framework jar dependency in developing the application using that framework
+
+The ServletContextListener implementation class, shipped by the framework developers within their jars will not be identified/registered into ServletContext of our application by ServletContainer even though those are annotated and added into our application.
+By default ServletContainer looks for the Web Application Components only within our application, will not goes to jar dependencies 
+
+2. incase if we have web.xml, and the developers marked the <web-app> element with attribute metadata-complete="true", it indicates the complete configuration is in web.xml and dont look for annotations to the ServletContainer, then also our listener class will not be called.
+	
+from the above we can understand, frameworks or third-party libraries cannot rely on ServletContextListener component for registering their framework/third-party library provided web application components within our application
+
+
+Then how does the frameworks can register their WebApplication components into our application during the bootstrapping?
+Its the responsibility of the Servlet Api or Servlet specification to provide an mechanism allowing the frameworks/third-party libraries to register their own web application components into an application during the bootstrapping of an web application.
+	
+In Servlet 3.0 specification they introduced an new interface (supported by Servlet Containers of Servlet 3.x specification)
+	
+interface ServletContainerInitializer {
+	void onStartup(Set<Class> handlers, ServletContext context);
+}
+	
+The servlet container aspart of the servlet 3.0 specification contract, will invoke the implementation of SerlvetContainerInitializer class during the time of deployment of the application as below.
+	
+1. upon creating the ServletContext object of our application
+2. after loading the metadata written in web.xml or annotations into ServletContext object
+3. The servlet container goes to each jar dependency in our project and looks for META-INF/services/javax.servlet.ServletContainerInitializer file
+4. inside the file it reads the fqn of implementation classes of ServletContainerInitializer interface, then instantiates them and invokes the onStartup(Set<Class<?>> handlers, ServletContext context) by passing SerlvetContext object of our application, allowing the framework vendor/third-party library to register their components within our application
+
+
+In this approach we have again limitations:
+if the framework vendor or third-party libraries by themself has written the logic for registering their components in our application, we loose the control or flexibility of using that framework. So along with allowing the frameworks/libraries to handle boiler-plate logic in registering their own components, it should allow customizations in bootstrapping the framework components
+
+This has been provided through the concept of Handlers by servlet specification
+The Framework/Third-party libraries defines their own interfaces to be acted as Handlers, allowing the programmers to plugin their own implementations of those Handler interfaces allowing them to customize or add their own logic for registering the framework components.
+	
+When it comes to Spring WebMvc it has defined an Handler interface 
+	
+interface WebApplicationInitializer {
+	void onStartup(ServletContext context);
+}
+
+now programmers in their web application can write their own implementation class of WebApplicationInitializer interface and write the code for registering programmatically the Framework/third-party library components into the underlying ServletContext of the application.
+	
+Who will call the handler implementation class?
+The Framework/Third-party library implementations of ServletContainerInitializer interface has relevant logic for performing basic initialization/instantiation of the framework and to futher allow the initialization they invoke the above Handler interface implementations provided by the programmers.
+	
+@HandlerTypes({WebApplicationInitializer.class})	
+class SpringServletContainerInitializer implements ServletContainerInitializer {
+	public void onStartup(Set<Class<?>> handlers, ServletContext context) {
+		
+	}
+}	
+
+
+1. during the startup of our application, after creating the ServletContext object, after loading the metadata (xml/annotations) before publishing the ServletContextEvent
+The ServletContainer goes to each jar dependency in our project looking for META-INF/services/javax.servlet.ServletContainerInitializer file, if found reads the fqn implementation classes of ServletContainerInitializer and instantiates their objects
+
+2. look for @HandlerTypes annotation on these classes and identifies the implementations of these Handler interfaces written aspart of the application 
+
+3. then passing these Handler interface implementation class references and ServletContext object, the ServletContainer will call the onStartup(handlers, context) on the ServletContainerInitializer implementation
+
+4. The ServletContainerInitializer implementation performs common bootstrapping logic of the framework/third-party library components and to further allow the application to customize it will Handler implementations that are written by programmers
+--------------------------------------------------------------------------------------------------------------------------------------
+
+So from the above we can understand if we dont have web.xml in our application, to register DispatcherServlet or ContextLoaderListener in our application, we need to write implementation class of WebApplicationInitializer interface (handler).
+	
+The Spring Framework provided implementation of ServletContainerInitializer, ie.. SpringServletContainerInitializer will invoke the implementation class of WebApplicationInitializer
+	
+The ServletContainer during the startup will call SpringServletContainerInitializer#onStartup(...)
+	
+
+
+class MyWebApplicationInitializer implements WebApplicationInitializer {
+	public void onStartup(ServletContext context) {
+		XmlWebApplicationContext rootApplicationContext = null;
+		XmlWebApplicationContext servletApplicationContext = null;
+		ContextLoaderListener contextLoaderListener = null;
+		DispatcherServlet dispatcherServlet = null;
+		
+		rootApplicationContext = new XmlWebApplicationContext();
+		rootApplicationContext.setConfigLocation("/WEB-INF/application-context.xml");
+		
+		contextLoaderListener = new ContextLoaderListener(rootApplicationContext);
+		context.addListener(contextLoaderListener);
+		
+		servletApplicationContext = new XmlWebApplicationContext();
+		servletApplicationContext.setConfigLocation("/WEB-INF/mvc-beans.xml");
+		
+		dispatcherServlet = new DispatcherServlet(servletApplicationContext);
+		ServletRegistration.Dynamic dynamic = context.addServlet("dispatcher", dispatcherServlet);
+		dynamic.setLoadOnStartup(1);
+		dynamic.addMappings("*.htm");		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

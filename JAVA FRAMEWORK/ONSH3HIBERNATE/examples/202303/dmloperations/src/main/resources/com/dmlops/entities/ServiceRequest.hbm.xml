@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping package="com.dmlops.entities">
+    <class name="ServiceRequest" table="service_request" dynamic-update="true">
+        <id name="serviceRequestNo" column="service_req_no" unsaved-value="0">
+            <generator class="identity"/>
+        </id>
+        <property name="requestType" column="request_type"/>
+        <property name="customerName" column="customer_nm"/>
+        <property name="mobileNo" column="mobile_no"/>
+        <property name="emailAddress" column="email_address"/>
+        <property name="problem"/>
+        <property name="raisedDate" column="raised_dt"/>
+        <property name="status"/>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,358 @@
+Cascade
+--------
+An Entity may have relationship with another entity through association. For eg.. a Project is in relationship with Tasks or an Product is in association with Reviews. An Task / Review entity doesnt have an meaning without the existence of their parent entity which is Project and Product respectively
+
+So when we delete an Project entity our Task entity of that project also should be deleted. Cascade is a way through which we can rollout the operation we performed on the parent entity into the associated entity objects as well.
+
+Project
+ Set<Task> tasks;	
+	
+session.persist(project)	
+the associated object can	be:
+	- transient  = 
+	- persistent = 
+--------------------------------------------------------------------------------------------------------------------------------------
+HQL/JPQL
+HQL stands for hibernate query language
+JPQL stands for java persistence query language
+
+To query the data from the database the hibernate/jpa api has provide an single object query method called "fetch(ClassType, id)". using this method we can query an object of data from the database
+
+But in the real world applications we wanted to query and access the data from the relational database based on different criterias. for which we need to use sql language.
+	
+SQL = stands for structured query language, we can write sql queries with where clauses, groupBy and joins etc in fetching the data from the database tables. But there are problems in using sql language for querying the data in hibernate/jpa applications.
+	
+sql language has been standardized with SQL92 standard, so that most of the relational databases follows the SQL92 standards in provide query capabilities. But many of the databases additional to the SQL92 standard provides additional query clauses in supporting building complex queries in retrieving the data.
+	
+So if we use sql queries in querying the data from a database, the application will be tightly coupled with the underlying database from which we are querying the data from.
+Because when we move from one database to another database we not only need to modify the sql query we need to even modify the application logic that is written around that query in wrapping the data and using it.
+	
+
+To ensure the application is portable across the databases, the hibernate/jpa api has provided their own SQL standard language called HQL or JPQL which is independent of any database management system.
+	
+If we write the HQL/JPQL query we cannot pass this query as an input to the underlying database asking to execute it, since it is hibernate/jpa specific query language. So to translate the HQL/JPQL queries into database specific query format, the Dialect has been introduced.
+	
+Per each database hibernate has provided an Dialect component that takes care of converting the HQL/JPQL queries into database specific queries so that those can be passed as an input to the underlying database asking them to execute.
+	
+HQL/JPQL
+1. HQL/JPQL are object query language, within these queries we will not refer to the underlying tables or the columns from which we want to query the data. The main advantage of this approach is our queries are decoupled from the table schema.
+	
+when there is a change in the table name or columns of the table, we dont need to rewrite the HQL/JPQL queries, we need to change the corresponding mapping info for that entity class pertaining to that table.
+	
+HQL/JPQL queries the hibernate has provided all the query clauses that are required for querying and acessing the data from database
+1. aggregate functions (avg, sum, count)
+2. where clause
+3. groupBy
+4. having
+5. joins
+6. orderBy
+
+so learning the hql/jpql is all about exploring all of the query clauses provided by hibernate/jpa
+
+Before begining to explore the query clauses of HQL/JPQL let us first understand what api classes are provided by hibernate to execute these queries.
+	
+Query = A Query class represents an HQL/JPQL query that has to be executed on the underlying database. A Query class object is created out of an Session/EntityManager. The Query class has relevant logic for translating the HQL/JPQL query into native sql query of the underlying database using dialect, and takes care of executing that sql query on the database by using jdbc api classes internally.
+	
+From Hibernate5+ the Query api of hibernate has been deprecated and removed in favor of jpa api. Now we need to use Jpa api provided Query class called "TypedQuery" to execute HQL/JPQL queries in hibernate
+
+Query = doesnt support generic type, always the objects that are returned by the query is Object type only
+TypedQuery = we can specify the generic type of the output that is returned out of executing the query.
+	
+Product.hbm.xml
+----------------
+<hibernate-mapping package="com.invs.entities" auto-import="true">
+	<class name="Product" table="project">
+	</class>
+</hibernate-mapping>
+	
+
+
+SessionFactory sessionFactory = SFRegistry.getSessionFactory();
+Session session = sessionFactory.openSession();
+
+TypedQuery<Product> productsQuery = session.createQuery("from Product p");
+List<Product> products = productsQuery.getResultsList();
+
+
+incase of dynamic sql queries hibernate doesnt support positional parameters. it supports only named parameters.
+	
+TypedQuery<Product> productsByCategoryQuery = session.createQuery("from Product p where p.category = ?category");
+productsByCategoryQuery.setParameter("category", category);
+
+List<Product> products = productsByCategoryQuery.getResultsList();
+--------------------------------------------------------------------------------------------------------------------------------------
+
+HQL/JPQL queries
+HQL/JPQL is an database independent query language that is provided by hibernate/jpa apis. instead of writing the sql queries in querying the data from the database, it is recommended to use HQL/JPQL queries as we have advantages:
+1. our application code will become portable across the databases when we work with HQL/JPQL queries
+2. since it is an object query language, we dont refer tables and columns in querying the data, rather we refer class names and attribute names in querying the data from respective tables, so if the underlying database schema has been changes there is zero impact on the queries we wrote. only the mapping information needs to be modified.
+	
+How to execute an JPQL/HQL queries?
+From hibernate 5.x the HQL apis are deprecated and we need to only use jpa query apis for executing HQL/JPQL queries.
+There are 2 ways we can execute an HQL/JPQL queries
+1. Query = The query class doesnt support generics, it returns always an List<Object> objects from the database by executing the query, we need to manually type convert those objects into respective entities while reading the data
+
+2. TypedQuery = supports generics, we can specific the List<T> generic type while creating the query itself.
+	
+Few points to memorize while writing the HQL/JPQL Queries:
+1. The queries are case insentitive. We can write HQL/JPQL Query clauses in any case, we can even write in mixed case letters also
+2. While writing the queries we need to use fqn of the entity classes, by default auto-import="true" so that we can avoid writing fqn class names within the queries and only required incase of conflict.
+3. all the entityClassnames and attributes names are case sensitive while referring them in the query
+4. always HQL/JPQL queries are designed to return multiple objects of data.  if we want to fetch only one object of data from database we need to use single query api methods like fetch(ClassType, id);
+
+Association Join queries
+------------------------
+Join queries are used for fetching the data from multiple tables together. In order to query the data across the tables using join queries, first the underlying tables from which we want to query should have relationship with each other. We join the tables and query the data based on primary key matching with foreign key of the another table
+
+product           review
+--------          ------
+product_no (pk)   review_no (pk)
+product_nm        rating
+manufacturer      remarks
+description       posted_dt
+category          posted_by
+price             product_no (fk)
+ 	
+select * from product p inner join review r on p.product_no = r.product_no where r.posted_by = 'alex';
+
+@Entity                                     @Entity
+@Table(name="product")                      @Table(name="review")
+class Product {                             class Review {
+	@Id                                         @Id
+	int productNo;                              int reviewNo;
+	String productName;                         int rating;
+	String description;                         String remarks;
+	String category;                            LocalDate postedDate;
+	String manufacturer;                        String postedBy;
+	double price;                               @ManyToOne
+	@OneToMany(mappedBy = "product")            @JoinColumn(name="product_no")
+	Set<Review> reviews;                        Product product;
+	// accessors                                // accessors
+}                                             }
+
+
+There are 2 types of join query syntax forms are there in HQL/JPQL
+1. implict join
+2. explicit join
+
+1. give me all the reviews that are posted for the products of category = "electronics"
+sql: select r from review r inner join product p on r.product_no = p.product_no	where p.category = 'electronics';
+
+implicit:
+select r from Review r where r.product.category = ?1
+in the implict join we dont use join keyword instead we dereferenc the associated object through dot notation for joining the associated objects
+
+explict:
+2. give me all the products for whom the review has been posted by 'alex'
+	
+select p from Product p inner join p.reviews as r where r.postedBy = 'alex';
+
+
+sub-queries:
+give me the products whose price greater than the average price of a product within a category
+category = electronics
+
+select p1 from Product p1 where p1.category = ? and p1.price > (select avg(p.price) from Product p where p.category = ?);
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

@@ -1,0 +1,16 @@
+Bootstrapping
+-------------
+Instantiating the hibernate core objects to be used for performing the persistence operations is called "bootstrapping". There are new approaches of bootstrapping the core components are introduced in different releases of the hibernate framework
+
+In hibernate 3:
+There are 3 approaches are there
+1. property file approach
+2. xml configuration approach
+3. programmatic approach
+
+In hibernate 4:
+Services & Service Registry has been introduced using which we need to bootstrap the hibernate core objects
+
+In hibernate 5:
+Metadata sources api is introduced
+

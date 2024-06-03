@@ -1,0 +1,137 @@
+How many combinations of working with configuring the classes in spring framework are there?
+There are 6 combinations are there
+1. xml-based configuration approach
+2. stereotype annotation approach
+3. java configuration approach
+4. xml-based configuration approach + stereotype annotations
+5. java configuration approach + stereotype annotations
+6. xml-based configuration + java-configuration approach + stereotype annotations
+--------------------------------------------------------------------------------------------------------------------------------------
+How to inject primitive values as dependents into the Target class?
+@Value annotation is used. it can be written at
+1. Attribute Level
+2. Constructor Argument Level
+3. Setter Level
+4. Arbitary method argument level, given if the arbitary method is annotated with @Autowired.
+
+stereotype + xml-based configuration
+
+// sourcecode
+@Component
+class Person {
+	@Value("#{myvalues.id}")
+	int id;
+	@Value("#{myvalues.fullname}")
+	String fullname;
+	@Value("#{myvalues.age}")
+	int age;
+	@Value("#{myvalues.gender}")
+	String gender;
+	
+	// toString
+	// accessor methods
+}
+
+application-context.xml
+-----------------------
+<util:properties id="myvalues" location="classpath:values.properties"/>
+<context:component-scan base-package="com.pi.annotation"/>
+
+values.properties
+------------------
+id=10
+fullname=alex
+age=20
+gender=male
+
+Test.java
+---------
+ApplicationContext context = new ClassPathXmlApplicationContext("com/pi/annotation/pi-beans.xml");
+Person person = context.getBean("person", Person.class);
+--------------------------------------------------------------------------------------------------------------------------------------
+	
+primitive injection with only stereotype
+---------------------------------------
+
+// source code
+@PropertySource("classpath:stereotypepivalues.properties")
+@Component
+class Address {
+	@Value("${streetAddress}")
+	String streetAddress;
+	@Value("${city}")
+	String city;
+	@Value("${state}")
+	String state;
+	@Value("${zip}")
+	int zip;
+	@Value("${country}")
+	String country;
+	
+	// toString
+}
+
+stereotypepivalues.properties
+------------------------------
+streetAddress=Clock tower road
+city=Chennai
+state=Tamilnadu
+zip=39384
+country=India
+
+
+Test.java
+----------
+ApplicationContext context = new AnnotationConfigApplicationContext("com.stereotypepi.annotation");
+Address address = context.getBean("address", Address.class);
+sop(address);
+
+@PropertySource = 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

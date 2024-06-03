@@ -1,0 +1,374 @@
+How do we decompose the enterprise business application into Microservices?
+The enterprise large-scale business application/solution can be broken down into smaller microservices based on any of these design principles or patterns
+1. decompose by business capabilities
+2. decompose by subdomain
+3. self-contained service
+4. service per team
+
+1. decompose by business capabilities
+A business capability represents what a business does inorder to generate the value for the business. The business capability corresponds to a business object always
+
+For eg.. in a e-commerce solution the business capabilities can be 
+1. product management
+2. inventory management
+3. order management
+4. delivery management
+
+
+2. decompose by subdomain
+define microservices based on Domain Driven Design (DDD) subdomains. Domain driven design refers to a problem space within the business where business as a domain. A domain consists of multiple subdomains. Each subdomain corresponds to different parts of the business.
+	
+Subdomains can be classified into 3 categories
+1. Core         = Key differentiator for the business and contributes to the highest value of the business system
+2. Supporting   = related to the business, but not an differentiator. 
+3. Generic      = not specific to the business 
+
+In an HRM Solution the below are the subdomains we can identify as:
+1. Leave Management
+2. Time Management
+3. Scheduling
+4. Payroll
+5. Training/Certification
+6. OnBoarding
+
+3. Self-Contained Service
+Break down the system into Microservices, where in each Microservice is completely independent of other services of the system which means the service can respond to an synchronous request without waiting for the response from any other services. Each service should be self-contained by itself without having any dependency with others
+
+4. Service per team
+Each service is owned by one team, which is responsible for developing and delivering the service end-to-end
+-------------------------------------------------------------------------------------------------------------------------------
+Data Management
+1. Database per service
+2. Shared database
+
+1. Database per service
+per each microservice create an separate schema/database to achieve highest-level of decompling the services. If all the microservices are using a single database schema, if one of the microservice has changed a database table, then it effects all the other microservices as well since everyone is using same schema.
+	
+To ensure all the microservices are completely loosely coupled, use per each service a separate schema/database. since the service has their own schema, if one service requires the data that is managed by another service, the services has to communicate using the api calls only
+
+advantages:
+1. each microservice is completely loosely coupled from other service
+2. each service can use the database of their own type. Few might use sql and other service might use no-sql based on what suites best for them.
+	
+dis-advantage:-
+	1. since each microservice has to make an api call in using the data of the other service, it results in huge network calls and impacts the performance of the system
+	2. since each microservice has their own schema, if there is a business operation that spans across the microservices achieving transactionality is very complex. one way to achieve the transactionality is using 2pc (phase commit). But we should avoid global transactions in microservices applications to achieve high scalability
+	
+3. implementing queries that joins the data across multiple databases is very complex
+4. since each microservice can have its own schema/database type. For eg.. few as sql and others as no-sql combining the data across these databases is highly complex
+	
+2. shared database
+All the microservices that are part of the system uses single database schema only.
+		
+advantages:-
+	1. even the business operation scales across the services, as all the services uses the same schema, achieving transactionality is easy. we dont need to rely on 2pc transactions
+	2. no need of network calls in sharing or using the data of other microservices, so that there is no performance impact or network congession
+	3. aggregating the data and running join queries is easy
+
+dis-advantages:-
+	1. development time coupling = A developer working on one microservice needs to coordinate with other developers when he is making changes in the schema. This coupling requires additional efforts in coordinating across the teams to ensure the changes are rightly communicated thus slows down the development of system
+	2. runtime coupling = because all the microservices uses the same schema or database, each of their transactions might interfere with other services locking the tables and running into deadlock
+--------------------------------------------------------------------------------------------------------------------------------
+Data Management and Access (Pattern)
+1. Api Composer
+Incase of service per database pattern, per each microservice in the system we create a separate schema/database so that the data would be scattered across the schemas of the microservices. In this case there is no way we can create join queries in aggregating and querying the data across the services / schemas directly
+
+To overcome this problem use Api Composer design pattern. An Api Composer is an query service that invokes multiple microservices that own the data and joins/aggregates the data in-memory and returns the results. Usually Api Composer is implemented aspart of Api Gateway
+
+advantages:-
+	1. Through Api Composer we can aggregate the data across the microservices avoiding repetitive implementation of the same across the services
+	
+dis-advantages:-
+	1. since the data sets of data is joined in-memory, it leads to increased memory consumption and might run into out of memory issues as well.
+	2. as we traverse or loop through these data sets in-memory to aggregate, the performance of the application would be very slow.
+-----------------------------------------------------------------------------------------------------------------------------
+Command Query Responsibility Segregation (CQRS)
+------------------------------------------------
+When we are implementing database per service pattern, we will not be able to implement querying the data and joining the data across the multiple microservices. one way we can aggregate the data across the microservices is using API Composer, but it has lot of dis-advantages like
+
+1. increased network calls
+2. high utilization of memory
+3. performance impact
+etc
+
+to overcome these problems and query/aggregate the data across the services we need to use CQRS design pattern.
+--------------------------------------------------------------------------------------------------------------------------------
+SAGA design pattern
+In database per service pattern, each microservice has its own database/schema against which it performs operation. If we have a business transaction that pans across multiple services, we need to apply transactionality acorss these services, so how to implement transactionality across the services when each service has its own database schema?
+	
+one solution towards managing transactions across the services/schemas is use "Global Transactions"	
+	
+1. Global Transaction or Distributor Transactions
+We can achieve transactionality accross the databases/microservices by using Global/Distributed Transactions. All the Participating resources within the Transactional boundary would be commited or rollback at one shot. But there are lot of 
+problems with Global Transactions
+
+Problems:
+1. By applying the distributed/global transactions we will not be able to achieve highest-level of concurrency/scalability of the requests/solution.
+The scalability is one of the key pillar or characteristic that drives us in building the solutions based on the Microservices Architecture. By implementing the global transactions across the services we run into scalability issues like
+	1.1 There are several requests being sent to the microservice application, while a request is under execution might begin a global transaction and is in progress by locking the record/table on the underlying database, during this period all the other requests that are received by that microservice has to be in-queue waiting for the request#1 to complete its transaction and release the lock due to which the concurrency at which the requests are processed is very low.
+		
+	1.2 by using global transactions across the services always there is a chance of system running into dead-lock
+	
+2. In a database per service pattern, each microservice uses its own database. In this case each microservice might choose a database of its own Type based on the nature of the operations of the microservice which might be different from others. For eg.. one microservice might be using mysql database, where other one might be using no-sql database. So across different database types we cannot enforce global transactions
+
+So from the above we can understand global transactions is an anti-pattern that kills the basic notion of Microservices and many of the times it is not feasible to implement as well
+
+Then how to achieve transaction across the Microservices?
+To help us in implementing transactionality across the microservices the SAGA design pattern has been introduced.
+		
+Saga:
+If there is an business transaction that spans across the services implement it using Saga. A Saga means sequence of local transactions, where each local transaction updates the database and publishes a message or event to trigger the next local transaction in the saga.
+	
+If a local transaction has been failed because it violates a business rule, then saga executes a series of compensating transactions that undo the changes that were made by the preceding local transactions.
+
+There are 2 ways we can implement saga design pattern:
+1. Choreography Based Saga
+2. Orchestration Based Saga
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

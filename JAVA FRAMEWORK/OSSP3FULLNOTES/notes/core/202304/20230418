@@ -1,0 +1,57 @@
+depends-on
+----------
+
+@WebServlet(“/loanEnquiry)
+class LoanEnquiryServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+      Properties props = new Properties();
+		double ri = 0.0;
+		String applicantName = httpReq.getParameter("applicantName");
+		String mobileNo = httpReq.getParameter("mobileNo");
+		String emailAddress = httpReq.getParameter("emailAddress");
+		double principleAmount = Double.parseDouble(httpReq.getParameter("principleAmount"));
+		int tenure = Integer.parseInt(httpReq.getParameter("tenure"));
+		String city = httpReq.getParameter("city");
+      String loanType = httpReq.getParameter(“loanType”);
+		...
+
+      props.load(this.getClass().getClassLoader().getResourceAsStream(“cityri.properties”);      
+      if(props.containsKey(city) == false) {
+        throw new ServletException(“city is not supported”);
+      }
+      ri = Double.parseDouble(props.getProperty(city));
+      double interestAmount = (principleAmount * tenure * ri)/100;
+      double repaymentAmount = principleAmount + interestAmount;
+      double processingFee = principleAmount * 10 / 100;
+
+		// bind all these values into request scope
+      // forward to loan-estimate.jsp
+	}
+}
+								 
+cityri.properties
+-----------------
+hyderabad=10.1
+banglore=10.25
+chennai=11
+new delhi=10.15
+gurgoan=10.56
+pune=11.12
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 
+								 

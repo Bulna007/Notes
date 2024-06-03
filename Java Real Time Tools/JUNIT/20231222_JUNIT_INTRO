@@ -4,7 +4,7 @@ Testing is the process of verifying the code with pre-defined inputs (test fixtu
 	
 Unit testing / test automation:	
 1. is the code is ready for testing or not
-2. in agile development the application is being developed in sprints, which are spanning between 1-3 weeks. Within the sprint duration the code should be developed, testing and delivered. The only way to accomplish this is having stringent test-automation in place. one of the key ways to achieve this fast-paced delivery is adopting
+2. in agile development the application is being developed in sprints, which are spanning between 1-3 weeks. Within the sprint duration the code should be developed, tested and delivered. The only way to accomplish this is having stringent test-automation in place. one of the key ways to achieve this fast-paced delivery is adopting
 	2.1 unit test automation
 	2.2 integration-tests
 	
@@ -264,13 +264,13 @@ so instead of writing the testcode in testing all the methods of original class 
 	
 There are rules to be followed in writing the test methods:
 1. the testmethod need not be public, we can write with default access modifier.
-2. the testmehtod always reports a success/failure, it will not produce any returnValue. so the returnType of the testmethod should be always void
+2. the testmethod always reports a success/failure, it will not produce any returnValue. so the returnType of the testmethod should be always void
 3. the testmethod should be written with naming convention started with "test" followed by original methodname appended with testcase we are conducting for eg..
 	if we are writing the test logic for add(int a, int b)  of Calculator class, the test method name should be
 	void testAddWithPositiveNumbers() {}
-  void testAddWithNegativeNumbers() {}
-  void testAddWithPositiveAndNegativeNumbers() {}
-  void testAddWithZeros() {}
+  	void testAddWithNegativeNumbers() {}
+  	void testAddWithPositiveAndNegativeNumbers() {}
+  	void testAddWithZeros() {}
 by looking at the method names we can easily identify what method of the original class we are testing and what test we are conducting.
 	
 4. the testMethods performs testing the original code with fixed-set of inputs, so always the parameters for the test method will be zero arguments.
@@ -719,7 +719,7 @@ From the above code we have implemented we can derive the typical requirements i
 looks like everyone across all the projects needs to take care of addressing the above aspects/requirements in implementing the unittest automation code aspart of their applications. as it is a common requirement for everyone who implements unittesting automation, instead of we writing we need to make use of unittest automation frameworks like JUnit, TestNG etc.
 	
 JUnit
-The JUnit is an unit test automation framework that has provided lot of api classes, allowing developers to quickly write testcases, the JUnit engine takes case of executing the testcases written by us and reports the statistics out of conducting the testing.
+The JUnit is an unit test automation framework that has provided lot of api classes, allowing developers to quickly write testcases, the JUnit engine takes care of executing the testcases written by us and reports the statistics out of conducting the testing.
 it has provided most of the api classes like
 1. Asserts
 2. Exceptions for reporting failures
@@ -784,254 +784,3 @@ public class CalculatorTest extends TestCase {
 
 JUnit3 has provided a TestRunner class called "junit.textui.TestRunner", which is an console-based runner that produces the textual output of the test executions. 
 To this class we need to pass the fqn of the TestCase classes, so that it searches for testmethods that starts with testXXX() and executes them along with test fixture methods which are setUp() and tearDown(), reports the TestResults after completion
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

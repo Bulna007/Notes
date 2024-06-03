@@ -1,0 +1,222 @@
+Spring DataJpa
+--------------
+How to work with spring + jpa api using spring orm?
+jpa api = lot of boiler-plate logic, so to eliminate spring orm has been introduced. is there any more boiler-plate logic we write while working with spring orm, lets explore
+	
+
+1. entity class
+package org.licindia.entities;
+@Entity
+@Table(name="policy")
+public class Policy {
+	@Id
+	@Column(name="policy_no")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	int policyNo;
+	@Column(name="policy_holder_nm")
+	String policyHolderName;
+	@Column(name="plan_nm")
+	String planName;
+	@Column(name="effective_dt")
+	LocalDate effectiveDate;
+	int tenure;
+	@Column(name="sum_insurred")
+	double sumInsurred;
+	
+	// accessors
+}
+
+db.properties
+-------------
+db.driverClassName=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/db
+db.username=root
+db.password=root
+
+@Configuration
+@PropertySource("classpath: db.properties")	
+class PersistenceConfig {
+  @Bean
+	public DataSource dataSource(...) {}
+	@Bean
+	public LocalContainerEntityManagerFactory entityManagerFactory(DataSource dataSource) {}
+	@Bean
+	public TransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {}
+	@Bean
+	public JpaTemplate jpaTemplate(EntityManagerFactory entityManagerFactory) {}
+}
+
+@Repository
+class PolicyDao {
+	@Autowired
+	private JpaTemplate jpaTemplate;
+	
+	public int savePolicy(Policy policy) {
+		jpaTemplate.persist(policy);
+		return policy.getPolicyNo();
+	}
+	
+	public Policy findPolicy(int policyNo) {
+		Policy policy = null;
+		policy = jpaTemplate.find(Policy.class, policyNo);
+		return policy;
+	}
+	
+	public List<Policy> getPoliciesByTenure(int tenure) {
+		return jpaTemplate.findByNamedParameter("from Policy p where p.tenure >= :tenure", Map.of("tenure", tenure));
+	}
+	
+	public void updatePolicy(Policy policy) {
+		jpaTemplate.merge(policy);
+	}
+	
+	public void deletePolicy(int policyNo) {
+		Policy policy = jpaTemplate.find(Policy.class, policyNo);
+		jpaTemplate.remove(policy);
+	}
+}
+
+@Entity
+@Table(name="plan")
+class Plan {
+	@Id
+	@Column(name="plan_no")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	int planNo;
+	String planName;
+	int minEligibilityAge;
+	int maxEligibilityAge;
+	
+	// accessors	
+}
+
+@Repository
+class PlanDao {
+	@Autowired
+	private JpaTemplate jpaTemplate;
+	
+	public int savePlan(Plan plan) {
+		jpaTemplate.persist(plan);
+		return plan.getPlanNo();
+	}
+	
+	public Plan findPlan(int planNo) {
+		return jpaTemplate.find(Plan.class, planNo);
+	}
+	
+	public void updatePlan(Plan plan) {
+		jpaTemplate.merge(plan);
+	}
+	
+	public void deletePlan(int planNo) {
+		Plan plan = jpaTemplate.find(Plan.class, planNo);
+		jpaTemplate.remove(plan);
+	}
+}
+
+If we look at the above code across the daos of our application, the logic we have written for performing persistence operations seems to be duplicated and again lands up into the same problem even though we are using spring + orm
+
+
+Spring DataJpa is a module introduced by Spring Framework to eliminate writing the boiler-plate logic that needs to be written in performing persistence operations across the daos of our application while working with spring + orm. So we dont have to write dao classes in our application while working with spring datajpa module.
+	
+How does the spring datajpa works, how is it able to eliminate writing dao classes in our application to perform persistence operation?
+The Spring DataJpa uses the runtime proxy generation capabilities in eliminating the boiler-plate logic, so to keep it simple it uses proxy design pattern.
+	
+	
+Let us explore proxy design pattern before jumping on to understand datajpa
+Proxies are surrogates or substitutes of the original class. Proxies exactly looks same as original class itself. When we communicate with proxy, they internally talks to the original class and returns the outcome that is returned by the original class itself.
+	
+Then what is the purpose of using proxy?
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

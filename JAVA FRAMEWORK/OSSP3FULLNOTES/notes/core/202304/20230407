@@ -1,0 +1,195 @@
+Bean Lifecycle
+Anything that has existence has 2 things are there
+1. lifecycle = activities that are taken part ontop of the object during its existence are part of the lifecycle
+2. lifecycle management = any object/entity to participate in its lifecycle, there are few mandatory activities that has to be performed ontop of the object after it has been born or before it is dying such activities being carrried ontop of the object are called lifecycle management activities
+
+The platforms, containers, or the runtimes for eg.. incase of java the jvm should take care of providing the support for carrying the lifecycle management activities
+
+For java object, how does jvm helps us in carrying the lifecycle management activites:
+jvm has provided contractual methods constructor and finalize to be invoked ontop of every object 
+constructor = after creating the object to perform mandatory post-construction logic
+finalize = to perform pre-destruction logic before the object is being destroyed
+
+What is lifecycle of a servlet object?
+Lifecycle of an Servlet class object is init(), service() and destroy() within which, init() and destroy are considered as lifecycle management methods
+why does servlet class objects requires an different lifecycle management methods apart from constructor and finalize?
+The Servlet class object is instantiated by the Servlet container, always the Servlet container invokes the default constructor in instantiating the object of the Servlet, but sometimes we wanted to pass our own values in performing the initialization or post construction logic during the time of creating the object of the Servlet
+
+This cannot be done by writing an parameterized constructor since Servlet Container cannot invoke it by passing values. The Servlet Container to help us in performing post-construction logic ontop of the Servlet after it has been created, it has provided #2 things
+
+1. Init parameters = we can configure for the servlet in web.xml, which can be used for initialization of the servlet
+2. Special lifecycle method = init(ServletConfig), this is the contractual method that would be guaranteed to be called by the SerlvetContainer by passing Servlet Configuration (Init Parameters associated to that servlet) upon creating the object before using the object for request processing.
+	
+Bean Lifecycle
+Why do we need bean lifecycle?
+we wanted to perform post-construction logic ontop of the bean definition object with all the values being supplied at the time of creating the object. There are 2 ways we can pass values as an input to the bean definition object during its creation
+1. constructor injection
+2. setter injection
+but not all the values that are supplied during the time of creating the object will not be available within the constructor, since few are injected via setter injection which are only available after creating the object
+
+So how to perform post construction logic with all the values being supplied at the time of instantiating the object, that is where spring has provided bean lifecycle
+
+What is bean lifecycle?
+Bean Lifecycle is meant for perform post-construction logic ontop of the bean definition object that has been created by the ioc container with all the values being supplied at the time of creating the object or perform pre-destruction logic ontop of the bean definition object before the object is being removed from the ioc container can be done using bean lifecycle	
+
+class Calculator {
+	int i;
+	int j;
+	int sum;
+	
+	public Calculator(int i) {
+		this.i = i;
+		// post construction logic with all the values supplied during creating the object
+		this.sum = this.i + this.j;
+	}
+	
+	public void setJ(int j) {
+		this.j = j;
+	}
+	
+	public int getSum() {
+		return sum;
+	}
+	
+}
+
+application-context.xml
+-----------------------
+<bean id="calculator" class="Calculator">
+	<constructor-arg value="20"/>
+	<property name="j" value="30"/>
+</bean>
+
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("a-c.xml"));
+Calculator Calculator = beanFactory.getBean("a", A.class);
+calculator.getSum(); // would return 20 only
+
+There are 3 ways in working with bean lifecycle are there
+1. configuration approach
+2. programmatic approach
+3. annotation-driven approach
+
+1. configuration approach
+we declare the init-method and destroy-method to be executed ontop of the bean definition object by the ioc container through configuration, so it is called "configuration approach".
+
+class Calculator {
+	int i;
+	int j;
+	int sum;
+	
+	public Calculator(int i) {
+		this.i = i;		
+	}
+	
+	public void setJ(int j) {
+		this.j = j;
+	}
+	
+	public void init() {
+		// post contruction logic here
+		// all the dependents are available
+		this.sum = this.i + this.j;
+	}
+	
+	public void destroy() {
+		sop("cleanup logic..");
+	}
+	
+	public int getSum() {
+		return sum;
+	}	
+}
+
+application-context.xml
+-----------------------
+<bean id="calculator" class="Calculator" init-method="init" destroy-method="destroy">
+	<constructor-arg value="20"/>
+	<property name="j" value="30"/>
+</bean>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

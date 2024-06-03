@@ -1,0 +1,274 @@
+Managing the dependencies between the bean definitions
+
+#1
+xml-based configuration
+class A {
+	B b;
+	public void setB(B b) {}
+}
+
+class B {}
+
+<bean id="a" class="A">
+	<property name="b" ref="b"/>
+</bean>
+<bean id="b" class="B"/>
+
+#2 source code
+
+@Component
+class A {
+	B b;
+	
+	@Autowired
+	public void setB(B b) {}
+}
+
+@Component
+class B {}
+
+#3 one class has sourcecode and another one dont have sourcecode
+xml-based configuration + stereotype
+
+// sourcecode
+@Component
+class A {
+  @Autowired
+	B b;
+	public void setB(B b) {}
+}
+
+// no sourcecode
+class B {}
+	
+a-c.xml
+--------
+<bean id="b" class="B"/>
+<context:component-scan base-package="pkg1"/> 
+
+Test.java
+ApplicationContext context = new ClassPathXmlApplicationContext("a-c.xml");
+
+--------------------------------------------------------------------------------------------------------------------------------------
+no xml based configuration
+1. sourcecode, 2. no sourcecode = stereotype + java configuration
+
+// target sourcecode
+@Component
+class Robot {
+	Chip chip;
+	
+	@Autowired
+	public void setChip(Chip chip) {}
+}
+
+// dependent no sourcecode
+class Chip {
+	String chipType;
+	
+	public void setChipType(String chipType) {}
+}
+
+@Configuration
+@PropertySource("classpath: values.properties")
+@ComponentScan(basePackages={"pkg1"})
+class JavaConfig {
+
+	@Bean
+	public Chip chip(@Value("${chipType}") String chipType) {
+		Chip chip = new Chip();
+		chip.setChipType(chipType);
+		return chip;
+	}
+}
+
+values.properties
+-----------------
+chipType=i7
+
+Test.java
+----------
+ApplicationContext context = new AnnotationConfigApplicationContext(JavaConfig.class);
+--------------------------------------------------------------------------------------------------------------------------------------
+// target class no sourcecode
+// dependent class sourcecode
+	
+// no sourcecode	
+class Launcher {
+	private Rocket rocket;
+	
+	public void setRocket(Rocket rocket) {}
+}	
+
+// sourcecode
+@Component
+class Rocket {
+	String rocketType;
+	
+	@Value("${rocketType}")
+	public void setRocketType(String rocketType) {}
+}	
+
+values.properties
+-----------------
+rocketType=pslv2
+
+@Configuration
+@PropertySource("classpath:values.properties")
+@ComponentScan(basePackages={"pkg2"})
+class JavaConfig {
+
+	@Bean
+	public Launcher launcher(Rocket rocket) {
+		Launcher launcher = new Launcher();
+		launcher.setRocket(rocket);
+		
+		return launcher;
+	}
+}
+
+Test.java
+----------
+ApplicationContext context = new AnnotationConfigApplicationContext(JavaConfig.class);
+--------------------------------------------------------------------------------------------------------------------------------------
+What is depends-on?
+@DependsOn
+	
+@Component
+@DependsOn("cacheManager")	
+class LoanEnquire {}
+
+@Component
+class CacheManager {}
+	
+	
+Test.java
+----------
+ApplicationContext context = new AnnotationConfigApplicationContext("pkg1");
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

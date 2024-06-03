@@ -1,5 +1,5 @@
 How to customize the WebServers in spring boot application?
-Incase of spring boot webmvc application, the ServletWebServerApplicationContext (ioc container) takes the job of creating the WebServer and registering/deploying our application on	the Embedded ServletContainer.
+Incase of spring boot webmvc application, the ServletWebServerApplicationContext (ioc container) takes the job of creating the WebServer and registering/deploying our application on the Embedded ServletContainer.
 	
 The job of creating the Embedded Servlet containers and deploying the application on the underlying container is taken care by AnnotationConfigServletWebServerApplicationContext itself, then it is going to be tightly coupled with spring embedded container only and will not support deploying the application on other embedded containers
 
@@ -35,56 +35,3 @@ WebServerFactory is an interface and it has 2 child interfaces are derived
 The process of instantiating the WebServers and configuring them differs from one WebServer to another one. so the spring boot has provided ServletWebServerFactory interface for which multiple implementations are provided for each WebServer type
 For eg..
 To instantiate and configure TomcatWebServer, the spring boot has provided ConfigurableTomcatWebServerFactory
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	

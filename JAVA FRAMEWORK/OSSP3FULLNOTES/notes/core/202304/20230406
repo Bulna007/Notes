@@ -1,0 +1,221 @@
+Bean Lifecycle
+For anything/object that has existence has 2 things
+1. lifecycle
+2. lifecycle management
+
+1. lifecycle = the activities that are taken part ontop of the object during its existence is called "lifecycle".
+2. lifecycle management = Inorder for an object to have its lifecycle we might have to perform certain mandatory activities on top of the object
+	2.1 when the object has been born, before it begins participating in lifecycle activities
+	2.2 while the object is going to die, before it destorys we might have to perform few cleanup activities to have smooth destruction of the object
+such activities being carried on top of the object during it birth or before its death are called lifecycle management activities
+
+Even a Java class object has an existence and it also has lifecycle and lifecycle management applicable
+lifecycle of java class object = all the actions or operations performed ontop of the object during its existence is part of the lifecycle of the object for eg..
+	1. invoking methods using the object
+	2. changing the state of the object (like modifying the attribute values)
+	etc
+that happens on top of the object during its existence is part of the lifecycle of the object
+
+For the java class objects to participate in performing the lifecycle activities we need to perform certain mandatory activities, while the object is being created or while the object is being destroyed
+The activities we perform during the time of creation of the object are called "post construction activities", during the time of destorying are called "pre-destruction activities"
+	
+it looks like it is mandatory to perform post construction or pre-destruction activity on each object that we create for every class, to have those objects participate in performing lifecycle activities
+
+taking care of performing post-construction activities after the object has been created or performing pre-destruction activity for each object before it is removed/destoryed for each class object we create in the application becomes very difficult that might leads to
+	1. duplicate of code across all the objects we create for classes
+	2. unable to manage in manually carrying these activites for every instance of the class
+
+since the jvm knows when the object has been created or destroyed, the jvm should provide an mechanism for performing post-construction or pre-destruction 	activities for every object we create for any class, that is where
+1. constructor 
+write all the post construction logic we want to apply ontop of an object after it has been created within the constructor of the class, so that jvm takes care of invoking the constructor to perform mandatory activities ontop of the object, before the object is being returned to us
+
+2. finalize 
+write all the destruction/clean-up logic within the finalize(){} method of the class, so that jvm automatically takes care of invoking the finalize method ontop of an object before destroying or garbage collecting the object
+
+methods are provided by jvm
+
+since the jvm/underlying platform takes care of invoking the finalize or constructor for each object we create for every class, these methods are called lifecycle management methods
+
+what is a constructor?
+constructor is an lifecycle management method that is used for performing/applying post construction logic ontop of the object upon creating the object by the jvm
+--------------------------------------------------------------------------------------------------------------------------------------
+Servlet is also an normal java class only, why do we need init() and destroy() methods for performing lifecycle management activities, why cant we have constructor/finalize to perform post-construction and pre-destruction activities?
+	
+class A {
+	int i;
+	A(int i) {
+		this.i = i;
+	}
+}	
+
+A a = new A();
+A a1 = new A();
+A a2 = new A(12);
+
+class AccountServlet extends HttpServlet {
+	String url;
+	String username;
+	String password;
+	String driverClassname;
+	
+	// invoking the default constructor
+	public void init(ServletConfig config) {
+		// initialization with our own values
+		url = config.getInitParameter("url");
+		username = config.getInitParameter("username");
+		password = config.getInitParamerter("password");
+		driverClassname = config.getInitParameter("driverClassname");
+	}
+	
+	
+	
+}
+
+web.xml
+<servlet>
+	<servlet-name>accountServlet</servlet-name>
+	<servlet-class>AccountServlet</servlet-class>
+	<init-param>
+		<param-name>url</param-name>
+		<param-value>jdbc:mysql://localhost:3306/db</param-value>
+	</init-param>
+	<init-param>
+		<param-name>username</param-name>
+		<param-value>root</param-value>
+	</init-param>
+	<init-param>
+		<param-name>password</param-name>
+		<param-value>root</param-value>
+	</init-param>
+	<init-param>
+		<param-name>driverClassname</param-name>
+		<param-value>com.mysql.cj.jdbc.Driver</param-value>
+	</init-param>
+</servlet>
+<servlet-mapping>
+	<servlet-name>accountServlet</servlet-name>
+	<url-pattern>/account</url-pattern>
+</servlet-mapping>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

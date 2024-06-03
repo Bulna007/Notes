@@ -1,0 +1,17 @@
+to make an spring boot application deploy on a standalone container as a war deployment, we need to perform 2 changes
+1. remove the embdded servlet container transitive dependency in the pom.xml
+2. extend our BootApplication class from SpringBootServletInitializer to kickoff the SpringApplication.run(..)
+	
+spring boot webmvc:
+1. internals of spring boot webmvc and how springmvc components are bootstrapped in spring boot application
+2. what is embedded servlet containers, how does they work?
+3. who is deploying the application in embedded servlet container while working with springboot?
+4. customizing the embedded servlet containers in spring boot
+	1. configuration
+	2. programmatic
+5. how to register webapplication components like servlets or filters in springboot application?
+6. how does DispatcherServlet is being registerd with servlet container in spring boot
+7. how to deploy springmvc spring boot application onto different embedded servlet containers
+8. how to deploy a springboot mvc application as an war on standalone servlet container.
+	
+Actuator Endpoints:

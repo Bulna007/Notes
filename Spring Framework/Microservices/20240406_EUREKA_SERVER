@@ -49,7 +49,7 @@ Then why does eureka server has added discovery client as an transitive?
 There are 2 reasons why we need discovery client capabilities in eureka server as well.
 When we are running the eureka server in production environment, for high availability we need to run atleast #2 instances of eureka server as a master/slave architecture, so that when the primary node went down, the secondary/slave acts as an primary until the primary node has been restored, so that the whole cluster will not go down.
 	
-1. The slave/secondary eureka server has to register itself to the primary as an replica and should send periodical heartbearts to the primary indicating its availability
+1. The slave/secondary eureka server has to register itself to the primary as an replica and should send periodically heartbearts to the primary indicating its availability
 
 2. The slave/secondary has to fetch the registery of the primary and should populate into itself
 

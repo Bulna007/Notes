@@ -1,0 +1,12 @@
+voiCom:
+  enabled: true
+  voip:
+    server:
+      host: 192.182.92.1
+      port: 29
+      username: voip
+      password: notreachable
+  config:
+    protocol: voip
+    quality: hd
+    retries: 3

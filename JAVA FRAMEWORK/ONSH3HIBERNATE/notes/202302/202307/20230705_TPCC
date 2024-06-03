@@ -1,0 +1,25 @@
+Table per subclass
+Strategy: how the inheritance hierarchy of classes are mapped to the table model?
+For the super class create one table. per each subclass within the hierarchy create another table with subclass attributes in-relationship of superclass table via an pk & fk
+
+1. Persist/Save
+1.1 Subclass
+store all the inherited attributes of the Subclass into superclass table. pick the pk of the record we inserted and store it as fk in the subclass table along with inserting the subclass attributes
+
+1.2 Superclass
+directly store in the superclass represented table
+
+2. Fetch/Get
+2.1 Subclass
+by doing an innerjoin between the superclass table and the corresponding subclass table
+
+2.2 Superclass
+while fetching the data for a superclass, we should support polymorphic retrieval, to do that we need to do left outer join across all the tables in the hierarchy and identify the record belongs to which table, based on which instantiate the appropiate entity class of the hierarchy.
+	
+tag: <joined-subclass/>
+		joined column = <key column=""/> 
+		
+	
+
+	
+	

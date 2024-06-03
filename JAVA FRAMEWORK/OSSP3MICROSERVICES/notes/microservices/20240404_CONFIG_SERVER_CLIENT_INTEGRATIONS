@@ -1,0 +1,166 @@
+How to secure the access to the Cloud ConfigServer?
+The configuration pertaining to an application is confidential or private to the application and should not be exposed and made it publicly accessible. We can enforce authentication in pulling the configuration from the ConfigServer by enablishing spring security basic authentication
+
+add spring-boot-starter-security dependency into the pom.xml of our project. upon adding spring-boot-starter-security dependency the spring security components will be auto-configured through spring boot echo system and it generates a default username: user and password as random password onto the console using which we can authenticate in accessing the configuration
+
+But this would not be helpful in integrating with microservice applications, because everytime when we restart the ConfigServer a new password would be generated, so that we need to change microservice applications again.
+	
+So we can configure a static username/password for ConfigServer using below security configuration in application.yml
+
+security:
+  user:
+    name: configadm
+		password: admin!$
+		role: administrator
+
+How to pull the configuration from ConfigServer in Microservices applications, when we enforce or enabled the basic authentication on the ConfigServer?
+			
+By default spring-cloud-config-client supports sending basic authentication headers aspart of the request in authenticating with ConfigServer. We just need to provide username/password to the ConfigClient api as below
+
+bootstrap.yml
+-------------
+spring:
+  config:
+    import: 
+      - "configserver:http://localhost:9099/"
+	cloud:
+    config:
+      username: configadm
+			password: admin!$
+--------------------------------------------------------------------------------------------------------------------------------
+How to work with spring boot profiles while working with Cloud ConfigServer?
+An application will move across various different environments right from the development to production. The configuration would be different from one to another. So every time when we move our application across we need modify the configuration of our application.
+	
+Instead of modifying the configuration pertaining to the env while running the application, we can create multiple configurations per each env and use it while deploying the application on that env by using spring profiles.
+
+In spring boot we write the configuration information in application.yml | properties. When we invoke
+SpringApplication.run(Application.class, args)
+	
+it will reads the application.yml from the classpath and loads the configuration into env object using which it creates the ioc container.
+	
+But to support working with various different environments, Spring boot has designed SpringApplication class to load the configurations specific to env on which we are running the application. This can be acommplished as below.
+	
+	default: application.yml 	= all the static configuration that doesnt change in our application will be written
+	per each environment, create one env specific configuration file with naming convention as application-profile.properties|yml
+	
+then based on the profile we activated, the relevant profile specific configuration will be read by the SpringApplication class.
+	
+Incase if we are using YML file we can write multiple env configurations in one single file itself.
+application.yml
+---------------
+---
+spring:
+  profile:
+    active: dev
+...
+---
+spring:
+  config:
+    active:
+      on-profile: dev
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+		url: jdbc:mysql://localhost:3306/db
+		username: root
+		password: welcome1
+...
+---			
+spring:
+  config:
+    active:
+      on-profile: test
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+		url: jdbc:mysql://192.23.3.2:3306/testdb
+		username: testuser
+		password: welcome3
+...		
+			
+While working with microservices, the Configuration information pertaining to the microservice is centralized and distributed through ConfigServer
+
+To support profile based distribution of configuration, we need to write multiple configuration files for an microservice application and publish it to ConfigServer
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
+     
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+

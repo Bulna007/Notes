@@ -1,0 +1,218 @@
+class PlanService {
+	public List<String> findPlans(int zipCode, int age, String gender, int copay, boolean outpatientCoverage, boolean outOfNetworkCoverage) {
+		// it goes through the permutations and combination of inputs and identifies the plans that are suitable for you	
+		List<String> plans = Arrays.asList(new String[] {"oldplan001", "oldplan002"});
+		return plans;
+	}
+	public List<String> findPlans(int copay, boolean outpatientCoverage, boolean outOfNetworkCoverage, String employmentType) {
+	}
+}
+
+class FindPlansMethodReplacer	implements MethodReplacer {
+	public Object reimplement(Method method, Object[] args, Object target) {
+		int zipCode = 0;
+		int age = 0;
+		String gender = null;
+		int copay = 0;
+		boolean outpatientCoverage = false;
+		boolean outOfNetworkCoverage = false;
+		
+		// conditional check to see whether we are being called for right method to be replaced
+		if(method.getName().equals("findPlans")) {
+			zipCode = (Integer) args[0];
+			age = (Integer) args[1];
+			gender = (String) args[2];
+			copay = (Integer) args[3];
+			outpatientCoverage = (Boolean) args[4];
+			outOfNetworkCoverage = (Boolean) args[5];
+			
+			// write new implementation logic to replace the original method for finding plans
+			List<String> plans = Arrays.asList(new String[]{"plan001", "plan002", "plan003"});
+			return plans;
+		}else {
+			throw MethodNotSupportedException("cannot replace method");
+		}					
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="findPlansMethodReplacer" class="FindPlansMethodReplacer" />
+
+<bean id="planService" class="PlanService">
+	<replaced-method name="findPlans" replacer="findPlansMethodReplacer">
+		<arg-type>int</arg-type>
+		<arg-type>int</arg-type>
+		<arg-type>java.lang.String</arg-type>
+		<arg-type>int</arg-type>
+		<arg-type>Boolean</arg-type>
+		<arg-type>Boolean</arg-type>
+	</replaced-method>
+</bean>
+
+Test.java
+----------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/mr/common/application-context.xml"));
+PlanService planService= beanFactory.getBean("planService", PlanService.class);
+List<String> plans = planService.findPlans(30283, 23, "Female", 10, true, true);
+plans.forEach(System.out::println);
+
+In case if the class has overloaded methods, then the ioc container runs into ambiguty and will not replace any of the methods, then we need to specify which method to be replaced by giving the signature of the method using <arg-type> tag as above
+
+How can we replace a method inside a class, without modifying the code inside the class in java/oops?
+The only way is method overriding, so when we ask ioc container to create the object of planService
+
+PlanService planService= beanFactory.getBean("planService", PlanService.class);
+
+The beanfactory goes to the in-memory metadata of the ioc container looking for the bean definition with id "planService", once it found it, it identifies we have written <replaced-method/> tag, from which it understands we wanted ioc container to replace the original method of the class with the replacer we specified
+
+so ioc container generates an proxy class at runtime within the jvm memory using cglib/asm libraries extending from original class and overrides the replaced-method we specified
+
+class PlanService$Proxy extends PlanService {
+	private MethodReplacer methodReplacer;
+	
+	PlanService$Proxy(MethodReplacer methodReplacer) {
+		this.methodReplacer = methodReplacer;
+	}
+	
+	public List<String> findPlans(int zipCode, int age, String gender, int copay, boolean outpatientCoverage, boolean outOfNetworkCoverage) {
+		Method method = Thread.currentThread().getStackTrace()[1].getMethod();
+		Object[] args = new Object[]{};
+		Object target = this;
+		return methodReplacer.reimplement(target, method, args);
+	}
+}
+
+the ioc container instantiates the object of the proxy and stores it in ioc container with the name as "planService" and returns to us
+
+To replace a method of a class, the class should not be final and the method should not be final
+-------------------------------------------------------------------------------------------------------------------------------------
+Post Processors
+What is a PostProcessor means?
+PostProcessor means, applying some post processing login ontop of an entity/object after it has been created, and before it is being used by others. PostProcessors are the container extension points or plugins into the ioc container, through which we can enhance the features/functionality of the ioc container
+
+There are 2 types of Post Processors are supported by the ioc container
+1. BeanFactoryPostProcessor
+BeanFactoryPostProcessor is used for performing the post processing ontop of the ioc container itself, when?
+	1.1 upon creating the ioc container
+	1.2 after loading the bean definition information as an in-memory metadata
+	1.3 before ioc container begins instantiating the object for the bean definitions
+we wanted to apply post processing on the in-memory metadata, using BeanFactoryPostProcessor, so that with the modified metadata we want ioc container to instantiate the object of the bean definitions
+
+
+2. BeanPostProcessor
+BeanPostProcessor is used for performing post processing logic onto of the bean definition object, upon the ioc container has created the object, before it returns the object to the application for usage
+
+What is the difference between BeanFactoryPostProcessor and BeanPostProcessor?
+BeanFactoryPostProcessor is used for performing post processing on ioc container itself, whereas BeanPostProcessor is used for performing post processing on the bean definition object that ioc container has created
+
+
+1. BeanFactoryPostProcessor
+BeanFactoryPostProcessor is meant for applying post processing logic ontop of the ioc container, after the ioc container has been created, after the metadata has been loaded, before the ioc container begins instantiating the objects for the bean definition we wanted to apply the post processing then we need to use "BeanFactoryPostProcessor"
+	
+From the above we can understand, using the BeanFactoryPostProcessor we can only apply post processing on in-memory metadata of the ioc container, why do we need to modify the in-memory metadata, why cant we change the physical configuration file directly
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,109 @@
+When do we need to use one to many map based association?
+There is some additional data that is generated out of the association relationship, to hold or represent the additional data out of the association relationship we use Map based collection 
+
+For eg.. 
+We have 2 entity classes Project and Vendor. The contractNo is the additional data that is not related to project or vendor but only comes into existence when the project has been allocated/alloted to the vendor, and that too unique.
+To represent such additional data out of the association relationship we need to use Map based collection
+
+class Project {
+	int projectNo;
+	String description;
+	String type;
+	int estimatedDays;
+	double estimatedAmount;
+	//Vendor vendor;
+	// accessors
+}
+
+class Vendor {
+	int vendorNo;
+	String vendorName;
+	LocalDate establishedDate;
+	String contactNo;
+	String emailAddress;
+	Map<String, Project> projects;
+	// accessors
+}
+
+project             vendor
+project_no(pk)      vendor_no(pk)   
+description         vendor_nm
+type                established_dt
+estimated_days      contact_no
+estimated_amt       email_address
+vendor_no (fk)
+          (nullable)
+contract_no (unique)
+	
+Vendor.hbm.xml
+----------------
+<hibernate-mapping package="com.otmm.entities">
+	<class name="Vendor" table="vendor">
+		<id name="vendorNo" column="vendor_no">
+			<generator class="increment" />
+		</id>
+		<property name="vendorName" column="vendor_nm"/>
+		..
+		<map name="projects">
+			<key column="vendor_no" not-null="false"/>
+			<map-key column="contract_no" type="string" unique="true"/>
+			<one-to-many class="Project"/>
+		</map>
+	</class>
+</hibernate-mapping>
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

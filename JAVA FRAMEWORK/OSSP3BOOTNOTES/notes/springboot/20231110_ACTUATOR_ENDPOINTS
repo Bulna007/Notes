@@ -1,0 +1,56 @@
+There are 6 features are there in spring boot
+1. auto-configurations
+2. starter dependencies
+3. actuator endpoints
+4. devtools
+5. embedded servlet containers
+6. boot CLI
+
+1. auto-configurations
+The Auto-Configurations takes care of configuring the spring framework components as bean definitions within our application based on opinionated-view.
+
+2. starter dependencies
+spring boot starter dependencies are the maven artifacts declared with transitive dependencies as spring framework modules and other external third-party libraries that acts as dependencies in using those modules. per each type of technology we use in building the application, spring boot has comeup within one starter. We can quickly add these starters as dependencies into our project, so that we can quickly build applications using spring framework
+
+3. actuator endpoints
+we can build development to production grade deployable application quickly using spring boot actuator endpoints
+When we develop an application, to make it production deployable we need to add additional components/endpoints to ship it to the production for monitoring and managing like
+1. healthcheck
+2. metrics
+3. logs
+etc
+
+The development team upon completing the development and qa of the application, to make the application production deployable, again they need to spend considerable amount of time in building these non-functional endpoints that are needed for managing/monitoring the application in production.
+	
+This shoots up the cost of development and delays significantly the delivery of the application. since this seems to be a common requirement of having the additional endpoints to make the application deployable, the spring boot team has provided actuator endpoints.
+	
+The actuator endpoints are nothing but pre-built components that can be embedded or packaged into our application quickly, so that we can have the application deployed into production and manage/monitor it easily without any delay.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

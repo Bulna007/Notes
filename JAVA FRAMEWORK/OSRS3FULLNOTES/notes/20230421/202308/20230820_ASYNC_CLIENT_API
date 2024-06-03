@@ -1,0 +1,271 @@
+Asynchronous client api
+Asynchronous client is no way related to Asynchronous resources/apis. Irrespective of the resource is synchronous/asynchronous resource we can build an client program of anyType
+
+When we are working with Client api, by default the client api works on blocking request/response model, which means upon sending the request to the resource, the client application/program will be blocked on that resource waiting for the response without doing anything. upon gathering the response from the resource, the remaining block code within the client program will be executed.
+	
+But always in a client program we may not be calling/invoking one resource only, we might need to talk to multiple resources in aggregating the data or to perform business operation.
+	
+business logic:
+for eg.. an food ordering application like an swiggy or zomota may have to call multiple resources in completing an order. when an customer has placed an order to food inorder to complete the order swiggy/zomota has to make several api calls
+	1. check whether the food item is available at the restaurant or not
+	2. request the restaurant to accept the order
+	3. make a call to banking gateway to process the payment
+	4. schedule for delivery by makig a call to delivery services api
+	
+aggregating the data:
+collecting the data from multiple sources and combining them to produce an outcome is called "data aggregation". for eg for an travel agency we want to derive an report showning the trips and the occupancy of the passengers per trip for both flight and bus travel
+
+when we are building such complex client applications, the synchronous client api model may not work and run into performance problems. While making the api calls in client application, we dont need to block on a request being send to the resource waiting for the response unless the 2nd resource is dependent on the output of the 1st one.
+	
+if the resources to be called from the client application are independent of each other, those resources can invoked in parallel using asynchronous client api
+
+There are 2 styles of asynchronous client api are there
+1. fork and join
+2. callback mechanism
+
+1. fork and join
+The fork and join technic is usually used for data aggregation from multiple services. we might want to run/invoke multiple services in parallel at one-shot without waiting for the response from the individually. then block the client program (join) waiting for the response from all the service calls, so that we can aggregate the data and process at the client application.
+	
+invoke service1
+invoke service2
+invoke service3
+-> block on receiving the response from all or few
+apply the business logic on their response
+
+2. callback mechanism
+within the client application we might need to call multiple resources independently and needs to perform business logic with their responses individually without the need to each other. this can be achieved through callback mechanism.
+	
+1. how to work with fork and join
+AsyncInvocation asyncInvocation1 = ClientBuilder.newClient().webTarget(uri).request().async().buildGet();
+
+Invocation = class is used for blocking request/response
+AsyncInvocation = is provided for non-blocking request and response to support both fork&join and callback handler as well
+
+
+
+Future<Response> future1 = asyncInvocation1.invoke(); //non-blocked
+since for the request we send, it has not blocked waiting for the response, it returns an future object into which the response would be populated whenever it is available
+
+Future<Response> future2 = asyncInvocation2.invoke(); 
+
+now upon invoking both the resources we need to wait for the response, this can be done in block or non-block way also as below.
+future1.isDone()= true/false indicating the response is available or not (non-blocking)
+	
+Response response1 = future1.get(); // will block until the response is available
+Response response2 = future2.get();
+// aggregate the data
+
+2. Callback
+instead of joining / waiting for the response from resource we hookup an Callback Handler while invoking the service asking to call the Callback class when the response is ready.
+	
+class CallbackHandler implements InvocationCallback {
+	public void sucess(Response res)
+}	
+--------------------------------------------------------------------------------------------------------------------------------------
+swagger/open api specification
+------------------------------
+1. unique addressable URI
+2. uniform constrained interfaces
+3. communication stateless
+4. representation oriented
+5. HATEOS
+
+2. uniform constrained interfaces
+across all the resources they should be finite set of fixed interfaces/methods. we achieve the uniformed constrained interfaces through http protocol and their methods.
+	
+without uniform constrained interfaces:
+since each resources has different interfaces, to let the client application access the resource we need to provide documentation information. there are lot of problems in using the documentation
+	1. the client developers has to go through the documentation information to understand the information about the apis exposed that takes huge amount of time in understanding to build client api
+	2. since different people write the documentation in different ways and formats, understanding and them becomes complex and time taking.
+	3. there is no guarantee that adequate or relevant information required for accessing the service will be available
+	
+To overcome the above problem with documentation, we need standardized documentation standards 
+	even these standard documentations also has their own problems:
+1. different technologies has different documentation standards of their own, for eg.. Corba has IDL, SOAP WebServices as WSDL etc there is no single standard documentation across the technologies. So developer has spend lot of time in understanding these standards across to build client programs
+
+2. Most of the time these documentations are too technical, the client developer should have strong knowledge of the technology in which the api/distributed program is built to access it thus making it complex to integrate
+
+3. These documentations are not human understandable or readable thus making it difficult to use.
+	
+From the above we can understand through documentation adoptability / integrating the services are becoming very difficult.
+	
+So to avoid the documentation, use 
+Uniform constrained interfaces
+since across the resources we build, we need to have finite/same set of interfaces being defined. since everyone knows the interfaces across the resources we dont need explicit documentation to describe the information about the service.
+	1. interoperability
+	2. scalability
+	3. familiarity
+	
+
+even though we adopted uniform constrained interfaces, in realworld still we problems:
+1. just by knowing the interfaces we cannot access the resources, we still need inputs and possible outputs of the resources to access them, which are not available
+
+2. adoptibility/integrating restful services is very difficult, because developer has manually write the code by understanding the technology to access the services. There is not way to take the help of tools for generating the client programs since there is no documentation.
+	
+3. if there is not standard documentation standard, we cannot build services using "design-first" approach	
+
+The documentation is used in 2 ways
+1. design (through documentation) and develop
+2. distribute the documentation to client 
+	
+so how to overcome this problems: taking all these problems into consideration, there are third-party vendors who come up standardized documentation standards for restful services which are
+1. RAML
+2. SWAGGER
+
+these documentation standards documents the apis independent of technology, language in which those are build. out of these SWAGGER become widely adopted and used in the market
+
+eventually swagger has been made as an universal documentation standard for the restfulservices and converted into openapi specification.
+advantages:
+1. irrespective of technology/platform in which we build the apis the documentation would be same
+2. the openapi secification documentation is human understandable and easy to read like simple english like language
+3. sophisticated tools that can be used for generating the client libraries
+4. even these specifications has provided sophisticated tools to support design-first approach
+	1. provided tools for desiging the apis
+	2. generate the code out of produced design to develop the api by using the tools
+	
+5. provided sophisticated graphical userinterface tools through which we can read these documentations easily
+
+by using the openapi secification adoptability/integrating the restful services becomes very easy
+
+1. Swagger UI = for reading the documentation
+2. Swagger Codegen = for genering client/server libraries out of the documentation (20 languages)
+3. Swagger Editor = to design the api, so that we can build from the produced design
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

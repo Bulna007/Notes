@@ -1,0 +1,414 @@
+How many types of data typically exists within an application?
+There are 3 types of data are there
+1. long-lived data or static/fixed data
+2. moderately modified data
+3. short-lived data or frequently modified data
+
+in general if the data is being modified frequently within the runtime of the application, it is adviced not to cache such data because the cost of maintaining the data within the Cache is high than the times we are going to use the data from the Cache.
+	
+But there are few exceptions to it, if the application is high, customer intensive application where the number of user requests being received in fetching the data seems to be very high than the shortest interval in which the data is being modified, in such case we can Cache and reuse the data for all the subsequent requests that falls within that shortest-interval of time so that we can optimize the performance of the application
+
+Why do we need Caching in an ORM Technology frameworks?
+Every ORM technology framework must and should support Caching mechanism.
+
+For eg.. in ORM for every operation we perform on the underlying database, these frameworks fetches objects of data from the database and populates into jvm memory. if more and more number of requests are coming into application for fetching the data, the more the number of objects being created and placed in jvm.
+	
+At somepoint of time during the execution, we endup in having huge number of objects in jvm memory with duplicate footprints (several objects of the same copy could exists). Lets say if there are 1000 users concurrently sending the request in accessing a product of a given productCode, per each request, the hibernate/orm technology framework queries the product data from product table based on productCode and creates 1000 objects with the same data and places within the jvm memory which results in huge wastage of jvm memory and might quickly run into out of memory issues.
+	
+So having Cache in-place will help in reusing the same object for the subsequent 999 requests in serving the data thus optimizes the usage of the jvm memory, which is the major cause of having Caching in ORM technology frameworks
+
+1. What is Caching, why do we need it?
+2. What is persistence-level caching, why does an persistency technology apis/frameworks should support Caching?
+3. How many types of data are there in an Application, which one should be cached and how?
+4. Why ORM technology frameworks/api should support Caching?
+	
+Which Type of data should be Cached by the Hibernate or ORM Technology Framework?
+Looks like static or moderately modified data should be Cached. 
+	
+product
+product_no  product_nm  manufacturer_no (fk) description  category, ratings  price
+
+manufacturer
+manufacturer_no  manufacturer_nm    address
+
+class Product {}
+class Manufacturer {}
+
+class ProductDetails {
+	productNo
+	productName
+	category
+	description
+	price
+	manufacturer_nm
+	rating
+}
+	
+// 5000
+p1 = m1
+p2 = m2
+p3 = m1
+#5000 = 50 products manufactured by m1
+
+
+class ProductDao {
+	public List<ProductDetails> popularProducts() {
+		try {
+			SessionFactory sessionFactory = SFRegistry.getSessionFactory();
+			Session session = sessionFactory.openSession();
+			TypedQuery<Product> productsQuery = session.createQuery("select * from Products p where p.rating > 4");
+			List<Product> products = productsQuery.getResultList();
+			
+			for(Product product : products) { // 5 milliseconds (0%) = not cache
+				Manufacturer manufacturer = session.get(Manufacturer.class, product.getManufacturerNo());	
+				productDetails = new ProductDetails();
+				// store product & manufacturer data into ProdutDetails
+				list.add(productDetails);
+			}
+		}finally {
+			// close resources
+		}
+		return list;
+	}
+}	
+
+1. long-lived data = Yes permanently
+2. moderately modified data = Yes (TTL)
+3. short-lived data = No, but can be cached to the shortest-interval of time
+
+
+Second-level Cache
+Cache (scope) #application scope = The Cache will exists till the end of the application 
+|-long-lived data
+|-moderately modified data
+
+First-level Cache:
+Cache (scope) #operation level = so that while performing the operation, if there is any data, that needs to be repeatedly has to be query from the database can be avoided and reused from the Cache. So that we can eliminate costly db operation and save memory
+1. long-lived data
+2. moderately modified data
+3. short-lived data 
+
+long-lived data and moderately modified data should be cached for more time than operation scope
+
+From ORM technology perspective we need to cache all the three types of data
+1. Long-lived data / static/fixed data
+2. Moderately modified data 
+should be cached for longer amount of time to the scope of the application
+
+Whereas by default we need to Cache all the types of data including short-lived data to the scope of the operation so that we can avoid fetching repeatedly the same data and create several objects of that data within the scope of the operation.
+	
+In the above example, if we consider while fetching the popular products we query the manufacturer for each product as well. So during the time of performing this operation we might endup in fetching/querying several times the manufacturer data for each product where for multiple products the manufacturer could be same even then also we endup in requering the same manufacturer and create several objects of it. 
+What is the tendency of having an manufacturer information being modified within the scope of the operation	(within nano-seconds of time)?
+The chances are almost 0%, even then also we unecessarily query the same data and create multiple objects of the same and waste huge amount of jvm memory. Instead if we can Cache the manufacturer within the scope of the operation and reuse the same, we can avoid recreating the object by requering repeatedly from database, that is where first-level cache comes into picture.
+	
+while performing an operation, the tendency of repeatedly accessing the same object from the database would be high, so to avoid re-querying the same record from the database and creating one more object within the jvm memory with the same data the hibernate has introduced first-level cache.
+	
+--------------------------------------------------------------------------------------------------------------------------------------	
+What is first-level cache?
+First-level cache is the Cache that is created by the hibernate framework at the scope of the operation. Since we perform the database operation in hibernate framework using Session object, the Cache would be created at the Session scope.
+	
+For each operation we create an object of Session, so while creating the object of the Session, the hibernate creates the Cache within it, so that the Session while performing the operation on the underlying database, it first lookups for the objects in the Session. While closing the Session object, the Cache that is created within the Session also will be closed/destroyed
+
+So first-level cache in hibernate framework is also called as "Session-Level Cache".
+	
+The First-level cache is the default Cache and is mandatory aspart of the hibernate frameworks. we dont need to configure/enable it and we cannot disable aswell. 
+
+class Cache {
+	Map<Class, Map<Object, Object>> dataMap;
+	
+	public Cache() {
+		dataMap = new HashMap<>();
+	}
+	
+	public void put(Object id, Object object) {
+		Map<Object, Object> entityMap = null;
+		
+		if(dataMap.containsKey(object.getClass())) {
+			entityMap = dataMap.get(object.getClass());
+		}else {
+			entityMap = new ConcurrentHashMap<>();
+			dataMap.put(object.getClass(), entityMap);
+		}
+		entityMap.put(id, object);		
+	}
+	
+	public Object get(Class classType, Object id) {
+		Map<Object, Object> entityMap = null;
+		
+		if(dataMap.containsKey(classType)) {
+			entityMap = dataMap.get(classType);
+			if(entityMap.containsKey(id)) {
+				return entityMap.get(id);
+			}
+		}
+		return null;
+	}
+	
+	public boolean containsKey(Class classType, Object id) {
+		Map<Object, Object> entityMap = null;
+		
+		if(dataMap.containsKey(classType)) {
+			entityMap = dataMap.get(classType);
+			if(entityMap.containsKey(id)) {
+				return true
+			}
+		}
+		return false;
+	}
+}
+
+class Session {
+	Connection connection;
+	Map<Class, EntityMapping> entityMappings;
+	Dialect dialect;
+	Cache cache;
+	
+	public Session(Connection connection, Map<Class, EntityMapping> entityMappings, Dialect dialect) {
+		cache = new Cache();
+	}
+	public void close() {
+		cache = null;
+	}
+	
+	public Object get(Class classType, Object id) {
+		Object entityObject = null;
+		
+		if(cache.containsKey(classType, id)) {
+			entityObject = cache.get(classType, id);
+		}else {
+			sql = dialect.sqlForObject(entityMapping);
+			PreparedStatement pstmt = con.preparedStatement(sql);
+			// substitute id
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				entityObject = GenericMapper.mapResultSetToObject(rs, classType, entityMapping);
+				cache.put(id, entityObject);
+			}
+		}
+		
+		return entityObject;
+	}
+}
+
+product1 = session.get(Product.class, 1);
+product2 = session.get(Product.class, 1);
+
+session.close();
+session = sessionFactory.openSession();
+product3 = session.get(Product.class, 1);
+
+
+
+product = new Product();
+product.setProductNo(1);
+// populated the data
+session.persist(product); // within the Cache only, will not execute the insert query on the database
+.. no preparedStatement
+
+session.flush(); // then hibernate framework or session class will execute insert statement on the database writing the data to database
+
+tx.commit(); // then only the operation will be commited
+when we do tx.commit(); it internally calls session.flush(), so we dont need to explicitly invoke session.flush().
+-------------------------------------------------------------------------------------------------------------------------------------
+
+
+First-level cache helps in optimizing the write operations on to the underlying database.
+whenever we perform any DML operation on the database using session. save()/persist()/update()/delete() all these operations are applied on Cache.
+	
+Product product = new Product();
+product.setProductNo(100);
+product.setProductName("Television");
+// populated rest of the data
+
+session.persist(product); // it executed sql query also (went to database and wrote the data)
+when we call the persist method, the query also will not be executed on the database, it just stores the object into the Cache.
+
+product.setProductName("32inch LED Television");
+session.update(product); // it will execute update query
+
+tx.commit();
+
+	
+session.persist(product); // dont execute sql query, just keep the object in session cache
+product.setProductName("32inch LED Television");
+session.update(product); // it updates the product in the Cache 
+
+tx.commit(); // only one insert into the db
+
+	
+	
+	
+pstmt = con.preparedStatement("insert into product values(?,?,?,?,?,?)");
+// substituted
+pstmt.executeUpdate(); //  executes the sql query on database (Yes) (data will not be persisted)
+
+con.commit(); (// data is persisted)
+	
+	
+	
+product = session.get(Product.class, 1);
+product.setProductPrice("x");
+session.update(product);
+	
+product.setPrice(100);
+session.update(product);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

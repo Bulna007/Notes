@@ -1,0 +1,116 @@
+Gradle
+-------
+Gradle is an opensource build automation tool, unlike ant and maven gradle can be used for building any applications developed based on jvm languages like
+1. groovy
+2. kotlin
+3. scala
+4. golang
+5. andriod platform
+etc
+
+Why not ANT or Maven, why does Gradle has been brought as one more build automation tool?
+
+ANT
+---
+ANT has provided pre-defined tasks. Tasks are the basic build blocks of the ANT system, that takes care of performing build activities or actions in performing the build. The developers has to write build instruction file archestrating the tasks that needs to be executed in performing the build of the application.
+	
+drawbacks:-
+	1. developers will endup in redudantly writing the same build script file across the projects in building them
+	2. For different projects, the directory layout and the targets named in conducting build activities are different. So one has to understand the buildscript file and targets being written inside them to conduct the build of a project
+	3. writing the buildscript or conducting the build in Ant is time consuming
+	
+Maven
+-----
+Maven works based on "CoC Principle", it defined conventions and plugins. Plugins are the basic building blocks in maven, that performs an build activity or an operation in conducting the build, these can be treated as similar to Tasks in Ant. For building any java project maven has defined standardized build-lifecycle
+The build lifecycle has defined predefined phases associated with plugin-goals that needs to be executed in a specific order in conducting the build for any java project, so programmers dont have to write any buildscript file in building the projects in maven.
+	
+Features:
+1. standardized directory structure
+2. depenency management
+3. plugins
+4. archetypes (pre-packaged project templates)
+5. build abstraction through build lifecycles
+6. tools support
+
+drawbacks:-
+	1. Maven strictly enforces "CoC" Convention over Configuration, we need to create the project based on standardized directory structure only and write the project based on the rules defined, unless otherwise building the project using maven seems very difficult and cannot be accomplished few times.
+	2. Customizing the build activities or steps while working with maven seems to be very complex. There are pre-defined build lifecycle with fixed phases associated with standard plugins/goals are defined by maven. If we want to perform additional build activity we need to write our own plugin, publish it as an artifact into maven remote repository.
+	Then import the plugin as part of the project we want to use and add necessary plugin configurations to associate it to the build phase of the maven build
+	There seems to be too much work needs to be done in customizing the build process while working with maven.
+		
+From the above we can understand both ANT and Maven build tools suffers with their own drawbacks, to overcome the above problems with both these build tools a blend of together has been put to create called "Gradle"		
+		
+Gradle: tasks
+build project = archestrate the tasks 
+
+plugins = per each project type (build lifecycle)
+ |-conventions
+ |-tasks
+ 
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

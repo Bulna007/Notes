@@ -1,0 +1,182 @@
+drawbacks with xml based configuration:
+1. verbosed
+2. lengthy tags, in specific order difficult to memorize and makes it complex to work
+3. xml is not an java language, so needs more learning curve to understand it
+4. doesnt support inter-mediate compilation like java, so the only way to identify the errors in xml configuration is at runtime thus makes it hard to debug the errors and fix them so kills lot of developers time
+5. no powerful ide supporting xml
+6. since the configuration is placed externally in a xml file, the developer has to switch between java and xml to understand the information about the javacode
+considering all xml doesnt support rapid application development
+
+advantages of annotations:
+1. annotations are short in nature, at max spans an word. easy to memorize and quick to write
+2. annotations are java special interfaces types, so dont need to learn a new language something like xml to work with annotations, since every java developer is familiar with java
+3. annotations are written directly aspart of the sourcecode of the java classes, so those are compiled along with sourcecode and produces compile-time errors if there are any mis-configuration issues are there 
+4. every java ide supports writing annotations
+5. all the information pertaining to a class along with configuration is available within the sourcecode directly, so it is easy to understand the information about a class
+annotations support RAPID application development
+	
+	
+drawbacks with annotations:
+1. since the configuration is written directly within the sourcecode, a change in configuration requires modification of sourcecode, that enforces recompilation, repackaging, redeployment and restart the servers to have the changes effected
+2. annotations cannot be written for the classes who doesnt have sourcecode
+3. holistic configuration information about all the components and their configuration cannot be derived while using annotations
+
+advantages of xml:
+1. easy to change without modifying the sourcecode. and the changes would gets effected easily
+2. we can apply xml on the classes for both who has sourcecode and nosourcecode
+3. the complete configuration information of the entire application can be derived at one-shot by looking at once single central xml configuration file
+--------------------------------------------------------------------------------------------------------------------------------------
+From the above we can understand each of them has their own advantages and dis-advantages, which one should be preferred and used when?
+There are few considerations can be taken into account while developing an application to think about using xml / annotations:
+1. if the application is very big and the business complexity in building the application is very high, then it is recommended to use xml-based configuration rather than annotations, since annotations adds more complexity interms of understanding the components and their relationship of usage within the application. it makes quite harder to debug them as well
+
+2. if the team size is very large and are sperated over the geographical locations, then manage the application with annation based configuration is hard because to identify a specific component is under usage or not is difficult to dervie, so developers might endup in creating duplicate configurations/components within the application.
+instead it is better manage configuration using xml itself
+
+but the above considerations may not be impacting the decision of using annotations in the application, if we follow few standards / guideliness across the developers in the team, we can make use of annotations as well for enterprise large complex application
+1. ensure proper naming conventions are enforced across all the developers within the team, so that we can quickly identify the stereotype of the classes, by looking at their name. for eg.. an persistence class should be named with an name ending DAO, similarly an business logic class should be named ending with Service etc
+	
+2. if we can have proper package hierarch being used across the projects then we can easily derive the relationship between the classes.
+for eg.. all the servlets under servlet package, all daos under dao package and all services under service package and establish strict rules around which hierarchy of classes can talk to whom like
+	servlet -> service -> dao, then identifing the classes and their configurations becomes quite easy
+	
+but one thing to be memorized: annotations cannot replace completely the xml-based configuration
+--------------------------------------------------------------------------------------------------------------------------------------
+There are few people who are against to the Annotations, and wanted to continue support XML based configuration aspart of java language, since Annotations poses severe problem of usage. Let us explore the problems they reported and what solutions sun microsystems has provided in mitigating them
+
+1. annotations doesnt makes the components of the application pojofied, whereas xml supports pojofied application development
+2. there will be an conflicting roles between the developer and deployer when we use annotations, so better avoid them
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

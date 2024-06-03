@@ -1,0 +1,223 @@
+How many ways are there in setting up a springboot project while working with maven?
+There are 3 ways are there in setting up a springboot project while working with maven
+
+1. directly declare starter dependencies/plugins in pom.xml
+2. using spring-boot-parent project in creating spring boot project
+
+
+2. using spring-boot-parent as parent project
+
+pom.xml
+-------
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+	<groupId/>
+	<artifactId/>
+	<version/>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<version>3.1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+			<version>3.1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-datajpa</artifactId>
+			<version>3.1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+			<version>3.1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+			<version>3.1.5</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.1.5</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
+	
+spring framework 7
+For each release of the spring framework version, spring boot team provides a new release of spring boot aligned with spring framework version.
+now we need to goto the project and update the versions of all the starter dependencies to migrate to the newer version of the spring framework
+
+
+
+
+spring-boot-parent
+|-pom.xml
+
+pom.xml
+--------
+<project>
+  <groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-parent</artifactId>
+	<version>3.1.5</version>
+	<type>pom</type>
+	<dependencyManagment> <!-- inherited in child projects -->
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter</artifactId>
+				<version>3.1.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-webmvc</artifactId>
+				<version>3.1.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-datajpa</artifactId>
+				<version>3.1.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-cache</artifactId>
+				<version>3.1.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-security</artifactId>
+				<version>3.1.5</version>
+			</dependency>	
+		<dependencies>
+	</dependencyManagment>
+	<build>
+		<pluginManagement> <!-- plugins can be inherited to child projects -->
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+					<version>3.1.5</version>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>repackage</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
+
+
+bootparent
+|-src
+  |-main
+	  |-java
+		|-resources
+	|-test
+	  |-java
+		|-resources
+|-pom.xml
+
+pom.xml
+--------
+<project>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.1.5</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>boot.org</groupId>
+	<artifactId>bootparent</artifactId>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-datajpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

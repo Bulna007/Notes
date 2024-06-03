@@ -1,0 +1,110 @@
+Bean lifecycle
+
+class Calculator {
+	int i;
+	int j;
+	int sum;
+	
+	public Calculator(int i) {
+		this.i = i;
+	}
+	public void setJ(int j) {
+		this.j = j;
+	}
+	public void init() {
+		sop("init()")
+		this.sum = this.i + this.j;
+	}
+	public void destroy() {
+		sop("destroy()")
+		this.i = 0;
+		this.j = 0;
+		this.sum = 0;
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="calculator" class="Calculator" c:i="10" p:j="20" init-method="init" destroy-method="destroy"/>
+
+class Test {
+	public static void main(String[] args) {
+		BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("application-context.xml"));
+		Calculator calculator = beanFactory.getBean("calculator", Calculator.class);
+		sop(calculator);
+		
+		((ConfigurableListableBeanFactory)beanFactory).destroySingletons();
+	}
+}
+
+whenever our application is going to terminate, at that point we need to call the destroySingletons() on the ioc container. within an core java application, there can be multiple exit points can be there. for eg.. we can terminate an application before reaching to the end of main method by calling explicitly System.exit(0);
+
+In such case when should we call destroySingletons() method?
+within all the places whereever our application is going to die, before that we need to call destroySingletons(); but looks like it is impractical to ensure we call destroySingletons() at all those exit points within our application
+
+when should we call destroySingletons()? = while terminating the application/jvm
+if jvm knows when it is going to die, can the jvm can tell us when is the application/jvm is dying?
+Yes we can ask jvm to inform when the application/jvm is dying
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+

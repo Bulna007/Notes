@@ -1,0 +1,160 @@
+Annotations
+------------
+Why is the need of configuration has been arised?
+while building enterprise applications, we endup in writing lot of infrastructure or cross-cutting logic across all the components of our application, due to this we endup in more cost, time and efforts in developing the application. instead of we writing the cross-cutting services, these are offered through containers, runtime environments or engines, for these services to be applied to our application classes, our application class has to be managed by the underlying containers, thus requires information about our classes, that can be provided through configuration / metadata
+
+we need to write the configuration information describing our classes in xml-based configuration files.
+	
+What are annotations?
+Annotations are the another way of writing the configuration information describing the details of the java class instead of using the xml-based configuration file. annotations are directly written aspart of the sourcecode of the java class, to describe the information about that class, so these are called sourcecode metadata
+
+There are lot of challenges/difficulties exists in writing the configuration information within an xml-based configuration file, to eliminate those difficulties annotations are introduced, let us explore the challanges in writing the xml-based configuration:
+
+1. xml is too verbosed, we endup in writing more information describing the data in xml than the actual information that makes the poeple difficult to memorize in writing the xml file
+
+2. we need to write the xml by using tags, these tags are quite length difficult to memorize and use. In addition we need to remember the case in-which they appear within the xml file along with the order in which these tags should be written. by considering these people find it very complex to write or work with xml
+
+3. xml is no way related to java, its an altogether different language which has its own syntax and semantics in writing it. Many of the times the java developer find it very complex to learn a new language to work with developing applications in java platform
+
+4. xml doesnt support intermediate compilation like java. The only way to identify the errors within the XML is during the runtime. upon deploying and running the application, the runtime environments or engines or containers while reading the XML will throws or reports an ugly runtime exception breaking/aborting the application. Now developer will have hardtime in reading the logs, identifying the failure and modifying the XML and repackage, redeploy and rerun the application.
+This goes in loops until all the errors in the XML are eliminated, this making it very complex and difficult work using XML
+
+5. There are no powerful ides that helps the develpers in quickly writing the XML hence wastes most of the developers time
+
+6. since the configuration information about the class is kept externally within an XML file, the developer always find it hard to understand the class/configuration with which it is executed. always he has to flip through the java class and the corresponding xml configuration to understand the details of class, that makes very difficult to debug/modify
+	
+From the above we can understand XML doesnt support rapid application development, developer has to spend lot of time in memorizing, writing, validating and debugging the XML configuration he has written during the development that inccurs huge time and delays the development of the application
+To overcome the above problems annotations are introduced.
+	
+There are lot of advantages of working with Annotations when compared with XML as described below.
+1. Annotations are short in-nature and spans at max a word and may have couple of attributes defined within them to describe more details of a class. due to reason being small in nature, one can easy understand and memorize, work with annotations 
+
+2. Annotations are also special type of java interfaces only. the resemble the syntax and semantics of java programming language so to work with annotations developers dont need to learn altogether a different language to work with annotations.
+	
+3. Since annotations are directly written aspart of the sourcecode of the java class, those are compiled during the java compilation process and reports any mis-configuration errors that exists aspart of them, so debugging and identifying the configuration problems written interms of annotations is very easy and dont run into iterates in fixing them during runtime
+
+4. since these are directly written aspart of the sourcecode of the java class, the developer can find all the information pertaining to the class by looking at the class itself, he dont need to switch between code and external file to understand the details of the class, thus making it easy to maintain and debug
+
+5. all the java ides supports working with annotations, since annotations are also java types
+From the above we can easily understand annotations promotes/supports rapid application development
+
+From the above discussion itseems that we have lot of dis-advantages in using XML and have plenty of advantages with annotations. but even annotations also has their own dis-advantages and XML has their own advantages let us understand.
+	
+drawbacks in working with annotations:
+1. while working with annotations, since the configuration information is written directly on the class itself, if there is a change in the configuration required, it enforces us to recompile, repackage and redeploy the whole application which is an biggest dis-advantage with annotations
+
+2. annotations are another way of writing the configuration information, but it is not alternate to the xml-configuration, because annotations are written directly aspart of the sourcecode of the java classes, but every class may not have sourcecode, for eg.. if the classes are provided by a framework or a third-party library, to use those classes aspart of our application we might have to attach configuration information around them which cannot be written using annotations since we dont have sourcecode of them. then we need fallback to alternate approaches (like xml for those classes)
+	
+From the above we can understand we cannot achieve a cleaner way of accomplishing the configuration information for an applicatin through annotations, thus making it complex to use annotations in an application
+
+3. since the configuration information pertaining to the java classes are scattered and distributed across the classes, it would very difficult to get the holistic view of the entire application thus making it difficult to understand the application and their components and hence leads to difficulty in debugging
+
+
+@Component // bean definition
+class A {	
+	IB b;
+	
+	@Autowired(name="x")
+	public void setB(IB b) {}
+}
+
+@Component("x")
+class B1 implements IB {}
+
+@Component("y")
+class B2 implements IB {}
+
+(or)
+
+<bean id="a" class="A">
+	<property name="b" ref="x"/>
+</bean>
+<bean id="x" class="B1"/>
+
+
+advantages of xml:
+1. since the configuration is written separately in an external xml file, any change in the configuration doesnt requires modifications in java class, thus eliminates recompilation, repackging and redeployment of the application, we just need to rebounce the server after the changes
+
+2. as always the configuration is kept away from the class, we write the configuration irrespective of whether we have sourcecode or no sourcecode. thus making an unified way of defining the configuration
+
+3. since all the configuration information describing the components of the application are written in one-single central xml file, we can easily derive the holistic view of the application. the complete configuration information about all the components of the application can be derived at one-shot while working with xml, thus making it easy to understand and debug
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

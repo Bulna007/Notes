@@ -1,0 +1,164 @@
+Spring boot application is also an java application only, so the default behavior of java application will be applicable to spring boot application also, which means an successful completion of a spring boot application returns an zero exitcode by the jvm and incase if the application was terminated with an exception, then jvm returns non-zero exitcode.
+	
+so sometimes we might want to customize the exitcode for an spring boot application aswell, how do we customize?
+
+class App {
+	public static void main(String[] args) {
+		ApplicationContext context = new AnnotationConfigApplicationContext(JavaConfig.class);
+		
+		
+		try {
+			// logic	
+		}catch(Exception e) {			
+			System.exit(9);
+		}
+	}
+}	
+	Spring boot Exitcode
+--------------------
+Every program upon completing its execution, it should return an exitcode to the operating system of the computer indicating a success or failure of execution
+zero = indicates the program has successfully finished its execution
+non-zero = indicates, the program has ran into an error during its execution and terminated abnormally
+
+Incase of java programs also they need to return exitcode indicating the status of the program execution, but we dont need to write explicitly anycode in returning the exitcode to the operating system of our computer, rather jvm takes care of reporting the exitcode to the operating system based on the way the program has finished execution.
+	
+If a java program has finished executing all the lines of code within the main() method without any execptions and returned the control to the jvm, then jvm treats the program has finished execution normally and returns "0"	exitcode to the operating system.
+
+Incase if the java program during its execution has caught into an exception and reported it to the jvm, then the jvm marks the program has failed in execution and reports an appropriate non-zero exitcode to the operating system indicating the failure 
+
+This is how the default behavior of reporting the exitcodes works in java applications
+--------------------------------------------------------------------------------------------------------------------------------------
+How to see the exitcode reported by a program to the operating system of our computer?
+upon completing the execution of the program, it returns an exitcode to the operating system, the operating system stores the exitcode temporarily in an implicit variable and will be overwritten per each program upon completion.
+	
+incase of windows operating system, it stores the exitcode of a program in a shell variable : errorlevel, we can access it using 
+"echo %ERRORLEVEL%" from windows prompt
+
+incase of linux, it stores the exitcode of a program in a bash variable: $?, we can access it using echo $?
+--------------------------------------------------------------------------------------------------------------------------------------
+How can we customize the exitcode with which we want to terminate our java program?
+by default the jvm takes care of reporting an exitcode indicating the success/failure to the operating system. but few times we may wanted to customize the exitcode with which we want to terminate the application.
+	
+For eg.. for each type of failure or execption we encountered during the application, indicating the type of the exception or failure we want to return a specific exitcode, to the operating system indicating the failure. usually these customizations are very much used in running the applications in containerized environments like docker.
+	
+We can customize the exitcode of an application by using System.exit(exitcode);
+by using the System.exit(..) we are letting the jvm to terminate the program with the exitcode specified.
+	
+	
+How to handle exitcodes in spring boot application?
+Spring boot application is also an java application only, so the default behavior of java application will be applicable to spring boot application also, which means an successful completion of a spring boot application returns an zero exitcode by the jvm and incase if the application was terminated with an exception, then jvm returns non-zero exitcode.
+	
+so sometimes we might want to customize the exitcode for an spring boot application aswell, how do we customize?
+Incase of spring framework application, the bean lifecycle management methods will not be invoked automatically, post creation of the ioc container we need to manually register shutdown hooks to the jvm so that the lifecycle methods on the bean definitions are called to gracefully terminate the application.
+	
+whereas incase of spring boot application, the SpringApplication class takes care of registering the shutdownhook ontop of the ioc container upon creating the ioc container. that means no matter how our application has been terminated, always the bean lifecycle management methods on the bean definitions will be invoked, so that our application would be terminated gracefully.
+	
+From the above we can understand if we want to customize the exitcode of an spring boot application we can directly invoke System.exit(exitcode); as below
+
+@SpringBootApplication
+class BootApplication {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(BootApplication.class, args);
+		
+		// logic
+		System.exit(34);
+	}
+}
+
+From the code it looks like we can call directly System.exit(exitcode) in customizing the exitcode with which we want to terminate a spring boot application, because SpringApplication class has already registered shutdownhooks ensuring the application being terminated gracefully.
+	
+But incase of springboot application, it is not recommeded to directly call System.exit(exitcode) in customizing	the exitcode of the application. because spring boot developers built lot of echo system aspart of the SpringApplication class in handling the exit of an spring boot application
+	
+The Spring boot developers has provided an method called exit(ApplicationContext) in SpringApplication class, that should be called while terminating an spring boot application
+
+@SpringBootApplication
+class BootApplication {
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(BootApplication.class, args);
+		try {
+		
+			// logic
+		}finally {
+			int exitcode = SpringApplication.exit(context);
+			// the exit() method has the logic for handling the termination of spring boot application and returns an exitcode that needs to be passed to System.exit as below
+			System.exit(exitcode);			
+		}
+	}
+}
+	
+The SpringApplication.exit(ApplicationContext)?
+exit(..) = is the method used for gracefully terminating the ioc container in spring boot application. upon calling SpringApplication.exit(context); it performs several operations internally as below.
+	
+1. it looks for ExitCodeGenerator bean definition within the iocontainer and make a collection of them.
+2. it tries to close the ioc container gracefully by calling ApplicationContext.close();
+	2.1 while closing the ioc container, if there is an exception, then the exit() method of the SpringApplication class will generate a random number indicating the failure of the termination and returns to us
+		2.2 if there is no exception while closing the ioc container, the SpringApplication class will call ExitCodeGenerator and takes the exitcode and returns to us.
+3. indicating the terminate of the application, it publishes an ExitCodeEvent and looks for an listener to be invoked
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

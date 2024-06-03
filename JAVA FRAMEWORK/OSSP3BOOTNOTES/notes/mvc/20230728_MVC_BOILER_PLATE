@@ -1,0 +1,144 @@
+Spring WebMvc 
+
+Spring WebMvc is an module provided by spring framework developer to support building web applications using spring framework. Even though we can develop web applications using servlet/jsp or struts framework, there are lot of challenges in building the application with them.
+servlet/jsp = being an api, doesnt provider boiler-plate logic
+struts framework = doesnt support building end-to-end application
+
+To eliminate the above problems, the spring framework has provided spring webmvc module.
+	
+What type of boiler-plate logic do we need to write while building applications using servlet/jsp?
+1. Request Wrapping:
+Reading the request parameters that are send aspart of the http request and binding them to the java class object attributes is called "Request Wrapping"
+
+In a Typical Servlet/Jsp based web application, upon receiving the request within the Servlet we need to write the code for reading the request parameter values that are send aspart of the request and bind them to an java bean object, so that the data can be passed as an input to the other layers of the project (business-tier/persistence-tier). This piece of code/functionality seems to be common across any projects that we build using servlet/jsp which is called "Boiler-plate" logic
+
+Since Servlet/Jsp is an api, they dont provide boiler-plate logic, the programmer has to endup in writing this code across all the servlet classes of the application in wrapping the data into object
+
+class AddDoctorServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+	
+		DoctorForm form = RequestWrapper.wrap(httpReq, "DoctorForm");
+		
+	}
+}
+
+class RegisterPatientServlet extends HttpServlet {
+  public void service(httpReq, httpResp) {
+		PatientForm form = RequestWrapper.wrap(httpReq, "PatientForm");
+	}
+}
+
+class DoctorRequestWrapper {
+	DoctorForm wrap(httpReq) {}
+}
+
+class PatientRequestWrapper {
+	PatientForm wrap(httpReq) {
+	
+	}
+}
+
+class RequestWrapper {
+	public Object wrap(HttpServletRequest req, String formClassName) {
+		Map<String, String[]> paramMap = null;
+		Object form = null;
+		
+		paramMap = req.getParameterMap();
+		form = Class.forName(formClassName).newInstance();
+		
+		paramMap.forEach((paramName, paramValue)->{
+		
+		});		
+		
+	}
+}
+
+
+class A {
+	int m1(int i) {
+	
+	}
+}
+
+A a = new A();
+int k = a.m1(10);
+
+class B {
+	int m2(int i, int j) {}
+}
+
+B b = new B();
+int k = b.m2(10, 20);
+
+
+Object obj = Class.forName("A").newInstance();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

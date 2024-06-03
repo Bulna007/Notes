@@ -1,0 +1,103 @@
+What will happens when we invoke SpringApplication.run(BootApplication.class, args);
+1. creates an empty environment object
+2. detects and identifies the external configuration of our application and loads into the environment object that is created above
+3. prints the boot banner
+4. detects the WebApplicationType based on the classpath of the project
+  4.1 if spring mvc jars are found under the classpath of the project, it treats WebApplicationType as "WEB" and instantiates
+	    AnnotationConfigServletWebServerApplicationContext
+	4.2 if the spring webflux jars are found under the classpath, it treats the WebApplicationType as "REACTIVE" and instantiates
+	    AnnotationConfigReactiveWebServerApplicationContext
+	4.3 otherwise it treats the WebApplicationType as "NONE" and instantiates
+	    AnnotationConfigApplicationContext
+5. instantiates the spring factories and registers them with the ioc container
+6. Invokes the ApplicationContextInitializer
+7. prepareContext
+8. refreshContext
+9. executes the CommandLineRunners and ApplicationRunners that are part of the ioc container. upon completing the execution returns the reference of the ioc container to the application
+10. during the above stages of execution, the SpringApplication class would publishes an event indicating the phase/stage of bootstrapping and invokes the Listener allowing us to handle the event.
+-------------------------------------------------------------------------------------------------------------------------------------------	
+How many ways we can setup an spring boot project while working with Maven?
+There are 3 ways are there in setting up an boot project using maven
+
+1. directly declare starter dependencies/plugins of spring boot in pom.xml
+
+1.1 create an maven-archetype-quickstart project 
+mvn archetype:generate -DgroupId=boot.org -DartifactId=directboot -Dversion=1.0.0 -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4
+	
+1.2 into the above project that has created, we need to add the spring boot starter dependencies
+There are several starter dependencies are provided by spring boot team, per each technology. depends on which technologies we want to use in the project, we need to identify and add them into the pom.xml of our project
+
+all the spring boot starter dependencies follows an standard naming convention and starts with spring-boot-starter-* with groupId=org.springframework.boot
+
+1.3 The spring boot team has provided an maven plugin called "spring-boot-maven-plugin" that should be declared under build plugins within the pom.xml of our project.
+The spring-boot-maven-plugin does the job of building boot jar/war file when we package the application.
+	
+
+	
+
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,57 @@
+There are 3 types of data are there within an application
+1. Static/Fixed data or Long-lived data
+Static/Fixed data
+Static/Fixed data will not change during the lifetime of the application, this is the pre-identified data and is fixed in nature and will not grow and modified during the runtime of the application
+
+This data is a very good candidate for caching and can be cached permanently through out the runtime of the application. This data can be cached during the startup of the application.
+	
+eXamples: static values / configurations written in a properites, xml, json or yaml files
+          master tables data
+	
+2. Moderate data
+Moderate data seems to constant or static or will not change for long interval of time and might get modified rarely during the runtime of the application.
+Nature: This data is not fixed in nature and the data gets populated, created, modified	or deleted while the application is running which is called "runtime data", but the chances of getting changed is very less
+
+Can we cache the Moderate data?
+Yes, this also sometimes qualifies for caching. If the frequency at which the users are accessing the data seems to more than the time interval its gets modified
+
+for eg.. the likeliness of this data being modified is at avg: every 1 hour, within this one-hour of interval of time if more number of users are trying to access the data for eg.. around 100 users then we can cache on first-request and can reuse the data for subsequent 99 user requests and can save/improve performance and scale the application
+
+For eg.. in a e-commerce application various users are accessing products information. The product information is not going to change frequently but the chance of users accessing the data repeatedly within an interval of time is more and is a good candidate of caching.
+	
+How to cache such data?
+since this data is runtime data (modified/manipulated during the runtime of the application) and might be of any/huge amount in nature this data is not recommended to cached during startup.
+Such data should be cached only on demand when requested. For eg.. an user is trying to browse a product with produceCode=3974, at this moment after fetching the data from database, we can Cache the data and can be reused at subsequent requests.
+	
+How long such data should be Cached?
+1. This data should not be Cached permanently.
+2. All this data we are storing should have an TTL interval (Time To Live Seconds) indicating how long this data should be kept in Cache.
+3. MaxEntriesInCache, how many number of entries can at max be kept in cache. This ensures the cache is not bursted out. when the Cache has reaced to max entries we should apply an eviction algorithm like
+- LRU
+- MRU
+- FIFO
+- LIFO
+
+3. In addition to the above we need to have proper mechanism for evicting or marking the data as stale whenever it has been modified in the underlying source system (because it is runtime data).
+4. never such data should be modified outside the scope of the application
+
+
+
+3. Short-Lived Data or Frequently Modified data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

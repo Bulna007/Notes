@@ -1,0 +1,68 @@
+Custom Content Handlers
+The Jax-rs runtime has provided predefined/supported dataTypes that should be declared as parameterTypes or returnTypes for the resource class methods in receiving the requestBody or dispatching the data aspart of the response body to client. But it is not recommended to design the api classes/methods in receiving/dispatching raw representation of the data 
+
+Always design your api/resources against objects as parameterTypes or returnTypes in receiving the requestBody or dispatching the data aspart of response body
+
+
+When we declared parameterType as object or returnType as Object in resource method, the jaxrs runtime will not be able to extract the requestbody data and convert into object in passing it as parameter to the resource method. Similarly when we returned object as an return value, jaxrs runtime dont know how to convert the object we returned into data representation format, to be dispatched it aspart of response body.
+	
+So we need to write our own classes in converting the requestbody data into object format or object into data representation format that can be dispatched aspart of response body.
+
+So upon receiving the request, let the jaxrs runtime takes care of invoking the converters we have written during request/response time in converting to object or data formats while calling the resource method.
+	
+The jaxrs api has provided #2 standard interfaces for converting requestBody data into object and converting object into data format to be dispatched aspart of responsebody
+
+MessageBodyReader = reading the requestbody data and convert into object 
+MessageBodyWriter = takes the returnValue (object) that is returned by the resource method, converts into data representation standard and writes it to responsebody of the http response 
+
+
+	
+interface MessageBodyReader {
+	boolean isReadable(Class<?> class, Type genericType, Annotation[] annotations);
+	Object readFrom(InputStream ins, Class<?> classType, Type genericType, Annotation[] annotations, MultiValuedMap<String, String> requestHeaders);
+}	
+
+interface MessageBodyWriter {
+	boolean isWritable(Class<?> class, Type genericType, Annotation[] annotations);
+	void writeTo(Object obj, Class<?> classType, Type genericType, Annotation[] annotations, MutliValuedMap<String, String> responseHeaders, OutputStream os);
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+	
+	

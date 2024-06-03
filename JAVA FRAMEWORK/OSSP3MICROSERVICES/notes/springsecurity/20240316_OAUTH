@@ -1,0 +1,97 @@
+OAuth2
+------
+OAuth2 is an authorization framework
+The OAuth2.0 framework enables third-party applications to obtain limited access to the http service onbehalf of an resource owner, by orchestrating an approval process between the resource owner and the service.
+	
+How to authorize third-party application to obtain access to the http service or a resource on-behalf of the resource owner?	
+1. Traditional client-server authorization
+The Resource owner provides the resource credentials to the Third-party application, allowing the third-party application to access the resource onbehalf of the owner.
+
+Resource Owner: Customer owning an account with PhonePe
+Third-Party Application: Amazon
+Resource: PhonePe Wallet
+
+"The Customer gives the PhonePe credentials to Amazon allowing them to access the wallet for transferring the funds from his account".
+	
+There are lot of problems and limitations with Traditional Authorization model:
+1. Third-Party application are required to store the resource owner credentials for future usage, typically in a clear-text password, that poses security breach. In future if the third-party application has been compromized, then all the data pertaining to the resource owner will also be exposed or stolen
+
+2. The third-party application gains overly broad access or unrestricted access to the resource owners protected resource, leaving the resource owner without having the ability of restrict the duration or access to the resource
+
+3. Resource owner cannot revoke access to an third-party application without revoking the access to all the third-parties, because the only way to revoke an access is by resetting the credentials that revokes access to all the third-parties
+
+From the above we can understand there are lot of problems in authorizing the third-party applications in granting the access to the resources. To over these problems the OAuth2.0 has been introduced.
+--------------------------------------------------------------------------------------------------------------------------------
+OAuth2.0 has addressed the above problems by providing an authorization flow/layer. The Third-party application request access to the resource that is controlled by the Resource Owner and is hosted on Resource Server, rather than issuing resource owner credentials directly to the ThirdParty Application. The resource server provides altogether a different set of credentials to the third-party application allowing them to access the Resource.
+	
+The Third-Party application gains access to the protected resource through obtaining an Token. The Token contains specific scope, lifetime and other attributes (This token can be a string or a json token). Using this Token the Third-Party application gains access to the HTTP Service or Resource.
+	
+In OAuth2.0 there are four roles are there
+1. Resource Owner
+An entity capable of granting access to a protected resource. If the entity is a person, then he is referred as enduser
+
+2. Third-Party Application
+Its the application that requests access to the protected/restricted resource onbehalf of the Resource Owner
+
+3. Resource Server
+The Resource Server is the server that is hosting the HttpService/Resource and is capable of granting the access to the resource based on the token
+
+4. Authorization Server
+Authorization Server issues accessTokens to the Third-Party application, upon authenticating the resource owner with his credentials.
+	
+OAuth2 Introduced Grant Types to support authorizing the different third-party applications in accessing the resource. There are 4 Grant Types are supported by OAuth2:
+1. AuthorizationCode
+2. Implicit
+3. Resource Owner Password Credentials
+4. Client Credentials
+
+out of the above implicit and client credentials are deprecated and no more under use due to security breach or risk.
+	
+	
+	
+	
+	
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

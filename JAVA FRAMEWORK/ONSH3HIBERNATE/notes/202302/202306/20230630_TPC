@@ -1,0 +1,16 @@
+Inheritance Mapping Model
+-------------------------
+Inheritance Mapping model is about modelling an inheritance relationship between the entity classes interms of table relationships, so that we can perform persistency operations on the underlying tables based on the Inheritance hierarchy
+
+There are 3 ways we can map/model an inheritance relationship between the entity classes interms of database tables
+1. Table per class hierarchy = For all the entity classes within the hierarchy, we create one table 
+2. Table per Subclass        = Per each subclass within the inheritance hierarchy, we create one table with inrelationship with 	 
+                               superclass table
+3. Table per Concreate class = For each concreate class within the inheritance hierarchy, we create one independent table
+--------------------------------------------------------------------------------------------------------------------------------------
+
+1. Table per class Hierarchy
+	
+
+	
+	

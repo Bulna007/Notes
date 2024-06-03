@@ -1,0 +1,303 @@
+As the SpringApplication class acts as an key component in performing the bootstrapping activities in bringing up the spring boot application, we might think SpringApplication class itself is taking care of registering/deploying and starting our application on the Embedded Servlet containers.
+	
+But not all the spring boot applications should be deployed and executed on embedded servlet containers, that too based on the type of the WebApplication the containers on which those needs to be deployed will change, so the SpringApplication class will not take the responsiblity in deploying, rather spring boot people comes up with a implementation of ApplicationContext specific to the Type of the application.
+WebApplicationType = WEB: ServletWebServerApplicationContext
+WebApplicationType = REACTIVE: ReactiveWebServerApplicationContext
+
+so these respective containers takes the responsibility of creating, deploying, start and stopping the application on the Embedded Servlet containers.
+	
+	
+The SpringApplication class upon 
+	1. creating the ioc container based on the WebApplicationType being detected from classpath
+	2. it registers the spring factories by instantiating them 
+	3. invokes ApplicationContextInitializers
+	4. prepareContext()
+	5. refreshContext()
+	
+upon calling refreshContext() on the ioc container, the respective ApplicationContext implementation in our case it is ServletWebServerApplicationContext, will instantiates all the bean definitions and executes the CommandLineRunners and ApplicationRunners to perform one-time initialization logic ontop of our application.
+	
+as all the bean definitions are instantiated and initializations are finished, the application is ready for deployment, since the ioc container knows about the stage, by itself it calls onRefresh() method internally
+
+within the onRefresh(), it creates an WebServer implementation (default: tomcat) and registers the application onto it and starts the server. That is how an springboot application is deployed on the embedded servlet container.
+-------------------------------------------------------------------------------------------------------------------------------------	
+How do we register web application components while working with spring boot, spring mvc in embedded servlet container environment?
+We register a servlet or filter or listener in a web application
+
+1. configuration approach
+we use web.xml in declaring these components using respective configuration
+
+2. programmatic approach
+2.1 ServletContainerInitializer, used by the framework vendors in registering their framework components into the ServletContainer
+2.2 ServletContextListener = used by the developers within the application, for registering programmatically their own application components.
+	
+While working with springboot we dont write web.xml. It is not recommended to use ServletContainerInitializer for registering our application components and we cannot use ServletContextListener because it should be configured in web.xml which we dont have. The only way we can register our Web Application components with the Servlet container is directly using embedded Servlet Container apis.
+	
+Each Embedded Servlet container vendor has provided apis through which we can register the dynamic web components of our application.
+Tomcat tomcat = new Tomcat();
+tomcat.addServlet("/urlPattern", ServletObject);
+
+While working with spring boot ServletWebServerApplicationContext (ioc container) is taking care of creating the Embedded Servlet container, registering and deploying our application. So we dont have the reference of Servlet container (like Tomcat object) for registering our Web Application Components (like servlets, filters, listeners etc) here.
+	
+Since the ioc container only has the reference of Servlet Container, the ioc container only can register the web components with servlet container. To facilitate this the ioc container or ServletWebServerApplicationContext has provided a mechanism
+
+1. Write an Servlet component using servlet api in the spring boot application and configure it as an bean definition
+@Component
+class PingServlet extends HttpServlet {
+	void service(HttpServletRequest req, HttpServletResponse resp) {
+		resp.getWriter().out("Pong!");
+	}
+}
+
+dont write and declare any servlet annotations to register this as an servlet within the servlet container, rather configure it as an bean definition using @Component or by declaring it as bean in JavaConfig incase if you dont have sourcecode. Here we take an advantage, as servlet is a bean definition we can perform dependency injection.	
+
+	
+2. Inorder to register this Servlet with the underlying servlet container, we need wrap the information about this servlet in ServletRegistrationBean class and configure it as a bean definition
+The ServletRegistrationBean class along with holding the servlet object, it has attached with metadata of the servlet like
+	2.1 servlet url pattern
+	2.2 name
+	2.3 load-on-startup
+	2.4 init-parameters
+	etc
+	
+inorder for the ioc container to register the servlet with servlet container, it requires these metadata information which is wrapped inside the ServletRegistrationBean 
+
+@SpringBootApplication
+class BootApplication {
+
+	@Bean
+	public ServletRegistrationBean pingServlet(PingServlet pingServlet) {
+		ServletRegistrationBean registrationBean = new ServletRegistrationBean(pingServlet);
+		registrationBean.setName("ping");
+		registrationBean.setUrlPatterns("/ping");
+		return registrationBean;
+	}
+	
+	public static void main(String[] args) {
+		SpringApplication.run(BootApplication.class, args);
+	}
+}
+
+3. upon starting the application, the SpringApplication class run(...) method internally takes care of
+1. creating the ioc container based on WebApplicationType
+2. registers spring factories
+3. invokes ApplicationContextInitializer
+4. prepareContext
+5. refereshContext = here all the bean definitions are instantiated and all the initializations has been performed. so ServletRegistrationBean objects are also instantiated
+
+6. The ioc container internally onRefresh() -> it creates the WebServer object and registers our application onto the EmbeddedServlet Container. 
+during/at this stage, the ioc container goes into it and looks for all the ServletRegistrationBean definition objects if found takes one bean after another and extracts the servlet object and their metadata using which it registers the servlets with the underlying servlet container programmatically.
+so that our Filters & Servlets can be registered by defining them as beans in our servlet container in Spring Boot.
+-------------------------------------------------------------------------------------------------------------------------------------	
+How does DispatcherServlet is being configured or registered with underlying servlet container while working with spring boot mvc?
+While working with springboot mvc, we are not configuring DispatcherServlet in web.xml or programmatically with the underlying servlet container.
+The job of registering the DispatcherServlet with the underlying servlet container will be taken care by the ServletWebServerApplicationContext itself by using the above mechanism we discussed which is "ServletRegistrationBean".
+	
+	
+#1. The springboot developers has written DispatcherServletRegistrationBean extending from ServletRegistrationBean that holds the DispatcherServlet object along with metadata with which it should be registered with underlying Servlet container.
+	
+	
+#2. In addition the spring boot developers has written DispatcherServletAutoConfiguration class that takes care of configuring DispatcherServlet and DispatcherServletRegistrationBean as bean definitions within the ioc container with default configurations.
+	
+upon calling SpringApplication.run(Config.class, args);
+1. identify the WebApplicationType = WEB and instantiates the AnnotationConfigServletWebServerApplicationContext object
+2. instantiates and registers the spring factories (autoconfiguration classes with the ioc container)
+3. invokes ApplicationContextInitializer
+4. prepareContext
+5. refreshContext 
+	5.1 The AutoConfiguration classes are identified and all the bean definition methods within them will be executed by the ioc container based on Conditional Annotations defined around them (Opinionated View).
+	5.2 Along with that all the bean definitions will be instantiated by the ioc container.
+	5.3 initializers are invoked
+at this stage, even DispatcherServletAutoConfiguration class also gets executed by the ioc container, by which
+	- DispatcherServlet object is configured as bean definition
+	- DispatcherServletRegistrationBean is also configured as bean definition wrapping DispatcherServlet object and relevant metadata
+	5.4 calls onRefresh() method internally
+	5.5 within the onRefresh() (ioc container) method it creates WebServer object (ServletContainer), and then looks for ServletRegistrationBean objects and registers them with underlying Servlet Container with appropriate metadata
+	so here we have DispatcherServletRegistrationBean which is an subclass of ServletRegistrationBean, so it is also being registered as servlet in underlying servlet container	
+hence: we dont need to configure DispatcherServlet within our application while working with spring boot.
+	
+
+
+How does the ViewResolver is configured as bean definition?
+The springboot developers has provided WebMvcAutoConfiguration class, that takes care of configuring most of the mvc components as bean definitions with default configuration.
+	
+so when we configure in application.yml
+spring.mvc.view.prefix
+spring.mvc.view.suffix
+
+the WebMvcAutoConfiguration class reads these properties from environment object and configures the InternalResourceViewResolver as bean definition within the ioc container.
+	
+Now inorder to develop spring mvc application using spring boot we only need to takecare of writing controllers or application logic we dont need to worry about framework components.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

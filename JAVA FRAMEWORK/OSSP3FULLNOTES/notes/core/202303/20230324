@@ -1,0 +1,132 @@
+class ShowSignupServlet extend HttpServlet {
+    public void service(httpReq, httpResp) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        List<String> cities = null;
+        List<String> states = null;
+        List<String> coutries = null;
+				Cache cache = null;
+        try {
+						cache = Cache.getInstance();
+						if(cache.containsKey("cities") == true) {
+								cities = (List<String>) cache.get("cities");
+						} else {
+							Class.forName(driverClassname);
+							con = DriverManager.getConnection(url, un, pwd);
+							stmt = con.createStatement();
+							rs = stmt.executeQuery("select * from cities");
+							cities = new ArrayList<>();
+							while(rs.next()) {
+								cities.add(rs.getString("city_nm"));
+							}
+							cache.put("cities", cities);		
+						}
+            // query for states and coutries also and make a list of them
+            httpReq.setAttribute("cities", cities);
+            httpReq.setAttribute("states", states);
+            httpReq.setAttribute("countries", countries);
+            httReq.getRequestDispatcher("/signup.jsp").forward(httpReq, httpResp);
+        }catch(SqlException | ClassNotFoundException e) {
+            throw new ServletException(e);
+        }
+    }
+}
+
+Here even though the cities, states and countries will not change, but for each request we endup in repeadly reading the same data from database and forwarding to the jsp page, due to this the performance of the application will be impacted. So to overcome this problem we need to implement caching
+
+Cache Design Pattern
+---------------------
+Cache is used for storing the data in-memory, so that we can quickly access the data when we need avoiding fetching the data from the source system (like a database or a file) so that we can optimize the performance in reusing the data.
+all the data we store in cache should be attached with identification so that we can quickly access the data we wanted from the cache. so we store the data in cache as key,value pair
+
+class Cache {
+	private Map<String, Object> dataMap;
+	private static Cache instance;
+	
+	private Cache() {
+		dataMap = new HashMap();
+	}
+	
+	public static synchronized Cache getInstance() {
+		if(instance == null) {
+			instance = new Cache();
+		}
+		return instance;
+	}
+	
+	public void put(String key, Object value) {
+		dataMap.put(key, value);
+	}
+	public Object get(String key) {
+		return dataMap.get(key);
+	}
+	public boolean containsKey(String key) {
+		return dataMap.containskey(key);
+	}
+	
+}
+
+
+
+
+so while storing the data in the cache group all the related data together, organize the data and store inside it.
+List<String> cities = store cities list in cache with key "cities", list(string)
+		                                                      "states", list(string)
+		                                                      "countries", list(string)
+		
+
+bean scopes
+1. singleton
+2. prototype
+--------------
+3. request
+4. session
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

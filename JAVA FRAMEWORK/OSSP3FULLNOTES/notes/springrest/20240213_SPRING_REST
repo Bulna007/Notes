@@ -1,0 +1,161 @@
+Spring Restful Services
+------------------------
+The restful services are the architectural style of building distributed components that are interoperable. There are 5 principles over which the rest components works
+
+1. Unique Addressable URI = each resource should have a directly addressable/accessible URI through which we should be able to access the distributed component, that makes them easily adoptable
+	
+2. Uniform constrained interfaces = standardized & fixed set of interfaces over which these software components should be built
+	1. Interoperability
+	2. Familiarity
+	3. Scalability
+	
+3. Representation oriented = It can communicate with any of the representation formats requested by the client.
+	
+4. Communication Stateless = No data is stored onbehalf of the client on the server. All the data has to be cached at the client-side and should be reused.
+	
+5. HAETEOS = embeddeds the links aspart of the response enabling the clients to understand what course of action or operation can be done on the resource.
+--------------------------------------------------------------------------------------------------------------------------------
+In a typical restful service application along with business logic we have to implement persistence logic in storing the data. if we are building the restful components using jaxrs api and its implementation libraries like
+1. jersey
+2. resteasy
+
+we endup in writing lot of boiler-plate logic in building the end-to-end solution like
+1. For persistency = we need to use jdbc api or any of the ORM frameworks, which requires significant amount of efforts in building the persistence-tier of the application
+2. Support of Transactionality = need to use either jdbc for local transactions or jta for global transactions or should rely on third-party frameworks like hibernate, toplink transaction capabilities.
+3. There is no support of cross-cutting functionality from java, to manage cross-cutting aspects we need to use third-party libraries like AspectJ 
+4. To manage the dependencies and to collaborate the objects we need to endup in writing lot of boiler-plate logic
+
+Looks like there are several challenges involved in building an entire application using these libraries, instead use Spring Restful services api, so that we can leverage spring framework and ioc capabilities in building the application quickly.
+	
+The spring framework from spring 3.x onwards re-wamped itself towards modern programming methodologies in accomplishing the ease of programming the solutions. Aspart of its new programming adoption, it has re-written the entire spring mvc module, and aligned to support building restful services using spring mvc module itself.
+--------------------------------------------------------------------------------------------------------------------------------Working with client api
+There are #2 client-side apis are provided by spring framework in accessing the restful resource class
+1. RestTemplate
+2. WebClient
+
+As of spring framework 5, to support Webflux stack, spring has introduced WebClient as an alternate to the RestTemplate. The WebClient supports traditional Synchronous api and also the non-blocking and asynchronous approach (reactive). In future version of the Spring Framework the RestTemplate might be deprecated.
+	
+	
+1. RestTemplate approach
+The RestTemplate object will be configured as bean definition by default when we are working on springboot mvc application, otherwise we need to manually create it as an bean definition
+
+1.1 getForEntity
+is used for sending an HTTP "GET" request and receive the response from the server as ResponseEntity object
+
+RestTemplate restTemplate = new RestTemplate();
+ResponseEntity<String> responseEntity = restTemplate.getForEntity("url", String.class);
+
+1.2 getForObject
+it is same as the getForEntity, the only difference is instead of return ResponseEntity, it returns the Object type we specified in capturing the response.
+	
+String response = restTemplate.getForObject("url", String.class);	
+
+1.3 postForObject
+used for sending the post request with requestBody and capture the response back
+
+Account account = new Account();
+//populate the account
+HttpEntity<?> requestBody = new HttpEntity(account)
+AccountDetails accountDetails = restTemplate.postForObject(url, requestBody, AccountDetails.class);
+
+1.4 exchange() api
+restTemplate.exchange(url, requestMethod, requestBody, ResponseType);
+--------------------------------------------------------------------------------------------------------------------------------
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	   
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	
+	

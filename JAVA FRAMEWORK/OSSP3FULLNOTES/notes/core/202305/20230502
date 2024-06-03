@@ -1,0 +1,183 @@
+BeanFactoryPostProcessor
+------------------------
+BeanFactoryPostProcessor is used for applying the post processing logic ontop of the ioc container (BeanFactory), upon creating the ioc container, after loading the metadata, before the ioc container instantiates the objects of the Bean Definitions.
+	
+In-Short: using BeanFactoryPostProcessors, we update the in-memory metadata of the ioc container
+
+class AccountDao {
+	private ConnectionFactory connectionFactory;
+	
+	public AccountDao(ConnectionFactory connectionFactory) {
+		this.connectionFactory = connectionFactory;
+	}
+	
+	public void saveAccount(Account account) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = connectionFactory.newConnection();
+			
+			
+		}catch(ClassNotFoundException | SqlException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			// close the resources
+		}
+	}
+}
+
+class ConnectionFactory {
+	private String driverClassname;
+	private String url;
+	private String username;
+	private String password;
+	
+	public ConnectionFactory(String driverClassname, String url, String username, String password) {
+		this.driverClassname =driverClassname;
+		this.url = url;
+		this.username= username;
+		this.password=  password;
+	}
+	
+	public Connection newConnection() {
+		Connection con = null;
+		Class.forName(driverClassname);
+		con = DriverManager.getConnection(url, username, password);
+		con.setAutoCommit(false);
+		return con;
+	}
+}
+
+application-context.xml
+------------------------
+<bean id="connectionFactory" class="ConnectionFactory">
+	<constructor-arg value="#{db.driverClassname}"/>
+	<constructor-arg value="#{db.url}"/>
+	<constructor-arg value="#{db.username}"/>
+	<constructor-arg value="#{db.password}"/>
+</bean>
+
+<bean id="accountDao" class="AccountDao" c:connectionFactory-ref="connectionFactory"/>
+
+<bean id="ppc" class="PropertyPlaceHolderConfigurer">
+	<property name="location" value="classpath: db.properties"/>
+</bean>
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/bfpp/common/application-context.xml"));
+BeanFactoryPostProcessor bfpp = beanFactory.getBean("ppc", BeanFactoryPostProcessor.class);
+bfpp.postProcessBeanFactory((ConfigurableListableBeanFactory)beanFactory);
+
+
+ConnectionFactory connectionFactory = beanFactory.getBean("connectionFactory", ConnectionFactory.class);
+sop(connectionFactory);
+
+// use it
+
+db.properties
+-------------
+db.driverClassname=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/db
+db.username=root
+db.password=welcome1
+
+
+spring has provided an standard interface as below
+
+interface BeanFactoryPostProcessor {
+	void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory);
+}
+
+so if we want our class to act as an BeanFactoryPostProcessor, we need write our class implementing from the above interface and override the method taking ioc container as an parameter to apply the post processing logic
+	
+Instead spring has provided an concrete implementation of the BeanFactoryPostProcessor interface which is "PropertyPlaceHolderConfigurer", the name itself tells us it identifies placeholders in the in-memory metadata of the ioc container 
+#{}	and replaces them with property file values. this can be directly used within our application without writing our own implementation
+
+-------------------------------------------------------------------------------------------------------------------------------------
+BeanPostProcessor
+BeanPostProcessor is used for applying the post processing logic ontop of the bean definition object that has been created by the ioc container before ioc container returns the bean definition to the application
+
+by looking at the above definition we can think of Bean Lifecycle is available for applying the post processing logic ontop of the beandefinition object upon creating the object, after performing dependency injection
+then what is the difference between beanpostProcessor and bean lifecycle management (init-method)
+	
+class A implements InitializingBean {  |  class B implements InitializingBean {
+	public void afterPropertiesSet() {   |    public void afterPropertiesSet() {
+		// common post processing logic    |      // common postprocessing logic
+	}                                    |    }
+}	                                     |  }
+
+<bean id="a" class="A" />                 <bean id="b" class="B" />
+if we want to apply common postprocessing logic across all the bean definitions that are instantiated by the ioc container we should not write that common post processing logic using bean lifecycle, because it would be duplicated across all the beandefinition classes, instead use BeanPostProcessor
+
+class XPostProcessor {
+	// common logic
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

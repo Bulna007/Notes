@@ -1,0 +1,263 @@
+What are post processors, what is the purpose of them?
+Post processors are meant for performing post processing logic ontop of an object, immediately after the object has been created before it is being used in the application
+
+Spring supports #2 types of post processors
+1. BeanFactoryPostProcessor
+2. BeanPostProcessor
+
+1. BeanFactoryPostProcessor
+if we wanted to apply post processing logic ontop of the beanFactory (ioc container), upon creating the ioc container, after loading the metadata into the ioc container, before the ioc container beings instantiating the objects for the bean definitions then we need to use BeanFactoryPostProcessor
+
+In-short: if we want to modify the in-memory metadata of the ioc container at runtime, instead of modifying the physical configuration file, then we need to use BeanFactoryPostProcessor
+
+why do we need to modify the in-memory metadata of the ioc container at runtime, rather than modyfing the physical configuration file directly?
+There are many reasons or usecases under which we want to modify the runtime metadata rather than physical configuration file, let us try one usecase
+
+class AccountDao {
+	private ConnectionFactory connectionFactory;
+	
+	public AccountDao(ConnectionFactory connectionFactory) {
+		this.connectionFactory = connectionFactory;
+	}
+	
+	public void saveAccount(Account account) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = connectionFactory.newConnection();
+			
+			
+		}catch(ClassNotFoundException | SqlException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			// close the resources
+		}
+	}
+}
+
+class ConnectionFactory {
+	private String driverClassname;
+	private String url;
+	private String username;
+	private String password;
+	
+	public ConnectionFactory(String driverClassname, String url, String username, String password) {
+		this.driverClassname =driverClassname;
+		this.url = url;
+		this.username= username;
+		this.password=  password;
+	}
+	
+	public Connection newConnection() {
+		Connection con = null;
+		Class.forName(driverClassname);
+		con = DriverManager.getConnection(url, username, password);
+		con.setAutoCommit(false);
+		return con;
+	}
+}
+
+application-context.xml
+------------------------
+<bean id="connectionFactory" class="ConnectionFactory">
+	<constructor-arg value="com.mysql.cj.jdbc.Driver"/>
+	<constructor-arg value="jdbc:mysql://localhost:3306/db"/>
+	<constructor-arg value="root"/>
+	<constructor-arg value="welcome1"/>
+</bean>
+
+<bean id="accountDao" class="AccountDao" c:connectionFactory-ref="connectionFactory"/>
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/bfpp/common/application-context.xml"));
+AccountDao accountDao = beanFactory.getBean("accountDao", AccountDao.class);
+// use it
+
+How does the deployer has to deploy the application across the various different environments?
+1. pull the sourcecode from sourcecode management repositories
+2. the deployer has to compile the application by setting the classpath with dependencies required in compiling the application
+3. package the application based on packaging standard like jar, war or ear etc
+4. deploy the application onto the server and run the application
+
+problems:
+1. The deployer dont know what dependencies are required in building the application, what versions of the to be used.
+2. how to compile the application 
+3. along with building the application the deployer has to modify the configuration files pertaining to the env on which he is deploying. but the deployer dont know which configurations has to be modified before packaging the application
+
+Developer has to write documentation in building, packaging and deploying the java application, so that deployer can follow it in performing the operation
+
+with the documentation also still we have problems:
+1. The deployer has to gothrough the documentation througly in building and packaging the application which is an tedious job
+2. the deployer has to download the dependencies manually with right versions of them and set them to the classpath which is time taking job
+3. manually modifying the configurations within the application before packging the application is very difficult
+	3.1 identify which configuration files has to be modified and locating them in the project is difficult
+	3.2 the configuration file could be huge, identifying the right configuration to be changed is challenging
+	3.3 since the deployer dont know the configuration file format or standard, always there is a chance of modifying it wrongly that breaks the syntax or sematics of it, that leads to deployment error or broke the functionality
+4. there could be plenty of steps that has to be carried in sequential order to perform build/deployment of the application, and this has to carried several times in deploying the application so performing these activities manually may not be always accurate and results into error
+5. if something goes wrong, the deployer may not be able to identify what went wrong and might have to start from scratch that leads to huge amount of rework and waste of time
+
+To overcome the above problems, the build tools are introduced
+1. ant
+2. maven
+3. gradle
+etc
+
+since the developer knows the entire process of building, packaging the application he/she has to write the build instructions using ant, maven or gradle in automating the process of building the project
+The deployer will quickly conduct the build for the project by running these build tools, rather than manually building the applications.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

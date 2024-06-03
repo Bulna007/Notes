@@ -1,0 +1,106 @@
+How to make an object as Thread-Safe?
+The object thread-safety depends on the Type of the class
+1. if the class is an singleton class then:
+1.1. If the object of the class holds an sharable state, then all the access to the state should be synchronized to avoid data-inconsistency problems
+1.2. if the object has non-sharable state, it should be read-only
+1.3. if the object has non-sharable state and non readonly, dont delcare the state as attributes of the class, rather declare them as local variables/parameters to the methods in which we need the data, use it and dis-card it
+
+2. if the class is non-singleton class then:
+per each thread, we need to create a new object to perform operations using that class object
+	
+Lookup Method Injection
+-----------------------
+	
+class Container { // singleton
+	private Worker worker;
+	
+	public void receiveRequest(String data) {
+		worker.setData(data);
+		worker.processRequest();
+	}
+	
+	public void setWorker(Worker worker) {
+		this.worker = worker;
+	}
+}	
+
+class Worker { // non-singleton
+	String data;
+	public Worker(String data) {
+		this.data = data;
+	}
+	
+	public void processRequest() {
+		// worker performs the operation using the data	
+	}
+}
+	
+	
+application-context.xml
+-----------------------
+<bean id="worker" class="Worker" scope="prototype" />
+
+<bean id="container" class="Container">
+	<property name="worker" ref="worker"/>
+<bean>
+
+In the above example we have lot of problems:
+1. when we inject prototype bean into singleton bean definition, the prototype acts as singleton itself.
+2. in a singleton class we should not declare non-sharable state, if we declare non-sharable we run into data in-consistency problem
+
+if 2 requests has been sent simulataneously in the above example, the first request data will be overriden by the #2 request, since both the request are sharing the same Worker hence we run into data inconsistency problem. this has been caused because we are injecting prototype bean into singleton class, so that prototype behaves as singleton.
+	
+	
+How to avoid data in-consistency problem?
+dont declare the non-sharable state as attribute within the class, declare it as local variable within the method we wanted to use perform operation and discard within the method itself
+
+class Container implements BeanFactoryAware {
+	private BeanFactory beanFactory;
+	
+	public void receiveRequest(String data) {
+		Worker worker = null;
+		
+		worker = beanFactory.getBean("worker", Worker.class);
+		worker.setData(data);
+		worker.processRequest();
+	}
+	
+	public void setBeanFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
+}
+	
+When we should not use dependency injection?
+if a singleton class wants to use an prototype object within it, we should not declare prototype object as attribute, we should always declare it as an local variable within the method, pull the object inside it and use it and discard at the end of the usage. avoid injecting prototype bean as attribute into Singleton class
+	
+In the above Container class, we are implementing from BeanFactoryAware, this is an spring framework class, due to which our class will be tightly coupled with Spring framework and will loose non-invasiveness, how to overcome this problem?
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

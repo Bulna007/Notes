@@ -1,0 +1,113 @@
+Bean Lifecycle Management
+for every object or an entity that has existence will have lifecycle. 
+Lifecycle = is nothing but the actions or activities that are taken part on top of the object during its existence is called lifecycle.
+
+For every object to have its lifecycle, there are few mandatory activities to be performed on top of the object after the object has been born or before the object is going to be destroyed, such mandatory activities that has to be conducted ontop of the object once it is born and before it begins lifecyle or before it is going to die are called "lifecycle management activities".
+For every object there are 2 mandatory lifecycle management activites are there
+1. birth lifecycle
+2. death lifecycle
+
+class Calculator {
+	int i;
+	int j;
+	
+	public Calculator() {
+		i = 10;
+		j = 20;
+	}
+	
+	int add() {
+		sum = i + j;
+		return sum;
+	}
+}
+
+Calculator cal = new Calculator();
+cal.init();
+
+1. we are requesting the jvm to create the object
+2. jvm is creating the object
+
+we want to perform post construction logic after the object has been born
+
+
+// no we need to perform initialization or post construction activity ontop of the object
+cal.init();
+
+cal.add();
+
+
+Calculator cal1 = new Calculator();
+cal1.init();
+cal1.add();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	

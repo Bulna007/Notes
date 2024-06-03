@@ -1,0 +1,318 @@
+How to customize the embedded servlet container in spring boot?
+The AnnotationConfigServletWebServerApplicationContext is taking care of instantiating and deploying our application on Embedded Servlet Containers. It internally takes the help of ServletWebServerFactory in creating the appropriate implementation object of WebServer interface.
+	
+The ServletWebServerFactory implementations holds the configuration values with which they instantiate the object of Embedded Servlet Container	and wraps into WebServer implementation object. 
+
+The ServletWebServerFactory implementation will be instantiated as a bean definition by the ServletWebServerFactoryAutoConfiguration class. This AutoConfiguration class takes the server configuration values, populates into ServletWebServerFactory implementation with which the object will be created as bean definition.
+	
+So if we look at the flow, one way we can customize the way we want to instatiate the Embedded Servlet Container is through configuration approach.
+	
+We can populate the configuration values with which the ServletWebServerFactory should be instantiated by the AutoConfiguration in configuration file (application.yml|properties), so that it would be read and loaded into env object of the ioc container during bootstrapping and made available to autoconfiguration classes, through which we can achieve customization.
+	
+below are the properties we can configure in application.yml|properties to customize the embedded servlet containers.
+server.port=8081
+server.address=0.0.0.0/127.0.0.1
+server.error.whitelabel.enabled=false [by default spring boot provides an standard error webpage, if we dont want the default error page we can disable using this property]	
+server.error.path=/errorPage
+
+we can set these below properties indicating what information should be displayed aspart of the error page
+server.error.include-exception=true
+server.error.include-stacktrace=always
+
+server.tomcat.threads.max=200 #tunning the worker threads
+server.connection-timeout=5s
+server.max-http-header-size=8KB
+server.tomcat.max-swallow-size=2MB = maximum size of the request body
+server.tomcat.max-http-post-size=2MB - post request max size
+
+server.ssl.enabled=true
+server.ssl.protocol=TLS
+
+server.tomcat.accesslog.enabled=true #access activity log
+--------------------------------------------------------------------------------------------------------------------------------------
+Programmatic customization of Embedded Servlet Containers in Spring boot
+We can even customize the embedded servlet container being created programmatically aswell which has many more options than configuration approach.
+	
+upon the ServletWebServerFactoryAutoConfiguration instantiated the appropriate implementation of ServletWebServerFactory with populated configuration, the ioc container AnnotationConfigServletWebServerApplicationContext will use the 	ServletWebServerFactory and invoke getWebServer() for creating the WebServer object
+
+but if we want to customize ServletWebServerFactory that is created by the autoconfiguration class, then spring boot has comeup with an mechanism called "Customizer" classes.
+	
+Spring boot has introduced Customizer classes, through which we can customize the objects/bean definitions that are created by the AutoConfiguration classes. So the ioc container will invoke the Customize class we wrote by passing the object allowing us to customize it.
+	
+The spring boot has provided WebServerFactoryCustomizer interface we need to write our own implementation of the Customizer taking the appropriate WebServerFactory implementation as parameter for customizing it.
+	
+@Component	
+class TomcatServerWebServerFactoryCustomizer implements 
+	WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
+	void customize(TomcatServletWebServerFactory factory) {
+		// here write the code for customizing the factory
+		factory.setPort(8083);
+	}
+}	
+--------------------------------------------------------------------------------------------------------------------------------------
+How to switch from tomcat to an different embedded servlet container?	
+The spring boot supports 4 embedded servlet containers for which #4 starter dependencies are provided as below.
+1. spring-boot-starter-tomcat
+2. spring-boot-starter-jetty
+3. spring-boot-starter-reactive-netty
+4. spring-boot-starter-undertow
+
+by default when we add spring-boot-starter-web, it adds the spring-boot-starter-tomcat as an transitive dependency to our project. now if we want to switch to an different embedded servlet container we need to exclude that transitive dependency and add explicitly the one we wanted to use in pom.xml as shown below.
+	
+pom.xml
+--------
+<dependencies>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+		<exclusions>
+			<exclusion>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-tomcat</artifactId>
+			</exclusion>
+		</exclusions>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-jetty</artifactId>
+	</dependency>
+	<dependency>
+    <groupId>org.eclipse.jetty</groupId>
+    <artifactId>apache-jsp</artifactId>
+    <version>11.0.19</version>
+	</dependency>
+</dependencies>
+-------------------------------------------------------------------------------------------------------------------------------------
+How to deploy an spring boot application by packaging as an "war" into an Standalone Servlet container?
+
+The spring mvc application bootstraps under the standlone servlet container as below:
+1. either we write web.xml in which we configure
+1.1 DispatcherServlet
+1.2 ContextLoaderListener
+
+2. through programmatic approach we write WebApplicationInitializer or AbstractAnnotationConfigDispatcherServletInitializer through which we register DispatcherServlet and ContextLoaderListener with the underlying Servlet container.
+	
+so when we build/package our webmvc application as an war and deploy on standlaone servlet container, the servlet container during the startup will instantiate/invoke ContextLoaderListener and DispatcherServlet::init(). These #2 takes care of instantiating the parent/child ioc containers through which the spring mvc components will be available for our application
+
+The whole magic of creating the ioc container, and instantiating the spring mvc components begins with ServletContainer invoking ContextLoaderListener and DispatcherServlet. As the DispatcherServlet is register it acts as an entrypoint of our application.
+	
+
+Incase of spring boot webmvc application we run our application as an boot executable jar:
+The application execution will triggers from main() method in which we invoke SpringApplication.run(BootApplication.class, args):
+1. The SpringApplication class identifies and instantiates the AnnotationConfigServletWebServerApplicationContext.
+2. That internally takes care of 
+	2.1 creating WebServer
+	2.1 creating DispatcherServlet and registering with underlying WebServer
+	2.3 through variables AutoConfigurations, the mvc components are instantiated and available as bean definitions
+	
+The whole magic of bringing up the spring boot mvc application lies in SpringApplication.run(...)	
+	
+so when we package our springboot webmvc application as an ".war" and deploy on the standlone servlet container:
+1. since we havent configured DispatcherServlet or ContextLoaderListener with the underlying Servlet Container, the ioc container and mvc components will not be instantiated
+2. The servlet container will not call SpringApplication.run(..) since it dont know anything apart from web application components.
+
+so upon deploying our springboot application as a war and start the container, the mvc echo system will not be loaded and it just acts as an normal java web application only.
+	
+At this moment we have #2 options to make springboot mvc work with standalone servlet container:
+#1
+add or configure DispatcherServlet (optionally: ContextLoaderListener) in the application using either web.xml or Programmatic Registration so that the servlet container will invoke init(){} on the DispatcherServlet that instantiates the ioc container with which our mvc components are available to serve.
+	
+dis-advantage: 
+1. But we loose all the springboot capabilities that are provided aspart of SpringApplication class.
+2. application behaves in 2 ways one as bootjar and another one as standalone war
+
+#2.
+instead of adding DispatcherServlet into the application, if we can invoke SpringApplication.run(...); this brings up the ioc container (AnnotationConfigServletWebServerApplicationContext), that takes care of registering DispatcherServlet and brings up the mvc echo system.
+since the way the application is bootstrapped in boot jar or war is same, we dont have distinct behaviours and we can take the advantage of springboot features that comes aspart of SpringApplication class.
+	
+Then how to make Servlet Container invoke SpringApplication.run(...)	during the bootup of the container?
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

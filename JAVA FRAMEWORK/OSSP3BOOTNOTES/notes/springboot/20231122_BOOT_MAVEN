@@ -1,0 +1,144 @@
+How many ways we can create an spring boot project while using maven build tool?
+There are 3 ways we can setup a boot project using maven:
+1. directly use starter dependencies and boot plugin in the pom.xml
+2. create boot project by declaring spring-boot-starter-parent as the parent project
+3. importing boot-parent pom
+
+3. importing the parent pom approach
+In most of the organizations, they provide maven parent projects declared with standard dependencies/plugins so that the projects/products build by the organization can inherit from their parents to reuse them. In such case we cannot create our project by declaring spring-boot-starter-parent as an parent project since maven doesnt support create an maven project from multiple parents.
+	
+So the only way in setting up an spring boot project is by directly declaring the starters and boot plugin within the pom.xml. But this approach again makes us difficult in migrating from one spring framework version to another spring framework version and we are back to the original problem.
+	
+To overcome this problem in creating spring boot application, the 3rd approach can be used as below.
+
+oracle-middleware-common (organization parent project that must be used in creating products/projects)
+	|-groupId=oracle.com
+	|-artifactId=oracle-middleware-common
+	|-version=1.0.1
+	|-packaging=pom
+	|-dependencyManagement
+	  |-dependencies
+	|-pluginManagement
+		|-plugins
+	
+In this project they declared all the common dependencies and plugins to be used across all the projects being build in the organization	
+	for eg.. unit testing libraries, sonar plugins, jacoco plugins etc
+	
+The spring boot team has provided spring-boot-starter-parent declared with starters and boot plugin as common configurations that can be reused across the projects
+spring-boot-starter-parent
+	|-groupId=org.springframework.boot
+	|-artifactId=spring-boot-starter-parent
+	|-version=3.1.5
+	|-packaging=pom
+	|-dependencyManagement [Inheritable]
+		|-dependencies
+	|-pluginManagement
+		|-plugins
+		
+while creating our own project, we need to declare organization project as an parent project, then how to reuse the configurations of spring-boot-starter-parent?
+	
+oracle-esb
+|-pom.xml
+
+
+pom.xml
+-------
+<project>
+	<parent>
+		<groupId>oracle.com</groupId>
+		<artifactId>oracle-middleware-common</artifactId>
+		<version>1.0.1</version>
+		<relativePath/>
+	</parent>
+	
+	<artifactId>oracle-esb</artifactId>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-parent</artifactId>
+				<version>3.1.5</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.1.5</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

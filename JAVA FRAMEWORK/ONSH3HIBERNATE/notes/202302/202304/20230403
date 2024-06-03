@@ -1,0 +1,337 @@
+account 
+account_no  account_holder_nm  account_type  ifsc_code  balance
+
+if we want to access the records of data interms of objects, one record is equalTo one object in java. So we need to create an class representing the structure of the table, so that we can hold the records of data of that table into the corresponding class object
+
+Entity Class = is a class that is created representing the structure of the database table, so that all the data pertaining to that table can be stored in the objects of that entity class.
+	
+class Account {
+	String accountNo;
+	String accountHolderName;
+	String accountType;
+	String ifscCode;
+	String balance;
+	// accessors
+}	
+
+note: we are taking all the attributes as string type for simplicity
+
+
+class AccountAccessor {
+	public List<Account> getAccounts() throws SqlException {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<Account> accounts = null;
+		
+		
+		try {
+			con = ConnectionFactory.newConnection();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("select account_no, account_holder_nm, account_type, ifsc_code, balance from account");
+			accounts = new ArrayList<>();
+			while(rs.next()) {
+				//Account account = AccountMapper.mapResultSetRecordToAccount(rs);
+				Account account = (Account) GenericMapper.mapResultSetRecordToObject(rs, Account.class);
+				accounts.add(account);
+			}
+		
+		}catch(ClassNotFoundException | SqlException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			if(stmt != null) {
+				stmt.close();
+			}
+			if(con != null) {
+				con.close();
+			}
+		}
+		return accounts;
+	}
+	
+	public List<Account> getAccountsByAccountHolderName(String accountHolderName) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		List<Account> accounts = null;
+		
+		
+		try {
+			con = ConnectionFactory.newConnection();
+			
+			pstmt = con.preparedStatement("select account_no, account_holder_nm, account_type, ifsc_code, balance from accounts where account_holder_nm = ?");
+			pstmt.setString(1, accountHolderName);
+			rs = pstmt.executeQuery();
+			accounts = new ArrayList();
+			while(rs.next()) {
+				//Account account = AccountMapper.mapResultSetRecordToAccount(rs);				
+				Account account = (Account) GenericMapper.mapResultSetRecordToObject(rs, Account.class);
+				accounts.add(account);
+			}
+		
+		}catch(ClassNotFoundException | SqlException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			if(stmt != null) {
+				stmt.close();
+			}
+			if(con != null) {
+				con.close();
+			}
+		}
+		return accounts;
+	}
+}
+
+branch
+branch_no  branch_nm  ifsc_code  location  zipcode  contact_no  
+
+class Branch {
+	int branchNo;
+	String branchName;
+	String ifscCode;
+	String location;
+	int zipCode;
+	String contactNo;
+	// accessors	
+}
+
+class BankAccessor {
+	public List<Branch> getBranches() throws SqlException {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<Branch> branches = null;
+	
+		try {
+			con = ConnectionFactory.newConnection();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("select branch_no, branch_nm, ifsc_code,location, zipcode, contact_no from branch");
+			branches = new ArrayList<>();
+			while(rs.next()) {
+				//Branch branch = BranchMapper.mapResultSetRecordToBranch(rs);
+				Branch branch = (Branch) GenericMapper.mapResultSetRecordToObject(rs, Branch.class);
+				branches.add(branch);
+			}
+		
+		}catch(ClassNotFoundException | SqlException e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			if(stmt != null) {
+				stmt.close();
+			}
+			if(con != null) {
+				con.close();
+			}
+		}
+		return branches;
+	}
+	
+	public List<Branch> getBranchesByBranchName(String branchName) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		List<Branch> branches = null;
+				
+		try {
+			con = ConnectionFactory.newConnection();
+			pstmt = con.preparedStatement("select branch_no, branch_nm, ifsc_code,location, zipcode, contact_no from branch where branch_nm = ?");
+			pstmt.setString(1, branchName);
+			
+			branches = new ArrayList<>();
+			while(rs.next()) {
+				//Branch branch = BranchMapper.mapResultSetRecordToBranch(rs);
+				Branch branch = (Branch) GenericMapper.mapResultSetRecordToObject(rs, Branch.class);
+				branches.add(branch);				
+			}
+		}finally {
+			if(stmt != null) {
+				stmt.close();
+			}
+			if(con != null) {
+				con.close();
+			}
+			return branch;
+		}
+	}
+}
+
+class ConnectionFactory {
+	public static Connection newConnection() throws ClassNotFoundException, SqlException {
+		String driverClassname = null;
+		String url = null;
+		String username = null;
+		String password = null;
+		
+		Properties props = new Properties();
+		props.load(ConnectionFactory.class.getClassLoader().getResourceAsStream("orm.properties"));
+		
+		driverClassname = props.getProperty("db.driverClassname");
+		url = props.getProperty("db.url");
+		username = props.getProperty("db.username");
+		password = props.getProperty("db.password")
+		
+		Class.forName(driverClassname);
+		con = DriverManager.getConnection(url, username, password);
+		return con;
+	}
+}
+
+interface Reader {
+	Properties getProperties(String configFile);
+}
+
+class PropsReaderImpl implements Reader {
+	Properties getProperties(String configFile) {
+		Properties props = new Properties();
+		props.load(this.getClass().getClassLoader().getResourceAsStream(configFile));
+		return props;
+	}
+}
+
+orm.properties
+-------------
+db.driverClassname=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/inetbanking
+db.username=root
+db.password=root
+
+com.orm.entity.Account=account.properties
+com.orm.entity.Branch=branch.properties
+
+
+[mapping information]
+
+account.properties
+------------------
+account_no=accountNo
+account_holder_nm=accountHolderName
+account_type=accountType
+ifsc_code=ifscCode
+balance=balance
+
+
+branch.properties
+-----------------
+branch_no=branchNo
+branch_nm=branchName
+ifsc_code=ifscCode
+location=location
+zipcode=zipCode
+contact_no=contactNo
+
+
+Mapper = Mappers takes care of mapping the record of data into an entity class object
+	
+class AccountMapper {
+	public static Account mapResultSetRecordToAccount(ResultSet rs) {
+		Account account = new Account();
+		account.setAccountNo(rs.getInt(1));
+		account.setAccountHolderName(rs.getString(2));
+		account.setAccountType(rs.getString(3));
+		account.setIfscCode(rs.getString(4));
+		account.setBalance(rs.getDouble(5));
+		return account;
+	}
+}
+
+class BranchMapper {
+	public static Branch mapResultSetToBranch(ResultSet rs) {
+		Branch branch = new Branch();
+		branch.setBranchNo(rs.getInt(1));
+		branch.setBranchName(rs.getString(2));
+		branch.setIfscCode(rs.getString(3));
+		branch.setLocation(rs.getString(4));
+		branch.setZipCode(rs.getInt(5));
+		branch.setContactNo(rs.getString(6));
+		return branch;
+	}
+}
+
+class GenericMapper {
+	public Object mapResultSetRecordToObject(ResultSet rs, Class<?> entityClass) {
+		Object entityObject = null;
+		String colValue = null;
+		Properties<String, String> colsToAttributes = null;
+		Reader reader = null;
+		String mappingFile = null;
+		
+		
+		
+		reader = new PropsReaderImpl();
+		Props ormProps = reader.getProperties("orm.properties");
+		mappingFile = ormProps.getProperty(entityClass.getName());
+		
+		colsToAttributes = reader.getProperties(mappingFile);	
+		entityObject = entityClass.newInstance();
+		
+		colsToAttributes.forEach((colName, attributeName)-> {
+			colValue = rs.getString(colName);
+			String setterName = "set" + attributeName.charAt(0).toUpperCase() + attributeName.subString(1, attributeName.length);
+			
+			Method method = entityClass.getDeclaredMethod(setterName, Class<?>[]{String.class});
+			method.invoke(entityObject, new Object[]{colValue});			
+		});
+		return entityObject;		
+	}
+	
+}
+
+
+
+
+How to invoke a method on a class dynamically at runtime?
+class: className
+method: methodName, argumentTypes
+param: params
+
+Class<?> clazz = Class.forName(className);
+Method method = clazz.getDeclaredMethod(methodName, argumentTypes); //uniquely get the reference of the method using methodName/argTypes
+Object obj = clazz.newInstance();
+method.invoke(obj, params);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

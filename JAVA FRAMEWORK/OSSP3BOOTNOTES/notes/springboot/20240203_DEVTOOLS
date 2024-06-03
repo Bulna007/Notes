@@ -1,0 +1,126 @@
+DevTools provides required features that enables the application developers to build the applications quickly, thus improving the productivity of the developers
+
+How to enable the devtools?
+just add the spring-boot-devtools dependency to the project, it will enable the devtools automatically.
+	
+Features:
+1. automatic restart of the application
+where there are changes in any of the resources of our application under the below stnadard directories of the project
+	1.1 classpath
+	1.2 static/
+	1.3 templates/
+the devtools automatically restart the application.
+	
+The key difference between devtools restart and manually restart of an application is, devtools will not restart the jvm, rather it reloads the modified .class files into the jvm memory quickly
+	
+excluding resources for restart
+By default changing the resources in META/INF/maven, META-INF/resources, /resources, /static, /public, /templates will not restart the application, rather it reloads it. if we want to customize these exclusions we can configure a property 
+spring.devtools.restart.exclude="static/*"
+
+now any resources changed within static/ directory will not trigger a reload/restart
+
+if we want to include addition resource paths this can be done using
+spring.devtools.restart.additional-paths=
+	
+	
+if we want to disable the restart we can do that using the property
+spring.devtools.restart.enabled=false
+	
+	
+if you want to trigger a restart through trigger file:
+if we are working in IDE environment that continously compiles the code for each change, it is preferrable to restart only at specific times, once we are done with making all the changes. To do this we can use trigger file, it is special file that must be modified when you want to trigger an restart.
+	
+spring.devtools.restart.trigger-file=filename
+
+2. Property defaults
+several libraries that are supported by the spring boot uses caches to improve the performance. For eg.. template engines like Thymeleaf will cache the compiled template files to avoid repeated parsing of these template files. even spring mvc can add http caching headers to responses when serving static content.
+	
+these caching features are going to be beneficial in production, but it can be counter productive during development, because any changes in the application will not be reflected because of caching. 
+	
+When we add spring-boot-devtools for our project, it takes care of disabling the caching options by default. Incase if we are not using devtools, then developer has to manually configure relevant properties application.yml|properties files in disabling the caching capabilities for each library we are using.
+	
+3. LiveReload
+The spring-boot-devtools module includes an embedded liveReload server that can be used to trigger a browser refresh when a resource is changed. 
+For this we need to install LiveReload browser plugin/extension that is freely available for all the popular web browsers.
+	
+if we dont want live reload server to be running in our application then we need to set the below property
+spring.devtools.livereload.enabled=false
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

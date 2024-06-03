@@ -1,0 +1,109 @@
+Bean Lifecycle
+After ioc container has created the object for the bean definition, after ioc container has injected all the dependencies into the bean definition object, then using all the values that are supplied during creating, we want to perform post construction logic, similar before ioc container is removing the bean definition object from the ioc container we want to perform pre-destruction logic ontop of the bean definition, this can be done through bean lifecycle
+
+since the ioc container is taking care of instantiating, and managing the dependencies, its the responsibility of the ioc container itself to provide an mechanism of performing post construction and pre-destruction activities for the bean definition
+
+There are 3 ways of working with bean lifecycle are there:
+1. Configuration Approach
+2. Programmatic Approach
+3. Annotation-driven Approach
+
+1. Configuration Approach
+In case of configuration approach we define the lifecycle management methods for the bean definition to the ioc container using spring 
+bean configuration file, so it is called "configuration approach".
+	
+class Calculator {
+	int i;
+	int j;
+	int sum;
+	
+	public Calculator(int i) {
+		this.i = i;		
+	}
+	public void setJ(int j) {
+		this.j = j;
+	}
+	public void init() {
+		this.sum = this.i + this.j;
+	}
+	public void destroy() {
+		sop("cleaning up...");
+	}	
+}	
+
+application-context.xml
+-----------------------
+<bean id="calculator" class="Calculator" init-method="init" destroy-method="destroy">
+	<constructor-arg value="10"/>
+	<property name="j" value="20"/>
+</bean>
+
+
+Test.java
+---------
+BeanFactory beanFactory= new XmlBeanFactory(new ClassPathResource("com/bl/common/application-context.xml"));
+Calculator calculator = beanFactory.getBean("calculator", Calculator.class);
+sop(calculator);
+
+when does the ioc container will call the init-method="init" we configured?
+after creating the object of the bean definition, after performing constructor injection, setter injection and aware injection before placing the object within the ioc container, it invokes the init-method lifecycle management method on the bean definition.
+	
+destroy-method? :
+before the object is being removed from the ioc container?
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,117 @@
+The Spring DataJpa has provided an base interface called "Repository". Repository is an marker interface and is used only for type-safety. Ontop of the Repository interface, they have provided one more interface CRUDRepository. In CRUDRepository interface they have declared methods representing the common persistence operations we wanted to perform on the entity objects
+	
+interface CRUDRepository <ID, T> {
+	T save(T t);
+	T findById(ID id);
+	Iterable findAll();
+	long count();
+	void delete(T t);
+	boolean existsById(ID id);
+}
+
+Instead of writing an DAO class we need to write an repository interface extending from CRUDRepository, so that DataJpa creates an runtime proxy ontop of our Repository interface in applying the common persistence logic that is written in InvocationHandler.
+	
+
+In addition to the above interface, the DataJpa has provided technology specific repository interface per each persistence technology. While working with Jpa as persistency the datajpa has provided an child interface from CRUDRepository interface called
+	
+interface JPARepository {} 
+
+How to work with DataJpa?
+1. entity class
+
+@Entity
+@Table(name="plan")
+class Plan {
+	@Id
+	@GeneratedValue(GenerationType.IDENTITY)
+	int planNo;
+	String planName;
+	String planType;
+	String description;
+	String eligibilityCriteria;
+	// accessors
+}
+
+package com.djpa.repositories;
+interface PlanRepository extends JpaRepository<Integer, Plan> {}
+
+@Service
+class PlanService {
+	@Autowired
+	private PlanRepository planRepository;
+	
+	public int newPlan(PlanDto planDto) {
+		// convert dto into entity
+		planRepository.save(plan);
+		return plan.getPlanNo();
+	}
+}	
+
+db.properties
+-------------
+db.driverClassName=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/db
+db.username=root
+db.password=welcome1
+
+
+@Configuration
+@PropertySource("classpath: db.properties")
+@EnableJpaRepositories(basePackages={"com.djpa.repositories"})
+class PersistenceConfig {
+	@Bean
+	public DataSource dataSource() {}
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {}
+	@Bean
+	public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {}
+}
+
+@Configuration
+@ComponentScan(basePackages={"com.djpa.service"})
+@EnableTransactionManagement
+class RootConfig {
+	
+}	
+	
+Test.java
+----------
+ApplicationContext context = new AnnotationConfigApplicationContext(RootConfig.class);
+PlanService planService = context.getBean("planService", PlanService.class);
+
+PlanDto planDto = new PlanDto();
+// populate data
+
+int planNo = planService.save(planDto);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

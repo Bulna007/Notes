@@ -1,0 +1,193 @@
+Factory Beans
+Not all the classes can be instantiated using new operator or Class.forname("").newInstance(). Few classes might require complex instantiation logic to be written/executed to instantiate the object of a class.
+	
+For eg.. to create the object of SessionFactory while working with Hibernate, we need to write multiple lines of code in creating the object as below.
+
+Configuration configuration = new Configuration().configure();
+StandardServiceRegistry registry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
+SessionFactory sessionFactory = configuration.buildSessionFactory(registry);
+
+
+if we want to make SessionFactory object as a bean definition within ioc container, we cannot configure it directly as below.
+<bean id="sessionFactory" class="org.hibernate.SessionFactory"/>
+because by default ioc container tries to create the object of SessionFactory using new operator and would fail
+
+but ioc container dont know how to create the object of SessionFactory, since we know how to create the object and what lines of code should be written/executed for creating the object, wrap the logic in FactoryBean class and pass the FactoryBean to ioc container asking him to execute our code in instantiating the object of SessionFactory
+	
+FactoryBean
+FactoryBean is a factory class, that holds the logic for creating the object of another class. since ioc container invokes this class to get the object and make it as bean definition, it is called "FactoryBean"
+	
+FactoryBean "makes the bean definition objects"	
+	
+since the FactoryBean classes are invoked by the ioc container, we cannot write any class and call it as FactoryBean, we need to write the FactoryBean class by implementing an spring provided interface called "FactoryBean"
+	
+interface FactoryBean {
+	Object getObject();
+	Class<?> getObjectType();
+	boolean isSingleton();
+}
+
+1. getObject() = this method holds the logic for creating the object and returning the object
+2. getObjectType() =  this method returns the classType of the object the FactoryBean creates
+3. isSingleton() = the FactoryBean returned object should be placed in ioc container as singleton bean or prototype bean is indicated through isSingleton() method
+
+wap to query all the users from users table and display user_id, user_nm, password
+note:- per each operation we are performing on the database we need to create a new connection object
+
+
+class UserAccessor implements BeanFactoryAware {
+	private BeanFactory beanFactory;
+	
+	public void showAllUsers() {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			con = beanFactory.getBean("connection", Connection.class);
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("select user_id, user_nm, password from users");
+			while(rs.next()) {
+				System.out.println("id : "+ rs.getInt(1) + " username : "+ rs.getString(2) + " password: " + rs.getString(3));
+			}
+		
+		}catch(SqlException e) {
+			e.printStackTrace();
+		}finally {
+			// close resources
+		}
+	}
+	
+	public void setBeanFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
+}
+
+class ConnectionFactoryBean implements FactoryBean {
+	private String driverClassname;
+	private String url;
+	private String username;
+	private String password;
+	
+	public ConnectionFactoryBean(String driverClassname, String url, String username, String password) {
+		this.driverClassname = driverClassname;
+		this.url = url;
+		this.username = username;
+		this.password = password;
+	}
+	
+	public Object getObject() {
+		Connection con = null;
+		
+		try {
+			Class.forName(driverClassname);
+			con = DriverManager.getConnection(url, username, password);
+		}catch(SqlException e) {
+			throw e;
+		}		
+		return con;
+	}
+	
+	public Class<?> getClassType() {
+		return Connection.class;
+	}
+	
+	public boolean isSingleton() {
+		return false;
+	}	
+}
+
+
+application-context.xml
+------------------------
+<bean id="userAccessor" class="UserAccessor"/>
+<bean id="connection" class="java.sql.Connection"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

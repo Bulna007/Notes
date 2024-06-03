@@ -1,0 +1,175 @@
+What is boiler-plate logic that we typically write while developing an web application using servlet/jsps?
+1. Request Wrapping
+2. Form Handling
+3. Themes 
+4. Internationalization
+5. Session Management
+
+
+How does the framework typically provides the boiler-plate logic in building an web application?
+The Frameworks like spring mvc typically provides the components with pre-built logic in handling the boiler-plate logic
+1. Incase of request wrapping, the framework provides an generic RequestWrapper class, that takes care of reading the request parameters and wrapping into the give javabean class object
+
+2. For support field validations, the spring mvc module/framework provides necessary api classes for implementing the validation logic
+3. To display the validation errors in the source page, the framework provides custom tag, that renders all the errors in jsp page
+3. for rendering the html form components with data from the form object of the request/session/application scope the frameworks provided custom form tag library that has to be used in writing the jsp form controls
+
+
+Within each servlet of our application, to perform operation for a request we need write the below code:
+
+class ForEachRequestServlet extends HttpServlet {
+	public void service(HttpServletRequest httpReq, HttpServletResponse response) {
+		Form form = null;
+		RequestWrapper wrapper = null;
+		Validator validator = null;
+		List<String> errors = null;
+		
+		wrapper = new RequestWrapper();
+		form = wrapper.wrap(httpReq, "form");
+		
+		validator = new ValidatorImpl();
+		errors = validator.validate(form);
+		
+		if(errors != null && errors.size() > 0) {
+			httpReq.setAttribute("errors", errors);
+			httpReq.setAttribute("form", form);
+			httpReq.getRequestDispatcher("/source.jsp").forward(httpReq, httpResp);
+			return;
+		}
+		
+		service.doBusinessLogic();
+		httpReq.getRequestDispatcher("/success.jsp").forward(httpReq, httpResp);
+	}
+}
+
+class CommonRequestService {
+	Object applyCommonService(HttpServletRequest httpReq, HttpServletResponse httpResp, 
+														String formClassname, String validatorClass, String page) {
+		RequestWrapper wrapper = null;
+		List<String> errors = null;
+		Validator validator = null;
+		Object form = null;
+		
+		wrapper = new RequestWrapper();
+		form = wrapper.wrap(httpReq, formClassname);
+		
+		validator = (Validator) Class.forName(validatorClass).newInstance();
+		errors = validator.validate(form);
+		if(errors != null && errors.size() > 0 ) {
+			httpReq.setAttribute("errors", errors);
+			httpReq.setAttribute("form", form);
+			httpReq.getRequestDispatcher(page).forward(httpReq, httpResp);
+			return;
+		}
+		return form;
+	}
+}
+
+class AddDoctorServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		CommonRequestService requestService = new CommonRequestService();
+		Object form = requestService.applyCommonService(httpReq, httpResp, "DoctorForm", "DoctorValidator", "/add-doctor.jsp");
+		if(form == null) {
+			return;
+		}
+		// call service
+		// dispatch success page
+	}
+}
+
+class RegisterPatientServlet extends HttpServlet {
+	public void service(httpReq, httpResp) {
+		CommonRequestService requestService = new CommonRequestService();
+		Object form = requestService.applyCommonService(httpReq, httpResp, "PatientForm", "PatientValidator", "/register-patient.jsp");
+		if(form == null) {
+			return;
+		}
+		// call service
+		// dispatch success page
+	}
+}
+
+There are drawbacks with the above approach of applying the common processing logic that should be applied for every request of our application
+1. The code for applying common services is duplicated across all the Servlets of the application. We need to instantiate the object of CommonRequestService and invoke it to apply the common processing logic
+
+2. Even though applying these common service request processing is mandatory for each request of the application, we havent mandated to be executed for every request, still it is left to the choice of the developer to use or not, that makes the sole purpose of this code deceiving
+
+In such case how to apply these mandatory services to each and every request that is received by the application, that is where FrontController design pattern should be used.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

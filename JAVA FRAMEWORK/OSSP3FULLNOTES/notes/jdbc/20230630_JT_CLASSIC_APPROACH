@@ -1,0 +1,260 @@
+class StudentDao {
+	private JdbcTemplate jdbcTemplate;
+	// constructor
+	
+	public List<StudentBo> getAllStudents() {
+		List<StudentBo> students = null;
+		
+		students = jdbcTemplate.execute(new GetAllStudentsPreparedStatementCreator(), new GetAllStudentsPreparedStatementCallback());
+		return students;
+	}
+	
+	private final class GetAllStudentsPreparedStatementCreator implements PreparedStatementCreator {
+		public PreparedStatement createPreparedStatement(Connection con) {
+			PreparedStatement pstmt = con.preparedStatement("select * from student");
+			return pstmt;
+		}
+	}
+	
+	private final class GetAllStudentsPreparedStatementCallback implements PreparedStatementCallback {
+		public List<StudentBo> doInPreparedStatement(PreparedStatement pstmt) {
+			// execute the preparedStatement
+			// iterate over ResultSet
+			// gather data into List<StudentBo>
+			return students;
+		}
+	}
+}
+
+
+class JdbcTemplate {
+	private DataSource dataSource;
+	
+	public JdbcTemplate() {}
+	public JdbcTemplate(DataSource dataSource) {}
+	public setDataSource(DataSource dataSource) {}
+	
+	public Object execute(PreparedStatementCreator creator, PreparedStatementCallback callback) {
+		Object ret = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = dataSource.getConnection();
+			pstmt = creator.createPreparedStatement(con);
+			ret = callback.doInPreparedStatement(pstmt);			
+		}catch(SqlException e) {
+			throw new DataAccessException(e);
+		}finally {
+			if(pstmt != null) {
+				pstmt.close();
+			}
+			if(con != null) {
+				con.close();
+			}			
+		}
+		return ret;
+	}
+}
+
+
+<bean id="jdbcTemplate" class="JdbcTemplate">
+	<!--<constructor-arg ref="dataSource"/>-->
+	<property name="dataSource" ref="dataSource"/>
+</bean>
+--------------------------------------------------------------------------------------------------------------------------------------
+Statement VS PreparedStatement
+1. 
+Statement, the sql query will be compiled and the query plan will be generated for each execution, that results in costly operation in executing the query
+PreparedStatement: The query plan will be generated once and will be reused in repeatedly executing the same query by subtituting different values aspart of it
+
+
+List<StudentBo> findStudentByName(List<String> studentNames){
+  Connection con = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+	
+	try {
+		Class.forName("driverClassname");
+		con = DriverManager.getConnection(url, un, pwd);
+		pstmt = con.preparedStatement("select * from student where student_nm = ?");// #1 query compiled, #2 query plan
+		
+		for(String studentName: studentNames) {
+			pstmt.setString(1, studentName);
+			rs = pstmt.executeQuery(); //  #3 query executed
+			while(rs.next()) {
+				// grab the data
+			}
+		}
+	}catch(ClassNotFoundException | SqlException e) {
+		throw e;
+	}finally {
+		//close resource
+	}
+	return students;
+}
+
+2.
+Statement = are prone to sql injection or sql attack, so we should always use Statement object for executing static sql queries only (mandatorily)
+PreparedStatement = The sql attack/injection will be detected and reported as exception incase of PreparedStatement. So for executing dynamic sql queries we should always use PreparedStatement only
+
+List<StudentBo> findEmployee(String employeeName){
+  Connection con = null;
+	Statement stmt = null;
+	ResultSet rs = null;
+	
+	try {
+		Class.forName("driverClassname");
+		con = DriverManager.getConnection(url, un, pwd);
+		pstmt = con.preparedStatement("select * from student where student_nm = ?");// #1 query compiled, #2 query plan
+		pstmt.setString(1, employeeName); // PERFORMS A CHECK TO SEE IS IT SQL
+		
+		//stmt = con.createStatement();
+		rs = stmt.executeQuery("select * from emp where emp_nm = '"+ employeeName +"'");
+		
+		while(rs.next()) {
+			// grab the data
+		}
+
+	}catch(ClassNotFoundException | SqlException e) {
+		throw e;
+	}finally {
+		//close resource
+	}
+	return students;
+}
+--------------------------------------------------------------------------------------------------------------------------------------
+dynamic sql query then only we need to use PreparedStatement, otherwise use Statement only
+fetch all the students from student table by studentName
+dynamic: select * from student where student_nm = ?
+	
+	
+class StudentDao {
+	private JdbcTemplate jdbcTemplate;
+	
+	public List<StudentBo> getStudentsByName(String studentName) {
+		List<StudentBo> students = null;
+		
+		students = jdbcTemplate.execute(new GetStudentsByNamePreparedStatementCreator(studentName), new GetStudentsByStudentNamePreparedStatementCallback());
+		return students;
+	}
+	
+	private final class GetStudentsByNamePreparedStatementCreator implements PreparedStatementCreator {
+		private String studentName;
+		private GetStudentsByNamePreparedStatementCreator(String studentName) {}
+		
+		public PreparedStatement createPreparedStatement(Connection con) {
+			PreparedStatement pstmt = null;
+			pstmt = con.preparedStatement("select * from student where student_nm = ?");
+			pstmt.setString(1, studentName);
+			return pstmt;
+		}
+	}
+	
+	private final class GetStudentsByStudentNamePreparedStatementCallback implements PreparedStatementCallback<List<StudentBo>> {
+		public List<StudentBo> doInPreparedStatement(PreparedStatement pstmt) {
+			// execute pstmt and gather results
+			return students;
+		}
+	}
+	
+	
+}	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

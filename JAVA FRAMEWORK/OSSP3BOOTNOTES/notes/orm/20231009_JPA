@@ -1,0 +1,308 @@
+Spring Boot
+Duration: 2 months 15 days + [20 days for microservices]
+Fee: 6k only spring boot and 9k for spring boot + microservices
+
+Monday - Sunday
+Monday to Saturday = 7:00 AM ist - 8:00 AM ist
+Saturday/Sunday = 6:00 PM ist to 7:00 PM ist
+
+Notes: daily live classroom notes will be prepared and shared to the students on weekly basis
+No recordings, no youtube, no bell icon & no subscribe. Students are not allowed to record the sessions, if we found them recording the admission will be cancelled without fee refund.
+In case if there is any emergency, if we guys requested will record the session and share to that student only.
+	
+Pre-requisite:
+1. Core Java
+2. Advanced Java
+3. For Spring Boot: Spring Framework (core, aop, jdbc, tx, mvc)
+4. For Spring DataJpa : knowledge of Hibernate/Jpa is mandatory	
+5. For Microservices: Restful services
+
+syllabus
+spring boot
+------------
+1. spring orm = spring integration with jpa api
+2. spring datajpa
+3. spring boot
+4. spring security
+6. spring restful = mandatory (spring mvc + restful services)
+5. Spring WebFlux
+5.1 Introduction to Reactive world
+5.2 Project Reactor
+5.3 Reactive Api
+	1. Publisher
+	2. Subscriber
+	3. Processor
+	4. BackPressure
+5.5 WebFlux
+	1. Mono
+	2. Flux
+
+microservices:
+6. Spring Cloud
+	1. Cloud Config Server
+	2. Cloud Config Client
+	
+7. Microservices
+7.1 What are microservices?
+	1. Microservices vs Monolithic application
+7.2 How do we implement microservices on different stack (only architectural).
+	1. Java stack
+	2. devops (devops stack) (if possible I will demonstrate an example on kubernetes stack as well)
+7.3 Eureka Server (Service Discovery Registry)	
+7.4 Spring Cloud Loadbalancer 
+7.5 Feign Client
+7.6 Spring CircuitBreaker (Hystrix old) (Resilience4J)
+7.7 Spring Cloudgateway 
+7.8 Microservices design patterns (theory)
+	1. Api gateway
+	2. CQRS 
+	3. Service Modularity
+		1. Service per responsibility
+		2. Service per database
+		3. Service per usecase
+	4. Saga (one example) (Transaction)
+		1. Choreography Saga
+		2. Archestrator Saga
+7.9 Kafka 
+	1. Building Microservice application for asynchronous communication for exchanging messages.
+--------------------------------------------------------------------------------------------------------------------------------------
+		
+Spring ORM		
+-----------
+Spring ORM is an module provided by spring framework inorder to integrate spring with ORM technology frameworks like hibernate/jpa api.
+When we are working with Jpa api or Hibernate Framework, the developers endup in writing boiler-plate logic even though these are frameworks as below:
+1. per one database of the application we need to create only one EntityManagerFactory/SessionFactory. the programmer has to write the code for managing in creating the EMF/SF as one object per one db in our application
+2. opening/creating an EntityManager/Session object and closing it should be done per each operation
+3. transaction management logic should be written across all the service classes within our application
+
+To overcome in writing the boiler-plate spring has provided Spring ORM module
+
+1. Spring ORM module has provided a core class called JpaTemplate. It has relevant methods for performing persistence operations like
+	1.1 save
+	1.2 update
+	1.3 delete
+	1.4 find
+	etc
+upon calling any of these methods on JpaTemplate object, it internally goes and talks to the jpa or hibernate api classes like EntityManager or Session object
+
+So inorder to perform these operations the JpaTemplate requires EntityManager. To create an EntityManager per operation the JpaTemplate requires EntityManagerFactory.
+	
+So we need to inject EntityManagerFactory as a dependent bean into JpaTemplate.
+	
+How to create an EntityManagerFactory object?
+1. we need to write persistence.xml under the META-INF of the classpath
+2. we need to use Persistence class and call factory method createEntityManagerFactory("persistenceUnit") to create the object of EntityManagerFactory
+
+since the EntityManagerFactory has complex logic in creating the object of it, we cannot directly configure it as bean definition. We need to write FactoryBean class in which we need to wrap complex instantiation logic and pass it as an input to the ioc container asking to instantiate and place it as an bean definition
+	
+since making EntityManagerFactory as a bean is a common requirement, instead of we writing the FactoryBean class spring orm module has provided an FactoryBean class called "LocalContainerEntityManagerFactoryBean".
+	
+
+LocalContainerEntityManagerFactoryBean instantiates the object of EntityManagerFactory through programmatic approach, instead of configuration approach. So we dont need to write persistence.xml and place in META-INF/ directory under the classpath.
+When we are working with Spring we already write configuration info in spring bean configuration file or java config classes so instead of having one more configuration file for jpa, the configuration pertaining to jpa also can be configured aspart of spring bean configuration file itself, so that it acts as an input to LocalContainerEntityManagerFactoryBean in instantiating the object of EntityManagerFactory
+
+db.properties
+--------------
+db.driverClassname=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/db
+db.username=root
+db.password=welcome1
+
+@Configuration
+@PropertySource("classpath:db.properties")
+class JavaConfig {
+	@Bean
+	public DataSource dataSource(@Value("${db.driverClassname}") String driverClassname, 
+															 @Value("${db.url}") String url, 
+															 @Value("${db.username}") String username, 
+															 @Value("${db.password}") String password) {
+		DriverManagerDataSource dataSource = new DriverManagerDatasource(url, username, password);
+		dataSource.setDriverClassName(driverClassname);
+		return dataSource;
+	}
+	
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
+		LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = null;
+		HibernateJpaVendorAdapter jpaVendor = null;
+		
+		jpaVendor = new HibernateJpaVendor();
+		jpaVendor.setShowSql(true);
+		jpaVendor.setGenerateDdl(true);
+		
+		entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+		entityManagerFactoryBean.setDataSource(dataSource);
+		entityManagerFactoryBean.setJpaVendorAdapter(jpaVendor);
+		return entityManagerFactoryBean;		
+	}
+	
+	@Bean
+	public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+		return new JpaTransactionManager(entityManagerFactory);
+	}
+	
+	@Bean
+	public JpaTemplate jpaTemplate(EntityManagerFactory emf) {
+		new JpaTemplate(emf);
+	}
+}
+	
+@Entity
+@Table(name="address")
+class Address {
+	@Id
+	@Column(name="address_no")
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private int addressNo;
+	private String addressLine1;
+	private String addressLine2;
+	private String city;
+	private String state;
+	private int zip;
+	private String country;
+	
+	// accessors
+}	
+	
+@Repository	
+class AddressDao {
+	@Autowired
+	private JpaTemplate jpaTemplate;
+	
+	public int saveAddress(Address address) {
+		jpaTemplate.persist(address);
+		return address.getAddressNo();
+	}
+	
+	public Address findAddress(int addressNo) {
+		return jpaTemplate.find(Address.class, addressNo);
+	}
+	
+	public List<Address> findAddressesByCity(String city) {
+		Map<String, Object> paramMap = new HashMap();
+		paramMap.put("city", city);
+		return jpaTemplate.find("from Address address where address.city = :city", paramMap);
+	}
+}	
+
+@Service
+public AddressService {
+	private AddressDao addressDao;
+	
+	@Transactional(readOnly=false)
+	public int storeAddress(Address address) {
+		return dao.saveAddress(address);
+	}
+}
+	
+	
+	
+	
+	
+	
+Spring ORM
+JpaTemplate
+|-persist(entityObject)
+|-merge(entity)
+|-remove(entity)
+	
+EntityManager
+
+LocalContainerEntityManagerFactoryBean
+|-DataSource
+|-JpaVendorAdapter (configuration info specific to the jpa implementation vendor)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

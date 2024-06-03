@@ -1,0 +1,107 @@
+BeanPostProcessor
+BeanPostProcessor is used for applying common post-processing logic across all the bean definitions that are instantiated by the ioc container. upon the ioc container instantiate the object of an bean definition, it immediately invokes the BeanPostProcessor for that bean definition object it has created, by passing it as an input to the BeanPostProcessor asking it to apply post processing on it
+
+difference between bean lifecycle init-method & bean post processor
+BeanPostProcessor = is meant for applying common post processing logic across all the bean definitions instantiated by the ioc container
+bean lifecycle init-method = apply bean definition specific post processing logic only
+
+How to create our own bean post processor to apply common post processing logic?
+In order to have the BeanPostProcessor being invoked by the ioc container, it has to be written by implementing the spring framework provided interface called "BeanPostProcessor"	
+	
+interface BeanPostProcessor {
+	Object postProcessBeforeInitialization(String beanId, Object beanObject);
+	Object postProcessAfterInitialization(String beanId, Object beanObject);
+}	
+
+1. postProcessBeforeInitialization(..) method will be called after the bean definition object has been instantiated, after all the dependencies are injected, before the ioc container executes the beanlifecycle init-method on that bean definition, it passes the bean definition object to this method asking to apply post processing logic
+
+2. postProcessAfterInitialization(..) method will be invoked, after the bean lifecycle method completed execution on that bean definition object
+
+
+class Tank {}
+class Towner {}
+class Toolbox {}
+
+application-context.xml
+-----------------------
+<bean id="tank" class="Tank"/>
+<bean id="tower" class="Tower"/>
+<bean id="toolBox" class="Toolbox"/>
+<bean id="ot" class="ObjectTrackerBeanPostProcessor"/>
+
+Test.java
+---------
+BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("com/bpp/common/application-context.xml"));
+BeanPostProcessor bpp = beanFactory.getBean("ot", BeanPostProcessor.class);
+
+((ConfigurableListableBeanFactory)beanFactory).addBeanPostProcessor(bpp); // manually we need to register bpp to ioc container
+
+Tank tank = beanFactory.getBean("tank", Tank.class);
+Tower tower = beanFactory.getBean("tower", Tower.class);
+
+class ObjectTracker {
+	private static AtomicInteger nobjects = new AtomicInteger(0);
+	
+	public static void increment() {
+		nobjects.incrementAndGet();
+	}
+	public static int get() {
+		return nobjects.get();
+	}
+}
+
+class ObjectTrackerBeanPostProcessor implements BeanPostProcessor {
+	public Object postProcessBeforeInitialization(String beanId, Object bean) {
+		return bean;
+	}
+	public Object postProcessAfterInitialization(String beanId, Object bean) {
+		ObjectTracker.increment();
+		return bean;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

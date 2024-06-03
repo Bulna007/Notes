@@ -1,0 +1,248 @@
+problems with java jdbc api:
+1. jdbc is an api, apis will not provide boiler-plate logic, so we need to endup in writing lot of code in performing persistence operations onto the underlying database while working with jdbc api due to which we run into maintainability problems.
+	
+2. resource management is very difficult in java jdbc api, always we run into resource leakage issue irrespective how better we have written the code
+
+3. all the exceptions in java jdbc are designed to be checked exception, due to which we need to always sourround our code around annoying try/catch block while working with jdbc api
+
+There are #2 types of exceptions are there
+1. checked exception
+Checked exceptions are recoverable, for which the programmer can write alternate path of code by using try/catch block, so that the program upon encountering the Checked exception, would not terminate rather continue to execute by running through the alternate path of code written aspart of the catch-block
+
+void m1() {
+	// code that is reporting an checked-exception
+}
+
+In case if the code that we have written is causing an checked-exception, we need to mandatorily wrap our code in try/catch block unless otherwise the java compiler will not allows us to compile the program, because the nature of the exception is recoverable, so it enforces the programmer to write alternate path of execution
+
+In case if the programmer wishes not to provide alternate path of code, then he/she has to write the code by declaring it to throw the exception
+
+void m1() {
+	try {
+	// code is reporting an FileNotFoundException (Checked-Exception)
+	}catch(FileNotFoundException e) {}
+}
+
+(or)
+
+void m1() throws FileNotFoundException {
+	// code is reporting an FileNotFoundException (Checked-Exception)
+}
+
+2. un-checked exception
+UnChecked exceptions are the child exceptions of RuntimeException, many of the times for these exceptions are not recoverable and upon encoutering them, the program would be terminated reporting the failure information
+
+
+void m1() {
+	try {
+		// code is reporting an un-checked exception
+	}catch(UnCheckedException e) {
+	
+	}		
+}
+even the code that is reporting the unchecked exception also can be wrapped in try/catch block as shown above, but there is not guarantee the program flow of execution would enter into catch block in the event the of the exception. It purely depends on the type of the failure
+
+For eg.. if you program is throwing an OutOfMemoryException, then even we write the catch-block there is no way the control enters into catch block and would continue to execute. Similary if our program has reported an NullPointerException, we can still write catch-block catching the exception and continue to execute the program without termination
+
+void saveAccount(Account account) {
+	try {
+		Class.forName("driverClassname");
+		Connection con = DriverManager.getConnection(url, un, pwd); // is written to report SqlException (Checked-Exception)
+		Statement stmt = con.createStatement();// throw Checked-Exception SqlException
+		rs = stmt.executeUpdate(sql); // throws Checked-Exception SqlException
+	}catch(SqlException e) {
+		# even after catching the exception, most of the time we cannot do anything apart from terminating the program
+	}
+}
+
+The java jdbc api classes are designed to report SqlException or subclasses of the SqlException which is an Checked exception, so inorder to make our code compile while working with java jdbc, we need to always sourround our code around try/catch block. but for most of the database failures we encounter, we dont have alternate path of execution, even then also we are forced to write try/catch block which seems to unnecessary and reduces the readability of the code while working with java jdbc
+
+4. 
+There are #2 types of transactions are there in general
+1. local transactions = within the transactional boundary there will be only one-single transactional participating resource on whom we issue a commit or rollback directly which is called local transaction
+
+2. global transactions = within the transactional boundary there will be multiple global transactional participating resources are there on whom we issue a commit/rollback at one-shot across all the resources which is called global transactions
+
+java jdbc api only supports local transactions, and doesnt have support for managing global transactions. To work with global transaction we need to use jta api. So while working with jdbc api we need to write #2 different transaction management logics based on the type of the transaction we want to enforce and switching between them seems to be very complex
+
+
+To overcome the above challenges the spring has introduced spring jdbc module, there are plenty of advantages of writing database applications using spring jdbc rather than using java jdbc as described below
+
+1. spring jdbc module has provided convinient api classes using which we can perform database operations quite quickly eliminating the boiler-plate logic we write while working with java jdbc api
+
+2. while working with spring jdbc provided api classes, we dont need to write the code for creating the resources or even closing the resources, like Connection, Statement etc. These are been automatically taken in creating/closing them by spring jdbc itself. So there is always an gurantee we never run into Resource Leakage issues while working with Spring jdbc
+
+3. All the exceptions that are designed aspart of spring jdbc are unchecked-exceptions, so while working with spring jdbc we dont have to write our code sourrounding around the annoying try-catch block, so that we can improve the readability of the code while working with spring jdbc
+
+For all the Exceptions that are reported by the Spring jdbc api, the base exception class is DataAccessException which is an UnChecked exception, so we dont need to write ourcode while working with spring jdbc api classes around try/catch block
+There are several other exception classes that are provided by spring jdbc api representing different type of failures, but all of them are sub-classes of DataAccessException only
+
+UniqueConstraintViolationException
+IntegrityConstraintVilationException
+etc
+
+4. While working with spring jdbc, it has close integration with spring transaction module, which takes care of managing the transactionality irrespective of global/local, so it is easy to manage transactions within our application if we are using spring jdbc
+--------------------------------------------------------------------------------------------------------------------------------------
+What are the different types of operations we perform through an application on the underlying database?
+1. DDL
+Data Definition Language, which is about creating, alter, drop and truncate
+
+2. DQL
+Data Query language, for quering and filtering the data, select
+select 
+2.1 1 row 1 column
+2.2 1 complete record
+2.3 aggregate queries
+2.4 multiple records of data
+
+3. DML
+Data Manipulation language, used for inserting, updating or deleting the data onto the underlying tables
+
+4. DTL
+Data Transaction Language, for performing commit/rollback
+
+5. DCL
+Data Control Language, is about managing previliges or permissions on the data, like grant and revoke
+
+From the point of applications, most of the applications will perform only #3 types of operations on the database which are
+DQL, DML and DTL rest of the operations are managed aspart of administration aspects of the application
+
+There are #5 different ways we can perform database operations while working with spring jdbc 
+1. JdbcTemplate approach
+2. NamedParameterJdbcTemplate approach
+---------------------------------------------
+3. SimpleJbdcTemplate approach
+4. SimpleJdbcInsert or SimpleJdbcCall
+5. Mapping sql operations as Subclasses
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

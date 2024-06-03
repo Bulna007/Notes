@@ -1,0 +1,165 @@
+Logging
+The logging usecase we have considered can be implemented using aop, but here we have done only flow tracing, but we cannot implement the logging for the whole application using aop, because its not that we write log statements only for entry/exit of the methods, we need to write log statements within the program logic as well (between the method code also)
+	
+	
+Method Before Advice:
+---------------------
+if we want to apply the cross-cutting logic before the target class method executes then we need to use method before advice.
+audit: keeping track of the activities that are taken place aspart of the application is called "auditing".
+auditing helps us in eliminating the fraud and increases the security/protection of the business system.
+	
+For eg.. in a loan processing system, we want to capture the information about who is the person approving an load, this can be done by using auditing as below.
+	
+// user must be logged-in to the system/application (logged-in: robert)
+	
+class LoanManager {
+	public boolean approveLoan(long loanApplicationNo) {
+		System.out.println("approveLoan("+loanApplicationNo+") by rober on date : "+ LocalDateTime.now().toString());
+		
+		// check for the eligibility based on the loan application
+		
+		return true;
+	}
+}	
+
+now in the above class, we want to capture the user who has logged-in and approving/rejecting the loan in the system through auditing. the audit information is usually written into an audit schema (tables), but for sake of simplicity lets write it as an log/sysout statement
+
+since audit is an secondary logic and even cross-cutting logic, having it written directly aspart of primary business logic of the application is not recommended rather using aop
+
+
+class LoanManager {
+	public boolean approveLoan(long loanApplicationNo) {
+		// check for the eligibility based on the loan application
+		return true;
+	}
+}
+
+class AuditAdvice implements MethodBeforeAdvice {
+	public void before(Method method, Object[] args, Object proxy) {
+		String methodName = null;
+		Object[] args = null;
+		
+		methodName = method.getName();
+		System.out.print(methodName+"(");
+		for(int i=0;i<args.length;i++) {
+			if(i == 0) {
+				System.out.print(args[i]);
+				continue;
+			}
+			System.out.print(","+args[i]);
+		}
+		System.out.println(") has been called by Robert");			
+	}
+}
+
+1. To apply the aspect logic before the target class method executes we need to write our advice class implementing from MethodBeforeAdvice and override before(...) method 
+2. within the before() method we need to write the cross-cutting logic that should be executed onbehalf of the target class method, so it needs the information about targetClass method which is passed as parameters (Method, object[], proxy)
+	
+	
+Test.java
+---------
+ProxyFactory pf = new ProxyFactory();
+pf.setTarget(new LoanManager());
+pf.addAdvice(new AuditAdvice());
+
+LoanManager proxy = (LoanManager) pf.getProxy();
+boolean approved = proxy.approveLoan(19393);
+
+Flow of execution:
+1. since we have applied the MethodBeforeAdvice, spring aop understands we wanted to execute the aspect logic just before executing the target class method. so upon calling the proxy.approveLoan(..) method, before entering into the target class method, the control enters into the aspect advice method before() of AuditAdivce
+
+once the AuditAdvice before(..) method completed execution, automatically the control goes to target class method, so the before is not being called instead of target class method, the before is called just before the target class method, so it is not responsible to return the returnValue of the target, since the target method executes by itself and returns the returnValue
+
+So the before method returnType is void. similarly once the before method completed execution automatically the control goes to targetClass method, we dont need to pass it manually/explicity, so we dont need control over target class method, we just need info of target class method to perform cross-cutting logic,due to this there is no methodInvocation parameter
+
+
+How many control points?
+1. we can modify the parameters and these values are reflected in executing the actual method incase of spring aop, because spring aop passes the original argments by reference to advice method
+
+2. here we dont have control over executing the target class method, but we can abort execution of target class method by throwing exception in the advice method
+	
+3. the control never returns to the advice method after completing the target class method, because it is before advice, so there is no way of seeing the returnValue or modifying returnValue or returning the modified returnValue.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

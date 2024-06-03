@@ -1,0 +1,138 @@
+class Calculator {
+	int i;
+	int j;
+	int sum;
+	
+	public Calculator(int i) {
+		this.i = i;
+	}
+	public void setJ(int j) {
+		this.j = j;
+	}
+	public void init() {
+		sop("init()")
+		this.sum = this.i + this.j;
+	}
+	public void destroy() {
+		sop("destroy()")
+		this.i = 0;
+		this.j = 0;
+		this.sum = 0;
+	}
+}
+
+application-context.xml
+-----------------------
+<bean id="calculator" class="Calculator" c:i="10" p:j="20" init-method="init" destroy-method="destroy"/>
+
+class Test {
+	public static void main(String[] args) {
+		BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("application-context.xml"));
+		Calculator calculator = beanFactory.getBean("calculator", Calculator.class);
+		sop(calculator);
+		// here the application terminates
+		
+		((ConfigurableListableBeanFactory)factory).destroySingletons();
+	}
+}
+here the ioc container will not invoke the destroy method, why?
+The destroy method on the bean definition object is supposed to be called by the ioc container at the time of removing the object from the ioc container.
+	
+
+class A {
+	public A() {
+		
+	}
+	public void finalize() {
+		
+	}
+}
+
+A a = new A();
+a = null; // immediately the object becomes qualified for garbage collection
+
+The finalize() method on an object will be invoked by the Garbage Collector at the time reclaiming the memory of the object.
+When does the object will be garbage collected?
+whenever the object became dangling pointer, means it is not referenced by any other objects within the jvm then the object will be qualified for garbage collection
+The finalize() method on every object is not guaranteed to be called by the GC, why?
+	
+When does the garbage collector will be executed?
+The Garbage collector is an daemon thread that is executed only at periodically interval of time and we (programmer) dont have control over executing the gc, only we can request for execution by calling System.gc();
+
+How does an object knows why it is going to be garbage collected or destroyed or removed from the jvm memory?
+when the gc invokes finalize() method on the object, the object will know it has to perform cleanup activities since it getting destroyed or removed. Every object may or may not know when it is going to die, since the finalize() method is not guaranteed to be called on the object.
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

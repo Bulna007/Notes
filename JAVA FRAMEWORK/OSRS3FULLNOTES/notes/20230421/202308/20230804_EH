@@ -1,0 +1,187 @@
+#1. 
+HttpResponse
+status: 400 [Bad Request]
+Header: standard headers
+body:
+{
+	"errorCode": "A001",
+	"errorMessage": "error message describing the failure"
+}
+	
+
+class Receipt {
+	String receiptNo;
+	LocalDate rechargeDate;
+	String mobileNo;
+	double amount;
+	String status;
+	// accessors
+}
+
+class RechargeInfo {
+	String mobileNo;
+	String circle;
+	String provider;
+	String planName;
+	double amount;
+	// accessors
+}
+
+class Error {
+	String errorCode;
+	String errorMessage;
+	// accessors
+}
+
+@Path("/recharge")
+class MobileRechargeApiService {
+  @POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response recharge(RechargeInfo rechargeInfo) {
+		Response response = null;
+		ResponseBuilder builder = null;
+		
+		try {
+			AirtelRechargeService rechargeService=  new AirtelRechargeService();
+			String txNo = rechargeService.recharge(rechargeInfo.getMobileNo(), rechargeInfo.getPlan(), rechargeInfo.getAmount());
+			Receipt receipt = new Receipt();
+			// populate the data into receipt
+			
+			builder = Response.ok();
+			builder = builder.entity(Entity.json(receipt));
+			response = builder.build();
+			
+		}catch(SubscriptionNotActiveException e) {
+			builder = Response.status(Status.BAD_REQUEST);
+			Error error = new Error();
+			error.setErrorCode("A0001");
+			error.setErrorMessage("Subscription Not Active");
+			builder.entity(Entity.json(error));
+			response = builder.build();
+		}
+		
+		return response;
+	}
+}
+
+
+class AirtelRechargeService {
+	public String recharge(String mobileNo, String plan, double amount) {
+		// query the subscription information of the mobileNo
+		if(subscription.getStatus().equals("In-Active")) {
+			throw new SubscriptionNotActiveException(); // UnChecked Exception
+		}
+		// do recharge
+		return "03kf";
+	}
+}
+
+
+By looking at the above piece of code, one things that we are performing alternate path of the execution and returning an success response to the user, because always the exceptions/errors are reported by throwing exceptions in java 
+
+#2. 
+To address the above problem, the jaxrs api has provided an special type of exception class called "WebApplicationException". There are multiple subclasses of WebApplicationException representing different error statuscodes of http
+The WebApplicationException along with taking statuscode, it allows us to populate an Response object into it by wrapping original exception.
+	
+upon receiving the WebApplicationException, the jaxrs runtime extracts the Response object from it and constructs the http response with those details and dispatches to the client.
+	
+@Path("/recharge")
+class MobileRechargeApiService {
+  @POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response recharge(RechargeInfo rechargeInfo) {
+		Response response = null;
+		ResponseBuilder builder = null;
+		
+		try {
+			AirtelRechargeService rechargeService=  new AirtelRechargeService();
+			String txNo = rechargeService.recharge(rechargeInfo.getMobileNo(), rechargeInfo.getPlan(), rechargeInfo.getAmount());
+			Receipt receipt = new Receipt();
+			// populate the data into receipt
+			
+			builder = Response.ok();
+			builder = builder.entity(Entity.json(receipt));
+			response = builder.build();
+			
+		}catch(SubscriptionNotActiveException e) {
+			builder = Response.status(Status.BAD_REQUEST);
+			Error error = new Error();
+			error.setErrorCode("A0001");
+			error.setErrorMessage("Subscription Not Active");
+			builder.entity(Entity.json(error));
+			response = builder.build();
+			throw new WebApplicationException(response);
+		}
+		
+		return response;
+	}
+}
+
+#3.
+There could be several places within our application, we might be running into SubscriptionNotActiveException, in all those places we need to catch the exception and map itto an parsable/understandable error response, by creating an response object with (status,headers,body) and wrap into WebApplicationException and throw it
+The error response we report to the client for SubscriptionNotActiveException is always the same, but we still need to write the code for reporting it in several places within our application, thus making the exception reporting logic duplicated across all the classes in our application.
+	
+	
+To overcome this problem the jaxrs api has provided ExceptionMapper. Per each type of Exception to map it to an error response write one ExceptionMapper and register it as provider in jaxrs runtime.
+	
+	
+How many providers are there in jaxrs api?
+1. ParamConverterProvider
+2. MessageBodyReader
+3. MessageBodyWriter
+4. ExceptionMapper
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

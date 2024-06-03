@@ -1,0 +1,379 @@
+spring security
+----------------
+What is Security, how many forms or mechanisms are available in general for securing an application?
+There are different levels of security can be applied inorder to secure an application
+
+1. authentication & authorization
+one of the security mechanisms to be applied in securing an application is protected the application from unauthorized access, which means allowing only the users who are authorized to access our application. This cnan be achieved through authentication and authorization
+
+What is authentication?
+Authentication is about verifying the user identity inorder to grant the access to the underlying application is called "Authentication".
+	
+How authentication is being applied?
+every user should be associated with an identity to help the application quickly identify who is accessing the application. For eg.. for each employee we can bind an employee no or unique_access_code or username for a user to identify him
+
+so user has to produce his/her identity while accessing the application, but with only the identity the application cannot be secured, because anyone knows the identity of another other employee in the organization, so along with identity we need a secret or password that is only know to the user
+
+so while accessing the application, the user along with user identity he/she has produce the secret/password to the application to prove his identity for granting the access to the application
+
+The process of producing the identity of the user in gaining the access to the application is called "Authentication".
+	
+What is Authorization?
+Not everyone who is authenticated in accessing the application will not be allowed to perform any operation on the application. There are different roles/levels of users within the organization will be permitted to perform specific types of operations on the application 
+
+So, authorization is the process of allowing access to the application and its underlying resources of the application based on the role of the user. 
+	
+How to implement authorization?
+1. For each user of our application we associate the user to one or more roles categorizing the user
+2. we define list of roles allowed in our application (for eg.. employee, manager, administrator, owner).
+3. For each role that we defined, we need to associate access control list, indicating which roles of users are permitted to access which resources of our application.
+	
+with the above process, we need to implement the logic for verifying the who is the user, and what is his role, before granting the access to the specific resource of our application.
+	
+While implementing security for an application by using authentication/authorization, sometimes authorization is optional because we dont want the users of our application to be restricted in accessing the resources based on roles, insuch case we only enforce authentication for granting the access to our application.
+	
+when there is authorization, always authentication is mandatory, because unless we know the identity of the user we cannot restrict the user in accessing the resources.
+	
+2. Data protection through encryption
+Encryption/Decryption is the mechanism we should use while storing the data aspart of our application onto the underlying storage. Encryption/Decryption greatly kills the throughput or performance of the application, so not all the data that is stored aspart of the application will not be encrypted, only cruicial piece of information pertaining to banking/financial data or personal/privacy information will be encrypted and persisted within the application.
+
+We should apply encrypt/decrypt for highly confidential systems like banking, financial and defence etc application.
+	
+3. Data Integrity
+Ensures the end-to-end information is not altered or can be detected if it is tampered, this can be achieved through some checksum and signing technics aspart of the data being exchanged.
+
+4. Transport layer security (TLS)
+ensures all the data that is exchanged between the client and server over the network is secured through encryption technic so that no intruder can steal the data while exchanging.
+--------------------------------------------------------------------------------------------------------------------------------
+How to secure an web application by enforcing authentication & authorization mechanism?
+To implement authentication & authorization in securing an web application, the spring framework has provided spring security module, to better understand how to work with spring security for an application, let us
+
+1. Understand how to implement security (authentication/authorization) for our web application using custom security mechansim
+2. JEE security mechanism can be employed in securing an application
+
+by looking at both the ways of implementing security we know what are the challenges in working with them, so that we can easily understand spring security and why to use it also
+-------------------------------------------------------------------------------------------------------------------------------
+JEE Security
+By using jee security all that we need to do inorder to enforce security for our application is we need to write couple of configurations in enabling it. The infrastructure/framework for enforcing the security has been pre-built by the servlet container or jee container vendors based on javax security specification/api
+
+
+Looks like there are several advantages with jee security
+1. we dont need to design and implement security related logic in enforcing the security for our application, all that we just need to do is write few configurations in enabling the security, so that the efforts in implementing security is very less. The time required for enforcing the security and cost of implementation is very less
+2. we dont need to perform extensive security testing to verify the security of our application as it is an proved and standardized approach defined by jee itself.
+	
+In addition to the advantages there are lot of challenges in using jee security:
+The jee security specification and api is adopted and implemented by servlet containers and jee servers. These servers can be categorized into 2 categories
+1. opensource
+The opensource vendor implementors has not provided rich set of features in implementing security for our application. For eg.. most of the opensource players supports only File as an identity store for storing the identity information about the users and has poor support for extensibility or customization.
+	
+2. commercial
+Most of these commercial servers are jee servers that support enterprise class-level features like
+1. clustering
+2. high-availability
+3. session replication
+4. fault-tolerance
+5. connection pooling
+6. global transactions
+7. jms services
+8. security
+etc
+
+1. among these services, if our application only requires security, even then also we need to pay for the whole license which is going to be very expensive for using nothing.
+
+2.In addition running the applications on these enterprise servers is quite expensive
+ 2.1. We need server-grade hardware machines in deploying and running our application on these jee containers
+ 2.2 we need server administrators for monitoring and managing the applications on these servers
+which is going to be quite expensive even we dont use any of those features
+
+3. even these containers supports customizations through providing extensions, we will be tightly coupled with the underlying servlet container or jee server and migrating from one container to another container becomes very difficult.
+	 
+From the above it looks like jee security even though is an robust security, having it adopted or used in building an web applications seems to be in-feasible. It looks like it is suitable to be adopted for enterprise applications only and complexity in implementing and customizing the security is very high
+
+
+So is there any security standard or implementation that is well suited for
+	1. a java web application
+	2. enterprise applications
+and easily customizable, that is where spring security is introduced.
+--------------------------------------------------------------------------------------------------------------------------------
+Architecture of spring security
+
+How to integrate Servlets/Filters with Spring ioc container?
+
+application-context.xml
+-----------------------
+
+How to register spring security Filter programmatically while working with annotation approach?
+	
+class SecurityWebApplicationInitializer implements WebApplicationInitializer {
+	public void onStartup(ServletContext context) {
+		DelegatingFilterProxy filter = new DelegatingFilterProxy();
+		FilterRegistration.dynamic dynamic = context.addFilter("springSecurityFilterChain", filter);
+		dynamic.addMappings("/*");
+	}
+}	
+
+it looks like across all the applications we are working on, if we want to enable security we need to write the same piece of code in registering the security filter in our application, which seems to be boiler-plate logic instead of we writing this code spring security people has provided an abstract implementation of WebApplicationInitializer as below
+
+abstract class AbstractSecurityWebApplicationInitializer implements WebApplicationInitializer {
+public void onStartup(ServletContext context) {
+		DelegatingFilterProxy filter = new DelegatingFilterProxy();
+		FilterRegistration.dynamic dynamic = context.addFilter("springSecurityFilterChain", filter);
+		dynamic.addMappings("/*");
+	}
+}
+
+class BasicAnnotationSecurityFilterInitializer extends AbstractSecurityWebApplicationInitializer {}
+
+
+#2. now provide security related configuration:
+1. authorization roles for resources
+2. authentication mechanism
+3. security components like AuthenticationManager, AuthenticationProvider and AuthenticationService classes as beans
+
+We need to define them in JavaConfiguration class since we are working with annotation-driven approach. Instead of defining them as beans in RootConfig, let us keep security related configuration separately by writing in SecurityConfig.java
+
+
+@Configuration
+class SecurityConfig extends WebSecurityConfigurerAdapter {
+	
+	protected void configure(HttpSecurity http) {
+		http.httpBasic();
+		http.csrf().disabled();
+		
+		http.authorizeHttpRequests().
+			antMatchers("/home.htm").permitAll().
+			antMatchers("/loan-info.htm").authenticated();		
+	}
+	
+	protected void configure(AuthenticationManagerBuilder builder) {
+		PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
+		
+		builder.inMemoryAuthentication().
+		passwordEncoder(passwordEncoder).withUser("joseph").password("welcome1").authorities("customer")
+		.and().withUser("paul").password("welcome2").authorities("manager");
+	}
+}
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+interface UserDetailsService {
+	UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+}
+
+interface UserDetails {
+	Collection<? extends GrantedAuthority> getAuthorities();
+	String getPassword()
+	String getUsername();
+	boolean isAccountNonExpired();
+	boolean isAccountNonLocked();
+	boolean isCredentialNonExpired();
+	boolean isEnabled()
+}
+
+spring security:6 migration
+----------------------------
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+	public void configure(AuthenticationManagerBuilder builder) {}
+	public void configure(HttpSecurity http){}
+}
+
+In Spring Security: 6, the spring security has removed/deprecated Configurer Adapter class, so we need to manually construct AuthenticationManager and SecurityFilterChain objects respectively.
+	
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+	
+	@Autowired
+	private UserDetailsServiceImpl userDetailsService;
+	
+	@Bean
+	public AuthenticationManager authenticationManager() {
+		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+		authenticationProvider.setUserDetailsService(userDetailsService);
+		authenticationProvider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+		ProviderManager providerManager = new ProviderManager(authenticationProvider);
+		return providerManager;
+	}
+	
+	
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) {
+		return http.formLogin()
+				.loginPage("/login.htm") // login controller to display login.jsp
+				.loginProcessingUrl("/j_login")//login handler url
+				.usernameParameter("j_username") // username & password parameter names with which we submit the form
+				.passwordParameter("j_password").and()
+				.logout().logoutUrl("/j_logout").logoutSuccessUrl("/logout.htm").and()
+				.csrf().disable()
+				.authorizeHttpRequests()
+                .antMatchers("/home.htm").permitAll()
+                .antMatchers("/loan-info.htm").fullyAuthenticated().build();
+	}
+}
+--------------------------------------------------------------------------------------------------------------------------------
+csrf
+-----
+csrf stands for cross-site request forgery (attack)
+	
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	   
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+ 
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+

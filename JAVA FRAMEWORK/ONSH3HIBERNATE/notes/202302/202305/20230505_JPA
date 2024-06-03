@@ -1,0 +1,191 @@
+jpa api
+java persistence api it is an api that is provided by sun microsystems in support of ORM technology aspart of the java language. To work with jpa api we need implementations
+1. jpa ri implementation = distributed aspart of the jee containers
+2. hibernate3 entity-manager = acts as implementation of jpa api
+
+now the current version of the hibernate 6 is completely re-written to act as an implementation of jpa api itself.
+
+insurance_plan
+plan_no 
+plan_nm
+plan_type
+min_tenure
+min_insurred_amount
+min_eligibility_age
+maturity_bonus_percentage
+
+1. Entity class
+@Entity
+@Table(name="")
+class InsurancePlan implements Serializable {
+	@Id
+	@Column
+	private int planNo;
+	@Basic
+	private String planName;
+	private String planType;
+	private int minTenure;
+	private int minInsurredAmount;
+	private int minEligibilityAge;
+	private double maturityBonusPercentage;
+	
+	// default constructor
+	// accessor methods
+	// equals & hashCode()
+}
+
+2. We need to bind mapping information to the entity class, to make it persistable entity class. There are 2 ways we can write the mapping information
+	2.1 xml-based configuration
+	2.2 annotations
+	
+To write mapping information for an entity class we need to write orm.xml	(orm stands for object relational mapping), we can write mapping information about multiple entity classes in one single orm file or we can keep them separately into individual files as well.
+	
+InsurancePlan.orm.xml
+---------------------
+<?xml version="1.0" encoding="utf-8"?>
+<entity-mappings xsi:schemaLocation="...orm.xsd">
+	<package>com.jpa.entities</package>
+	<entity class="InsurancePlan">
+		<table name="insurance_plan"/>
+		<attributes>
+			<id name="planNo">
+				<column name="plan_no"/>
+			</id>
+			<basic name="planName">
+				<column name="plan_nm"/>
+			</basic>
+			<basic name="planType">
+				<column name="plan_type"/>
+			</basic>
+			<basic name="minTenure">
+				<column name="min_tenure"/>
+			</basic>
+			<basic name="minEligibilityAge">
+				<column name="min_eligibility_age"/>
+			</basic>
+			<basic name="minInsurredAmount">
+				<column name="min_insurred_amount"/>
+			</basic>
+			<basic name="maturityBonusPercentage">
+				<column name="maturity_bonus_percentage"/>
+			</basic>
+		</attributes>
+	</entity>
+</entity-mappings>
+
+3. To the above we need configuration file describing the database configuration, jpa engine configuration and mapping information. incase of jpa api we need write persistence.xml
+1. The name of the file must and should be persistence.xml only
+2. The file should be kept inside META-INF/ directory under the classpath of the application only (resources/META-INF/persistence.xml)
+3. within an application no matter how many databases we are using, always we have only one persistence.xml and per each database we work with we add an persistence-unit definition in persistence.xml
+
+		
+META-INF/persistence.xml
+<?xml version="1.0" encoding="utf-8"?>
+<persistence version="2.1" xsi:schemaLocation="persistence.xsd">
+	<persistence-unit name="pu1">
+		<provider>org.hibernate.jpa.HibernateJpaProvider</provider>
+		<mapping-file>com/jpa/entities/InsurancePlan.orm.xml</mapping-file>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/db"/>
+			<property name="javax.persistence.jdbc.username" value="root"/>
+			<property name="javax.persistence.jdbc.password" value="welcome1"/>
+			
+			<property name="hibernate.show_sql" value="true"/>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+		</properties>
+	</persistence-unit>
+</persistence>
+
+
+Test.java
+----------
+
+EntityManager = Entity Manager is equal to an Session in hibernate framework, it takes of managing the persistence operations for the entity class. it has relevant methods for fetching, save, updating and deleting the entity objects from the underlying database tables based on the mapping information we defined for each entity
+
+an EntityManager needs Connection, mappingInformation and dialect to carry the operations
+
+EntityManagerFactory = EntityManagerFactory acts as an factory for creating the object of EntityManager, he holds the persistence configuration information, mapping information within its internal repository that is being reused while creating the object of EntityManager.
+In addition it might hold/maintain connection pool configuration
+
+We need to create one object of the entityManagerFactory per one database of one application
+
+Persistence = The persistence class helps us in reading the persistence.xml and instantiate the object of EntityManagerFactory
+
+public static void main(String[] args) {
+	EntityManagerFactory emf = Persistence.createEntityManagerFactory("pu1");
+	EntityManager em = emf.createEntityManager();
+	InsurancePlan ip = em.find(InsurancePlan.class, 1);
+	sop(ip);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

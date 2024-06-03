@@ -35,7 +35,7 @@ For the bean definitions for whom we are injecting the configuration values usin
 --------------------------------------------------------------------------------------------------------------------------------
 Discovery Server/Registry
 -------------------------
-While working with Microservices, the enterprise large-scale complex business system is borken down into smaller microservices and are distribtued and scatted across the nodes of the cluster. Not all the nodes are running all the microservices of the System, different nodes are running different microservices, so the client application inorder to access an microservice he should know which nodes the microservice application he wanted to access is running.
+While working with Microservices, the enterprise large-scale complex business system is borken down into smaller microservices and are distribtued and scattered across the nodes of the cluster. Not all the nodes are running all the microservices of the System, different nodes are running different microservices, so the client application inorder to access an microservice he should know which nodes the microservice application he wanted to access is running.
 	
 Unfortunately the client dont have this information with him, to help the client locate and access the microservice application from the nodes of the cluster we need Discovery Server/registry
 
